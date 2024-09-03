@@ -1,1 +1,35 @@
+This file contains the write up of the requirements for the project. 
+They are broken up into Business, User-level, Operational-level, and Physical level.
+
+
+Business requirement specifications:
+  See Write-ups/Course Calender
+
+user-level needs and requirements:   
+    (i.e., "These are about how a product must support user needs" 
+        e.g. "The product must authenticate all users and assign them roles governing access to information.")
+-
+-
+-
+
+Operational-level needs and requirements:      
+    ("individual inputs, outputs, computations, operations, characteristics, or properties of a product."
+        e.g. "The product must allow users to enter polynomial equations, trigonometric equations, logarithmic equations, and exponential equations, all of one variable.")
+-
+-
+-
+
+physical-level needs and requirements
+    ("details of the physical layout and behavior of the product’s user interface"
+        "The product must support cut-and-paste of text into all text boxes." )
+-
+-
+-
+
+
+
+
+
+
+
 
