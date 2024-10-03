@@ -46,22 +46,26 @@ public class Board {
         letterKeyValue.put("Q",point7);
         letterKeyValue.put("Z",point7);
 
-
     }
     public void addToBoard(String letter, int row, int column) {
-        board[row][column] = new Tile(letter.toUpperCase(),letterKeyValue.get(letter.toUpperCase()), new Point(row,column));
+        if (row >= 0 && row < 15 && column >= 0 && column < 15 && board[row][column] == null) {
+            board[row][column] = new Tile(letter.toUpperCase(),letterKeyValue.get(letter.toUpperCase()), new Point(row,column));
+        } else {
+            System.out.println("Invalid position or tile already exists at (" + row + ", " + column + ").");
+        }
     }
 
     public static void main(String[] args) {
         Board test = new Board();
-        test.addToBoard("r",2,9);
-        test.addToBoard("u",3,9);
-        test.addToBoard("n",4,9);
-        test.addToBoard("i",4,10);
-        test.addToBoard("g",4,11);
-        test.addToBoard("h",4,12);
-        test.addToBoard("t",4,13);
+        test.addToBoard("r",5,7);
+        test.addToBoard("u",6,7);
+        test.addToBoard("n",7,7);
+        test.addToBoard("i",7,8);
+        test.addToBoard("g",7,9);
+        test.addToBoard("h",7,10);
+        test.addToBoard("t",7,11);
         test.boardView();
+        test.boardScan();
         System.out.println();
     }
     public void boardView(){
@@ -71,7 +75,7 @@ public class Board {
                     System.out.print(" "+board[row][column].getLetter()+" ");
                 }
                 else{
-                    System.out.print(" X ");
+                    System.out.print(" * ");
                 }
             }
             System.out.println();
@@ -86,13 +90,23 @@ public class Board {
                 }
             }
         }
+        for (int i = 0; i < Tiles.size(); i++) {
+            System.out.println(Tiles.get(i).getLetter());
+        }
         //
-        for( int i = 0; i < Tiles.size(); ++i){
+        for(int i = 0; i < Tiles.size(); ++i){
+            List<Tile> tempTiles = new ArrayList<>();
             for(int j = 0; j < Tiles.size(); ++j){
-                
+                if (i != j) {
+                    if ((Tiles.get(i).getLocation().getX() == Tiles.get(j).getLocation().getX()) || (Tiles.get(i).getLocation().getY() == Tiles.get(j).getLocation().getY())) {
+                        tempTiles.add(Tiles.get(j));
+                    }
+                }
             }
+            System.out.println(tempTiles.get(i).getLetter());
         }
     }
+
     public void clearBoard(){
         for(int row = 0; row < board.length; ++row){
             Arrays.fill(board[row], null);
