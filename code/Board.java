@@ -103,7 +103,11 @@ public class Board {
                     }
                 }
             }
-            System.out.println(tempTiles.get(i).getLetter());
+            // We just added this, did not give us an error, but we don't know if its the right solution.
+            for (int h = 0; h < tempTiles.size(); ++h) {
+                System.out.println(tempTiles.get(h).getLetter());
+            }
+            System.out.println();
         }
     }
 
