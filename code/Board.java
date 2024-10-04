@@ -69,6 +69,7 @@ public class Board {
         test.boardScan();
         System.out.println();
     }
+
     public void boardView(){
         for(int row = 0; row < board.length; ++row){
             for(int column = 0; column < board[row].length; ++column){
@@ -118,6 +119,44 @@ public class Board {
             System.out.println(newWords.get(i));
             System.out.println();
         }
+    }
+
+    /*
+    Takes in an x,y coordinate and returns a number between -1 and 5
+    return values and labels:
+        -1 = Invalid Coordinates
+        0 = Double Letter (light blue)
+        1 = Triple letter (dark blue)
+        2 = Double Word (light red)
+        3 = Triple Word (dark red)
+        4 = Start (light red)
+        5 = Blank (gray)
+    */
+    public static int locationCheck(int x, int y) {
+
+        final int[][] scrabbleBoard = {
+                // 0  1  2  3  4  5  6  7  8  9 10 11 12 13 14
+                {3, 5, 5, 0, 5, 5, 5, 3, 5, 5, 5, 0, 5, 5, 3}, // 0
+                {5, 2, 5, 5, 5, 1, 5, 5, 5, 1, 5, 5, 5, 2, 5}, // 1
+                {5, 5, 2, 5, 5, 5, 0, 5, 0, 5, 5, 5, 2, 5, 5}, // 2
+                {0, 5, 5, 2, 5, 5, 5, 0, 5, 5, 5, 2, 5, 5, 0}, // 3
+                {5, 5, 5, 5, 2, 5, 5, 5, 5, 5, 2, 5, 5, 5, 5}, // 4
+                {5, 1, 5, 5, 5, 1, 5, 5, 5, 1, 5, 5, 5, 1, 5}, // 5
+                {5, 5, 0, 5, 5, 5, 0, 5, 0, 5, 5, 5, 0, 5, 5}, // 6
+                {3, 5, 5, 0, 5, 5, 5, 4, 5, 5, 5, 0, 5, 5, 3}, // 7
+                {5, 5, 0, 5, 5, 5, 0, 5, 0, 5, 5, 5, 0, 5, 5}, // 8
+                {5, 1, 5, 5, 5, 1, 5, 5, 5, 1, 5, 5, 5, 1, 5}, // 9
+                {5, 5, 5, 5, 2, 5, 5, 5, 5, 5, 2, 5, 5, 5, 5}, // 10
+                {0, 5, 5, 2, 5, 5, 5, 0, 5, 5, 5, 2, 5, 5, 0}, // 11
+                {5, 5, 2, 5, 5, 5, 0, 5, 0, 5, 5, 5, 2, 5, 5}, // 12
+                {5, 2, 5, 5, 5, 1, 5, 5, 5, 1, 5, 5, 5, 2, 5}, // 13
+                {3, 5, 5, 0, 5, 5, 5, 3, 5, 5, 5, 0, 5, 5, 3}  // 14
+        };
+
+        if(x >= 0 && x < 15 && y >= 0 && y < 15)
+            return scrabbleBoard[x][y];
+        else
+            return -1;
     }
 
     public void clearBoard(){
