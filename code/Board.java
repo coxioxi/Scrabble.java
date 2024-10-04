@@ -110,7 +110,7 @@ public class Board {
 
             String tempString ="";
             for (int k = 0; k < tempTiles.size(); k++) {
-                if(tempTiles.getLast().getLocation().getX() == tempTiles.getFirst().getLocation().getX() || tempTiles.getLast().getLocation().getY() == tempTiles.getFirst().getLocation().getY() )
+                if(tempTiles.get(tempTiles.size() - 1).getLocation().getX() == tempTiles.get(0).getLocation().getX() || tempTiles.get(tempTiles.size() - 1).getLocation().getY() == tempTiles.get(0).getLocation().getY() )
                     tempString += tempTiles.get(k).getLetter();
             }
 
