@@ -5,7 +5,7 @@ public class Tile {
     private final String letter;
     private final Point location;
     private boolean isNew;
-    public Tile(String letter, int score,Point location){
+    public Tile(String letter, int score, Point location){
         this.letter = letter;
         this.score = score;
         this.location = location;

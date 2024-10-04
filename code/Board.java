@@ -65,6 +65,11 @@ public class Board {
         test.addToBoard("g",7,9);
         test.addToBoard("h",7,10);
         test.addToBoard("t",7,11);
+        test.addToBoard("k",7,6);
+        test.addToBoard("a",8,11);
+        test.addToBoard("l",9,11);
+        test.addToBoard("k",10,11);
+        test.addToBoard("t",8,10);
         test.boardView();
         test.boardScan();
         System.out.println();
@@ -103,21 +108,21 @@ public class Board {
                 }
             }
 
-            String tempString = "";
+            String tempString ="";
             for (int k = 0; k < tempTiles.size(); k++) {
-                tempString += tempTiles.get(k).getLetter();
+                if(tempTiles.getLast().getLocation().getX() == tempTiles.getFirst().getLocation().getX() || tempTiles.getLast().getLocation().getY() == tempTiles.getFirst().getLocation().getY() )
+                    tempString += tempTiles.get(k).getLetter();
             }
 
-            if (newWords.isEmpty()) {
+            if (newWords.isEmpty() && !tempString.isEmpty()) {
                 newWords.add(tempString);
-            } else if (!newWords.contains(tempString)) {
+            } else if (!newWords.contains(tempString)&& !tempString.isEmpty()) {
                 newWords.add(tempString);
             }
         }
 
         for (int i = 0; i < newWords.size(); i++) {
             System.out.println(newWords.get(i));
-            System.out.println();
         }
     }
 
