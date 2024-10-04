@@ -1,5 +1,6 @@
 
 import java.awt.*;
+import java.lang.reflect.Array;
 import java.util.*;
 import java.util.List;
 
@@ -82,31 +83,39 @@ public class Board {
         }
     }
     public void boardScan(){
-        List<Tile> Tiles = new ArrayList<>();
+        List<Tile> tiles = new ArrayList<>();
+        List<List<Tile>> words = new ArrayList<>();
+        List<String> newWords = new ArrayList<>();
         for(int row = 0; row < board.length; ++row){
             for(int column = 0; column < board[row].length; ++column){
                 if(board[row][column] != null){
-                    Tiles.add(board[row][column]);
+                    tiles.add(board[row][column]);
                 }
             }
-        }
-        for (int i = 0; i < Tiles.size(); i++) {
-            System.out.println(Tiles.get(i).getLetter());
         }
         //
-        for(int i = 0; i < Tiles.size(); ++i){
+        for(int i = 0; i < tiles.size() - 1; ++i){
             List<Tile> tempTiles = new ArrayList<>();
-            for(int j = 0; j < Tiles.size(); ++j){
-                if (i != j) {
-                    if ((Tiles.get(i).getLocation().getX() == Tiles.get(j).getLocation().getX()) || (Tiles.get(i).getLocation().getY() == Tiles.get(j).getLocation().getY())) {
-                        tempTiles.add(Tiles.get(j));
-                    }
+            for(int j = 0; j < tiles.size(); ++j){
+                if ((tiles.get(i).getLocation().getX() == tiles.get(j).getLocation().getX()) || (tiles.get(i).getLocation().getY() == tiles.get(j).getLocation().getY())) {
+                    tempTiles.add(tiles.get(j));
                 }
             }
-            // We just added this, did not give us an error, but we don't know if its the right solution.
-            for (int h = 0; h < tempTiles.size(); ++h) {
-                System.out.println(tempTiles.get(h).getLetter());
+
+            String tempString = "";
+            for (int k = 0; k < tempTiles.size(); k++) {
+                tempString += tempTiles.get(k).getLetter();
             }
+
+            if (newWords.isEmpty()) {
+                newWords.add(tempString);
+            } else if (!newWords.contains(tempString)) {
+                newWords.add(tempString);
+            }
+        }
+
+        for (int i = 0; i < newWords.size(); i++) {
+            System.out.println(newWords.get(i));
             System.out.println();
         }
     }
