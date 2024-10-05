@@ -1,5 +1,3 @@
-import java.awt.*;
-
 public class Tile {
     private final int score;
     private final String letter;
