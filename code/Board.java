@@ -55,10 +55,18 @@ public class Board {
         return 0;
     }
 
+    /**
+     *
+     * @return an array of the words played on the most recent board change
+     */
     public String[] getLastWordsPlayed() {
         return lastWordsPlayed;
     }
 
+    /*
+    this method sets up the boardSpecialCell field with all the correct placements
+    for modifier cells using Point objects and ModifierType enumerations.
+     */
     private void initializeModifierCells() {
         boardSpecialCell  =  new HashMap<>();
         boardSpecialCell.put(new Point(0,0), ModifierType.TRIPLE_WORD);

@@ -6,7 +6,7 @@
  * Original date: 10/08/2024
  */
 
-
+import java.awt.*;
 import java.util.Timer;
 
 /**
@@ -29,7 +29,12 @@ public class Game {
 		//From ruleset, create timer objects
 	}
 
-	public void playTiles(Tile[] tiles) {
+	public void playTiles(Tile[] tiles, Point[] points)
+			throws InvalidPositionException {
+		int score = board.playTiles(tiles, points);
+	}
+
+	public void increaseScore(Player player, int amount) {
 
 	}
 }

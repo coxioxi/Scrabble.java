@@ -6,18 +6,22 @@
  * Original date: 10/08/2024
  */
 
-import java.awt.*;
-
 /**
  * This class represents the tiles of the scrabble game
  */
 public class Tile {
 
-    private final int score;
-    private char letter;
-    private boolean isBlank;
+    private final int score;    // how many points this tile scores
+    private char letter;        // the letter on the tile
+    private final boolean isBlank;    // whether the tile is blank or not
 
-    public Tile(char letter, boolean isBlank){
+    /**
+     * Creates a new Tile object
+     * @param letter the letter on the face of the tile. Must be an alphabetical
+     *               character A-Z, unless it is blank.
+     * @param isBlank whether this tile is blank or not.
+     */
+    public Tile(char letter, boolean isBlank) {
         this.isBlank = isBlank;
         if (!this.isBlank){
             this.letter = letter;
@@ -28,6 +32,12 @@ public class Tile {
         }
     }
 
+    /**
+     * If a tile is blank, its letter can be set once it is played
+     * @param letter the letter to put on the tile
+     * @throws NotBlankException when a non-blank letter is attempted
+     *          to be set.
+     */
     public void setLetter(char letter)
         throws NotBlankException{
         if (!isBlank) {
@@ -36,9 +46,18 @@ public class Tile {
         else this.letter = letter;
     }
 
+    /**
+     *
+     * @return the letter on the tile
+     */
     public char getLetter() {
         return this.letter;
     }
+
+    /**
+     *
+     * @return the value of the letter
+     */
     public int getScore() {
         return this.score;
     }

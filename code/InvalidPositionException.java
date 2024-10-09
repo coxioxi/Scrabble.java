@@ -1,3 +1,6 @@
+/**
+ * Exception for tiles placed incorrectly on the scrabble board
+ */
 public class InvalidPositionException extends Exception{
 	public InvalidPositionException() {
 		super();

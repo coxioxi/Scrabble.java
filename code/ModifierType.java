@@ -1,3 +1,6 @@
+/**
+ * Enumeration of the modifier types on the Scrabble board
+ */
 public enum ModifierType {
 	DOUBLE_LETTER,
 	TRIPLE_LETTER,
