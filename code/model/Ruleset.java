@@ -1,4 +1,5 @@
-package model; /**
+package model;
+/*
  * Authors: Ian Boyer, David Carr, Samuel Costa,
  *      Maximus Latkovski, Jy'el Mason
  * Course: COMP 3100
