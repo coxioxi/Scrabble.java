@@ -1,27 +1,45 @@
+/**
+ * Authors: Ian Boyer, David Carr, Samuel Costa,
+ *      Maximus Latkovski, Jy'el Mason
+ * Course: COMP 3100
+ * Instructor: Dr. Barry Wittman
+ * Original date: 10/08/2024
+ */
+
+import java.awt.*;
+
+/**
+ * This class represents the tiles of the scrabble game
+ */
 public class Tile {
+
     private final int score;
-    private final String letter;
-    private final Point location;
-    private boolean isNew;
-    public Tile(String letter, int score, Point location){
-        this.letter = letter;
-        this.score = score;
-        this.location = location;
-        isNew = true;
+    private char letter;
+    private boolean isBlank;
+
+    public Tile(char letter, boolean isBlank){
+        this.isBlank = isBlank;
+        if (!this.isBlank){
+            this.letter = letter;
+            score = TileScore.getScoreForLetter(letter);
+        }
+        else {
+            score = 0;
+        }
     }
-    public String getLetter() {
+
+    public void setLetter(char letter)
+        throws NotBlankException{
+        if (!isBlank) {
+            throw new NotBlankException("Tile already has value " + this.letter);
+        }
+        else this.letter = letter;
+    }
+
+    public char getLetter() {
         return this.letter;
     }
     public int getScore() {
         return this.score;
-    }
-    public Point getLocation() {
-        return location;
-    }
-    public boolean isNew() {
-        return isNew;
-    }
-    public void setNew(boolean isNew){
-        this.isNew = isNew;
     }
 }

@@ -1,13 +1,140 @@
+/**
+ * Authors: Ian Boyer, David Carr, Samuel Costa,
+ *      Maximus Latkovski, Jy'el Mason
+ * Course: COMP 3100
+ * Instructor: Dr. Barry Wittman
+ * Original date: 10/08/2024
+ */
 
 import java.awt.*;
-import java.lang.reflect.Array;
 import java.util.*;
-import java.util.List;
 
+/**
+ * This class represents the scrabble board. It maintains the placement of
+ * Tile objects on the board and allows for changes to be made.
+ *
+ */
 public class Board {
-    private final Tile[][] board;
-    private final Map<String,Integer> letterKeyValue = new HashMap<>();
-    private final Map<Point,String> boardSpecialCell =  new HashMap<>();
+    private  Tile[][] board;  // where Tile objects are placed
+    private Map<Point,ModifierType> boardSpecialCell;   // map of modifier cells
+    private String[] lastWordsPlayed;   // the words which have most recently been played
+
+
+    /**
+     * Constructs a new Board object
+     */
+    public Board() {
+        initializeModifierCells();
+    }
+
+    /**
+     * This method places tiles at positions on the board and returns the score of
+     * the play made
+     *
+     * @param tiles the tiles which are being placed on the board
+     * @param points where the tiles are being placed. The size of this array and
+     *               tiles must be the same and ordered to correspond. points[0] must
+     *               correspond to tiles[0], points[1] must correspond to tiles[1], etc.
+     *               Note that neither array may be empty, but arrays of size 1 are allowed.
+     * @return the score of the word(s) played as an integer
+     * @throws InvalidPositionException when placed incorrectly. At least one tile
+     *                  must be adjacent to some other previously placed tile, or
+     *                  one of the tiles must be at the starting tile (7,7).
+     *                  No tile may be placed on an already occupied cell
+     */
+    public int playTiles(Tile[] tiles, Point[] points)
+            throws InvalidPositionException{
+        /*TODO:
+            this method must ensure that all tiles are placed on unoccupied cells.
+            it must check that one tile is placed on 7,7, or that one tile
+                is adjacent to an already placed tile.
+            it must score the words played appropriately.
+            it must change the lastWordsPlayed field with these word(s).
+         */
+        // It is very likely that this method will need helper methods.
+        return 0;
+    }
+
+    public String[] getLastWordsPlayed() {
+        return lastWordsPlayed;
+    }
+
+    private void initializeModifierCells() {
+        boardSpecialCell  =  new HashMap<>();
+        boardSpecialCell.put(new Point(0,0), ModifierType.TRIPLE_WORD);
+        boardSpecialCell.put(new Point(3,0), ModifierType.DOUBLE_LETTER);
+        boardSpecialCell.put(new Point(7,0), ModifierType.TRIPLE_WORD);
+        boardSpecialCell.put(new Point(11,0), ModifierType.DOUBLE_LETTER);
+        boardSpecialCell.put(new Point(14,0), ModifierType.TRIPLE_WORD);
+        boardSpecialCell.put(new Point(1,1), ModifierType.DOUBLE_WORD);
+        boardSpecialCell.put(new Point(5,1), ModifierType.TRIPLE_LETTER);
+        boardSpecialCell.put(new Point(9,1), ModifierType.TRIPLE_LETTER);
+        boardSpecialCell.put(new Point(13,1), ModifierType.DOUBLE_WORD);
+        boardSpecialCell.put(new Point(2,2), ModifierType.DOUBLE_WORD);
+        boardSpecialCell.put(new Point(6,2), ModifierType.DOUBLE_LETTER);
+        boardSpecialCell.put(new Point(8,2), ModifierType.DOUBLE_LETTER);
+        boardSpecialCell.put(new Point(12,2), ModifierType.DOUBLE_WORD);
+        boardSpecialCell.put(new Point(0,3), ModifierType.DOUBLE_LETTER);
+        boardSpecialCell.put(new Point(3,3), ModifierType.DOUBLE_WORD);
+        boardSpecialCell.put(new Point(7,3), ModifierType.DOUBLE_LETTER);
+        boardSpecialCell.put(new Point(11,3), ModifierType.DOUBLE_WORD);
+        boardSpecialCell.put(new Point(14,3), ModifierType.DOUBLE_LETTER);
+        boardSpecialCell.put(new Point(4,4), ModifierType.DOUBLE_WORD);
+        boardSpecialCell.put(new Point(10,4), ModifierType.DOUBLE_WORD);
+        boardSpecialCell.put(new Point(1,5), ModifierType.TRIPLE_LETTER);
+        boardSpecialCell.put(new Point(5,5), ModifierType.TRIPLE_LETTER);
+        boardSpecialCell.put(new Point(9,5), ModifierType.TRIPLE_LETTER);
+        boardSpecialCell.put(new Point(13,5), ModifierType.TRIPLE_LETTER);
+        boardSpecialCell.put(new Point(2,6), ModifierType.DOUBLE_LETTER);
+        boardSpecialCell.put(new Point(6,6), ModifierType.DOUBLE_LETTER);
+        boardSpecialCell.put(new Point(8,6), ModifierType.DOUBLE_LETTER);
+        boardSpecialCell.put(new Point(12,6), ModifierType.DOUBLE_LETTER);
+        boardSpecialCell.put(new Point(0,7), ModifierType.TRIPLE_WORD);
+        boardSpecialCell.put(new Point(3,7), ModifierType.DOUBLE_LETTER);
+        boardSpecialCell.put(new Point(7,7), ModifierType.DOUBLE_WORD);
+        boardSpecialCell.put(new Point(11,7), ModifierType.DOUBLE_LETTER);
+        boardSpecialCell.put(new Point(14,7), ModifierType.TRIPLE_WORD);
+
+        boardSpecialCell.put(new Point(0,14), ModifierType.TRIPLE_WORD);
+        boardSpecialCell.put(new Point(3,14), ModifierType.DOUBLE_LETTER);
+        boardSpecialCell.put(new Point(7,14), ModifierType.TRIPLE_WORD);
+        boardSpecialCell.put(new Point(11,14), ModifierType.DOUBLE_LETTER);
+        boardSpecialCell.put(new Point(14,14), ModifierType.TRIPLE_WORD);
+        boardSpecialCell.put(new Point(1,13), ModifierType.DOUBLE_WORD);
+        boardSpecialCell.put(new Point(5,13), ModifierType.TRIPLE_LETTER);
+        boardSpecialCell.put(new Point(9,13), ModifierType.TRIPLE_LETTER);
+        boardSpecialCell.put(new Point(13,13), ModifierType.DOUBLE_WORD);
+        boardSpecialCell.put(new Point(2,12), ModifierType.DOUBLE_WORD);
+        boardSpecialCell.put(new Point(6,12), ModifierType.DOUBLE_LETTER);
+        boardSpecialCell.put(new Point(8,12), ModifierType.DOUBLE_LETTER);
+        boardSpecialCell.put(new Point(12,12), ModifierType.DOUBLE_WORD);
+        boardSpecialCell.put(new Point(0,11), ModifierType.DOUBLE_LETTER);
+        boardSpecialCell.put(new Point(3,11), ModifierType.DOUBLE_WORD);
+        boardSpecialCell.put(new Point(7,11), ModifierType.DOUBLE_LETTER);
+        boardSpecialCell.put(new Point(11,11), ModifierType.DOUBLE_WORD);
+        boardSpecialCell.put(new Point(14,11), ModifierType.DOUBLE_LETTER);
+        boardSpecialCell.put(new Point(4,10), ModifierType.DOUBLE_WORD);
+        boardSpecialCell.put(new Point(10,10), ModifierType.DOUBLE_WORD);
+        boardSpecialCell.put(new Point(1,9), ModifierType.TRIPLE_LETTER);
+        boardSpecialCell.put(new Point(5,9), ModifierType.TRIPLE_LETTER);
+        boardSpecialCell.put(new Point(9,9), ModifierType.TRIPLE_LETTER);
+        boardSpecialCell.put(new Point(13,8), ModifierType.TRIPLE_LETTER);
+        boardSpecialCell.put(new Point(2,8), ModifierType.DOUBLE_LETTER);
+        boardSpecialCell.put(new Point(6,8), ModifierType.DOUBLE_LETTER);
+        boardSpecialCell.put(new Point(8,8), ModifierType.DOUBLE_LETTER);
+        boardSpecialCell.put(new Point(12,8), ModifierType.DOUBLE_LETTER);
+    }
+
+    /**
+     * Clears the board of all tiles, puts null values in their place
+     */
+    public void clearBoard(){
+		for (Tile[] tiles : board) {
+			Arrays.fill(tiles, null);
+		}
+    }
+
+    /*
 
     public Board(){
         board = new Tile[15][15];
@@ -48,6 +175,7 @@ public class Board {
         letterKeyValue.put("Z",point7);
 
     }
+
     public void addToBoard(String letter, int row, int column) {
         if (row >= 0 && row < 15 && column >= 0 && column < 15 && board[row][column] == null) {
             board[row][column] = new Tile(letter.toUpperCase(),letterKeyValue.get(letter.toUpperCase()), new Point(row,column));
@@ -136,7 +264,7 @@ public class Board {
         3 = Triple Word (dark red)
         4 = Start (light red)
         5 = Blank (gray)
-    */
+    *
     public static int locationCheck(int x, int y) {
 
         final int[][] scrabbleBoard = {
@@ -163,10 +291,5 @@ public class Board {
         else
             return -1;
     }
-
-    public void clearBoard(){
-        for(int row = 0; row < board.length; ++row){
-            Arrays.fill(board[row], null);
-            }
-        }
-    }
+    */
+}
