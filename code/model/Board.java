@@ -27,6 +27,7 @@ public class Board {
      */
     public Board() {
         initializeModifierCells();
+        board = new Tile[15][15];
     }
 
     /**
