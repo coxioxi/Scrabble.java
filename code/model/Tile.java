@@ -1,4 +1,5 @@
-package model; /**
+package model;
+/*
  * Authors: Ian Boyer, David Carr, Samuel Costa,
  *      Maximus Latkovski, Jy'el Mason
  * Course: COMP 3100
@@ -16,20 +17,25 @@ public class Tile {
     private final boolean isBlank;    // whether the tile is blank or not
 
     /**
-     * Creates a new model.Tile object
-     * @param letter the letter on the face of the tile. Must be an alphabetical
-     *               character A-Z, unless it is blank.
-     * @param isBlank whether this tile is blank or not.
+     * Creates a new, blank Tile object
+     * This tile has a score of 0 and an unset letter value.
+     * this letter value must be set at a future point to be a true representation of scrabble
      */
-    public Tile(char letter, boolean isBlank) {
-        this.isBlank = isBlank;
-        if (!this.isBlank){
-            this.letter = letter;
-            score = TileScore.getScoreForLetter(letter);
-        }
-        else {
-            score = 0;
-        }
+    public Tile() {
+        this.isBlank = true;
+        score = 0;
+    }
+
+    /**
+     * Creates a new Tile object from a letter
+     * @param letter the letter on the face of the tile. Must be an alphabetical
+     *      character A-Z. The letter is automatically scored according to the
+     *      rules of Scrabble, and as outlined in class TileScore
+     */
+    public Tile(char letter) {
+        this.letter = letter;
+        score = TileScore.getScoreForLetter(letter);
+        this.isBlank = false;
     }
 
     /**
