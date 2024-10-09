@@ -1,4 +1,5 @@
-package model; /**
+package model;
+/*
  * Authors: Ian Boyer, David Carr, Samuel Costa,
  *      Maximus Latkovski, Jy'el Mason
  * Course: COMP 3100
@@ -26,6 +27,28 @@ public class Board {
      */
     public Board() {
         initializeModifierCells();
+    }
+
+    /**
+     *
+     * @return an array of the words played on the most recent board change
+     */
+    public String[] getLastWordsPlayed() {
+        return lastWordsPlayed;
+    }
+
+    /**
+     * Clears the board of all tiles, puts null values in their place
+     */
+    public void clearBoard(){
+        for (Tile[] tiles : board) {
+            Arrays.fill(tiles, null);
+        }
+    }
+
+    public void removeTiles(Tile[] tiles, Point[] points) {
+        // TODO: implement to remove tiles from points on board. double check that
+        // tile specified and tile on board correspond
     }
 
     /**
@@ -60,11 +83,34 @@ public class Board {
         return score;
     }
 
-    private void addToBoard(Tile[] tiles, Point[] points) {
 
+    /**********************************************
+                    Private methods
+     **********************************************/
+
+
+    /*
+    helper method which adds tiles to the board at specified points.
+    does not check scoring or validity of play.
+     */
+    private void addToBoard(Tile[] tiles, Point[] points) {
+        //TODO: implement. for each tile in tiles, add to board at corresponding point
     }
 
+    /*
+    helper method; calculates the score of tiles played with words and modifier cells.
+    returns score as an int
+    also updates lastWordsPlayed
+     */
     private int score(Tile[] tiles, Point[] points) {
+        //TODO: implement score method.
+
+        // implementation details/ideas: figure out orientation of tiles (vertical/horizontal), all collateral words
+        // will be perpendicular. find the score of the main word first (use modifier cells. apply letter cells first,
+        // word modifiers at the end), move on to collaterals. apply same order of operations
+
+        // keep a list of all words, set as lastWordsPlayed at the end
+
         return 0;
     }
 
@@ -168,18 +214,10 @@ public class Board {
             );
     }
 
-    /**
-     *
-     * @return an array of the words played on the most recent board change
-     */
-    public String[] getLastWordsPlayed() {
-        return lastWordsPlayed;
-    }
-
     /*
-    this method sets up the boardSpecialCell field with all the correct placements
-    for modifier cells using Point objects and model.ModifierType enumerations.
-     */
+this method sets up the boardSpecialCell field with all the correct placements
+for modifier cells using Point objects and model.ModifierType enumerations.
+ */
     private void initializeModifierCells() {
         boardSpecialCell  =  new HashMap<>();
         boardSpecialCell.put(new Point(0,0), ModifierType.TRIPLE_WORD);
@@ -244,15 +282,6 @@ public class Board {
         boardSpecialCell.put(new Point(6,8), ModifierType.DOUBLE_LETTER);
         boardSpecialCell.put(new Point(8,8), ModifierType.DOUBLE_LETTER);
         boardSpecialCell.put(new Point(12,8), ModifierType.DOUBLE_LETTER);
-    }
-
-    /**
-     * Clears the board of all tiles, puts null values in their place
-     */
-    public void clearBoard(){
-		for (Tile[] tiles : board) {
-			Arrays.fill(tiles, null);
-		}
     }
 
     /*
