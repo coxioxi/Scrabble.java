@@ -47,7 +47,7 @@ public class Tile {
     }
 
     /**
-     *
+     * Getter for letter
      * @return the letter on the tile
      */
     public char getLetter() {
@@ -55,7 +55,7 @@ public class Tile {
     }
 
     /**
-     *
+     * getter for value
      * @return the value of the letter
      */
     public int getScore() {

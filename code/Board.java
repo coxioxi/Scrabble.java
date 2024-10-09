@@ -12,7 +12,8 @@ import java.util.*;
 /**
  * This class represents the scrabble board. It maintains the placement of
  * Tile objects on the board and allows for changes to be made.
- *
+ * When changes are made, Board scores the word(s) played and allows them to be accessed
+ * in the future. Note that Board does not check the validity of words, only their values.
  */
 public class Board {
     private  Tile[][] board;  // where Tile objects are placed
