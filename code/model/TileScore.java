@@ -1,3 +1,5 @@
+package model;
+
 /**
  * An enumeration of the values of the tiles in Scrabble.
  */
@@ -11,7 +13,7 @@ public enum TileScore {
 	private final int score;	// the value of the letter
 
 	/**
-	 * Creates a TileScore object with a score
+	 * Creates a model.TileScore object with a score
 	 * @param score value of playing this tile
 	 */
 	TileScore(int score) {

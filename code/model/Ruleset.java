@@ -1,4 +1,4 @@
-/**
+package model; /**
  * Authors: Ian Boyer, David Carr, Samuel Costa,
  *      Maximus Latkovski, Jy'el Mason
  * Course: COMP 3100
@@ -21,7 +21,7 @@ public class Ruleset {
 
 
 	/**
-	 * Creates a Ruleset object
+	 * Creates a model.Ruleset object
 	 * @param totalTime how much time (in seconds) is allotted for the whole game.
 	 *                  Between 300 and 3600.
 	 * @param turnTime how much time (in seconds) a player may take on their turn.

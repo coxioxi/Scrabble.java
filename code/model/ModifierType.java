@@ -1,3 +1,5 @@
+package model;
+
 /**
  * Enumeration of the modifier types on the Scrabble board
  */

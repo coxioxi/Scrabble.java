@@ -1,3 +1,5 @@
+package model;
+
 /**
  * Exception for tiles placed incorrectly on the scrabble board
  */
