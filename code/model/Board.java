@@ -46,14 +46,126 @@ public class Board {
     public int playTiles(Tile[] tiles, Point[] points)
             throws InvalidPositionException{
         /*TODO:
-            this method must ensure that all tiles are placed on unoccupied cells.
-            it must check that one tile is placed on 7,7, or that one tile
-                is adjacent to an already placed tile.
-            it must score the words played appropriately.
+            this method must score the words played appropriately
+                (implement score method)
             it must change the lastWordsPlayed field with these word(s).
+            update the board with tiles
          */
         // It is very likely that this method will need helper methods.
+        sameXorY(points);
+        hasDuplicates(points);
+        validatePositions(points);  // half implemented
+        int score = score(tiles, points);   // not implemented
+        addToBoard(tiles, points);      // not implemented
+        return score;
+    }
+
+    private void addToBoard(Tile[] tiles, Point[] points) {
+
+    }
+
+    private int score(Tile[] tiles, Point[] points) {
         return 0;
+    }
+
+    /*
+    helper method; checks that points meet valid positions requirements of Scrabble.
+    (here, tiles are represented by the points) checks that:
+        no tiles are placed in occupied cell
+        1 tile is placed on starting tile
+            or 1 tile is adjacent to already placed tile
+        all tiles are connected, either by adjacency, or adjacency to adjacency
+     */
+    private void validatePositions(Point[] points)
+            throws InvalidPositionException {
+
+        //TODO: add check that all tiles are connected
+        //  this means that all tiles are next to each other, or seperated
+        //  by an already placed tile. There may not be gaps.
+        boolean areValid = true;
+
+        // are any points already occupied?
+        for (Point point : points) {
+            if (board[(int) point.getX()][(int) point.getY()] != null)
+                throw new InvalidPositionException(
+                        "Illegal placement: some cells are already occupied"
+                );
+        }
+
+        // is any tile played on the starting tile?
+        boolean isStarting = false;
+        for (Point point : points) {
+            if (point.getY() == 7 && point.getX() == 7)
+                isStarting = true;
+        }
+
+        // is any tile next to an already placed tile?
+        boolean hasAdjacentTile = false;
+        if (!isStarting) {
+            for (Point point : points) {
+                if (hasAdjacentTile(point))
+                    hasAdjacentTile = true;
+            }
+        }
+
+        // did both of last two checks fail? throw an exception
+        if (!hasAdjacentTile && !isStarting)
+            throw new InvalidPositionException(
+                    "Invalid placement: not adjacent to a cell and not starting"
+            );
+
+        // check if they are all connected
+
+    }
+
+    /*
+    helper method; checks if any of the four adjacent cells to point are occupied
+    returns true if adjacent is occupied
+     */
+    private boolean hasAdjacentTile(Point point) {
+        //TODO: check cell above, below, left and right. return true if any are not null
+        return true;
+    }
+
+    /*
+    helper method; checks if any points have same x and y value
+    throws exception if duplicates found
+     */
+    private void hasDuplicates(Point[] points)
+            throws InvalidPositionException {
+        boolean hasDuplicates = false;
+        for (int i = 0; i < points.length - 1 && !hasDuplicates; i++) {
+            for (int j = i + 1; j < points.length && !hasDuplicates; j++) {
+                Point point1 = points[i];
+                Point point2 = points[j];
+                if (point1.getX() == point2.getX() && point1.getY() == point2.getY())
+                    hasDuplicates = true;
+            }
+        }
+        if (hasDuplicates)
+            throw new InvalidPositionException(
+                    "Duplicate locations are not allowed"
+            );
+    }
+
+    /*
+    helper method; checks that all points have either same x or y value
+    throws exception if points are not in a line.
+     */
+    private void sameXorY(Point[] points)
+            throws InvalidPositionException {
+        boolean hasSameX = true;
+        boolean hasSameY = true;
+        for (int i = 0; i < points.length - 1 && (hasSameX || hasSameY); i++) {
+            if (points[i].getX() != points[i+1].getX())
+                hasSameX = false;
+            if (points[i].getY() != points[i+1].getY())
+                hasSameY = false;
+        }
+        if (!(hasSameX || hasSameY))
+            throw new InvalidPositionException(
+                "Illegal orientation: not all tiles are in a line"
+            );
     }
 
     /**
