@@ -1,7 +1,7 @@
 package model;
 /*
  * Authors: Ian Boyer, David Carr, Samuel Costa,
- *      Maximus Latkovski, Jy'el Mason
+ * Maximus Latkovski, Jy'el Mason
  * Course: COMP 3100
  * Instructor: Dr. Barry Wittman
  * Original date: 10/08/2024
@@ -67,4 +67,10 @@ public class Tile {
     public int getScore() {
         return this.score;
     }
+
+    /**
+     * getter for isBlank
+     * @return the value of isBlank
+     */
+    public boolean isBlank(){return this.isBlank;}
 }
