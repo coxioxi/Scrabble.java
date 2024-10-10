@@ -47,9 +47,23 @@ public class Board {
         }
     }
 
+    /**
+     * Returns tiles inside of given x and y locations
+     */
+    public Tile getXAndY(int x, int y){
+        return board[x][y];
+    }
+
     public void removeTiles(Tile[] tiles, Point[] points) {
         // TODO: implement to remove tiles from points on board. double check that
         // tile specified and tile on board correspond
+    }
+
+    /**
+     * A caller method for testing purposes
+     */
+    public boolean hasAdjacentCaller(Point point){
+        return hasAdjacentTile(point);
     }
 
     /**
@@ -80,7 +94,7 @@ public class Board {
         hasDuplicates(points);
         validatePositions(points);  // half implemented
         int score = score(tiles, points);   // not implemented
-        addToBoard(tiles, points);      // not implemented
+        addToBoard(tiles, points);      // half implemented
         return score;
     }
 
@@ -94,8 +108,10 @@ public class Board {
     helper method which adds tiles to the board at specified points.
     does not check scoring or validity of play.
      */
-    private void addToBoard(Tile[] tiles, Point[] points) {
+    private void addToBoard(Tile[] tiles, Point[] points) throws InvalidPositionException {
         //TODO: implement. for each tile in tiles, add to board at corresponding point
+        for(int i = 0; i < tiles.length; ++i)
+            board[(int) points[i].getX()][(int) points[i].getY()] = tiles[i];
     }
 
     /*
@@ -170,16 +186,32 @@ public class Board {
     returns true if adjacent is occupied
      */
     private boolean hasAdjacentTile(Point point) {
-        //TODO: check cell above, below, left and right. return true if any are not null
-        return true;
+        int x = (int) point.getX();
+        int y = (int) point.getY();
+
+        if (x - 1 >= 0 && board[x - 1][y] != null && !board[x - 1][y].isBlank()) {
+            return true;
+        }
+        else if (x + 1 < 15 && board[x + 1][y] != null && !board[x + 1][y].isBlank()) {
+            return true;
+        }
+        else if (y - 1 >= 0 && board[x][y - 1] != null && !board[x][y - 1].isBlank()) {
+            return true;
+        }
+        else if (y + 1 < 15 && board[x][y + 1] != null && !board[x][y + 1].isBlank()){
+            return true;
+        }
+        else
+            return false;
     }
+
+
 
     /*
     helper method; checks if any points have same x and y value
     throws exception if duplicates found
      */
-    private void hasDuplicates(Point[] points)
-            throws InvalidPositionException {
+    private void hasDuplicates(Point[] points) throws InvalidPositionException {
         boolean hasDuplicates = false;
         for (int i = 0; i < points.length - 1 && !hasDuplicates; i++) {
             for (int j = i + 1; j < points.length && !hasDuplicates; j++) {
@@ -199,8 +231,7 @@ public class Board {
     helper method; checks that all points have either same x or y value
     throws exception if points are not in a line.
      */
-    private void sameXorY(Point[] points)
-            throws InvalidPositionException {
+    private void sameXorY(Point[] points) throws InvalidPositionException {
         boolean hasSameX = true;
         boolean hasSameY = true;
         for (int i = 0; i < points.length - 1 && (hasSameX || hasSameY); i++) {
@@ -216,11 +247,11 @@ public class Board {
     }
 
     /*
-this method sets up the boardSpecialCell field with all the correct placements
-for modifier cells using Point objects and model.ModifierType enumerations.
+    this method sets up the boardSpecialCell field with all the correct placements
+    for modifier cells using Point objects and model.ModifierType enumerations.
  */
     private void initializeModifierCells() {
-        boardSpecialCell  =  new HashMap<>();
+        boardSpecialCell = new HashMap<>();
         boardSpecialCell.put(new Point(0,0), ModifierType.TRIPLE_WORD);
         boardSpecialCell.put(new Point(3,0), ModifierType.DOUBLE_LETTER);
         boardSpecialCell.put(new Point(7,0), ModifierType.TRIPLE_WORD);
