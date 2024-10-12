@@ -21,17 +21,18 @@ import java.util.*;
 public class Board {
     private  Tile[][] board;  // where model.Tile objects are placed
     private Map<Point,ModifierType> boardSpecialCell;   // map of modifier cells
-    private ArrayList<String> lastWordsPlayed = new ArrayList<>();;   // the words which have most recently been played
+    private ArrayList<String> lastWordsPlayed = new ArrayList<>();   // the words which have most recently been played
     private final ArrayList<String> dictionary;
-    final int rows = 15;
-    final int cols = 15;
+
+    public static final int BOARD_ROWS = 15;
+    public static final int BOARD_COLUMNS = 15;
 
     /**
      * Constructs a new model.Board object
      */
     public Board() {
         initializeModifierCells();
-        board = new Tile[15][15];
+        board = new Tile[BOARD_ROWS][BOARD_COLUMNS];
         dictionary = importDictionary();
     }
 
@@ -110,7 +111,6 @@ public class Board {
     does not check scoring or validity of play.
      */
     public void addToBoard(Tile[] tiles) throws InvalidPositionException {
-        //TODO: implement. for each tile in tiles, add to board at corresponding point
         for(int i = 0; i < tiles.length; ++i)
             board[(int) tiles[i].getLocation().getX()][(int) tiles[i].getLocation().getY()] = tiles[i];
     }
@@ -133,7 +133,7 @@ public class Board {
         */
 
         int sum = 0;
-        for(int i = 0; i < originTiles.length; ++i){
+        for(int i = 0; i < originTiles.length; ++i) {
             int row = originTiles[i].getLocation().y;
             int col = originTiles[i].getLocation().x;
 
@@ -279,7 +279,8 @@ public class Board {
     helper method; checks if any points have same x and y value
     throws exception if duplicates found
      */
-    private void hasDuplicates(Tile[] tiles) throws InvalidPositionException {
+    private void hasDuplicates(Tile[] tiles)
+            throws InvalidPositionException {
         boolean hasDuplicates = false;
         for (int i = 0; i < tiles.length - 1 && !hasDuplicates; i++) {
             for (int j = i + 1; j < tiles.length && !hasDuplicates; j++) {
@@ -299,7 +300,8 @@ public class Board {
     helper method; checks that all points have either same x or y value
     throws exception if points are not in a line.
      */
-    private void sameXorY(Tile[] tiles) throws InvalidPositionException {
+    private void sameXorY(Tile[] tiles)
+            throws InvalidPositionException {
         boolean hasSameX = true;
         boolean hasSameY = true;
         for (int i = 0; i < tiles.length - 1 && (hasSameX || hasSameY); i++) {
@@ -317,7 +319,7 @@ public class Board {
     /*
     this method sets up the boardSpecialCell field with all the correct placements
     for modifier cells using Point objects and model.ModifierType enumerations.
- */
+    */
     private void initializeModifierCells() {
         boardSpecialCell = new HashMap<>();
         boardSpecialCell.put(new Point(0,0), ModifierType.TRIPLE_WORD);
@@ -384,7 +386,8 @@ public class Board {
         boardSpecialCell.put(new Point(12,8), ModifierType.DOUBLE_LETTER);
     }
 
-    private boolean isValidWord(Set<Point> originPoints, Tile[] newTiles, Point[] newTilePoints) throws InvalidPositionException {
+    private boolean isValidWord(Set<Point> originPoints, Tile[] newTiles, Point[] newTilePoints)
+            throws InvalidPositionException {
         ArrayList<String> strings = stringBuild(originPoints,newTiles,newTilePoints);
                 for(String string: strings) {
             if (!dictionary.contains(string)) {
@@ -413,7 +416,8 @@ public class Board {
     the top most and left most tiles of the given list
     and adds to board
     */
-    public Tile[] findOrigin(Tile[] tiles) throws InvalidPositionException {
+    public Tile[] findOrigin(Tile[] tiles)
+            throws InvalidPositionException {
         Set<Tile> parentTile = new HashSet<>();
         //adds tile to board for the purpose of finding previous tile location
         addToBoard(tiles);
