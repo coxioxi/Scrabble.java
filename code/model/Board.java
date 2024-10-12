@@ -66,8 +66,8 @@ public class Board {
     /**
      * A caller method for testing purposes
      */
-    public boolean hasAdjacentCaller(Tile tile){
-        return hasAdjacentTile(tile);
+    public boolean hasAdjacentCaller(Point location){
+        return hasAdjacentTile(location);
     }
 
     /**
@@ -75,10 +75,6 @@ public class Board {
      * the play made
      *
      * @param tiles the tiles which are being placed on the board
-     * @param points where the tiles are being placed. The size of this array and
-     *               tiles must be the same and ordered to correspond. points[0] must
-     *               correspond to tiles[0], points[1] must correspond to tiles[1], etc.
-     *               Note that neither array may be empty, but arrays of size 1 are allowed.
      * @return the score of the word(s) played as an integer
      * @throws InvalidPositionException when placed incorrectly. At least one tile
      *                  must be adjacent to some other previously placed tile, or
@@ -87,6 +83,7 @@ public class Board {
      */
     public int playTiles(Tile[] tiles)
             throws InvalidPositionException{
+        int score = 0;
         /*TODO:
             this method must score the words played appropriately
                 (implement score method)
@@ -94,11 +91,11 @@ public class Board {
             update the board with tiles
          */
         // It is very likely that this method will need helper methods.
-        sameXorY(points);
-        hasDuplicates(points);
-        validatePositions(tiles);  // half implemented
-        int score = score(tiles, points);   // not implemented
-        addToBoard(tiles);      // half implemented
+//        sameXorY(points);
+//        hasDuplicates(points);
+//        validatePositions(tiles);  // half implemented
+//        int score = score(tiles, points);   // not implemented
+//        addToBoard(tiles);      // half implemented
         return score;
     }
 
@@ -112,7 +109,7 @@ public class Board {
     helper method which adds tiles to the board at specified points.
     does not check scoring or validity of play.
      */
-    private void addToBoard(Tile[] tiles) throws InvalidPositionException {
+    public void addToBoard(Tile[] tiles) throws InvalidPositionException {
         //TODO: implement. for each tile in tiles, add to board at corresponding point
         for(int i = 0; i < tiles.length; ++i)
             board[(int) tiles[i].getLocation().getX()][(int) tiles[i].getLocation().getY()] = tiles[i];
@@ -123,7 +120,7 @@ public class Board {
     returns score as an int
     also updates lastWordsPlayed
      */
-    private int score(Tile[] originTiles) {
+    public int score(Tile[] originTiles) {
         //TODO: implement score method.
 
         /*
@@ -165,7 +162,7 @@ public class Board {
         }
         for(int i = 0; i < originTiles.length; ++i){
             if (originTiles[i].getIsNew() && boardSpecialCell.containsKey(new Point(originTiles[i].getLocation().x,originTiles[i].getLocation().y))){
-                sum *= boardSpecialCell.get(new Point(originTiles[i].getLocation().x,originTiles[i].getLocation().y));
+                //sum *= boardSpecialCell.get(new Point(originTiles[i].getLocation().x,originTiles[i].getLocation().y));
             }
         }
 
@@ -239,7 +236,7 @@ public class Board {
         boolean hasAdjacentTile = false;
         if (!isStarting) {
             for (Tile tile: tiles) {
-                if (hasAdjacentTile(tile))
+                if (hasAdjacentTile(new Point((int)tile.getLocation().getX(),(int)tile.getLocation().getY())))
                     hasAdjacentTile = true;
             }
         }
@@ -258,9 +255,9 @@ public class Board {
     helper method; checks if any of the four adjacent cells to point are occupied
     returns true if adjacent is occupied
      */
-    private boolean hasAdjacentTile(Tile tile) {
-        int x = tile.getLocation().x;
-        int y = tile.getLocation().y;
+    private boolean hasAdjacentTile(Point location) {
+        int x = location.x;
+        int y = location.y;
 
         if (x - 1 >= 0 && board[x - 1][y] != null && !board[x - 1][y].isBlank()) {
             return true;
@@ -416,7 +413,7 @@ public class Board {
     the top most and left most tiles of the given list
     and adds to board
     */
-    public Set<Tile> findOrigin(Tile[] tiles) throws InvalidPositionException {
+    public Tile[] findOrigin(Tile[] tiles) throws InvalidPositionException {
         Set<Tile> parentTile = new HashSet<>();
         //adds tile to board for the purpose of finding previous tile location
         addToBoard(tiles);
@@ -455,7 +452,10 @@ public class Board {
             }
         }
         removeTiles(tiles);
-        return parentTile;
+        Tile[] parent = new Tile[parentTile.size()];
+
+        parentTile.toArray(parent);
+        return parent;
     }
 
 

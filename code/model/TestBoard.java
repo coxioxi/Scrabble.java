@@ -6,33 +6,41 @@ import org.junit.jupiter.api.Test;
 import java.awt.*;
 
 public class TestBoard {
-    Tile[] tiles = {new Tile('N'),new Tile('I'),new Tile('C'), new Tile('E')};
+    Tile[] tiles = {new Tile('N',new Point(7,7)),new Tile('I',new Point(8,7))
+            ,new Tile('C',new Point(9,7)), new Tile('E',new Point(10,7))};
 
     //valid points
-    Point[] points = {new Point(7,7),new Point(8,7),new Point(9,7),new Point(10,7)};
     Board board = new Board();
 
     @Test
     public void testAddToBoard() throws InvalidPositionException {
-        board.playTiles(tiles);
+        board.addToBoard(tiles);
         System.out.println("Tiles : Board");
-        for (int i = 0; i < tiles.length; i++) {
-            Assertions.assertEquals(tiles[i], board.getXAndY(points[i].x, points[i].y));
-            System.out.println(tiles[i].getLetter() + " : " + board.getXAndY(points[i].x,points[i].y).getLetter());
+        for (Tile tile: tiles) {
+            Assertions.assertEquals(tile, board.getXAndY((int)tile.getLocation().getX(),(int)tile.getLocation().getY()));
+            System.out.println(tile.getLetter() + " : " + board.getXAndY((int)tile.getLocation().getX(),(int)tile.getLocation().getY()).getLetter());
         }
         System.out.println();
     }
-    /*
+
+    @Test
+    public void testScore() throws InvalidPositionException {
+        board.addToBoard(tiles);
+
+        int score = board.score(board.findOrigin(tiles));
+        System.out.println(score);
+    }
+
     @Test
     public void testHasAdjacentTile() throws InvalidPositionException {
         board.playTiles(tiles);
 
-        Assertions.assertTrue(board.hasAdjacentCaller(tiles[tiles.length - 1].getLocation().x + 1, points[points.length - 1].y))); // Right of 'E'
-        Assertions.assertTrue(board.hasAdjacentCaller(new Point(points[0].x - 1, points[0].y))); // Left of 'N'
-        Assertions.assertTrue(board.hasAdjacentCaller(new Point(points[2].x, points[0].y + 1))); // Below 'C'
-        Assertions.assertTrue(board.hasAdjacentCaller(new Point(points[2].x, points[0].y - 1))); // Above 'C'
+        Assertions.assertTrue(board.hasAdjacentCaller(new Point((int)tiles[tiles.length - 1].getLocation().getX() + 1,(int) tiles[tiles.length - 1].getLocation().getY()))); // Right of 'E'
+        Assertions.assertTrue(board.hasAdjacentCaller(new Point((int)tiles[0].getLocation().getX() - 1, (int)tiles[0].getLocation().getY()))); // Left of 'N'
+        Assertions.assertTrue(board.hasAdjacentCaller(new Point((int)tiles[2].getLocation().getX(), (int)tiles[0].getLocation().getY() + 1))); // Below 'C'
+        Assertions.assertTrue(board.hasAdjacentCaller(new Point((int)tiles[2].getLocation().getX(), (int)tiles[0].getLocation().getY() - 1))); // Above 'C'
 
-        Assertions.assertTrue(board.hasAdjacentCaller(tiles[0]));
+        Assertions.assertTrue(board.hasAdjacentCaller(tiles[0].getLocation()));
 
         // Test a point with no adjacent tiles and at the edges of the board
         Assertions.assertFalse(board.hasAdjacentCaller(new Point(14, 14)));
@@ -42,7 +50,7 @@ public class TestBoard {
         Assertions.assertFalse(board.hasAdjacentCaller(new Point(7, 14)));
         Assertions.assertFalse(board.hasAdjacentCaller(new Point(14, 7)));
     }
-    */
+
 
     @Test
     public void testHasDuplicates() throws InvalidPositionException {
