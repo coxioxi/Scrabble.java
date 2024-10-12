@@ -24,6 +24,7 @@ public class Tile {
     public Tile() {
         this.isBlank = true;
         score = 0;
+
     }
 
     /**
