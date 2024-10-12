@@ -28,7 +28,7 @@ public class Game {
 
 	public Game(Player[] players, Board board, Ruleset ruleset, Player me){
 		this.players = players;
-		this.board = board;
+		this.board = new Board();
 		this.ruleset = ruleset;
 		this.self = (LocalPlayer) me;
 		// TODO: From ruleset, set times
@@ -46,7 +46,7 @@ public class Game {
 	 */
 	public void playTiles(int playerID, Tile[] tiles, Point[] points)
 			throws InvalidPositionException {
-		int score = board.playTiles(tiles, points);
+		int score = board.playTiles(tiles);
 	}
 
 	public int getCurrentPlayerTime() {

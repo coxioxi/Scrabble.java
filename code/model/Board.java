@@ -75,10 +75,6 @@ public class Board {
      * the play made
      *
      * @param tiles the tiles which are being placed on the board
-     * @param points where the tiles are being placed. The size of this array and
-     *               tiles must be the same and ordered to correspond. points[0] must
-     *               correspond to tiles[0], points[1] must correspond to tiles[1], etc.
-     *               Note that neither array may be empty, but arrays of size 1 are allowed.
      * @return the score of the word(s) played as an integer
      * @throws InvalidPositionException when placed incorrectly. At least one tile
      *                  must be adjacent to some other previously placed tile, or
@@ -87,6 +83,7 @@ public class Board {
      */
     public int playTiles(Tile[] tiles)
             throws InvalidPositionException{
+        int score = 0;
         /*TODO:
             this method must score the words played appropriately
                 (implement score method)
@@ -94,10 +91,10 @@ public class Board {
             update the board with tiles
          */
         // It is very likely that this method will need helper methods.
-        sameXorY(points);
-        hasDuplicates(points);
+        //sameXorY(points);
+        //hasDuplicates(points);
         validatePositions(tiles);  // half implemented
-        int score = score(tiles, points);   // not implemented
+        //int score = score(tiles, points);   // not implemented
         addToBoard(tiles);      // half implemented
         return score;
     }
@@ -112,7 +109,7 @@ public class Board {
     helper method which adds tiles to the board at specified points.
     does not check scoring or validity of play.
      */
-    private void addToBoard(Tile[] tiles) throws InvalidPositionException {
+    public void addToBoard(Tile[] tiles) throws InvalidPositionException {
         //TODO: implement. for each tile in tiles, add to board at corresponding point
         for(int i = 0; i < tiles.length; ++i)
             board[(int) tiles[i].getLocation().getX()][(int) tiles[i].getLocation().getY()] = tiles[i];
@@ -123,7 +120,7 @@ public class Board {
     returns score as an int
     also updates lastWordsPlayed
      */
-    private int score(Tile[] originTiles) {
+    public int score(Tile[] originTiles) {
         //TODO: implement score method.
 
         /*
@@ -163,11 +160,13 @@ public class Board {
                 ++col;
             }
         }
+        /*
         for(int i = 0; i < originTiles.length; ++i){
             if (originTiles[i].getIsNew() && boardSpecialCell.containsKey(new Point(originTiles[i].getLocation().x,originTiles[i].getLocation().y))){
                 sum *= boardSpecialCell.get(new Point(originTiles[i].getLocation().x,originTiles[i].getLocation().y));
             }
         }
+         */
 
         StringBuilder string = new StringBuilder();
         for (Tile tile : originTiles) {
@@ -212,8 +211,7 @@ public class Board {
             or 1 tile is adjacent to already placed tile
         all tiles are connected, either by adjacency, or adjacency to adjacency
      */
-    private void validatePositions(Tile[] tiles)
-            throws InvalidPositionException {
+    private void validatePositions(Tile[] tiles) throws InvalidPositionException {
 
         //TODO: add check that all tiles are connected
         //  this means that all tiles are next to each other, or separated
@@ -620,11 +618,8 @@ public class Board {
             System.out.println(newWords.get(i));
         }
     }
+  */
 
-    /*
-
-    }
-    */
 
 
 

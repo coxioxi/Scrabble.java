@@ -2,11 +2,24 @@ package model;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import java.util.*;
 
 import java.awt.*;
 
 public class TestBoard {
     Tile[] tiles = {new Tile('N'),new Tile('I'),new Tile('C'), new Tile('E')};
+
+    @Test
+    public void testScore() throws InvalidPositionException {
+        Tile[] tiles = {new Tile('N'),new Tile('I'),new Tile('C'), new Tile('E')};
+        Board board = new Board();
+
+        Tile[] tile = new Tile[board.findOrigin(tiles).size()];
+        Set<Tile> tiles2 = board.findOrigin(tile);
+        tiles2.toArray();
+
+        System.out.println(board.score((Tile[]) tiles2.toArray()));
+    }
 
     //valid points
     Point[] points = {new Point(7,7),new Point(8,7),new Point(9,7),new Point(10,7)};
@@ -14,7 +27,7 @@ public class TestBoard {
 
     @Test
     public void testAddToBoard() throws InvalidPositionException {
-        board.playTiles(tiles);
+        board.addToBoard(tiles);
         System.out.println("Tiles : Board");
         for (int i = 0; i < tiles.length; i++) {
             Assertions.assertEquals(tiles[i], board.getXAndY(points[i].x, points[i].y));
