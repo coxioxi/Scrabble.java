@@ -14,7 +14,7 @@ public class TestBoard {
 
     @Test
     public void testAddToBoard() throws InvalidPositionException {
-        board.playTiles(tiles);
+        board.playTiles(tiles, points);
         System.out.println("Tiles : Board");
         for (int i = 0; i < tiles.length; i++) {
             Assertions.assertEquals(tiles[i], board.getXAndY((int) points[i].getX(), (int) points[i].getY()));
@@ -39,14 +39,14 @@ public class TestBoard {
     @Test
     public void testHasDuplicates() throws InvalidPositionException {
         //for if positions are right
-        board.playTiles(tiles);
+        board.playTiles(tiles,points);
         System.out.println("hasDuplicates is working when positions are right");
         System.out.println();
 
         //for if position is wrong
         Point[] points = {new Point(7,7),/* wrong points*/new Point(7,7),new Point(9,7),new Point(10,7),new Point(11,7)};
         try{
-            board.playTiles(tiles);
+            board.playTiles(tiles, points);
             Assertions.fail();
         }
         catch (InvalidPositionException e){
@@ -58,13 +58,13 @@ public class TestBoard {
     @Test
     public void testSameXorY() throws InvalidPositionException {
         //for if positions are right
-        board.playTiles(tiles);
+        board.playTiles(tiles, points);
         System.out.println("sameXorY is working when positions are right");
         System.out.println();
 
         Point[] points = {new Point(7,7),/* wrong points*/new Point(7,8),new Point(9,7),new Point(10,7),new Point(11,7)};
         try{
-            board.playTiles(tiles);
+            board.playTiles(tiles, points);
             Assertions.fail();
         }
         catch (InvalidPositionException e){
@@ -76,7 +76,7 @@ public class TestBoard {
     @Test
     public void printBoardState() throws InvalidPositionException {
         System.out.println("Board State:");
-        board.playTiles(tiles);
+        board.playTiles(tiles, points);
         for (int i = 0; i < 15; i++) {
             for (int j = 0; j < 15; j++) {
                 Tile tile = board.getXAndY(i, j);
