@@ -6,9 +6,9 @@ package model;
 public class Player {
 	public static int DEFAULT_SCORE = 0;	// the starting score
 
-	private String name;	// player name
+	private final String name;	// player name
 	private int score;		// player score
-	private int ID;			// player ID, their turn in play
+	private final int ID;		// player ID, their turn in play
 
 	/*
 	hasPassed and isActive are for the requirements on turn passing.
@@ -39,10 +39,6 @@ public class Player {
 		return name;
 	}
 
-	public void setName(String name) {
-		this.name = name;
-	}
-
 	public int getScore() {
 		return score;
 	}
@@ -53,10 +49,6 @@ public class Player {
 
 	public int getID() {
 		return ID;
-	}
-
-	public void setID(int ID) {
-		this.ID = ID;
 	}
 
 	public boolean isHasPassedLastTurn() {
