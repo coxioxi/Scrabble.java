@@ -8,7 +8,7 @@ public class Player {
 
 	private final String name;	// player name
 	private int score;		// player score
-	private int ID;			// player ID, their turn in play
+	private final int ID;		// player ID, their turn in play
 
 	/*
 	hasPassed and isActive are for the requirements on turn passing.
@@ -49,10 +49,6 @@ public class Player {
 
 	public int getID() {
 		return ID;
-	}
-
-	public void setID(int ID) {
-		this.ID = ID;
 	}
 
 	public boolean isHasPassedLastTurn() {
