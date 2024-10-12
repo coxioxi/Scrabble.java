@@ -262,13 +262,13 @@ public class Board {
         if (x - 1 >= 0 && board[x - 1][y] != null && !board[x - 1][y].isBlank()) {
             return true;
         }
-        else if (x + 1 < cols && board[x + 1][y] != null && !board[x + 1][y].isBlank()) {
+        else if (x + 1 < BOARD_COLUMNS && board[x + 1][y] != null && !board[x + 1][y].isBlank()) {
             return true;
         }
         else if (y - 1 >= 0 && board[x][y - 1] != null && !board[x][y - 1].isBlank()) {
             return true;
         }
-        else if (y + 1 < rows && board[x][y + 1] != null && !board[x][y + 1].isBlank()){
+        else if (y + 1 < BOARD_ROWS && board[x][y + 1] != null && !board[x][y + 1].isBlank()){
             return true;
         }
         else
