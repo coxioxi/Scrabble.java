@@ -92,4 +92,18 @@ public class Tile {
     public void setIsNew(boolean isNew){this.isNew = isNew;}
 
     public boolean getIsNew(){return isNew;}
+
+    /**
+     * Utility method which extracts the points from a tile set
+     * @param tiles the tiles which have points set.
+     *              All indices must be non-null; all tiles must have locations
+     * @return each point of the tile array, returned as an array of the same length.
+     */
+    public static Point[] getPoints(Tile[] tiles) {
+        Point[] points = new Point[tiles.length];
+        for (int i = 0; i < tiles.length; i++) {
+            points[i] = tiles[i].getLocation();
+        }
+        return points;
+    }
 }
