@@ -33,6 +33,7 @@ public class NetworkPlayer extends Player {
 	 */
 	public void setConnected(boolean connected) {
 		isConnected = connected;
+		if (!isConnected) this.setActive(false);
 	}
 
 	/**
