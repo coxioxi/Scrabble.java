@@ -10,17 +10,7 @@ public class TestBoard {
     Tile[] tiles = {new Tile('N',new Point(7,7)),new Tile('I',new Point(8,7))
             ,new Tile('C',new Point(9,7)), new Tile('E',new Point(10,7))};
 
-    @Test
-    public void testScore() throws InvalidPositionException {
-        Tile[] tiles = {new Tile('N'),new Tile('I'),new Tile('C'), new Tile('E')};
-        Board board = new Board();
 
-        Tile[] tile = new Tile[board.findOrigin(tiles).size()];
-        Set<Tile> tiles2 = board.findOrigin(tile);
-        tiles2.toArray();
-
-        System.out.println(board.score((Tile[]) tiles2.toArray()));
-    }
 
     //valid points
     Board board = new Board();
