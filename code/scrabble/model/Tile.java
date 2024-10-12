@@ -1,4 +1,4 @@
-package scrabble.model;
+package model;
 /*
  * Authors: Ian Boyer, David Carr, Samuel Costa,
  * Maximus Latkovski, Jy'el Mason
@@ -7,6 +7,8 @@ package scrabble.model;
  * Original date: 10/08/2024
  */
 
+import java.awt.*;
+
 /**
  * This class represents the tiles of the scrabble game
  */
@@ -14,7 +16,9 @@ public class Tile {
 
     private final int score;    // how many points this tile scores
     private char letter;        // the letter on the tile
-    private final boolean isBlank;    // whether the tile is blank or not
+    private final boolean isBlank; // whether the tile is blank or not
+    private Point location;
+    private boolean isNew; //determines whether the tile has already been played
 
     /**
      * Creates a new, blank Tile object
@@ -24,7 +28,6 @@ public class Tile {
     public Tile() {
         this.isBlank = true;
         score = 0;
-
     }
 
     /**
@@ -37,6 +40,7 @@ public class Tile {
         this.letter = letter;
         score = TileScore.getScoreForLetter(letter);
         this.isBlank = false;
+        this.isNew = true;
     }
 
     /**
@@ -48,7 +52,7 @@ public class Tile {
     public void setLetter(char letter)
         throws NotBlankException{
         if (!isBlank) {
-            throw new NotBlankException("scrabble.model.Tile already has value " + this.letter);
+            throw new NotBlankException("model.Tile already has value " + this.letter);
         }
         else this.letter = letter;
     }
@@ -74,4 +78,11 @@ public class Tile {
      * @return the value of isBlank
      */
     public boolean isBlank(){return this.isBlank;}
+
+    public void setLocation(Point location){this.location = location;}
+    public Point getLocation(){return location;}
+
+    public void setIsNew(boolean isNew){this.isNew = isNew;}
+
+    public boolean getIsNew(){return isNew;}
 }

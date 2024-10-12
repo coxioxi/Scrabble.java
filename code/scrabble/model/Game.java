@@ -1,7 +1,7 @@
 package scrabble.model;
 /*
  * Authors: Ian Boyer, David Carr, Samuel Costa,
- *      Maximus Latkovski, Jy'el Mason
+ * Maximus Latkovski, Jy'el Mason
  * Course: COMP 3100
  * Instructor: Dr. Barry Wittman
  * Original date: 10/08/2024
