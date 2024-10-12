@@ -6,7 +6,7 @@ package model;
 public class Player {
 	public static int DEFAULT_SCORE = 0;	// the starting score
 
-	private String name;	// player name
+	private final String name;	// player name
 	private int score;		// player score
 	private int ID;			// player ID, their turn in play
 
@@ -37,10 +37,6 @@ public class Player {
 	 */
 	public String getName() {
 		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
 	}
 
 	public int getScore() {
