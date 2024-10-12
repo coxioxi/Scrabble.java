@@ -121,6 +121,7 @@ public class Board {
     public int playTiles(Tile[] tiles, Point[] points)
             throws InvalidPositionException{
         /*TODO:
+            check all points are in-bounds
             this method must score the words played appropriately
                 (implement score method)
             it must change the lastWordsPlayed field with these word(s).
@@ -128,8 +129,6 @@ public class Board {
             update the board with tiles
          */
         // It is very likely that this method will need helper methods.
-        sameXorY(points);
-        hasDuplicates(points);
         validatePositions(points);  // half implemented
         int score = score(tiles, points);   // not implemented
         addToBoard(tiles, points);
@@ -225,6 +224,41 @@ public class Board {
         //TODO: add check that all tiles are connected
         //  this means that all tiles are next to each other, or seperated
         //  by an already placed tile. There may not be gaps.
+        pointsInbounds(points);
+        if (!allSameX(points) && !allSameY(points)) throw new InvalidPositionException(
+                "Illegal orientation: not all tiles are in a line"
+        );
+        hasDuplicates(points);
+        areAnyPointsOccupied(points);
+        arePointsStartingOrAdjacent(points);
+        arePointsConnected(points);
+
+    }
+
+    private void arePointsConnected(Point[] points)
+            throws InvalidPositionException {
+        // check if they are all connected
+
+        // steps to check connection status:
+        // determine orientation of new tiles (vertical, horizontal)
+        System.out.println(allSameX(points));
+        if (allSameX(points)) {     // horizontal
+
+        }
+        else {                      // vertical
+
+        }
+        // sort tiles by x or y component based on orientation
+        // start with top left tile. move to next tile, check that change is equal to 1;
+        //      if the change is greater, check that in between cells on the board are occupied.
+        //          check fails if any are blank
+        // repeat with remainder of the list
+        // return out of method if algorithm finishes list with no problems.
+
+    }
+
+    private void areAnyPointsOccupied(Point[] points)
+            throws InvalidPositionException {
         boolean areValid = true;
 
         // are any points already occupied?
@@ -234,6 +268,10 @@ public class Board {
                         "Illegal placement: some cells are already occupied"
                 );
         }
+    }
+
+    private void arePointsStartingOrAdjacent(Point[] points)
+            throws InvalidPositionException {
 
         // is any tile played on the starting tile?
         boolean isStarting = false;
@@ -256,18 +294,19 @@ public class Board {
             throw new InvalidPositionException(
                     "Invalid placement: not adjacent to a cell and not starting"
             );
+    }
 
-        // check if they are all connected
+    private void pointsInbounds(Point[] points)
+            throws InvalidPositionException {
+        for (Point p : points) {
+            int x = (int) p.getX();
+            int y = (int) p.getY();
 
-        // steps to check connection status:
-        // determine orientation of new tiles (vertical, horizontal)
-        // sort tiles by x or y component based on orientation
-        // start with top left tile. move to next tile, check that change is equal to 1;
-        //      if the change is greater, check that in between cells on the board are occupied.
-        //          check fails if any are blank
-        // repeat with remainder of the list
-        // return out of method if algorithm finishes list with no problems.
-
+            if (x<0 || x>14 || y<0 || y>14)
+                throw new InvalidPositionException(
+                        "Tiles must be placed between 0 and 14 x and y"
+                );
+        }
     }
 
     /*
@@ -333,6 +372,24 @@ public class Board {
             throw new InvalidPositionException(
                 "Illegal orientation: not all tiles are in a line"
             );
+    }
+
+    private boolean allSameY(Point[] points) {
+        boolean hasSameY = true;
+        for (int i = 0; i < points.length - 1 && hasSameY; i++) {
+            if (points[i].getY() != points[i+1].getY())
+                hasSameY = false;
+        }
+        return hasSameY;
+    }
+
+    private boolean allSameX(Point[] points) {
+        boolean hasSameX = true;
+        for (int i = 0; i < points.length - 1 && hasSameX; i++) {
+            if (points[i].getX() != points[i+1].getX())
+                hasSameX = false;
+        }
+        return hasSameX;
     }
 
     /*
