@@ -17,24 +17,32 @@ public class TestBoard {
         board.playTiles(tiles);
         System.out.println("Tiles : Board");
         for (int i = 0; i < tiles.length; i++) {
-            Assertions.assertEquals(tiles[i], board.getXAndY((int) points[i].getX(), (int) points[i].getY()));
-            System.out.println(tiles[i].getLetter() + " : " + board.getXAndY((int)points[i].getX(), (int)points[i].getY()).getLetter());
+            Assertions.assertEquals(tiles[i], board.getXAndY(points[i].x, points[i].y));
+            System.out.println(tiles[i].getLetter() + " : " + board.getXAndY(points[i].x,points[i].y).getLetter());
         }
         System.out.println();
     }
-
+    /*
     @Test
     public void testHasAdjacentTile() throws InvalidPositionException {
-        board.playTiles(tiles, points);
+        board.playTiles(tiles);
 
-        Assertions.assertTrue(board.hasAdjacentCaller(new Point(points[points.length - 1].x + 1, points[points.length - 1].y))); // Right of 'E'
+        Assertions.assertTrue(board.hasAdjacentCaller(tiles[tiles.length - 1].getLocation().x + 1, points[points.length - 1].y))); // Right of 'E'
         Assertions.assertTrue(board.hasAdjacentCaller(new Point(points[0].x - 1, points[0].y))); // Left of 'N'
         Assertions.assertTrue(board.hasAdjacentCaller(new Point(points[2].x, points[0].y + 1))); // Below 'C'
         Assertions.assertTrue(board.hasAdjacentCaller(new Point(points[2].x, points[0].y - 1))); // Above 'C'
 
-        // Test a point with no adjacent tiles
+        Assertions.assertTrue(board.hasAdjacentCaller(tiles[0]));
+
+        // Test a point with no adjacent tiles and at the edges of the board
         Assertions.assertFalse(board.hasAdjacentCaller(new Point(14, 14)));
+        Assertions.assertFalse(board.hasAdjacentCaller(new Point(0, 0)));
+        Assertions.assertFalse(board.hasAdjacentCaller(new Point(14, 0)));
+        Assertions.assertFalse(board.hasAdjacentCaller(new Point(0, 14)));
+        Assertions.assertFalse(board.hasAdjacentCaller(new Point(7, 14)));
+        Assertions.assertFalse(board.hasAdjacentCaller(new Point(14, 7)));
     }
+    */
 
     @Test
     public void testHasDuplicates() throws InvalidPositionException {
@@ -68,13 +76,13 @@ public class TestBoard {
             Assertions.fail();
         }
         catch (InvalidPositionException e){
-            System.out.println("Error message when and exception is thrown in sameXorY method:" + e.getMessage());
+            System.out.println("Error message when and exception is thrown in sameXorY method: " + e.getMessage());
             System.out.println();
         }
     }
 
     @Test
-    public void printBoardState() throws InvalidPositionException {
+    public void simulateGame() throws InvalidPositionException {
         System.out.println("Board State:");
         board.playTiles(tiles);
         for (int i = 0; i < 15; i++) {

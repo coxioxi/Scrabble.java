@@ -16,8 +16,8 @@ public class Tile {
 
     private final int score;    // how many points this tile scores
     private char letter;        // the letter on the tile
-    private final boolean isBlank;
-    private Point location;// whether the tile is blank or not
+    private final boolean isBlank; // whether the tile is blank or not
+    private Point location;
     private boolean isNew; //determines whether the tile has already been played
 
     /**
@@ -40,6 +40,7 @@ public class Tile {
         this.letter = letter;
         score = TileScore.getScoreForLetter(letter);
         this.isBlank = false;
+        this.isNew = true;
     }
 
     /**
@@ -81,4 +82,7 @@ public class Tile {
     public void setLocation(Point location){this.location = location;}
     public Point getLocation(){return location;}
 
+    public void setIsNew(boolean isNew){this.isNew = isNew;}
+
+    public boolean getIsNew(){return isNew;}
 }
