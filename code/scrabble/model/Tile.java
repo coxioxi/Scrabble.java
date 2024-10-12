@@ -42,6 +42,13 @@ public class Tile {
         this.isBlank = false;
         this.isNew = true;
     }
+    public Tile(char letter, Point location) {
+        this.letter = letter;
+        score = TileScore.getScoreForLetter(letter);
+        this.isBlank = false;
+        this.isNew = true;
+        this.location = location;
+    }
 
     /**
      * If a tile is blank, its letter can be set once it is played
