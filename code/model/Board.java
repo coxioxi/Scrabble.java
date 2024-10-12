@@ -17,10 +17,34 @@ import java.util.*;
  * in the future. Note that model.Board does not check the validity of words, only their values.
  */
 public class Board {
-    private  Tile[][] board;  // where model.Tile objects are placed
+    private Tile[][] board;  // where model.Tile objects are placed
     private Map<Point,ModifierType> boardSpecialCell;   // map of modifier cells
     private String[] lastWordsPlayed;   // the words which have most recently been played
 
+    public static void main(String[] args) {
+        Board board = new Board();
+
+        Tile[] tiles = new Tile[4];
+        Point[] points = new Point[4];
+        tiles[0] = new Tile('T');
+        points[0] = new Point(7,7);
+        tiles[1] = new Tile('I');
+        points[1] = new Point(7,8);
+        tiles[2] = new Tile('L');
+        points[2] = new Point(7,9);
+        tiles[3] = new Tile('E');
+        points[3] = new Point(7,10);
+
+        try {
+            board.playTiles(tiles, points);
+
+        }
+        catch (InvalidPositionException e) {
+            e.printStackTrace();
+        }
+
+        System.out.println(board);
+    }
 
     /**
      * Constructs a new model.Board object
@@ -48,15 +72,28 @@ public class Board {
     }
 
     /**
-     * Returns tiles inside of given x and y locations
+     * Returns tile inside of given x and y locations
      */
-    public Tile getXAndY(int x, int y){
+    public Tile getTile(int x, int y){
         return board[x][y];
     }
 
     public void removeTiles(Tile[] tiles, Point[] points) {
-        // TODO: implement to remove tiles from points on board. double check that
-        // tile specified and tile on board correspond
+        for (int i = 0; i < points.length; i++) {
+            Point p = points[i];
+            int x = (int) p.getX();
+            int y = (int) p.getY();
+
+            // check if position is null, then check letter value
+            if (board[x][y] != null && board[x][y].getLetter() == tiles[i].getLetter()) {
+                board[x][y] = null;
+            }
+            else {
+                throw new NullPointerException(
+                        "No tile on board position"
+                );
+            }
+        }
     }
 
     /**
@@ -87,6 +124,7 @@ public class Board {
             this method must score the words played appropriately
                 (implement score method)
             it must change the lastWordsPlayed field with these word(s).
+                 (job of score method)
             update the board with tiles
          */
         // It is very likely that this method will need helper methods.
@@ -94,10 +132,46 @@ public class Board {
         hasDuplicates(points);
         validatePositions(points);  // half implemented
         int score = score(tiles, points);   // not implemented
-        addToBoard(tiles, points);      // half implemented
+        addToBoard(tiles, points);
         return score;
     }
 
+    @Override
+    /**
+     * Creates a String representation of this Board object.
+     * For each cell on the board, the letter value of the tile is placed;
+     * or, the modifier cell is shown when no tile is placed;
+     * or, simply "__" is shown when neither condition is met.
+     * each cell is padded with spaces in the String. A newline is
+     * added to the end of board rows.
+     * @returns a String representation, with formatting as stated above
+     */
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < board.length; i++) {
+            for (int j = 0; j < board.length; j++) {
+                if (board[i][j] == null) {
+
+                    ModifierType mt = boardSpecialCell.get(new Point(i, j));
+                    if (mt == ModifierType.DOUBLE_WORD)
+                        sb.append(" DW ");
+                    else if (mt == ModifierType.TRIPLE_WORD)
+                        sb.append(" TW ");
+                    else if (mt == ModifierType.DOUBLE_LETTER)
+                        sb.append(" DL ");
+                    else if (mt == ModifierType.TRIPLE_LETTER)
+                        sb.append(" TL ");
+                    else
+                        sb.append(" __ ");
+                }
+                else {
+                    sb.append(" " + board[i][j].getLetter() + "  ");
+                }
+            }
+            sb.append("\n");
+        }
+        return sb.toString();
+    }
 
     /**********************************************
                     Private methods
@@ -108,7 +182,7 @@ public class Board {
     helper method which adds tiles to the board at specified points.
     does not check scoring or validity of play.
      */
-    private void addToBoard(Tile[] tiles, Point[] points) throws InvalidPositionException {
+    private void addToBoard(Tile[] tiles, Point[] points) {
         //TODO: implement. for each tile in tiles, add to board at corresponding point
         for(int i = 0; i < tiles.length; ++i)
             board[(int) points[i].getX()][(int) points[i].getY()] = tiles[i];
@@ -117,14 +191,20 @@ public class Board {
     /*
     helper method; calculates the score of tiles played with words and modifier cells.
     returns score as an int
-    also updates lastWordsPlayed
+    also updates lastWordsPlayed, so it should only be called when the positions have been
+    validated through all necessary methods.
      */
     private int score(Tile[] tiles, Point[] points) {
         //TODO: implement score method.
 
-        // implementation details/ideas: figure out orientation of tiles (vertical/horizontal), all collateral words
-        // will be perpendicular. find the score of the main word first (use modifier cells. apply letter cells first,
-        // word modifiers at the end), move on to collaterals. apply same order of operations
+        // implementation details/ideas: figure out orientation of tiles (vertical/horizontal),
+        // all collateral words will be perpendicular.
+        // find the score of the main word first (use modifier cells. apply letter cells first,
+        //      word modifiers at the end), move on to collaterals.
+        // collaterals will be made when a new tile has an adjacency which has a
+        //      different x (vertical orientation) or y (horizontal) than the new tiles
+        // apply same order of operations for collateral words
+        // (note that modifier cells do NOT apply when a tile has previously been placed on it)
 
         // keep a list of all words, set as lastWordsPlayed at the end
 
@@ -178,6 +258,15 @@ public class Board {
             );
 
         // check if they are all connected
+
+        // steps to check connection status:
+        // determine orientation of new tiles (vertical, horizontal)
+        // sort tiles by x or y component based on orientation
+        // start with top left tile. move to next tile, check that change is equal to 1;
+        //      if the change is greater, check that in between cells on the board are occupied.
+        //          check fails if any are blank
+        // repeat with remainder of the list
+        // return out of method if algorithm finishes list with no problems.
 
     }
 
