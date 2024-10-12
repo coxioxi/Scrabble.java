@@ -1,4 +1,4 @@
-package model;
+package scrabble.model;
 /*
  * Authors: Ian Boyer, David Carr, Samuel Costa,
  *      Maximus Latkovski, Jy'el Mason
@@ -6,6 +6,8 @@ package model;
  * Instructor: Dr. Barry Wittman
  * Original date: 10/08/2024
  */
+
+import model.Tile;
 
 import java.awt.*;
 import java.io.File;
@@ -66,8 +68,8 @@ public class Board {
     /**
      * A caller method for testing purposes
      */
-    public boolean hasAdjacentCaller(Point location){
-        return hasAdjacentTile(location);
+    public boolean hasAdjacentCaller(Tile tile){
+        return hasAdjacentTile(tile);
     }
 
     /**
@@ -91,11 +93,11 @@ public class Board {
             update the board with tiles
          */
         // It is very likely that this method will need helper methods.
-//        sameXorY(points);
-//        hasDuplicates(points);
-//        validatePositions(tiles);  // half implemented
-//        int score = score(tiles, points);   // not implemented
-//        addToBoard(tiles);      // half implemented
+        //sameXorY(points);
+        //hasDuplicates(points);
+        validatePositions(tiles);  // half implemented
+        //int score = score(tiles, points);   // not implemented
+        addToBoard(tiles);      // half implemented
         return score;
     }
 
@@ -109,7 +111,7 @@ public class Board {
     helper method which adds tiles to the board at specified points.
     does not check scoring or validity of play.
      */
-    public void addToBoard(Tile[] tiles) throws InvalidPositionException {
+    private void addToBoard(Tile[] tiles) throws InvalidPositionException {
         //TODO: implement. for each tile in tiles, add to board at corresponding point
         for(int i = 0; i < tiles.length; ++i)
             board[(int) tiles[i].getLocation().getX()][(int) tiles[i].getLocation().getY()] = tiles[i];
@@ -160,11 +162,13 @@ public class Board {
                 ++col;
             }
         }
+        /*
         for(int i = 0; i < originTiles.length; ++i){
             if (originTiles[i].getIsNew() && boardSpecialCell.containsKey(new Point(originTiles[i].getLocation().x,originTiles[i].getLocation().y))){
                 //sum *= boardSpecialCell.get(new Point(originTiles[i].getLocation().x,originTiles[i].getLocation().y));
             }
         }
+         */
 
         StringBuilder string = new StringBuilder();
         for (Tile tile : originTiles) {
@@ -236,7 +240,7 @@ public class Board {
         boolean hasAdjacentTile = false;
         if (!isStarting) {
             for (Tile tile: tiles) {
-                if (hasAdjacentTile(new Point((int)tile.getLocation().getX(),(int)tile.getLocation().getY())))
+                if (hasAdjacentTile(tile))
                     hasAdjacentTile = true;
             }
         }
@@ -255,9 +259,9 @@ public class Board {
     helper method; checks if any of the four adjacent cells to point are occupied
     returns true if adjacent is occupied
      */
-    private boolean hasAdjacentTile(Point location) {
-        int x = location.x;
-        int y = location.y;
+    private boolean hasAdjacentTile(Tile tile) {
+        int x = tile.getLocation().x;
+        int y = tile.getLocation().y;
 
         if (x - 1 >= 0 && board[x - 1][y] != null && !board[x - 1][y].isBlank()) {
             return true;
@@ -413,7 +417,7 @@ public class Board {
     the top most and left most tiles of the given list
     and adds to board
     */
-    public Tile[] findOrigin(Tile[] tiles) throws InvalidPositionException {
+    public Set<Tile> findOrigin(Tile[] tiles) throws InvalidPositionException {
         Set<Tile> parentTile = new HashSet<>();
         //adds tile to board for the purpose of finding previous tile location
         addToBoard(tiles);
@@ -452,10 +456,7 @@ public class Board {
             }
         }
         removeTiles(tiles);
-        Tile[] parent = new Tile[parentTile.size()];
-
-        parentTile.toArray(parent);
-        return parent;
+        return parentTile;
     }
 
 
@@ -620,11 +621,8 @@ public class Board {
             System.out.println(newWords.get(i));
         }
     }
+  */
 
-    /*
-
-    }
-    */
 
 
 
