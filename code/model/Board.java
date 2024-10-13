@@ -186,6 +186,329 @@ public class Board {
             board[(int) tiles[i].getLocation().getX()][(int) tiles[i].getLocation().getY()] = tiles[i];
     }
 
+
+    // TODO: add documentation comments to slimScore and its 4 helper methods
+    private int slimScore(Tile[] tiles) {
+        int turnScore = 0;
+        ArrayList<String> words = new ArrayList<>();    // stores words made from tiles placed on board
+        boolean isVertical = allSameY(tiles);           // check verticality
+        if (isVertical) {
+            tiles = sortDescendingByX(tiles);
+            ScoreData mainWord = getVerticalMainWordScore(tiles);
+            ScoreData collateralWords = getVerticalCollateralWordsScore(tiles);
+            Iterator<String> mainIterator = mainWord.getWords().iterator();
+            while (mainIterator.hasNext()) {
+                words.add(mainIterator.next());
+            }
+            Iterator<String> collateralIterator = mainWord.getWords().iterator();
+            while (collateralIterator.hasNext()) {
+                words.add(collateralIterator.next());
+            }
+            turnScore = collateralWords.getScore() + mainWord.getScore();
+        }
+        else {
+            tiles = sortDescendingByY(tiles);
+            ScoreData mainWord = getHorizontalMainWordScore(tiles);
+            ScoreData collateralWords = getHorizontalCollateralWordsScore(tiles);
+            Iterator<String> mainIterator = mainWord.getWords().iterator();
+            while (mainIterator.hasNext()) {
+                words.add(mainIterator.next());
+            }
+            Iterator<String> collateralIterator = mainWord.getWords().iterator();
+            while (collateralIterator.hasNext()) {
+                words.add(collateralIterator.next());
+            }
+            turnScore = collateralWords.getScore() + mainWord.getScore();
+        }
+        lastWordsPlayed = words;
+        return turnScore;
+    }
+
+    private ScoreData getHorizontalCollateralWordsScore(Tile[] tiles) {
+        ArrayList<String> words = new ArrayList<>();
+        int collateralWordsScore = 0;
+        int wordMultiplier = 1;
+        for (int i = 0; i < tiles.length; i++) {
+            // initialize variables
+            StringBuilder currentWord = new StringBuilder();
+            Tile current = tiles[i];
+            Point placement = current.getLocation();
+            int x = placement.x;
+            int y = placement.y;
+
+            // x = row
+            // y = column
+
+            // for this tile, find the topmost connected tile
+            int topMostTile = x;
+            while (topMostTile-1 >= 0 && board[topMostTile-1][y] != null) {
+                topMostTile--;
+            }
+
+            // move down from topmost, accumulating score.
+            // only stop when no letters below current tile
+            int currentWordScore = 0;
+            while (topMostTile < BOARD_ROWS &&
+                    (board[topMostTile][y] != null || x == topMostTile) )
+            {
+                Tile boardTile = board[topMostTile][y];
+                if (boardTile != null) {        // if topMost is position on board
+                    currentWordScore += boardTile.getScore();
+                    currentWord.append(boardTile.getLetter());
+                }
+                else {                          // if topMost is tile to be placed
+                    ModifierType cellMod = boardSpecialCell.get(placement);
+                    if (cellMod == ModifierType.DOUBLE_LETTER) {
+                        currentWordScore += (2 * current.getScore());
+                    }
+                    else if (cellMod == ModifierType.TRIPLE_LETTER) {
+                        currentWordScore += (3 * current.getScore());
+                    }
+                    else if (cellMod == ModifierType.DOUBLE_WORD) {
+                        wordMultiplier *= 2;
+                        currentWordScore += current.getScore();
+
+                    }
+                    else {
+                        wordMultiplier *= 3;
+                        currentWordScore += current.getScore();
+                    }
+                    currentWord.append(current.getLetter());
+                }
+                topMostTile++;      // move down
+            }
+            // final updates to collateral word variables
+            currentWordScore *= wordMultiplier;
+            wordMultiplier = 1;
+            collateralWordsScore += currentWordScore;
+            words.add(currentWord.toString());
+        }
+
+        return new ScoreData(words, collateralWordsScore);
+    }
+
+    private ScoreData getHorizontalMainWordScore(Tile[] tiles) {
+        // initialize variables
+        StringBuilder mainWordString = new StringBuilder();     // for word from "tiles"
+        int mainWordScore = 0;
+        int wordMultiplier = 1;
+        // check for tiles on left, add to score
+        int firstCol = tiles[0].getLocation().y;
+        int row = tiles[0].getLocation().x;
+        int onLeft = firstCol-1;
+        while (onLeft >= 0 && board[row][onLeft] != null) {
+            // add current highest known placed tile to score and string. move upwards
+            Tile current = board[row][onLeft];
+            mainWordScore += current.getScore();
+            mainWordString.append(current.getLetter());
+            onLeft--;
+        }
+
+        // MAIN WORD SCORE
+        for (int i = 0; i < tiles.length; i++) {
+            // initialize variables
+            Tile current = tiles[i];
+            Point placement = current.getLocation();   // current tile new cell location
+            int x = (int) placement.getX();
+            int y = (int) placement.getY();
+
+            //figure out if there are old tiles in between this tile and previous
+            int numOldTiles = 0;
+            if (i > 0) {
+                // if there is a difference between current Y and previous Y which is more than 1,
+                // then there are old tiles. (-1 makes sure to count only for gaps)
+                int previousTileY = (int) tiles[i-1].getLocation().getY();
+                numOldTiles = y - previousTileY - 1;        // Adjust by one for old tiles
+            }
+
+            // cycle through tiles on board in between, add in letter value
+            for (int j = y - numOldTiles; j < y; j++) {
+                mainWordScore += board[x][j].getScore();
+                mainWordString.append(board[x][j].getLetter());
+            }
+
+            // Handle modifiers on current tile's cell, add tile value to counter
+            // Add letter to string at end
+            ModifierType cellMod = boardSpecialCell.get(placement);
+            if (cellMod == ModifierType.DOUBLE_LETTER) {
+                mainWordScore += (2 * current.getScore());
+            }
+            else if (cellMod == ModifierType.TRIPLE_LETTER) {
+                mainWordScore += (3 * current.getScore());
+            }
+            else if (cellMod == ModifierType.DOUBLE_WORD) {
+                wordMultiplier *= 2;
+                mainWordScore += current.getScore();
+            }
+            else {
+                wordMultiplier *= 3;
+                mainWordScore += current.getScore();
+            }
+            mainWordString.append(current.getLetter());
+        }
+        // check if tiles are to right, add to score
+        int lastCol = tiles[tiles.length-1].getLocation().y;
+        row = tiles[0].getLocation().x;
+        int onRight = lastCol+1;
+        while (onRight < BOARD_COLUMNS && board[row][onRight] != null) {
+            mainWordScore += board[row][onRight].getScore();
+            mainWordString.append(board[row][onRight].getLetter());
+            onRight++;
+        }
+
+        // final scoring for the main word...
+        mainWordScore *= wordMultiplier;
+
+        // add this main word to string list
+        ArrayList<String> words = new ArrayList<>();
+        words.add(mainWordString.toString());
+
+        return new ScoreData(words, mainWordScore);
+    }
+
+    private ScoreData getVerticalCollateralWordsScore(Tile[] tiles) {
+        // now, figure out any collateral word total
+        int collateralWordsScore = 0;
+        ArrayList<String> words = new ArrayList<>();
+        int wordMultiplier = 1;
+        for (int i = 0; i < tiles.length; i++) {
+            // initialize variables
+            StringBuilder currentWord = new StringBuilder();
+            Tile current = tiles[i];
+            Point placement = current.getLocation();
+            int x = placement.x;
+            int y = placement.y;
+
+            // x = row
+            // y = column
+
+            // for this tile, find the leftmost connected tile
+            int leftMostTile = y;
+            while (leftMostTile-1 >= 0 && board[x][leftMostTile-1] != null) {
+                leftMostTile--;
+            }
+
+            // move right from leftmost, accumulating score.
+            // only stop when no letters to right of current
+            int currentWordScore = 0;
+            while (leftMostTile < BOARD_COLUMNS &&
+                    (board[x][leftMostTile] != null || y == leftMostTile) )
+            {
+                Tile boardTile = board[x][leftMostTile];
+                if (boardTile != null) {        // if leftMost is position on board
+                    currentWordScore += boardTile.getScore();
+                    currentWord.append(boardTile.getLetter());
+                }
+                else {                          // if leftMost is tile to be placed
+                    ModifierType cellMod = boardSpecialCell.get(placement);
+                    if (cellMod == ModifierType.DOUBLE_LETTER) {
+                        currentWordScore += (2 * current.getScore());
+                    }
+                    else if (cellMod == ModifierType.TRIPLE_LETTER) {
+                        currentWordScore += (3 * current.getScore());
+                    }
+                    else if (cellMod == ModifierType.DOUBLE_WORD) {
+                        wordMultiplier *= 2;
+                        currentWordScore += current.getScore();
+
+                    }
+                    else {
+                        wordMultiplier *= 3;
+                        currentWordScore += current.getScore();
+                    }
+                    currentWord.append(current.getLetter());
+                }
+                leftMostTile++;
+            }
+            // final updates to collateral word variables
+            currentWordScore *= wordMultiplier;
+            wordMultiplier = 1;
+            collateralWordsScore += currentWordScore;
+            words.add(currentWord.toString());
+        }
+
+        return new ScoreData(words, collateralWordsScore);
+    }
+
+    private ScoreData getVerticalMainWordScore(Tile[] tiles) {
+        // initialize variables
+        StringBuilder mainWordString = new StringBuilder();     // for word from "tiles"
+        int mainWordScore = 0;
+        int wordMultiplier = 1;
+        // check for tiles above, add to score
+        int firstRow = tiles[0].getLocation().x;
+        int col = tiles[0].getLocation().y;
+        int above = firstRow-1;
+        while (above >= 0 && board[above][col] != null) {
+            // add current highest known placed tile to score and string. move upwards
+            Tile current = board[above][col];
+            mainWordScore += current.getScore();
+            mainWordString.append(current.getLetter());
+            above--;
+        }
+
+        // START MAIN WORD SCORE CODE
+        for (int i = 0; i < tiles.length; i++) {
+            // initialize variables
+            Tile current = tiles[i];
+            Point placement = current.getLocation();   // current tile new cell location
+            int x = (int) placement.getX();
+            int y = (int) placement.getY();
+
+            //figure out if there are old tiles in between this tile and previous
+            int numOldTiles = 0;
+            if (i > 0) {
+                // if there is a difference between current X and previous X which is more than 1,
+                // then there are old tiles. (-1 makes sure to count only for gaps)
+                int previousTileX = (int) tiles[i-1].getLocation().getX();
+                numOldTiles = x - previousTileX - 1;        // Adjust by one for old tiles
+            }
+
+            // cycle through tiles on board in between, add in letter value
+            for (int j = x - numOldTiles; j < x; j++) {
+                mainWordScore += board[j][y].getScore();
+                mainWordString.append(board[j][y].getLetter());
+            }
+
+            // Handle modifiers on current tile's cell, add tile value to counter
+            // Add letter to string at end
+            ModifierType cellMod = boardSpecialCell.get(placement);
+            if (cellMod == ModifierType.DOUBLE_LETTER) {
+                mainWordScore += (2 * current.getScore());
+            }
+            else if (cellMod == ModifierType.TRIPLE_LETTER) {
+                mainWordScore += (3 * current.getScore());
+            }
+            else if (cellMod == ModifierType.DOUBLE_WORD) {
+                wordMultiplier *= 2;
+                mainWordScore += current.getScore();
+            }
+            else {
+                wordMultiplier *= 3;
+                mainWordScore += current.getScore();
+            }
+            mainWordString.append(current.getLetter());
+        }
+        // check if tiles are below, add to score
+        int lastRow = tiles[tiles.length-1].getLocation().x;
+        col = tiles[0].getLocation().y;
+        int below = lastRow+1;
+        while (below < BOARD_ROWS && board[below][col] != null) {
+            mainWordScore += board[below][col].getScore();
+            mainWordString.append(board[below][col].getLetter());
+            below++;
+        }
+
+        // final scoring for the main word...
+        mainWordScore *= wordMultiplier;
+
+        // add this main word to string list
+        ArrayList<String> words = new ArrayList<>();
+        words.add(mainWordString.toString());
+
+        return new ScoreData(words, mainWordScore);
+    }
+
     /*
     helper method; calculates the score of tiles played with words and modifier cells.
     returns score as an int
@@ -266,7 +589,7 @@ public class Board {
                 above--;
             }
 
-            // MAIN WORD SCORE
+            // START MAIN WORD SCORE CODE
             for (int i = 0; i < tiles.length; i++) {
                 // initialize variables
                 Tile current = tiles[i];
@@ -394,7 +717,7 @@ public class Board {
 
             // END VERTICAL SCRABBLE PLAY CODE
         }
-        else {
+        else {      // horizontal play
             // initialize variables
             StringBuilder mainWordString = new StringBuilder();     // for word from "tiles"
             int mainWordScore = 0;
@@ -540,7 +863,7 @@ public class Board {
             // update turn score
             turnScore = mainWordScore + collateralWordsScore;
 
-            // END VERTICAL SCRABBLE PLAY CODE
+            // END HORIZONTAL SCRABBLE PLAY CODE
         }
         lastWordsPlayed = words;
         return turnScore;
