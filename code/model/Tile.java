@@ -7,6 +7,8 @@ package model;
  * Original date: 10/08/2024
  */
 
+import java.awt.Point;
+
 /**
  * This class represents the tiles of the scrabble game
  */
@@ -15,6 +17,8 @@ public class Tile {
     private final int score;    // how many points this tile scores
     private char letter;        // the letter on the tile
     private final boolean isBlank;    // whether the tile is blank or not
+    private Point location;
+    private boolean isNew; //determines whether the tile has already been played
 
     /**
      * Creates a new, blank Tile object
@@ -37,6 +41,14 @@ public class Tile {
         this.letter = letter;
         score = TileScore.getScoreForLetter(letter);
         this.isBlank = false;
+    }
+
+    public Tile(char letter, Point location) {
+        this.letter = letter;
+        score = TileScore.getScoreForLetter(letter);
+        this.isBlank = false;
+        this.isNew = true;
+        this.location = location;
     }
 
     /**
@@ -74,4 +86,13 @@ public class Tile {
      * @return the value of isBlank
      */
     public boolean isBlank(){return this.isBlank;}
+
+
+    public void setLocation(Point location){this.location = location;}
+    public Point getLocation(){return location;}
+
+    public void setIsNew(boolean isNew){this.isNew = isNew;}
+
+    public boolean getIsNew(){return isNew;}
+
 }
