@@ -199,6 +199,15 @@ public class Board {
         // all collateral words will be perpendicular.
         // find the score of the main word first (use modifier cells. apply letter cells first,
         //      word modifiers at the end), move on to collaterals.
+        // the score of the main word can be found by starting at the top (vertical) and moving
+        //      down. all new tiles (tiles in tiles parameter) should be checked for multipliers on the cell.
+        //      letter multipliers can be applied immediately, while word multipliers must be noted and
+        //      applied at the end.
+        //      move to next tile. if its row number differs by more than one, check the in between cells first, add
+        //      the score of those tiles to the word. then repeat on remaining cells.
+        // ( the process is the same for horizontal, except that movement is to the right.
+        //      check that column numbers differ by more than one )
+        // repeat this process in the perpendicular direction for each tile to get collateral words.
         // collaterals will be made when a new tile has an adjacency which has a
         //      different x (vertical orientation) or y (horizontal) than the new tiles
         // apply same order of operations for collateral words
