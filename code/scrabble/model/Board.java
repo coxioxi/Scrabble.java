@@ -151,7 +151,7 @@ public class Board {
             }
             row = originTiles[i].getLocation().y;
 
-            while(board[row][col] != null){
+            while(board[row][col] != null){    // Same problem
                 if(board[row][col].getIsNew()) {
                     col = originTiles[i].getLocation().x;
                     while(board[row][col] != null) {
