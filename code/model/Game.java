@@ -38,13 +38,10 @@ public class Game {
 	 * Plays tiles on the board for a player
 	 * @param playerID the ID of the player for whom to make a play
 	 * @param tiles the tiles to be placed. must have at least on tile
-	 * @param points where the tiles are to be placed. The size of this array and
-	 *      		tiles must be the same and ordered to correspond. points[0] must
-	 *      		correspond to tiles[0], points[1] must correspond to tiles[1], etc.
 	 * @throws InvalidPositionException if the tiles are not placed correctly.
 	 * see Board.playTiles()
 	 */
-	public void playTiles(int playerID, Tile[] tiles, Point[] points)
+	public void playTiles(int playerID, Tile[] tiles)
 			throws InvalidPositionException {
 		int score = board.playTiles(tiles);
 	}
@@ -106,11 +103,11 @@ public class Game {
 		return 0;
 	}
 
-	public void addTiles(Tile[] tiles) {
+	public void addTiles(int playerID, Tile[] tiles) {
 
 	}
 
-	public void removeTiles(Tile[] tiles) {
+	public void removeTiles(int playerID, Tile[] tiles) {
 
 	}
 
