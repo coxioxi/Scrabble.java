@@ -120,18 +120,9 @@ public class Board {
      */
     public int playTiles(Tile[] tiles)
             throws InvalidPositionException{
-        /*TODO:
-            check all points are in-bounds
-            this method must score the words played appropriately
-                (implement score method)
-            it must change the lastWordsPlayed field with these word(s).
-                 (job of score method)
-            update the board with tiles
-         */
-        // It is very likely that this method will need helper methods.
-        validatePositions(tiles);  // half implemented
-        int score = score(tiles);   // not implemented
-        addToBoard(tiles);
+        validatePositions(tiles);       // ensure positions are allowed
+        int score = score(tiles);       // calculate score of playe
+        addToBoard(tiles);              // add to board
         return score;
     }
 
@@ -690,10 +681,6 @@ public class Board {
      */
     private void validatePositions(Tile[] tiles)
             throws InvalidPositionException {
-
-        //TODO: add check that all tiles are connected
-        //  this means that all tiles are next to each other, or seperated
-        //  by an already placed tile. There may not be gaps.
         pointsInbounds(tiles);
         if (!allSameX(tiles) && !allSameY(tiles)) throw new InvalidPositionException(
                 "Illegal orientation: not all tiles are in a line"
@@ -812,8 +799,6 @@ public class Board {
         else
             return false;
     }
-
-
 
     /*
     helper method; checks if any points have same x and y value
