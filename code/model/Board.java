@@ -137,7 +137,7 @@ public class Board {
             int row = originTiles[i].getLocation().y;
             int col = originTiles[i].getLocation().x;
 
-            while(board[row][col] != null){
+            while(board[row][col] != null){     // Problem: shouldn't this be null if a tile is being added here?
                 if(board[row][col].getIsNew()){
                     row = originTiles[i].getLocation().y;
                     while (board[row][col] != null) {
@@ -149,7 +149,7 @@ public class Board {
             }
             row = originTiles[i].getLocation().y;
 
-            while(board[row][col] != null){
+            while(board[row][col] != null){    // Same problem
                 if(board[row][col].getIsNew()) {
                     col = originTiles[i].getLocation().x;
                     while(board[row][col] != null) {
