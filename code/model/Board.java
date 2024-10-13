@@ -188,43 +188,92 @@ public class Board {
 
 
     // TODO: add documentation comments to slimScore and its 4 helper methods
+    /*
+        helper method; calculates the score of tiles played with words and modifier cells.
+        returns score as an int
+        also updates lastWordsPlayed, so it should only be called when the positions have been
+        validated through all necessary methods.
+     */
     private int slimScore(Tile[] tiles) {
+
+        /*
+        figure out orientation of tiles (vertical/horizontal);
+        all collateral words will be perpendicular.
+        find the score of the main word first, move on to collaterals.
+        update last words played and return turn score
+         */
         int turnScore = 0;
         ArrayList<String> words = new ArrayList<>();    // stores words made from tiles placed on board
         boolean isVertical = allSameY(tiles);           // check verticality
-        if (isVertical) {
-            tiles = sortDescendingByX(tiles);
-            ScoreData mainWord = getVerticalMainWordScore(tiles);
+        if (isVertical) {       // Vertical tiles
+            tiles = sortDescendingByX(tiles);       // sort by row
+
+            ScoreData mainWord = getVerticalMainWordScore(tiles);       // score word made by tiles
             ScoreData collateralWords = getVerticalCollateralWordsScore(tiles);
+
+            // Add main word to word list
             Iterator<String> mainIterator = mainWord.getWords().iterator();
             while (mainIterator.hasNext()) {
                 words.add(mainIterator.next());
             }
+
+            // Add collateral words to word list
             Iterator<String> collateralIterator = mainWord.getWords().iterator();
             while (collateralIterator.hasNext()) {
                 words.add(collateralIterator.next());
             }
-            turnScore = collateralWords.getScore() + mainWord.getScore();
+
+            turnScore = collateralWords.getScore() + mainWord.getScore();       // update turn score
         }
-        else {
-            tiles = sortDescendingByY(tiles);
-            ScoreData mainWord = getHorizontalMainWordScore(tiles);
-            ScoreData collateralWords = getHorizontalCollateralWordsScore(tiles);
+        else {              // Horizontal tiles
+            tiles = sortDescendingByY(tiles);       // sort by column
+
+            ScoreData mainWord = getHorizontalMainWordScore(tiles);     // score word made by tiles
+            ScoreData collateralWords = getHorizontalCollateralWordsScore(tiles);       // score perpendicular words
+
+            // Add main word to word list
             Iterator<String> mainIterator = mainWord.getWords().iterator();
             while (mainIterator.hasNext()) {
                 words.add(mainIterator.next());
             }
+
+            // Add collateral words to word list
             Iterator<String> collateralIterator = mainWord.getWords().iterator();
             while (collateralIterator.hasNext()) {
                 words.add(collateralIterator.next());
             }
-            turnScore = collateralWords.getScore() + mainWord.getScore();
+
+            turnScore = collateralWords.getScore() + mainWord.getScore();       // update turn score
         }
         lastWordsPlayed = words;
         return turnScore;
     }
 
+    /*
+    helper method: takes tiles sorted descending by column
+    and returns the word made and score accumulated in ScoreData object.
+     */
     private ScoreData getHorizontalCollateralWordsScore(Tile[] tiles) {
+        /*
+        the score of collateral words can be found by starting with the first tile,
+            moving up over all connected board tiles, adding the current tile,
+            then moving down from current tile.
+            start with first tile in tiles.
+            search up for board tiles, add in board tile value to
+            current word score. then, handle new tile modifier cell appropriately, and add
+            tile score to current word score. search down, adding in board tile values.
+            when there are no more connected board tiles (null found), add
+            word score to collateral word score and repeat for next tile in tiles.
+            repeat this process for each tile to get the score of collateral words.
+
+        (note that modifier cells only apply to tiles on the turn in which a tile is placed on the cell.
+            therefore, board tiles are NOT checked for modifier cells.)
+
+        as the value of individual tiles is added to the scoring variable,
+            the letter is added to a string builder. this process generates
+            a list of collateral words resulting from the play
+        return a ScoreData object with the words made and score accumulated
+         */
         ArrayList<String> words = new ArrayList<>();
         int collateralWordsScore = 0;
         int wordMultiplier = 1;
@@ -287,7 +336,38 @@ public class Board {
         return new ScoreData(words, collateralWordsScore);
     }
 
+    /*
+    helper method: takes tiles sorted descending by column
+    and returns the collateral (perpendicular) words
+    made and score accumulated in ScoreData object.
+     */
     private ScoreData getHorizontalMainWordScore(Tile[] tiles) {
+        /*
+        the score of the main word can be found by starting at the left (vertical) and moving
+              right.
+              first, identify the column of the highest connected board tile;
+              move right, adding the value of board tiles to the current word score
+
+              now, start with the first tile in tiles;
+              handle cell modifiers appropriately, add letter value to wordScore
+
+              move on to the next tile.
+              if there is a greater than 1 difference in column between this tile and the previous tile,
+                then there are board tiles in between. calculate the distance and add
+                these tiles to the word score.
+              repeat until the end of tiles, then check for board tiles on the right and add to score.
+
+              note that when checking for modifier cells on new tiles,
+                letter multipliers can be applied immediately, while word multipliers
+                must be noted and applied at the end of word score accumulation.
+        (note that modifier cells only apply to tiles on the turn in which a tile is placed on the cell.
+            therefore, board tiles are NOT checked for modifier cells.)
+
+        as the value of individual tiles is added to the scoring variable,
+            the letter is added to a string builder. this process generates
+            the main word resulting from the play
+        return a ScoreData object with the word created and the score accumulated
+         */
         // initialize variables
         StringBuilder mainWordString = new StringBuilder();     // for word from "tiles"
         int mainWordScore = 0;
@@ -366,8 +446,32 @@ public class Board {
         return new ScoreData(words, mainWordScore);
     }
 
+    /*
+    helper method: takes tiles sorted descending by row
+    and returns the word made and score accumulated in ScoreData object.
+     */
     private ScoreData getVerticalCollateralWordsScore(Tile[] tiles) {
-        // now, figure out any collateral word total
+        /*
+        the score of collateral words can be found by starting with the first tile,
+            moving left over all connected board tiles, adding the current tile,
+            then moving right from current tile.
+            start with first tile in tiles.
+            search left for board tiles, add in board tile value to
+            current word score. then, handle new tile modifier cell appropriately and add
+            tile score to current word score. search right, adding in board tile values.
+            when there are no more connected board tiles (null found), add
+            word score to collateral word score and repeat for next tile in tiles.
+            repeat this process for each tile to get the score of collateral words.
+
+        (note that modifier cells only apply to tiles on the turn in which a tile is placed on the cell.
+            therefore, board tiles are NOT checked for modifier cells.)
+
+        as the value of individual tiles is added to the scoring variable,
+            the letter is added to a string builder. this process generates
+            a list of collateral words resulting from the play
+        return a ScoreData object with the words made and score accumulated
+         */
+        // figure out any collateral word total
         int collateralWordsScore = 0;
         ArrayList<String> words = new ArrayList<>();
         int wordMultiplier = 1;
@@ -430,7 +534,39 @@ public class Board {
         return new ScoreData(words, collateralWordsScore);
     }
 
+    /*
+    helper method: takes tiles sorted descending by row
+    and returns the collateral (perpendicular) words
+    made and score accumulated in ScoreData object.
+     */
     private ScoreData getVerticalMainWordScore(Tile[] tiles) {
+        /*
+        the score of the main word can be found by starting at the top (vertical) and moving
+              down.
+              first, identify the row of the highest connected board tile;
+              move down, adding the value of board tiles to the current word score
+
+              now, start with the first tile in tiles;
+              handle cell modifiers appropriately, add letter value to wordScore
+
+              move on to the next tile.
+              if there is a greater than 1 difference in row between this tile and the previous tile,
+                then there are board tiles in between. calculate the distance and add
+                these tiles to the word score.
+              repeat until the end of tiles, then check for board tiles at the bottom and add to score.
+
+              note that when checking for modifier cells on new tiles,
+                letter multipliers can be applied immediately, while word multipliers
+                must be noted and applied at the end of word score accumulation.
+
+        (note that modifier cells only apply to tiles on the turn in which a tile is placed on the cell.
+            therefore, board tiles are NOT checked for modifier cells.)
+
+        as the value of individual tiles is added to the scoring variable,
+            the letter is added to a string builder. this process generates
+            the main word resulting from the play
+        return a ScoreData object with the word created and the score accumulated
+         */
         // initialize variables
         StringBuilder mainWordString = new StringBuilder();     // for word from "tiles"
         int mainWordScore = 0;
