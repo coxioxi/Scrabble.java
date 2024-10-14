@@ -275,7 +275,7 @@ public class Board {
         int turnScore = 0;
         ArrayList<String> words = new ArrayList<>();    // stores words made from tiles placed on board
         ScoreData collateralWords, mainWord;
-        boolean isVertical = allSameY(tiles);           // check verticality
+        boolean isVertical = allSameCol(tiles);           // check verticality
         if (isVertical) {       // Vertical tiles
             tiles = sortAscendingByRow(tiles);       // sort by row
 
@@ -789,7 +789,7 @@ public class Board {
     private void validatePositions(Tile[] tiles)
             throws InvalidPositionException {
         pointsInbounds(tiles);
-        if (!allSameRow(tiles) && !allSameY(tiles)) throw new InvalidPositionException(
+        if (!allSameRow(tiles) && !allSameCol(tiles)) throw new InvalidPositionException(
                 "Illegal orientation: not all tiles are in a line"
         );
         hasDuplicates(tiles);
@@ -895,7 +895,7 @@ public class Board {
             int x = (int) t.getLocation().getX();
             int y = (int) t.getLocation().getY();
 
-            if (x<0 || x>14 || y<0 || y>14)
+            if (x<0 || x>BOARD_ROWS-1 || y<0 || y>BOARD_COLUMNS-1)
                 throw new InvalidPositionException(
                         "Tiles must be placed between 0 and 14 x and y"
                 );
@@ -913,13 +913,13 @@ public class Board {
         if (x - 1 >= 0 && board[x - 1][y] != null && !board[x - 1][y].isBlank()) {
             return true;
         }
-        else if (x + 1 < 15 && board[x + 1][y] != null && !board[x + 1][y].isBlank()) {
+        else if (x + 1 < BOARD_ROWS && board[x + 1][y] != null && !board[x + 1][y].isBlank()) {
             return true;
         }
         else if (y - 1 >= 0 && board[x][y - 1] != null && !board[x][y - 1].isBlank()) {
             return true;
         }
-        else if (y + 1 < 15 && board[x][y + 1] != null && !board[x][y + 1].isBlank()){
+        else if (y + 1 < BOARD_COLUMNS && board[x][y + 1] != null && !board[x][y + 1].isBlank()){
             return true;
         }
         else
@@ -948,25 +948,10 @@ public class Board {
     }
 
     /*
-    helper method; checks that all points have either same x or y value
-    throws exception if points are not in a line.
+    checks if each tile in tiles has the same column (y) value as
+    each other tile in the array
      */
-    private void sameXorY(Tile[] tiles) throws InvalidPositionException {
-        boolean hasSameX = true;
-        boolean hasSameY = true;
-        for (int i = 0; i < tiles.length - 1 && (hasSameX || hasSameY); i++) {
-            if (tiles[i].getLocation().getX() != tiles[i+1].getLocation().getX())
-                hasSameX = false;
-            if (tiles[i].getLocation().getY() != tiles[i+1].getLocation().getY())
-                hasSameY = false;
-        }
-        if (!(hasSameX || hasSameY))
-            throw new InvalidPositionException(
-                "Illegal orientation: not all tiles are in a line"
-            );
-    }
-
-    private boolean allSameY(Tile[] tiles) {
+    private boolean allSameCol(Tile[] tiles) {
         boolean hasSameY = true;
         for (int i = 0; i < tiles.length - 1 && hasSameY; i++) {
             if (tiles[i].getLocation().getY() != tiles[i+1].getLocation().getY())
@@ -975,6 +960,10 @@ public class Board {
         return hasSameY;
     }
 
+    /*
+    checks if each tile in tiles has the same row (x) value as
+    each other tile in the array
+     */
     private boolean allSameRow(Tile[] tiles) {
         boolean hasSameX = true;
         for (int i = 0; i < tiles.length - 1 && hasSameX; i++) {
@@ -987,7 +976,7 @@ public class Board {
     /*
     this method sets up the boardSpecialCell field with all the correct placements
     for modifier cells using Point objects and model.ModifierType enumerations.
- */
+    */
     private void initializeModifierCells() {
         boardSpecialCell = new HashMap<>();
         boardSpecialCell.put(new Point(0,0), ModifierType.TRIPLE_WORD);
