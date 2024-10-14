@@ -39,7 +39,7 @@ public class Board {
             System.out.println("Score:" + score);
         }
         catch (InvalidPositionException e) {
-            e.printStackTrace();
+            System.out.println(e.getMessage());
         }
         System.out.println(board);
 
@@ -58,7 +58,7 @@ public class Board {
 
             System.out.println();
             System.out.println("Orientation");
-            System.out.print("\tEnter \'V\' for vertical, \'H\' for horizontal: ");
+            System.out.print("\tEnter 'V' for vertical, 'H' for horizontal: ");
             boolean isVertical = 'V' == in.next().toUpperCase().charAt(0);
 
             System.out.println();
@@ -106,13 +106,12 @@ public class Board {
             if (success) {
                 System.out.println("Score: " + score);
                 System.out.println("Words made: ");
-                Iterator<String> wordsPlayed = board.lastWordsPlayed.iterator();
-                while (wordsPlayed.hasNext()) {
-                    System.out.println("\t" + wordsPlayed.next());
-                }
+				for (String s : board.lastWordsPlayed) {
+					System.out.println("\t" + s);
+				}
                 System.out.println();
 
-                System.out.print("Show board? (\'Y\' or \'N\'): ");
+                System.out.print("Show board? ('Y' or 'N'): ");
                 boolean showBoard = 'Y' == in.next().toUpperCase().charAt(0);
                 System.out.println();
 
@@ -136,7 +135,7 @@ public class Board {
 
     /**
      *
-     * @return an array of the words played on the most recent board change
+     * @return an array list of the words played on the most recent board change
      */
     public ArrayList<String> getLastWordsPlayed() {
         return lastWordsPlayed;
@@ -232,7 +231,7 @@ public class Board {
                         sb.append(" __ ");
                 }
                 else {
-                    sb.append(" " + board[i][j].getLetter() + "  ");
+                    sb.append(" ").append(board[i][j].getLetter()).append("  ");
                 }
             }
             sb.append("\n");
@@ -249,9 +248,8 @@ public class Board {
     helper method which adds tiles to the board at specified points.
     does not check scoring or validity of play.
      */
-    public void addToBoard(Tile[] tiles) throws InvalidPositionException {
-        for(int i = 0; i < tiles.length; ++i)
-            board[(int) tiles[i].getLocation().getX()][(int) tiles[i].getLocation().getY()] = tiles[i];
+    public void addToBoard(Tile[] tiles) {
+		for (Tile tile : tiles) board[(int) tile.getLocation().getX()][(int) tile.getLocation().getY()] = tile;
     }
 
 
@@ -272,18 +270,18 @@ public class Board {
             the main word can have an arbitrary orientation and adjacent
             board tiles will be added into score correctly)
          */
-        int turnScore = 0;
+        int turnScore;
         ArrayList<String> words = new ArrayList<>();    // stores words made from tiles placed on board
         ScoreData collateralWords, mainWord;
         boolean isVertical = allSameCol(tiles);           // check verticality
         if (isVertical) {       // Vertical tiles
-            tiles = sortAscendingByRow(tiles);       // sort by row
+            sortAscendingByRow(tiles);       // sort by row
 
             mainWord = getVerticalMainWordScore(tiles);       // score word made by tiles
             collateralWords = getVerticalCollateralWordsScore(tiles);
         }
         else {              // Horizontal tiles
-            tiles = sortAscendingByCol(tiles);       // sort by column
+            sortAscendingByCol(tiles);       // sort by column
 
             mainWord = getHorizontalMainWordScore(tiles);     // score word made by tiles
             collateralWords = getHorizontalCollateralWordsScore(tiles);       // score perpendicular words
@@ -340,67 +338,61 @@ public class Board {
         ArrayList<String> words = new ArrayList<>();
         int collateralWordsScore = 0;
         int wordMultiplier = 1;
-        for (int i = 0; i < tiles.length; i++) {
-            // initialize variables
-            StringBuilder currentWord = new StringBuilder();
-            Tile current = tiles[i];
-            Point placement = current.getLocation();
-            int x = placement.x;
-            int y = placement.y;
+		for (Tile tile : tiles) {
+			// initialize variables
+			StringBuilder currentWord = new StringBuilder();
+			Point placement = tile.getLocation();
+			int x = placement.x;
+			int y = placement.y;
 
-            // x = row
-            // y = column
+			// x = row
+			// y = column
 
-            // for this tile, find the topmost connected tile
-            int topMostTile = x;
-            while (topMostTile-1 >= 0 && board[topMostTile-1][y] != null) {
-                topMostTile--;
-            }
+			// for this tile, find the topmost connected tile
+			int topMostTile = x;
+			while (topMostTile - 1 >= 0 && board[topMostTile - 1][y] != null) {
+				topMostTile--;
+			}
 
-            System.out.println("Horizontal collateral. topmost for tile " +
-                    current.getLocation().x + ", " + current.getLocation().y +
-                    " is location " + topMostTile + " with value " +
-                    (board[topMostTile][y] == null ? "none" : board[topMostTile][y].getLetter()));
+			System.out.println("Horizontal collateral. topmost for tile " +
+					tile.getLocation().x + ", " + tile.getLocation().y +
+					" is location " + topMostTile + " with value " +
+					(board[topMostTile][y] == null ? "none" : board[topMostTile][y].getLetter()));
 
-            // move down from topmost, accumulating score.
-            // only stop when no letters below current tile
-            int currentWordScore = 0;
-            while (topMostTile < BOARD_ROWS &&
-                    (board[topMostTile][y] != null || x == topMostTile) )
-            {
-                Tile boardTile = board[topMostTile][y];
-                if (boardTile != null) {        // if topMost is position on board
-                    currentWordScore += boardTile.getScore();
-                    currentWord.append(boardTile.getLetter());
-                }
-                else {                          // if topMost is tile to be placed
-                    ModifierType cellMod = boardSpecialCell.get(placement);
-                    int letterMultiplier = 1;
-                    if (cellMod == ModifierType.DOUBLE_LETTER) {
-                        letterMultiplier *= 2;
-                    }
-                    else if (cellMod == ModifierType.TRIPLE_LETTER) {
-                        letterMultiplier *= 3;
-                    }
-                    else if (cellMod == ModifierType.DOUBLE_WORD) {
-                        wordMultiplier *= 2;
-                    }
-                    else if (cellMod == ModifierType.TRIPLE_WORD) {
-                        wordMultiplier *= 3;
-                    }
-                    currentWordScore += letterMultiplier*current.getScore();
-                    currentWord.append(current.getLetter());
-                }
-                topMostTile++;      // move down
-            }
-            // final updates to collateral word variables
-            if (currentWord.length() > 1) {
-                currentWordScore *= wordMultiplier;
-                wordMultiplier = 1;
-                collateralWordsScore += currentWordScore;
-                words.add(currentWord.toString());
-            }
-        }
+			// move down from topmost, accumulating score.
+			// only stop when no letters below current tile
+			int currentWordScore = 0;
+			while (topMostTile < BOARD_ROWS &&
+					(board[topMostTile][y] != null || x == topMostTile)) {
+				Tile boardTile = board[topMostTile][y];
+				if (boardTile != null) {        // if topMost is position on board
+					currentWordScore += boardTile.getScore();
+					currentWord.append(boardTile.getLetter());
+				} else {                          // if topMost is tile to be placed
+					ModifierType cellMod = boardSpecialCell.get(placement);
+					int letterMultiplier = 1;
+					if (cellMod == ModifierType.DOUBLE_LETTER) {
+						letterMultiplier *= 2;
+					} else if (cellMod == ModifierType.TRIPLE_LETTER) {
+						letterMultiplier *= 3;
+					} else if (cellMod == ModifierType.DOUBLE_WORD) {
+						wordMultiplier *= 2;
+					} else if (cellMod == ModifierType.TRIPLE_WORD) {
+						wordMultiplier *= 3;
+					}
+					currentWordScore += letterMultiplier * tile.getScore();
+					currentWord.append(tile.getLetter());
+				}
+				topMostTile++;      // move down
+			}
+			// final updates to collateral word variables
+			if (currentWord.length() > 1) {
+				currentWordScore *= wordMultiplier;
+				wordMultiplier = 1;
+				collateralWordsScore += currentWordScore;
+				words.add(currentWord.toString());
+			}
+		}
 
         return new ScoreData(words, collateralWordsScore);
     }
@@ -544,68 +536,62 @@ public class Board {
         int collateralWordsScore = 0;
         ArrayList<String> words = new ArrayList<>();
         int wordMultiplier = 1;
-        for (int i = 0; i < tiles.length; i++) {
-            // initialize variables
-            StringBuilder currentWord = new StringBuilder();
-            Tile current = tiles[i];
-            Point placement = current.getLocation();
-            int x = placement.x;
-            int y = placement.y;
+		for (Tile tile : tiles) {
+			// initialize variables
+			StringBuilder currentWord = new StringBuilder();
+			Point placement = tile.getLocation();
+			int x = placement.x;
+			int y = placement.y;
 
-            // x = row
-            // y = column
+			// x = row
+			// y = column
 
-            // for this tile, find the leftmost connected tile
-            int leftMostTile = y;
-            while (leftMostTile-1 >= 0 && board[x][leftMostTile-1] != null) {
-                leftMostTile--;
-            }
+			// for this tile, find the leftmost connected tile
+			int leftMostTile = y;
+			while (leftMostTile - 1 >= 0 && board[x][leftMostTile - 1] != null) {
+				leftMostTile--;
+			}
 
-            System.out.println("Vertical collateral. leftmost for tile " +
-                    current.getLocation().x + ", " + current.getLocation().y +
-                    " is location " + leftMostTile + " with value " +
-                    (board[x][leftMostTile] == null ? "none" : board[x][leftMostTile].getLetter()));
-            // move right from leftmost, accumulating score.
-            // only stop when no letters to right of current
-            int currentWordScore = 0;
-            while (leftMostTile < BOARD_COLUMNS &&
-                    (board[x][leftMostTile] != null || y == leftMostTile) )
-            {
-                Tile boardTile = board[x][leftMostTile];
-                if (boardTile != null) {        // if leftMost is position on board
-                    currentWordScore += boardTile.getScore();
-                    currentWord.append(boardTile.getLetter());
-                }
-                else {                          // if leftMost is tile to be placed
-                    ModifierType cellMod = boardSpecialCell.get(placement);
-                    int letterMultiplier = 1;
-                    if (cellMod == ModifierType.DOUBLE_LETTER) {
-                        letterMultiplier *= 2;
-                    }
-                    else if (cellMod == ModifierType.TRIPLE_LETTER) {
-                        letterMultiplier *= 3;
-                    }
-                    else if (cellMod == ModifierType.DOUBLE_WORD) {
-                        wordMultiplier *= 2;
-                    }
-                    else if (cellMod == ModifierType.TRIPLE_WORD) {
-                        wordMultiplier *= 3;
-                    }
-                    currentWordScore += letterMultiplier*current.getScore();
-                    currentWord.append(current.getLetter());
-                }
-                leftMostTile++;
-            }
+			System.out.println("Vertical collateral. leftmost for tile " +
+					tile.getLocation().x + ", " + tile.getLocation().y +
+					" is location " + leftMostTile + " with value " +
+					(board[x][leftMostTile] == null ? "none" : board[x][leftMostTile].getLetter()));
+			// move right from leftmost, accumulating score.
+			// only stop when no letters to right of current
+			int currentWordScore = 0;
+			while (leftMostTile < BOARD_COLUMNS &&
+					(board[x][leftMostTile] != null || y == leftMostTile)) {
+				Tile boardTile = board[x][leftMostTile];
+				if (boardTile != null) {        // if leftMost is position on board
+					currentWordScore += boardTile.getScore();
+					currentWord.append(boardTile.getLetter());
+				} else {                          // if leftMost is tile to be placed
+					ModifierType cellMod = boardSpecialCell.get(placement);
+					int letterMultiplier = 1;
+					if (cellMod == ModifierType.DOUBLE_LETTER) {
+						letterMultiplier *= 2;
+					} else if (cellMod == ModifierType.TRIPLE_LETTER) {
+						letterMultiplier *= 3;
+					} else if (cellMod == ModifierType.DOUBLE_WORD) {
+						wordMultiplier *= 2;
+					} else if (cellMod == ModifierType.TRIPLE_WORD) {
+						wordMultiplier *= 3;
+					}
+					currentWordScore += letterMultiplier * tile.getScore();
+					currentWord.append(tile.getLetter());
+				}
+				leftMostTile++;
+			}
 
 
-            // final updates to collateral word variables
-            if (currentWord.length() > 1) {
-                currentWordScore *= wordMultiplier;
-                wordMultiplier = 1;
-                collateralWordsScore += currentWordScore;
-                words.add(currentWord.toString());
-            }
-        }
+			// final updates to collateral word variables
+			if (currentWord.length() > 1) {
+				currentWordScore *= wordMultiplier;
+				wordMultiplier = 1;
+				collateralWordsScore += currentWordScore;
+				words.add(currentWord.toString());
+			}
+		}
 
         return new ScoreData(words, collateralWordsScore);
     }
@@ -811,7 +797,7 @@ public class Board {
         // repeat with remainder of the list
         // return out of method if algorithm finishes list with no problems.
         if (allSameRow(tiles)) {     // horizontal
-            tiles = sortAscendingByCol(tiles);
+            sortAscendingByCol(tiles);
             for (int i = 1; i < tiles.length; i++) {
                 int oldY = tiles[i-1].getLocation().y;
                 int currentY = tiles[i].getLocation().y;
@@ -825,7 +811,7 @@ public class Board {
             }
         }
         else {                      // vertical
-            tiles = sortAscendingByRow(tiles);
+            sortAscendingByRow(tiles);
             for (int i = 1; i < tiles.length; i++) {
                 int oldX = tiles[i-1].getLocation().x;
                 int currentX = tiles[i].getLocation().x;
@@ -845,8 +831,6 @@ public class Board {
      */
     private void areAnyPointsOccupied(Tile[] tiles)
             throws InvalidPositionException {
-        boolean areValid = true;
-
         // are any points already occupied?
         for (Tile t : tiles) {
             if (board[(int) t.getLocation().getX()][(int) t.getLocation().getY()] != null)
@@ -857,7 +841,7 @@ public class Board {
     }
 
     /*
-    throws an invalidpositionexception if the new tiles are neither
+    throws an invalidPositionException if the new tiles are neither
     adjacent to an old tile nor on the starting tile
      */
     private void arePointsStartingOrAdjacent(Tile[] tiles)
