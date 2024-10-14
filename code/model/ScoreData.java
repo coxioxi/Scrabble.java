@@ -7,14 +7,8 @@ import java.util.ArrayList;
  * it is a stand-alone convenience class for helper methods of Board.score()
  */
 public class ScoreData {
-	private ArrayList<String> words = new ArrayList<>();
+	private ArrayList<String> words;
 	private int score;
-
-	/**
-	 * empty constructor
-	 */
-	public ScoreData() {
-	}
 
 	/**
 	 * Constructs an object from a list of words and a score
