@@ -129,13 +129,15 @@ public class Board {
      * Constructs a new model.Board object
      */
     public Board() {
-        initializeModifierCells();
+        initializeModifierCells();		// set up boardSpecialCell map with appropriate
+										// modifier values
         board = new Tile[BOARD_ROWS][BOARD_COLUMNS];
     }
 
     /**
-     *
-     * @return an array list of the words played on the most recent board change
+     * getter for lastWordsPlayed, the list of words added to the
+	 * board on the previous call to playTiles()
+     * @return an array list of most recent words
      */
     public ArrayList<String> getLastWordsPlayed() {
         return lastWordsPlayed;
@@ -157,23 +159,30 @@ public class Board {
         return board[x][y];
     }
 
-    public void removeTiles(Tile[] tiles, Point[] points) {
-        for (int i = 0; i < points.length; i++) {
-            Point p = points[i];
-            int x = (int) p.getX();
-            int y = (int) p.getY();
+	/**
+	 * Removes the specified tiles from the board.
+	 * All tiles in parameter tiles must have been placed on the board already
+	 * @param tiles the tiles to remove from the board
+	 * @throws NullPointerException when not all tiles have already been placed
+	 * 								on the board
+	 */
+	public void removeTiles(Tile[] tiles)
+			throws NullPointerException {
+		for (Tile tile : tiles) {
+			Point p = tile.getLocation();
+			int x = (int) p.getX();
+			int y = (int) p.getY();
 
-            // check if position is null, then check letter value
-            if (board[x][y] != null && board[x][y].getLetter() == tiles[i].getLetter()) {
-                board[x][y] = null;
-            }
-            else {
-                throw new NullPointerException(
-                        "No tile on board position"
-                );
-            }
-        }
-    }
+			// check if position is null, then check letter value
+			if (board[x][y] != null && board[x][y].getLetter() == tile.getLetter()) {
+				board[x][y] = null;
+			} else {
+				throw new NullPointerException(
+						"No tile on board position"
+				);
+			}
+		}
+	}
 
     /**
      * A caller method for testing purposes
@@ -202,7 +211,7 @@ public class Board {
         return score;
     }
 
-    @Override
+
     /**
      * Creates a String representation of this Board object.
      * For each cell on the board, the letter value of the tile is placed;
@@ -210,8 +219,8 @@ public class Board {
      * or, simply "__" is shown when neither condition is met.
      * each cell is padded with spaces in the String. A newline is
      * added to the end of board rows.
-     * @returns a String representation, with formatting as stated above
-     */
+     * {@code @returns} a String representation, with formatting as stated above
+	 */
     public String toString() {
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < board.length; i++) {
@@ -249,7 +258,8 @@ public class Board {
     does not check scoring or validity of play.
      */
     public void addToBoard(Tile[] tiles) {
-		for (Tile tile : tiles) board[(int) tile.getLocation().getX()][(int) tile.getLocation().getY()] = tile;
+		for (Tile tile : tiles)
+			board[(int) tile.getLocation().getX()][(int) tile.getLocation().getY()] = tile;
     }
 
 
@@ -287,22 +297,10 @@ public class Board {
             collateralWords = getHorizontalCollateralWordsScore(tiles);       // score perpendicular words
         }
         // Add main word to word list
-        Iterator<String> mainIterator = mainWord.getWords().iterator();
-        System.out.println("\tMain word: ");
-        while (mainIterator.hasNext()) {
-            String next = mainIterator.next();
-            System.out.println("\t" + next);
-            words.add(next);
-        }
+		words.addAll(mainWord.getWords());
 
         // Add collateral words to word list
-        Iterator<String> collateralIterator = collateralWords.getWords().iterator();
-        System.out.println("\tCollateral Words: ");
-        while (collateralIterator.hasNext()) {
-            String next = collateralIterator.next();
-            System.out.println("\t" + next);
-            words.add(next);
-        }
+		words.addAll(collateralWords.getWords());
 
         turnScore = collateralWords.getScore() + mainWord.getScore();       // update turn score
 
