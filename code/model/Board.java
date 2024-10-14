@@ -442,6 +442,7 @@ public class Board {
             mainWordString.append(current.getLetter());
             onLeft--;
         }
+		mainWordString.reverse();
 
         // MAIN WORD SCORE
         for (int i = 0; i < tiles.length; i++) {
@@ -642,6 +643,7 @@ public class Board {
             mainWordString.append(current.getLetter());
             above--;
         }
+		mainWordString.reverse();
 
         // START MAIN WORD SCORE CODE
         for (int i = 0; i < tiles.length; i++) {
@@ -682,7 +684,6 @@ public class Board {
             }
             else if (cellMod == ModifierType.TRIPLE_WORD) {
                 wordMultiplier *= 3;
-                mainWordScore += current.getScore();
             }
             mainWordScore += letterMultiplier*current.getScore();
             mainWordString.append(current.getLetter());
