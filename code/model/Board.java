@@ -42,6 +42,88 @@ public class Board {
             e.printStackTrace();
         }
         System.out.println(board);
+
+
+
+        Scanner in = new Scanner (System.in);
+        System.out.print("Make a play (Y) or quit (Q): ");
+        char userInput = in.next().toUpperCase().charAt(0);
+        while (userInput != 'Q') {
+            System.out.println();
+            System.out.println("Starting point");
+            System.out.print("\tEnter row (integer): ");
+            int startingRow = in.nextInt();
+            System.out.print("\tEnter column (integer): ");
+            int startingColumn = in.nextInt();
+
+            System.out.println();
+            System.out.println("Orientation");
+            System.out.print("\tEnter \'V\' for vertical, \'H\' for horizontal: ");
+            boolean isVertical = 'V' == in.next().toUpperCase().charAt(0);
+
+            System.out.println();
+            System.out.print("Enter letters on this line: ");
+            char[] letters = in.next().trim().toUpperCase().toCharArray();
+
+
+            Tile[] tiles = new Tile[letters.length];
+            int gap = 0;
+            for (int i = 0; i < letters.length; i++) {
+                char letter = letters[i];
+                if (i == 0) {
+                    tiles[i] = new Tile(letter,
+                            new Point(startingRow, startingColumn));
+                    gap = 1;
+                }
+                else if (isVertical) {
+                    while (board.board[startingRow+gap][startingColumn] != null) {
+                        gap++;
+                    }
+                    tiles[i] = new Tile(letter,
+                            new Point(startingRow+gap, startingColumn));
+                    gap++;
+                }
+                else {
+                    while (board.board[startingRow][startingColumn+gap] != null) {
+                        gap++;
+                    }
+                    tiles[i] = new Tile(letter,
+                            new Point(startingRow, startingColumn+gap));
+                    gap++;
+                }
+            }
+
+            boolean success = true;
+            int score = 0;
+            try {
+                score = board.playTiles(tiles);
+            } catch (InvalidPositionException e) {
+                System.out.println("Play unsuccessful: "
+                        + e.getMessage());
+                success = false;
+            }
+
+            if (success) {
+                System.out.println("Score: " + score);
+                System.out.println("Words made: ");
+                Iterator<String> wordsPlayed = board.lastWordsPlayed.iterator();
+                while (wordsPlayed.hasNext()) {
+                    System.out.println("\t" + wordsPlayed.next());
+                }
+                System.out.println();
+
+                System.out.print("Show board? (\'Y\' or \'N\'): ");
+                boolean showBoard = 'Y' == in.next().toUpperCase().charAt(0);
+                System.out.println();
+
+                if (showBoard)
+                    System.out.println(board);
+                System.out.println();
+            }
+
+            System.out.print("Make a play (Y) or quit (Q): ");
+            userInput = in.next().toUpperCase().charAt(0);
+        }
     }
 
     /**
