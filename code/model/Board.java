@@ -710,7 +710,12 @@ public class Board {
         return new ScoreData(words, mainWordScore);
     }
 
-    private Tile[] sortAscendingByCol(Tile[] tiles) {
+
+    /*
+    sorts the tiles so that each subsequent tile has a smaller
+    column (x) value, with smallest at tiles[0]
+    */
+    private void sortAscendingByCol(Tile[] tiles) {
         for (int i = 0; i < tiles.length-1; i++) {
             for (int j = i; j < tiles.length-1; j++) {
                 if (tiles[j].getLocation().y > tiles[j+1].getLocation().y) {
@@ -720,10 +725,13 @@ public class Board {
                 }
             }
         }
-        return tiles;
     }
 
-    private Tile[] sortAscendingByRow(Tile[] tiles) {
+    /*
+    sorts the tiles so that each subsequent tile has a smaller
+    row (y) value, with smallest at tiles[0]
+     */
+    private void sortAscendingByRow(Tile[] tiles) {
         for (int i = 0; i < tiles.length-1; i++) {
             for (int j = i; j < tiles.length-1; j++) {
                 if (tiles[j].getLocation().x > tiles[j+1].getLocation().x) {
@@ -733,7 +741,6 @@ public class Board {
                 }
             }
         }
-        return tiles;
     }
 
     public ArrayList<String> stringBuild(Set<Point> originTiles, Tile[] newTiles, Point[] newTilePoints) throws InvalidPositionException {
