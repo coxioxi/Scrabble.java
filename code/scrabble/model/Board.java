@@ -36,13 +36,9 @@ public class Board {
         firstPlay[2] = new Tile('L', new Point(7,9 ));
         firstPlay[3] = new Tile('E', new Point(7,10));
 
-        try {
-            int score = board.playTiles(firstPlay);
-            System.out.println("Score:" + score);
-        }
-        catch (InvalidPositionException e) {
-            System.out.println(e.getMessage());
-        }
+		int score = board.playTiles(firstPlay);
+		System.out.println("Score:" + score);
+
         System.out.println(board);
 
 
@@ -96,16 +92,11 @@ public class Board {
             }
 
             boolean success = true;
-            int score = 0;
-            try {
-                score = board.playTiles(tiles);
-            } catch (InvalidPositionException e) {
-                System.out.println("Play unsuccessful: "
-                        + e.getMessage());
-                success = false;
-            }
 
-            if (success) {
+			score = board.playTiles(tiles);
+
+
+			if (score != -1) {
                 System.out.println("Score: " + score);
                 System.out.println("Words made: ");
 				for (String s : board.lastWordsPlayed) {
@@ -121,6 +112,10 @@ public class Board {
                     System.out.println(board);
                 System.out.println();
             }
+			else {
+				System.out.println("Play failed.");
+				System.out.println();
+			}
 
             System.out.print("Make a play (Y) or quit (Q): ");
             userInput = in.next().toUpperCase().charAt(0);
@@ -200,14 +195,20 @@ public class Board {
      * @param tiles the tiles which are being placed on the board
      *               Note the array may not be empty, but arrays of size 1 are allowed.
      * @return the score of the word(s) played as an integer
-     * @throws InvalidPositionException when placed incorrectly. At least one tile
-     *                  must be adjacent to some other previously placed tile, or
+	 * 			-1 if position is fails to meet following conditions:
+	 * 					At least one tile must be adjacent to some other
+	 * 					previously placed tile, or
      *                  one of the tiles must be at the starting tile (7,7).
      *                  No tile may be placed on an already occupied cell
+	 *                  All tiles must be within the bounds of the board
+	 *                  All tiles must have the same row (x) or column (y)
+	 *                  All tiles must have differing points (no duplicates)
+	 *                  All tiles must be adjacent to each other, or must have board tiles
+	 *                  	in between them.
      */
-    public int playTiles(Tile[] tiles)
-            throws InvalidPositionException{
-        validatePositions(tiles);       // ensure positions are allowed
+    public int playTiles(Tile[] tiles) {
+        if (!validatePositions(tiles))
+			return -1;       // ensure positions are allowed
         int score = score(tiles);       // calculate score of play
         addToBoard(tiles);              // add to board
         return score;
@@ -780,20 +781,16 @@ public class Board {
             or 1 tile is adjacent to already placed tile
         all tiles are connected, either by adjacency, or adjacency to adjacency
      */
-    private void validatePositions(Tile[] tiles)
-            throws InvalidPositionException {
-        pointsInbounds(tiles);
-        if (!allSameRow(tiles) && !allSameCol(tiles)) throw new InvalidPositionException(
-                "Illegal orientation: not all tiles are in a line"
-        );
-        hasDuplicates(tiles);
-        areAnyPointsOccupied(tiles);
-        arePointsStartingOrAdjacent(tiles);
-        arePointsConnected(tiles);
+    private boolean validatePositions(Tile[] tiles) {
+        return (arePointsInbounds(tiles) &&
+			   (allSameRow(tiles) || allSameCol(tiles)) &&
+				hasNoDuplicates(tiles) &&
+				pointsNotOccupied(tiles) &&
+				arePointsStartingOrAdjacent(tiles) &&
+				arePointsConnected(tiles));
     }
 
-    private void arePointsConnected(Tile[] tiles)
-            throws InvalidPositionException {
+    private boolean arePointsConnected(Tile[] tiles) {
         // check if they are all connected
 
         // steps to check connection status:
@@ -801,9 +798,9 @@ public class Board {
         // sort tiles by x or y component based on orientation
         // start with top left tile. move to next tile, check that change is equal to 1;
         //      if the change is greater, check that in between cells on the board are occupied.
-        //          check fails if any are blank
+        //          check fails if any are blank. return false
         // repeat with remainder of the list
-        // return out of method if algorithm finishes list with no problems.
+		// return true if all checks clear
         if (allSameRow(tiles)) {     // horizontal
             sortAscendingByCol(tiles);
             for (int i = 1; i < tiles.length; i++) {
@@ -811,9 +808,7 @@ public class Board {
                 int currentY = tiles[i].getLocation().y;
                 for (int j = oldY + 1; j < currentY; j++) {
                     if (board[tiles[0].getLocation().x][j] == null) {
-                        throw new InvalidPositionException(
-                                "Not all tiles are connected"
-                        );
+                        return false;
                     }
                 }
             }
@@ -825,35 +820,33 @@ public class Board {
                 int currentX = tiles[i].getLocation().x;
                 for (int j = oldX + 1; j < currentX; j++) {
                     if (board[j][tiles[0].getLocation().y] == null) {
-                        throw new InvalidPositionException(
-                                "Not all tiles are connected"
-                        );
+                        return false;
                     }
                 }
             }
         }
+		return true;
     }
 
     /*
     helper method which checks if any spaces are not blank which are for new tiles
+    returns true if play is acceptable
+    false if one point already has a tile on it
      */
-    private void areAnyPointsOccupied(Tile[] tiles)
-            throws InvalidPositionException {
+    private boolean pointsNotOccupied(Tile[] tiles) {
         // are any points already occupied?
         for (Tile t : tiles) {
             if (board[(int) t.getLocation().getX()][(int) t.getLocation().getY()] != null)
-                throw new InvalidPositionException(
-                        "Illegal placement: some cells are already occupied"
-                );
+                return false;
         }
+		return true;
     }
 
     /*
-    throws an invalidPositionException if the new tiles are neither
+    returns false if the new tiles are neither
     adjacent to an old tile nor on the starting tile
      */
-    private void arePointsStartingOrAdjacent(Tile[] tiles)
-            throws InvalidPositionException {
+    private boolean arePointsStartingOrAdjacent(Tile[] tiles) {
 
         // is any tile played on the starting tile?
         boolean isStarting = false;
@@ -871,27 +864,23 @@ public class Board {
             }
         }
 
-        // did both of last two checks fail? throw an exception
-        if (!hasAdjacentTile && !isStarting)
-            throw new InvalidPositionException(
-                    "Invalid placement: not adjacent to a cell and not starting"
-            );
-    }
+        // did both of last two checks fail?
+		return (hasAdjacentTile || isStarting);
+	}
 
     /*
     checks that all the new tiles are within the confines of the Board
+    returns false if one tile is out of bounds
      */
-    private void pointsInbounds(Tile[] tiles)
-            throws InvalidPositionException {
+    private boolean arePointsInbounds(Tile[] tiles) {
         for (Tile t : tiles) {
             int x = (int) t.getLocation().getX();
             int y = (int) t.getLocation().getY();
 
             if (x<0 || x>BOARD_ROWS-1 || y<0 || y>BOARD_COLUMNS-1)
-                throw new InvalidPositionException(
-                        "Tiles must be placed between 0 and 14 x and y"
-                );
+                return false;
         }
+		return true;
     }
 
     /*
@@ -920,9 +909,10 @@ public class Board {
 
     /*
     helper method; checks if any points have same x and y value
-    throws exception if duplicates found
+    returns true if no duplicates found
+    false if any two tiles share locations
      */
-    private void hasDuplicates(Tile[] tiles) throws InvalidPositionException {
+    private boolean hasNoDuplicates(Tile[] tiles) {
         boolean hasDuplicates = false;
         for (int i = 0; i < tiles.length - 1 && !hasDuplicates; i++) {
             for (int j = i + 1; j < tiles.length && !hasDuplicates; j++) {
@@ -933,10 +923,7 @@ public class Board {
                     hasDuplicates = true;
             }
         }
-        if (hasDuplicates)
-            throw new InvalidPositionException(
-                    "Duplicate locations are not allowed"
-            );
+        return !hasDuplicates;
     }
 
     /*
