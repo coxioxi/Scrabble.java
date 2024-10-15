@@ -7,8 +7,6 @@ package model;
  * Original date: 10/08/2024
  */
 
-import java.awt.*;
-
 /**
  * This class represents the Scrabble game.
  * It is responsible for modeling the game and all the components.
@@ -71,16 +69,26 @@ public class Game {
 	}
 
 	public void increaseScore(int playerID, int amount) {
+		Player player = getPlayer(playerID);
+		player.increaseScore(amount);
+	}
 
+	private Player getPlayer(int playerID) {
+		return null;
 	}
 
 
 	public void passTurn(int ID) {
-
+		Player player = getPlayer(ID);
+		player.setHasPassedLastTurn(true);
 	}
 
 	public void setConnected(int playerID, boolean isConnected) {
-
+		Player player = getPlayer(playerID);
+		if (player instanceof NetworkPlayer) {
+			NetworkPlayer np = (NetworkPlayer) player;
+			np.setConnected(isConnected);
+		}
 	}
 
 	public boolean isConnected(int playerID) {
@@ -103,15 +111,7 @@ public class Game {
 		return 0;
 	}
 
-	public void addTiles(int playerID, Tile[] tiles) {
-
-	}
-
-	public void removeTiles(int playerID, Tile[] tiles) {
-
-	}
-
-	public Tile[] getPlayerTiles() {
+	public Tile[] getLocalPlayerTiles() {
 		return self.getRack();
 	}
 
