@@ -19,7 +19,7 @@ public class Player {
 	if a player passes two consecutive turns, they will become
 	inactive, not able to make plays on the board.
 	 */
-	private boolean hasPassedLastTurn;	// did they pass their last turn?
+	private boolean passedLastTurn;	// did they pass their last turn?
 	private boolean isActive;		// can they make plays on the board?
 
 	/**
@@ -31,7 +31,7 @@ public class Player {
 		this.score = DEFAULT_SCORE;
 		this.name = name;
 		this.ID = ID;
-		hasPassedLastTurn = false;
+		passedLastTurn = false;
 		isActive = true;
 	}
 
@@ -76,16 +76,16 @@ public class Player {
 	 * getter for hasPassedLastTurn.
 	 * @return boolean value of the field
 	 */
-	public boolean isHasPassedLastTurn() {
-		return hasPassedLastTurn;
+	public boolean passedLastTurn() {
+		return passedLastTurn;
 	}
 
 	/**
 	 * changes the value of hasPassedLastTurn.
-	 * @param hasPassedLastTurn the new value of this object's field
+	 * @param passedLastTurn the new value of this object's field
 	 */
-	public void setHasPassedLastTurn(boolean hasPassedLastTurn) {
-		this.hasPassedLastTurn = hasPassedLastTurn;
+	public void setPassedLastTurn(boolean passedLastTurn) {
+		this.passedLastTurn = passedLastTurn;
 	}
 
 	/**

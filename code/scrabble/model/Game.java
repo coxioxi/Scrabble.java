@@ -82,7 +82,7 @@ public class Game {
 
 	public void passTurn(int ID) {
 		Player player = getPlayer(ID);
-		player.setHasPassedLastTurn(true);
+		player.setPassedLastTurn(true);
 	}
 
 	public void setConnected(int playerID, boolean isConnected) {
