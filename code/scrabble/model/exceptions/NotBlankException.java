@@ -1,4 +1,4 @@
-package model;
+package scrabble.model.exceptions;
 
 /**
  * Exception for trying to set a tile to have a letter value when it is not blank

@@ -1,4 +1,6 @@
-package model;
+package scrabble.model;
+
+import scrabble.model.exceptions.NoTileFoundException;
 
 /**
  * this class represents the player who is on this computer

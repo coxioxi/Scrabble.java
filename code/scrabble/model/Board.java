@@ -1,4 +1,4 @@
-package model;
+package scrabble.model;
 /*
  * Authors: Ian Boyer, David Carr, Samuel Costa,
  *      Maximus Latkovski, Jy'el Mason
@@ -7,17 +7,19 @@ package model;
  * Original date: 10/08/2024
  */
 
+import scrabble.model.exceptions.InvalidPositionException;
+
 import java.awt.*;
 import java.util.*;
 
 /**
  * This class represents the scrabble board. It maintains the placement of
- * model.Tile objects on the board and allows for changes to be made.
- * When changes are made, model.Board scores the word(s) played and allows them to be accessed
- * in the future. Note that model.Board does not check the validity of words, only their values.
+ * scrabble.model.Tile objects on the board and allows for changes to be made.
+ * When changes are made, scrabble.model.Board scores the word(s) played and allows them to be accessed
+ * in the future. Note that scrabble.model.Board does not check the validity of words, only their values.
  */
 public class Board {
-    private Tile[][] board;  // where model.Tile objects are placed
+    private Tile[][] board;  // where scrabble.model.Tile objects are placed
     private Map<Point,ModifierType> boardSpecialCell;   // map of modifier cells
     private ArrayList<String> lastWordsPlayed = new ArrayList<>();   // the words which have most recently been played
 
@@ -29,9 +31,9 @@ public class Board {
         Board board = new Board();
 
         Tile[] firstPlay = new Tile[4];
-        firstPlay[0] = new Tile('T', new Point(7,7));
-        firstPlay[1] = new Tile('I', new Point(7,8));
-        firstPlay[2] = new Tile('L', new Point(7,9));
+        firstPlay[0] = new Tile('T', new Point(7,7 ));
+        firstPlay[1] = new Tile('I', new Point(7,8 ));
+        firstPlay[2] = new Tile('L', new Point(7,9 ));
         firstPlay[3] = new Tile('E', new Point(7,10));
 
         try {
@@ -126,7 +128,7 @@ public class Board {
     }
 
     /**
-     * Constructs a new model.Board object
+     * Constructs a new scrabble.model.Board object
      */
     public Board() {
         initializeModifierCells();		// set up boardSpecialCell map with appropriate
@@ -965,7 +967,7 @@ public class Board {
 
     /*
     this method sets up the boardSpecialCell field with all the correct placements
-    for modifier cells using Point objects and model.ModifierType enumerations.
+    for modifier cells using Point objects and scrabble.model.ModifierType enumerations.
     */
     private void initializeModifierCells() {
         boardSpecialCell = new HashMap<>();

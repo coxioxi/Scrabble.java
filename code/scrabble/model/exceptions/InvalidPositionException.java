@@ -1,4 +1,4 @@
-package model;
+package scrabble.model.exceptions;
 
 /**
  * Exception for tiles placed incorrectly on the scrabble board

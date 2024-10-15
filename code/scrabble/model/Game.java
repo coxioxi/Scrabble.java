@@ -1,4 +1,4 @@
-package model;
+package scrabble.model;
 /*
  * Authors: Ian Boyer, David Carr, Samuel Costa,
  *      Maximus Latkovski, Jy'el Mason
@@ -6,6 +6,8 @@ package model;
  * Instructor: Dr. Barry Wittman
  * Original date: 10/08/2024
  */
+
+import scrabble.model.exceptions.InvalidPositionException;
 
 /**
  * This class represents the Scrabble game.

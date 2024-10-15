@@ -1,4 +1,4 @@
-package model;
+package scrabble.model;
 
 /**
  * This class represents a player over a network.

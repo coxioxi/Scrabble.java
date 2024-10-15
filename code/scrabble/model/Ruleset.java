@@ -1,4 +1,4 @@
-package model;
+package scrabble.model;
 /*
  * Authors: Ian Boyer, David Carr, Samuel Costa,
  *      Maximus Latkovski, Jy'el Mason
@@ -22,7 +22,7 @@ public class Ruleset {
 
 
 	/**
-	 * Creates a model.Ruleset object
+	 * Creates a scrabble.model.Ruleset object
 	 * @param totalTime how much time (in seconds) is allotted for the whole game.
 	 *                  Between 300 and 3600.
 	 * @param turnTime how much time (in seconds) a player may take on their turn.
