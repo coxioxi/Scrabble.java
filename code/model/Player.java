@@ -44,7 +44,7 @@ public class Player {
 	}
 
 	public void setScore(int score) {
-		this.score = score;
+		this.score += score;
 	}
 
 	public int getID() {
