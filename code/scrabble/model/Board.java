@@ -1,4 +1,4 @@
-package model;
+package scrabble.model;
 /*
  * Authors: Ian Boyer, David Carr, Samuel Costa,
  *      Maximus Latkovski, Jy'el Mason
@@ -12,12 +12,12 @@ import java.util.*;
 
 /**
  * This class represents the scrabble board. It maintains the placement of
- * model.Tile objects on the board and allows for changes to be made.
- * When changes are made, model.Board scores the word(s) played and allows them to be accessed
- * in the future. Note that model.Board does not check the validity of words, only their values.
+ * scrabble.model.Tile objects on the board and allows for changes to be made.
+ * When changes are made, scrabble.model.Board scores the word(s) played and allows them to be accessed
+ * in the future. Note that scrabble.model.Board does not check the validity of words, only their values.
  */
 public class Board {
-    private Tile[][] board;  // where model.Tile objects are placed
+    private Tile[][] board;  // where scrabble.model.Tile objects are placed
     private Map<Point,ModifierType> boardSpecialCell;   // map of modifier cells
     private String[] lastWordsPlayed;   // the words which have most recently been played
 
@@ -47,7 +47,7 @@ public class Board {
     }
 
     /**
-     * Constructs a new model.Board object
+     * Constructs a new scrabble.model.Board object
      */
     public Board() {
         initializeModifierCells();
@@ -337,7 +337,7 @@ public class Board {
 
     /*
     this method sets up the boardSpecialCell field with all the correct placements
-    for modifier cells using Point objects and model.ModifierType enumerations.
+    for modifier cells using Point objects and scrabble.model.ModifierType enumerations.
  */
     private void initializeModifierCells() {
         boardSpecialCell = new HashMap<>();
@@ -407,8 +407,8 @@ public class Board {
 
     /*
 
-    public model.Board(){
-        board = new model.Tile[15][15];
+    public scrabble.model.Board(){
+        board = new scrabble.model.Tile[15][15];
         int point1 = 1;
         int point2 = 2;
         int point3 = 3;
@@ -449,14 +449,14 @@ public class Board {
 
     public void addToBoard(String letter, int row, int column) {
         if (row >= 0 && row < 15 && column >= 0 && column < 15 && board[row][column] == null) {
-            board[row][column] = new model.Tile(letter.toUpperCase(),letterKeyValue.get(letter.toUpperCase()), new Point(row,column));
+            board[row][column] = new scrabble.model.Tile(letter.toUpperCase(),letterKeyValue.get(letter.toUpperCase()), new Point(row,column));
         } else {
             System.out.println("Invalid position or tile already exists at (" + row + ", " + column + ").");
         }
     }
 
     public static void main(String[] args) {
-        model.Board test = new model.Board();
+        scrabble.model.Board test = new scrabble.model.Board();
         test.addToBoard("r",5,7);
         test.addToBoard("u",6,7);
         test.addToBoard("n",7,7);
@@ -488,8 +488,8 @@ public class Board {
         }
     }
     public void boardScan(){
-        List<model.Tile> tiles = new ArrayList<>();
-        List<List<model.Tile>> words = new ArrayList<>();
+        List<scrabble.model.Tile> tiles = new ArrayList<>();
+        List<List<scrabble.model.Tile>> words = new ArrayList<>();
         List<String> newWords = new ArrayList<>();
         for(int row = 0; row < board.length; ++row){
             for(int column = 0; column < board[row].length; ++column){
@@ -500,7 +500,7 @@ public class Board {
         }
         //
         for(int i = 0; i < tiles.size() - 1; ++i){
-            List<model.Tile> tempTiles = new ArrayList<>();
+            List<scrabble.model.Tile> tempTiles = new ArrayList<>();
             for(int j = 0; j < tiles.size(); ++j){
                 if ((tiles.get(i).getLocation().getX() == tiles.get(j).getLocation().getX()) || (tiles.get(i).getLocation().getY() == tiles.get(j).getLocation().getY())) {
                     tempTiles.add(tiles.get(j));

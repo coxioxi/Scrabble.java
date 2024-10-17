@@ -1,4 +1,4 @@
-package model;
+package scrabble.model;
 
 /**
  * Generalized representation of a Player.

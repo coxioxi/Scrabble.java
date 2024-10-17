@@ -1,4 +1,4 @@
-package model;
+package scrabble.model;
 /*
  * Authors: Ian Boyer, David Carr, Samuel Costa,
  *      Maximus Latkovski, Jy'el Mason
