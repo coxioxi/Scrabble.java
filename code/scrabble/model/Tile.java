@@ -7,6 +7,8 @@ package scrabble.model;
  * Original date: 10/08/2024
  */
 
+import java.awt.*;
+
 /**
  * This class represents the tiles of the scrabble game
  */
@@ -14,7 +16,9 @@ public class Tile {
 
     private final int score;    // how many points this tile scores
     private char letter;        // the letter on the tile
-    private final boolean isBlank;    // whether the tile is blank or not
+    private final boolean isBlank; // whether the tile is blank or not
+    private Point location;
+    private boolean isNew; //determines whether the tile has already been played
 
     /**
      * Creates a new, blank Tile object
@@ -37,6 +41,14 @@ public class Tile {
         this.letter = letter;
         score = TileScore.getScoreForLetter(letter);
         this.isBlank = false;
+        this.isNew = true;
+    }
+    public Tile(char letter, Point location) {
+        this.letter = letter;
+        score = TileScore.getScoreForLetter(letter);
+        this.isBlank = false;
+        this.isNew = true;
+        this.location = location;
     }
 
     /**
@@ -46,7 +58,7 @@ public class Tile {
      *          to be set.
      */
     public void setLetter(char letter)
-        throws NotBlankException{
+            throws NotBlankException{
         if (!isBlank) {
             throw new NotBlankException("scrabble.model.Tile already has value " + this.letter);
         }
@@ -74,4 +86,25 @@ public class Tile {
      * @return the value of isBlank
      */
     public boolean isBlank(){return this.isBlank;}
+
+    public void setLocation(Point location){this.location = location;}
+    public Point getLocation(){return location;}
+
+    public void setIsNew(boolean isNew){this.isNew = isNew;}
+
+    public boolean getIsNew(){return isNew;}
+
+    /**
+     * Utility method which extracts the points from a tile set
+     * @param tiles the tiles which have points set.
+     *              All indices must be non-null; all tiles must have locations
+     * @return each point of the tile array, returned as an array of the same length.
+     */
+    public static Point[] getPoints(Tile[] tiles) {
+        Point[] points = new Point[tiles.length];
+        for (int i = 0; i < tiles.length; i++) {
+            points[i] = tiles[i].getLocation();
+        }
+        return points;
+    }
 }

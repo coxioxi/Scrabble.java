@@ -46,7 +46,7 @@ public class Game {
 	 */
 	public void playTiles(int playerID, Tile[] tiles, Point[] points)
 			throws InvalidPositionException {
-		int score = board.playTiles(tiles, points);
+		int score = board.playTiles(tiles);
 	}
 
 	public int getCurrentPlayerTime() {
