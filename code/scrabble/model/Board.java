@@ -42,12 +42,7 @@ public class Board {
         tiles[3] = new Tile('E');
         points[3] = new Point(7,10);
 
-        try {
-            board.playTiles(tiles);
-        }
-        catch (InvalidPositionException e) {
-            e.printStackTrace();
-        }
+        board.playTiles(tiles);
 
         System.out.println(board);
     }
@@ -159,7 +154,7 @@ public class Board {
         return score;
     }
 
-    @Override
+
     /**
      * Creates a String representation of this Board object.
      * For each cell on the board, the letter value of the tile is placed;
@@ -167,8 +162,8 @@ public class Board {
      * or, simply "__" is shown when neither condition is met.
      * each cell is padded with spaces in the String. A newline is
      * added to the end of board rows.
-     * @returns a String representation, with formatting as stated above
-     */
+     * {@code @returns} a String representation, with formatting as stated above
+	 */
     public String toString() {
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < board.length; i++) {
@@ -356,21 +351,18 @@ public class Board {
                     ++column;
                 }
 
-                if (tempString.length() > 1) {
-                    string.add(tempString.toString());
-                }
-            }
+			}
             else{
                 while (board[row][column] != null) {
                     tempString.append(board[row][column].getLetter());
                     ++row;
                 }
 
-                if (tempString.length() > 1) {
-                    string.add(tempString.toString());
-                }
-            }
-        }
+			}
+			if (tempString.length() > 1) {
+				string.add(tempString.toString());
+			}
+		}
         return string;
     }
 
@@ -734,9 +726,8 @@ column (x) value, with smallest at tiles[0]
         boardSpecialCell.put(new Point(12,8), ModifierType.DOUBLE_LETTER);
     }
 
-    private boolean isValidWord(Set<Point> originPoints, Tile[] newTiles, Point[] newTilePoints)
-            throws InvalidPositionException {
-        ArrayList<String> strings = stringBuild(originPoints,newTiles,newTilePoints);
+    private boolean isValidWord(Set<Point> originPoints, Tile[] newTiles, Point[] newTilePoints) {
+        ArrayList<String> strings = stringBuild(originPoints);
                 for(String string: strings) {
             if (!dictionary.contains(string)) {
                 return false;
@@ -759,58 +750,6 @@ column (x) value, with smallest at tiles[0]
         }
         return list;
     }
-    /*
-    takes a players chosen tiles and returns
-    the top most and left most tiles of the given list
-    and adds to board
-    */
-    public Tile[] findOrigin(Tile[] tiles)
-            throws InvalidPositionException {
-        Set<Tile> parentTile = new HashSet<>();
-        //adds tile to board for the purpose of finding previous tile location
-        addToBoard(tiles);
-
-        for( Tile tile : tiles){
-            int row = (int)tile.getLocation().getX();
-            int column = (int)tile.getLocation().getY();
-            int tempRow = 0;
-            int tempColumn = 0;
-            //gets new tiles top and left most row and column
-            while(board[row][column] != null){
-                row = row - 1;
-
-                if(board[row][column] == null){
-                    tempRow = row+1;
-                    String letter = board[tempRow][column].getLetter() + "";
-                }
-            }
-            row = (int)tile.getLocation().getX();
-            while(board[row][column] != null){
-                column = column - 1;
-
-                if(board[row][column] == null){
-                    tempColumn = column+1;
-                    String letter = board[row][tempColumn].getLetter() + "";
-                }
-            }
-            column = (int)tile.getLocation().getY();
-            Tile top = board[tempRow][column];
-            Tile left = board[row][tempColumn];
-            if(!top.getLocation().equals(tile.getLocation()) ) {
-                parentTile.add(top);
-            }
-            if(!left.getLocation().equals(tile.getLocation())){
-                parentTile.add(left);
-            }
-        }
-        removeTiles(tiles);
-        Tile[] parent = new Tile[parentTile.size()];
-
-        parentTile.toArray(parent);
-        return parent;
-    }
-
-
 }
 //    public boolean isValid(Set<Tile> tiles){
 //        //take top and left most tile and run down and right creating word
