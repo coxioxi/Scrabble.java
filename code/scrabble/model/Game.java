@@ -1,7 +1,7 @@
 package scrabble.model;
 /*
  * Authors: Ian Boyer, David Carr, Samuel Costa,
- *      Maximus Latkovski, Jy'el Mason
+ * Maximus Latkovski, Jy'el Mason
  * Course: COMP 3100
  * Instructor: Dr. Barry Wittman
  * Original date: 10/08/2024
@@ -28,7 +28,7 @@ public class Game {
 
 	public Game(Player[] players, Board board, Ruleset ruleset, Player me){
 		this.players = players;
-		this.board = board;
+		this.board = new Board();
 		this.ruleset = ruleset;
 		this.self = (LocalPlayer) me;
 		// TODO: From ruleset, set times
@@ -38,15 +38,12 @@ public class Game {
 	 * Plays tiles on the board for a player
 	 * @param playerID the ID of the player for whom to make a play
 	 * @param tiles the tiles to be placed. must have at least on tile
-	 * @param points where the tiles are to be placed. The size of this array and
-	 *      		tiles must be the same and ordered to correspond. points[0] must
-	 *      		correspond to tiles[0], points[1] must correspond to tiles[1], etc.
 	 * @throws InvalidPositionException if the tiles are not placed correctly.
 	 * see Board.playTiles()
 	 */
-	public void playTiles(int playerID, Tile[] tiles, Point[] points)
+	public void playTiles(int playerID, Tile[] tiles)
 			throws InvalidPositionException {
-		int score = board.playTiles(tiles, points);
+		int score = board.playTiles(tiles);
 	}
 
 	public int getCurrentPlayerTime() {

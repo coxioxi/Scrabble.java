@@ -8,18 +8,25 @@ package scrabble.model;
  */
 
 import java.awt.*;
+import java.io.File;
+import java.io.IOException;
 import java.util.*;
 
 /**
  * This class represents the scrabble board. It maintains the placement of
- * scrabble.model.Tile objects on the board and allows for changes to be made.
- * When changes are made, scrabble.model.Board scores the word(s) played and allows them to be accessed
- * in the future. Note that scrabble.model.Board does not check the validity of words, only their values.
+ * model.Tile objects on the board and allows for changes to be made.
+ * When changes are made, model.Board scores the word(s) played and allows them to be accessed
+ * in the future. Note that model.Board does not check the validity of words, only their values.
  */
 public class Board {
     private Tile[][] board;  // where scrabble.model.Tile objects are placed
     private Map<Point,ModifierType> boardSpecialCell;   // map of modifier cells
-    private String[] lastWordsPlayed;   // the words which have most recently been played
+    private ArrayList<String> lastWordsPlayed = new ArrayList<>();   // the words which have most recently been played
+    private final ArrayList<String> dictionary;
+    public ArrayList<String> allWordsPlayed = new ArrayList<>();
+
+    public static final int BOARD_ROWS = 15;
+    public static final int BOARD_COLUMNS = 15;
 
     public static void main(String[] args) {
         Board board = new Board();
@@ -36,8 +43,7 @@ public class Board {
         points[3] = new Point(7,10);
 
         try {
-            board.playTiles(tiles, points);
-
+            board.playTiles(tiles);
         }
         catch (InvalidPositionException e) {
             e.printStackTrace();
@@ -45,20 +51,34 @@ public class Board {
 
         System.out.println(board);
     }
+    /**
+     * Constructs a new model.Board object
+     * getter for dictionary for testing purposes
+     */
+    public ArrayList<String> getDictionary() {
+        return dictionary;
+    }
+
+    /**
+     * getter for isValidWord for testing purposes
+     */
+    public boolean isValidWordCaller(Set<Point> originPoints) throws InvalidPositionException {
+        return isValidWord(originPoints);
+    }
 
     /**
      * Constructs a new scrabble.model.Board object
      */
     public Board() {
         initializeModifierCells();
-        board = new Tile[15][15];
+        board = new Tile[BOARD_ROWS][BOARD_COLUMNS];
+        dictionary = importDictionary();
     }
 
     /**
-     *
-     * @return an array of the words played on the most recent board change
+     * @return a list of the words played on the most recent board change
      */
-    public String[] getLastWordsPlayed() {
+    public ArrayList<String> getLastWordsPlayed() {
         return lastWordsPlayed;
     }
 
@@ -72,23 +92,30 @@ public class Board {
     }
 
     /**
-     * Returns tile inside of given x and y locations
+     * Returns tiles inside of given x and y locations
      */
     public Tile getTile(int x, int y){
         return board[x][y];
     }
 
-    public void removeTiles(Tile[] tiles, Point[] points) {
-        for (int i = 0; i < points.length; i++) {
-            Point p = points[i];
+    /**
+     * Removes the specified tiles from the board.
+     * All tiles in parameter tiles must have been placed on the board already
+     * @param tiles the tiles to remove from the board
+     * @throws NullPointerException when not all tiles have already been placed
+     * 								on the board
+     */
+    public void removeTiles(Tile[] tiles)
+            throws NullPointerException {
+        for (Tile tile : tiles) {
+            Point p = tile.getLocation();
             int x = (int) p.getX();
             int y = (int) p.getY();
 
             // check if position is null, then check letter value
-            if (board[x][y] != null && board[x][y].getLetter() == tiles[i].getLetter()) {
+            if (board[x][y] != null && board[x][y].getLetter() == tile.getLetter()) {
                 board[x][y] = null;
-            }
-            else {
+            } else {
                 throw new NullPointerException(
                         "No tile on board position"
                 );
@@ -99,8 +126,12 @@ public class Board {
     /**
      * A caller method for testing purposes
      */
-    public boolean hasAdjacentCaller(Point point){
-        return hasAdjacentTile(point);
+    public boolean hasAdjacentCaller(Tile tile){
+        return hasAdjacentTile(tile);
+    }
+
+    public boolean hasAdjacentCaller(Point tile){
+        return hasAdjacentTile(tile);
     }
 
     /**
@@ -108,31 +139,23 @@ public class Board {
      * the play made
      *
      * @param tiles the tiles which are being placed on the board
-     * @param points where the tiles are being placed. The size of this array and
-     *               tiles must be the same and ordered to correspond. points[0] must
-     *               correspond to tiles[0], points[1] must correspond to tiles[1], etc.
-     *               Note that neither array may be empty, but arrays of size 1 are allowed.
      * @return the score of the word(s) played as an integer
-     * @throws InvalidPositionException when placed incorrectly. At least one tile
-     *                  must be adjacent to some other previously placed tile, or
+     * 			-1 if position is fails to meet following conditions:
+     * 					At least one tile must be adjacent to some other
+     * 					previously placed tile, or
      *                  one of the tiles must be at the starting tile (7,7).
      *                  No tile may be placed on an already occupied cell
+     *                  All tiles must be within the bounds of the board
+     *                  All tiles must have the same row (x) or column (y)
+     *                  All tiles must have differing points (no duplicates)
+     *                  All tiles must be adjacent to each other, or must have board tiles
+     *                  	in between them.
      */
-    public int playTiles(Tile[] tiles, Point[] points)
-            throws InvalidPositionException{
-        /*TODO:
-            this method must score the words played appropriately
-                (implement score method)
-            it must change the lastWordsPlayed field with these word(s).
-                 (job of score method)
-            update the board with tiles
-         */
-        // It is very likely that this method will need helper methods.
-        sameXorY(points);
-        hasDuplicates(points);
-        validatePositions(points);  // half implemented
-        int score = score(tiles, points);   // not implemented
-        addToBoard(tiles, points);
+    public int playTiles(Tile[] tiles) {
+        if (!validatePositions(tiles))
+            return -1;       // ensure positions are allowed
+        int score = score(tiles);       // calculate score of play
+        addToBoard(tiles);              // add to board
         return score;
     }
 
@@ -182,33 +205,173 @@ public class Board {
     helper method which adds tiles to the board at specified points.
     does not check scoring or validity of play.
      */
-    private void addToBoard(Tile[] tiles, Point[] points) {
-        //TODO: implement. for each tile in tiles, add to board at corresponding point
-        for(int i = 0; i < tiles.length; ++i)
-            board[(int) points[i].getX()][(int) points[i].getY()] = tiles[i];
+    public void addToBoard(Tile[] tiles) {
+		for (Tile tile : tiles) board[(int) tile.getLocation().getX()][(int) tile.getLocation().getY()] = tile;
     }
 
     /*
     helper method; calculates the score of tiles played with words and modifier cells.
     returns score as an int
-    also updates lastWordsPlayed, so it should only be called when the positions have been
-    validated through all necessary methods.
+    also updates lastWordsPlayed
      */
-    private int score(Tile[] tiles, Point[] points) {
-        //TODO: implement score method.
+    public int score(Tile[] originTiles) {
+        int finalSum = 0;
 
-        // implementation details/ideas: figure out orientation of tiles (vertical/horizontal),
-        // all collateral words will be perpendicular.
-        // find the score of the main word first (use modifier cells. apply letter cells first,
-        //      word modifiers at the end), move on to collaterals.
-        // collaterals will be made when a new tile has an adjacency which has a
-        //      different x (vertical orientation) or y (horizontal) than the new tiles
-        // apply same order of operations for collateral words
-        // (note that modifier cells do NOT apply when a tile has previously been placed on it)
+        for (Tile originTile : originTiles) {
+            Point location = originTile.getLocation();
+            int row = location.x;
+            int col = location.y;
 
-        // keep a list of all words, set as lastWordsPlayed at the end
+            // Check for both horizontal and vertical words
+            if(isHorizontal(row,col))
+                finalSum += calculateWordScore(row, col, true);  // Horizontal
+            else
+                finalSum += calculateWordScore(row, col, false); // Vertical
+        }
 
-        return 0;
+        return finalSum;
+    }
+
+    //helper method for score
+    private int calculateWordScore(int row, int col, boolean isHorizontal) {
+        int wordPoints = 0;
+        int totalMultiplier = 1;
+        boolean newWord = false;
+        StringBuilder stringBuilder = new StringBuilder();
+
+        // Scan in the desired direction
+        int startRow = row;
+        int startCol = col;
+
+        // Scan left (for horizontal) or up (for vertical) to account for previous tiles
+        if (isHorizontal) {
+            while (isWithinBounds(startCol - 1, row) && board[row][startCol - 1] != null) {
+                startCol--;
+            }
+        } else {
+            while (isWithinBounds(row, startRow - 1) && board[startRow - 1][col] != null) {
+                startRow--;
+            }
+        }
+
+        // Scan through the tiles in the desired direction
+        while (isWithinBounds(row, col) && board[row][col] != null) {
+            Tile tile = board[row][col];
+            int tileScore = tile.getScore();
+            boolean isNewTile = tile.getIsNew();
+
+            // Apply modifiers if the tile is new
+            if (isNewTile) {
+                newWord = true;
+
+                // Check for modifiers
+                if (boardSpecialCell.containsKey(new Point(row, col))) {
+                    ModifierType modifier = boardSpecialCell.get(new Point(row, col));
+                    switch (modifier) {
+                        case DOUBLE_LETTER:
+                            wordPoints += tileScore * 2;
+                            break;
+                        case TRIPLE_LETTER:
+                            wordPoints += tileScore * 3;
+                            break;
+                        case DOUBLE_WORD:
+                            wordPoints += tileScore;
+                            totalMultiplier *= 2;
+                            break;
+                        case TRIPLE_WORD:
+                            wordPoints += tileScore;
+                            totalMultiplier *= 3;
+                            break;
+                    }
+                    tile.setIsNew(false);
+                } else {
+                    wordPoints += tileScore;
+                    tile.setIsNew(false);
+                }
+            } else {
+                wordPoints += tileScore; // Add points for existing tiles
+            }
+
+            stringBuilder.append(tile.getLetter());
+
+            // Update row or col based on direction
+            if (isHorizontal) {
+                col++;
+            } else {
+                row++;
+            }
+        }
+        // Update lastWordsPlayed
+        lastWordsPlayed.add(stringBuilder.toString());
+
+        // Return the final word score, applying any word multipliers
+        if (newWord) {
+            return wordPoints * totalMultiplier;
+        } else {
+            return 0;
+        }
+    }
+
+    //helper method for score
+    private boolean isWithinBounds(int row, int col) {
+        return row >= 0 && row < board.length && col >= 0 && col < board[0].length;
+    }
+
+    //helper method for score
+    private boolean isHorizontal(int row, int col) {
+        // Check for horizontal
+        for (int i = col; i < board[0].length && board[row][i] != null; i++) {
+            if (board[row][i].getIsNew())
+                return true; // Found a new tile in a horizontal line
+        }
+
+        // Check for vertical
+        for (int j = row; j < board.length && board[j][col] != null; j++) {
+            if (board[j][col].getIsNew())
+                return false; // Found a new tile in a vertical line
+        }
+
+        return false;
+    }
+
+    private boolean isValidWord(Set<Point> originPoints) throws InvalidPositionException {
+        ArrayList<String> strings = stringBuild(originPoints);
+        for(String string: strings) {
+            if (!dictionary.contains(string))
+                return false;
+        }
+        return true;
+    }
+
+    public ArrayList<String> stringBuild(Set<Point> originTiles) {
+        ArrayList<String> string = new ArrayList<>();
+        for(Point originPoint : originTiles){
+            StringBuilder tempString = new StringBuilder();
+            int row = (int)originPoint.getX();
+            int column = (int)originPoint.getY();
+
+            if(isHorizontal(row,column)) {
+                while (board[row][column] != null) {
+                    tempString.append(board[row][column].getLetter());
+                    ++column;
+                }
+
+                if (tempString.length() > 1) {
+                    string.add(tempString.toString());
+                }
+            }
+            else{
+                while (board[row][column] != null) {
+                    tempString.append(board[row][column].getLetter());
+                    ++row;
+                }
+
+                if (tempString.length() > 1) {
+                    string.add(tempString.toString());
+                }
+            }
+        }
+        return string;
     }
 
     /*
@@ -219,44 +382,20 @@ public class Board {
             or 1 tile is adjacent to already placed tile
         all tiles are connected, either by adjacency, or adjacency to adjacency
      */
-    private void validatePositions(Point[] points)
-            throws InvalidPositionException {
+    private boolean validatePositions(Tile[] tiles) {
+        return (arePointsInbounds(tiles) &&
+                (allSameRow(tiles) || allSameCol(tiles)) &&
+                hasNoDuplicates(tiles) &&
+                pointsNotOccupied(tiles) &&
+                arePointsStartingOrAdjacent(tiles) &&
+                arePointsConnected(tiles));
+    }
 
-        //TODO: add check that all tiles are connected
-        //  this means that all tiles are next to each other, or seperated
-        //  by an already placed tile. There may not be gaps.
-        boolean areValid = true;
-
-        // are any points already occupied?
-        for (Point point : points) {
-            if (board[(int) point.getX()][(int) point.getY()] != null)
-                throw new InvalidPositionException(
-                        "Illegal placement: some cells are already occupied"
-                );
-        }
-
-        // is any tile played on the starting tile?
-        boolean isStarting = false;
-        for (Point point : points) {
-            if (point.getY() == 7 && point.getX() == 7)
-                isStarting = true;
-        }
-
-        // is any tile next to an already placed tile?
-        boolean hasAdjacentTile = false;
-        if (!isStarting) {
-            for (Point point : points) {
-                if (hasAdjacentTile(point))
-                    hasAdjacentTile = true;
-            }
-        }
-
-        // did both of last two checks fail? throw an exception
-        if (!hasAdjacentTile && !isStarting)
-            throw new InvalidPositionException(
-                    "Invalid placement: not adjacent to a cell and not starting"
-            );
-
+    /*
+	helper method which checks that all tiles are adjacent
+	to each other or have gaps filled with board tiles
+	 */
+    private boolean arePointsConnected(Tile[] tiles) {
         // check if they are all connected
 
         // steps to check connection status:
@@ -264,81 +403,271 @@ public class Board {
         // sort tiles by x or y component based on orientation
         // start with top left tile. move to next tile, check that change is equal to 1;
         //      if the change is greater, check that in between cells on the board are occupied.
-        //          check fails if any are blank
+        //          check fails if any are blank. return false
         // repeat with remainder of the list
-        // return out of method if algorithm finishes list with no problems.
-
+        // return true if all checks clear
+        if (allSameRow(tiles)) {     // horizontal
+            sortAscendingByCol(tiles);
+            for (int i = 1; i < tiles.length; i++) {
+                int oldY = tiles[i-1].getLocation().y;
+                int currentY = tiles[i].getLocation().y;
+                for (int j = oldY + 1; j < currentY; j++) {
+                    if (board[tiles[0].getLocation().x][j] == null) {
+                        return false;
+                    }
+                }
+            }
+        }
+        else {                      // vertical
+            sortAscendingByRow(tiles);
+            for (int i = 1; i < tiles.length; i++) {
+                int oldX = tiles[i-1].getLocation().x;
+                int currentX = tiles[i].getLocation().x;
+                for (int j = oldX + 1; j < currentX; j++) {
+                    if (board[j][tiles[0].getLocation().y] == null) {
+                        return false;
+                    }
+                }
+            }
+        }
+        return true;
     }
 
     /*
-    helper method; checks if any of the four adjacent cells to point are occupied
+sorts the tiles so that each subsequent tile has a smaller
+column (x) value, with smallest at tiles[0]
+*/
+    private void sortAscendingByCol(Tile[] tiles) {
+        for (int i = 0; i < tiles.length-1; i++) {
+            for (int j = i; j < tiles.length-1; j++) {
+                if (tiles[j].getLocation().y > tiles[j+1].getLocation().y) {
+                    Tile temp = tiles[j];
+                    tiles[j] = tiles[j+1];
+                    tiles[j+1] = temp;
+                }
+            }
+        }
+    }
+
+    /*
+    sorts the tiles so that each subsequent tile has a smaller
+    row (y) value, with smallest at tiles[0]
+     */
+    private void sortAscendingByRow(Tile[] tiles) {
+        for (int i = 0; i < tiles.length-1; i++) {
+            for (int j = i; j < tiles.length-1; j++) {
+                if (tiles[j].getLocation().x > tiles[j+1].getLocation().x) {
+                    Tile temp = tiles[j];
+                    tiles[j] = tiles[j+1];
+                    tiles[j+1] = temp;
+                }
+            }
+        }
+    }
+
+    /*
+    helper method which checks if any spaces are not blank which are for new tiles
+    returns true if play is acceptable
+    false if one point already has a tile on it
+     */
+    private boolean pointsNotOccupied(Tile[] tiles) {
+        // are any points already occupied?
+        for (Tile t : tiles) {
+            if (board[(int) t.getLocation().getX()][(int) t.getLocation().getY()] != null)
+                return false;
+        }
+        return true;
+    }
+
+    /*
+    returns false if the new tiles are neither
+    adjacent to an old tile nor on the starting tile
+     */
+    private boolean arePointsStartingOrAdjacent(Tile[] tiles) {
+
+        // is any tile played on the starting tile?
+        boolean isStarting = false;
+        for (Tile t : tiles) {
+            if (t.getLocation().getY() == 7 && t.getLocation().getX() == 7)
+                isStarting = true;
+        }
+
+        // is any tile next to an already placed tile?
+        boolean hasAdjacentTile = false;
+        if (!isStarting) {
+            for (Tile t : tiles) {
+                if (hasAdjacentTile(t))
+                    hasAdjacentTile = true;
+            }
+        }
+
+        // did both of last two checks fail?
+        return (hasAdjacentTile || isStarting);
+    }
+
+    /*
+    checks that all the new tiles are within the confines of the Board
+    returns false if one tile is out of bounds
+     */
+    private boolean arePointsInbounds(Tile[] tiles) {
+        for (Tile t : tiles) {
+            int x = (int) t.getLocation().getX();
+            int y = (int) t.getLocation().getY();
+
+            if (x<0 || x>BOARD_ROWS-1 || y<0 || y>BOARD_COLUMNS-1)
+                return false;
+        }
+        return true;
+    }
+
+    /*
+    helper method; checks if any of the four adjacent cells to tile are occupied
     returns true if adjacent is occupied
      */
-    private boolean hasAdjacentTile(Point point) {
-        int x = (int) point.getX();
-        int y = (int) point.getY();
+    private boolean hasAdjacentTile(Tile tile) {
+        int x = (int) tile.getLocation().getX();
+        int y = (int) tile.getLocation().getY();
 
         if (x - 1 >= 0 && board[x - 1][y] != null && !board[x - 1][y].isBlank()) {
             return true;
         }
-        else if (x + 1 < 15 && board[x + 1][y] != null && !board[x + 1][y].isBlank()) {
+        else if (x + 1 < BOARD_ROWS && board[x + 1][y] != null && !board[x + 1][y].isBlank()) {
             return true;
         }
         else if (y - 1 >= 0 && board[x][y - 1] != null && !board[x][y - 1].isBlank()) {
             return true;
         }
-        else if (y + 1 < 15 && board[x][y + 1] != null && !board[x][y + 1].isBlank()){
+        else if (y + 1 < BOARD_COLUMNS && board[x][y + 1] != null && !board[x][y + 1].isBlank()){
             return true;
         }
         else
             return false;
     }
 
-
-
     /*
-    helper method; checks if any points have same x and y value
-    throws exception if duplicates found
-     */
-    private void hasDuplicates(Point[] points) throws InvalidPositionException {
-        boolean hasDuplicates = false;
-        for (int i = 0; i < points.length - 1 && !hasDuplicates; i++) {
-            for (int j = i + 1; j < points.length && !hasDuplicates; j++) {
-                Point point1 = points[i];
-                Point point2 = points[j];
-                if (point1.getX() == point2.getX() && point1.getY() == point2.getY())
-                    hasDuplicates = true;
-            }
+   helper method; checks if any of the four adjacent cells to point are occupied
+   returns true if adjacent is occupied
+	*/
+    private boolean hasAdjacentTile(Point tile) {
+        int x = (int) tile.getX();
+        int y = (int) tile.getY();
+
+        if (x - 1 >= 0 && board[x - 1][y] != null && !board[x - 1][y].isBlank()) {
+            return true;
         }
-        if (hasDuplicates)
-            throw new InvalidPositionException(
-                    "Duplicate locations are not allowed"
-            );
+        else if (x + 1 < BOARD_ROWS && board[x + 1][y] != null && !board[x + 1][y].isBlank()) {
+            return true;
+        }
+        else if (y - 1 >= 0 && board[x][y - 1] != null && !board[x][y - 1].isBlank()) {
+            return true;
+        }
+        else if (y + 1 < BOARD_COLUMNS && board[x][y + 1] != null && !board[x][y + 1].isBlank()){
+            return true;
+        }
+        else
+            return false;
     }
 
     /*
-    helper method; checks that all points have either same x or y value
-    throws exception if points are not in a line.
+    helper method; checks if any points have same x and y value
+    returns true if no duplicates found
+    false if any two tiles share locations
      */
-    private void sameXorY(Point[] points) throws InvalidPositionException {
-        boolean hasSameX = true;
+    private boolean hasNoDuplicates(Tile[] tiles) {
+        boolean hasDuplicates = false;
+        for (int i = 0; i < tiles.length - 1 && !hasDuplicates; i++) {
+            for (int j = i + 1; j < tiles.length && !hasDuplicates; j++) {
+                Tile tile1 = tiles[i];
+                Tile tile2 = tiles[j];
+                if (tile1.getLocation().getX() == tile2.getLocation().getX() &&
+                        tile1.getLocation().getY() == tile2.getLocation().getY())
+                    hasDuplicates = true;
+            }
+        }
+        return !hasDuplicates;
+    }
+
+    /*
+    checks if each tile in tiles has the same column (y) value as
+    each other tile in the array
+     */
+    private boolean allSameCol(Tile[] tiles) {
         boolean hasSameY = true;
-        for (int i = 0; i < points.length - 1 && (hasSameX || hasSameY); i++) {
-            if (points[i].getX() != points[i+1].getX())
-                hasSameX = false;
-            if (points[i].getY() != points[i+1].getY())
+        for (int i = 0; i < tiles.length - 1 && hasSameY; i++) {
+            if (tiles[i].getLocation().getY() != tiles[i+1].getLocation().getY())
                 hasSameY = false;
         }
-        if (!(hasSameX || hasSameY))
-            throw new InvalidPositionException(
-                "Illegal orientation: not all tiles are in a line"
-            );
+        return hasSameY;
+    }
+
+	/*
+    checks if each tile in tiles has the same row (x) value as
+    each other tile in the array
+     */
+	private boolean allSameRow(Tile[] tiles) {
+		boolean hasSameX = true;
+		for (int i = 0; i < tiles.length - 1 && hasSameX; i++) {
+			if (tiles[i].getLocation().getX() != tiles[i+1].getLocation().getX())
+				hasSameX = false;
+		}
+		return hasSameX;
+	}
+
+    /*
+    takes a players chosen tiles and returns
+    the top most and left most tiles of the given list
+    and adds to board
+    */
+    public Tile[] findOrigin(Tile[] tiles)
+            throws InvalidPositionException {
+        Set<Tile> parentTile = new HashSet<>();
+        //adds tile to board for the purpose of finding previous tile location
+        addToBoard(tiles);
+
+        for( Tile tile : tiles){
+            int row = (int)tile.getLocation().getX();
+            int column = (int)tile.getLocation().getY();
+            int tempRow = 0;
+            int tempColumn = 0;
+            //gets new tiles top and left most row and column
+            while(board[row][column] != null){
+                row = row - 1;
+
+                if(board[row][column] == null){
+                    tempRow = row+1;
+                    String letter = board[tempRow][column].getLetter() + "";
+                }
+            }
+            row = (int)tile.getLocation().getX();
+            while(board[row][column] != null){
+                column = column - 1;
+
+                if(board[row][column] == null){
+                    tempColumn = column+1;
+                    String letter = board[row][tempColumn].getLetter() + "";
+                }
+            }
+            column = (int)tile.getLocation().getY();
+            Tile top = board[tempRow][column];
+            Tile left = board[row][tempColumn];
+            if(!top.getLocation().equals(tile.getLocation()) ) {
+                parentTile.add(top);
+            }
+            if(!left.getLocation().equals(tile.getLocation())){
+                parentTile.add(left);
+            }
+        }
+        //removeTiles(tiles);
+        Tile[] parent = new Tile[parentTile.size()];
+
+        parentTile.toArray(parent);
+        return parent;
     }
 
     /*
     this method sets up the boardSpecialCell field with all the correct placements
-    for modifier cells using Point objects and scrabble.model.ModifierType enumerations.
- */
+    for modifier cells using Point objects and model.ModifierType enumerations.
+    */
     private void initializeModifierCells() {
         boardSpecialCell = new HashMap<>();
         boardSpecialCell.put(new Point(0,0), ModifierType.TRIPLE_WORD);
@@ -405,10 +734,129 @@ public class Board {
         boardSpecialCell.put(new Point(12,8), ModifierType.DOUBLE_LETTER);
     }
 
-    /*
+    private boolean isValidWord(Set<Point> originPoints, Tile[] newTiles, Point[] newTilePoints)
+            throws InvalidPositionException {
+        ArrayList<String> strings = stringBuild(originPoints,newTiles,newTilePoints);
+                for(String string: strings) {
+            if (!dictionary.contains(string)) {
+                return false;
+            }
+        }
+        return true;
+    }
 
-    public scrabble.model.Board(){
-        board = new scrabble.model.Tile[15][15];
+    private ArrayList<String> importDictionary(){
+        ArrayList<String> list = new ArrayList<>();
+        try{
+            File dictionary = new File("./code/dictionary.txt");
+            Scanner scanner = new Scanner(dictionary);
+            while(scanner.hasNext()){
+                list.add(scanner.nextLine());
+            }
+
+        }catch(IOException e){
+            System.out.println(e.getMessage());
+        }
+        return list;
+    }
+    /*
+    takes a players chosen tiles and returns
+    the top most and left most tiles of the given list
+    and adds to board
+    */
+    public Tile[] findOrigin(Tile[] tiles)
+            throws InvalidPositionException {
+        Set<Tile> parentTile = new HashSet<>();
+        //adds tile to board for the purpose of finding previous tile location
+        addToBoard(tiles);
+
+        for( Tile tile : tiles){
+            int row = (int)tile.getLocation().getX();
+            int column = (int)tile.getLocation().getY();
+            int tempRow = 0;
+            int tempColumn = 0;
+            //gets new tiles top and left most row and column
+            while(board[row][column] != null){
+                row = row - 1;
+
+                if(board[row][column] == null){
+                    tempRow = row+1;
+                    String letter = board[tempRow][column].getLetter() + "";
+                }
+            }
+            row = (int)tile.getLocation().getX();
+            while(board[row][column] != null){
+                column = column - 1;
+
+                if(board[row][column] == null){
+                    tempColumn = column+1;
+                    String letter = board[row][tempColumn].getLetter() + "";
+                }
+            }
+            column = (int)tile.getLocation().getY();
+            Tile top = board[tempRow][column];
+            Tile left = board[row][tempColumn];
+            if(!top.getLocation().equals(tile.getLocation()) ) {
+                parentTile.add(top);
+            }
+            if(!left.getLocation().equals(tile.getLocation())){
+                parentTile.add(left);
+            }
+        }
+        removeTiles(tiles);
+        Tile[] parent = new Tile[parentTile.size()];
+
+        parentTile.toArray(parent);
+        return parent;
+    }
+
+
+}
+//    public boolean isValid(Set<Tile> tiles){
+//        //take top and left most tile and run down and right creating word
+//        ArrayList<String> strings = stringBuild(tiles);
+//        for(String string: strings) {
+//            if (!dictionary.contains(string)) {
+//                return false;
+//            }
+//        }
+//        return true;
+//    }
+//    /*
+//    constructs string from tile set
+//     */
+//    public ArrayList<String> stringBuild(Set<Tile> tiles){
+//        //take top and left most tile and run down and right creating word
+//        ArrayList<String> string = new ArrayList<>();
+//        for(Tile tile : tiles){
+//            String tempString = "";
+//            int row = (int)tile.getLocation().getX();
+//            int column = (int)tile.getLocation().getY();
+//
+//            while(board[row][column] != null){
+//                tempString += board[row][column].getLetter();
+//                row = row + 1;
+//            }
+//            row = (int)tile.getLocation().getX();
+//            if(tempString.length() > 1){
+//                string.add(tempString);
+//            }
+//            tempString = "";
+//            while(board[row][column] != null){
+//                tempString += board[row][column].getLetter();
+//                column = column + 1;
+//            }
+//            if(tempString.length() > 1){
+//                string.add(tempString);
+//            }
+//        }
+//        return string;
+//
+//    }
+ /*
+
+    public model.Board(){
+        board = new model.Tile[15][15];
         int point1 = 1;
         int point2 = 2;
         int point3 = 3;
@@ -449,14 +897,14 @@ public class Board {
 
     public void addToBoard(String letter, int row, int column) {
         if (row >= 0 && row < 15 && column >= 0 && column < 15 && board[row][column] == null) {
-            board[row][column] = new scrabble.model.Tile(letter.toUpperCase(),letterKeyValue.get(letter.toUpperCase()), new Point(row,column));
+            board[row][column] = new model.Tile(letter.toUpperCase(),letterKeyValue.get(letter.toUpperCase()), new Point(row,column));
         } else {
             System.out.println("Invalid position or tile already exists at (" + row + ", " + column + ").");
         }
     }
 
     public static void main(String[] args) {
-        scrabble.model.Board test = new scrabble.model.Board();
+        model.Board test = new model.Board();
         test.addToBoard("r",5,7);
         test.addToBoard("u",6,7);
         test.addToBoard("n",7,7);
@@ -488,8 +936,8 @@ public class Board {
         }
     }
     public void boardScan(){
-        List<scrabble.model.Tile> tiles = new ArrayList<>();
-        List<List<scrabble.model.Tile>> words = new ArrayList<>();
+        List<model.Tile> tiles = new ArrayList<>();
+        List<List<model.Tile>> words = new ArrayList<>();
         List<String> newWords = new ArrayList<>();
         for(int row = 0; row < board.length; ++row){
             for(int column = 0; column < board[row].length; ++column){
@@ -500,7 +948,7 @@ public class Board {
         }
         //
         for(int i = 0; i < tiles.size() - 1; ++i){
-            List<scrabble.model.Tile> tempTiles = new ArrayList<>();
+            List<model.Tile> tempTiles = new ArrayList<>();
             for(int j = 0; j < tiles.size(); ++j){
                 if ((tiles.get(i).getLocation().getX() == tiles.get(j).getLocation().getX()) || (tiles.get(i).getLocation().getY() == tiles.get(j).getLocation().getY())) {
                     tempTiles.add(tiles.get(j));
@@ -524,43 +972,4 @@ public class Board {
             System.out.println(newWords.get(i));
         }
     }
-
-    /*
-    Takes in an x,y coordinate and returns a number between -1 and 5
-    return values and labels:
-        -1 = Invalid Coordinates
-        0 = Double Letter (light blue)
-        1 = Triple letter (dark blue)
-        2 = Double Word (light red)
-        3 = Triple Word (dark red)
-        4 = Start (light red)
-        5 = Blank (gray)
-    *
-    public static int locationCheck(int x, int y) {
-
-        final int[][] scrabbleBoard = {
-                // 0  1  2  3  4  5  6  7  8  9 10 11 12 13 14
-                {3, 5, 5, 0, 5, 5, 5, 3, 5, 5, 5, 0, 5, 5, 3}, // 0
-                {5, 2, 5, 5, 5, 1, 5, 5, 5, 1, 5, 5, 5, 2, 5}, // 1
-                {5, 5, 2, 5, 5, 5, 0, 5, 0, 5, 5, 5, 2, 5, 5}, // 2
-                {0, 5, 5, 2, 5, 5, 5, 0, 5, 5, 5, 2, 5, 5, 0}, // 3
-                {5, 5, 5, 5, 2, 5, 5, 5, 5, 5, 2, 5, 5, 5, 5}, // 4
-                {5, 1, 5, 5, 5, 1, 5, 5, 5, 1, 5, 5, 5, 1, 5}, // 5
-                {5, 5, 0, 5, 5, 5, 0, 5, 0, 5, 5, 5, 0, 5, 5}, // 6
-                {3, 5, 5, 0, 5, 5, 5, 4, 5, 5, 5, 0, 5, 5, 3}, // 7
-                {5, 5, 0, 5, 5, 5, 0, 5, 0, 5, 5, 5, 0, 5, 5}, // 8
-                {5, 1, 5, 5, 5, 1, 5, 5, 5, 1, 5, 5, 5, 1, 5}, // 9
-                {5, 5, 5, 5, 2, 5, 5, 5, 5, 5, 2, 5, 5, 5, 5}, // 10
-                {0, 5, 5, 2, 5, 5, 5, 0, 5, 5, 5, 2, 5, 5, 0}, // 11
-                {5, 5, 2, 5, 5, 5, 0, 5, 0, 5, 5, 5, 2, 5, 5}, // 12
-                {5, 2, 5, 5, 5, 1, 5, 5, 5, 1, 5, 5, 5, 2, 5}, // 13
-                {3, 5, 5, 0, 5, 5, 5, 3, 5, 5, 5, 0, 5, 5, 3}  // 14
-        };
-
-        if(x >= 0 && x < 15 && y >= 0 && y < 15)
-            return scrabbleBoard[x][y];
-        else
-            return -1;
-    }
-    */
-}
+  */
