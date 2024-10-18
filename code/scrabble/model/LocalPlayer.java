@@ -1,4 +1,4 @@
-package model;
+package scrabble.model;
 
 /**
  * this class represents the player who is on this computer

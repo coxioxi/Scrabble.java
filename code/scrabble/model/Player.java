@@ -1,4 +1,4 @@
-package model;
+package scrabble.model;
 
 /**
  * Generalized representation of a Player.
@@ -43,8 +43,8 @@ public class Player {
 		return score;
 	}
 
-	public void setScore(int score) {
-		this.score = score;
+	public void increaseScore(int score) {
+		this.score += score;
 	}
 
 	public int getID() {

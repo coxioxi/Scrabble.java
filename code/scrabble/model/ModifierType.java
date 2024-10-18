@@ -1,4 +1,4 @@
-package model;
+package scrabble.model;
 
 /**
  * Enumeration of the modifier types on the Scrabble board
