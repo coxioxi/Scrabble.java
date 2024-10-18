@@ -126,8 +126,15 @@ public class Game {
 	whose ID is equal to the parameter
  	*/
 	private Player getPlayer(int playerID) {
+		Player finalPlayer = null;
+		for(Player player: players){
+			if(playerID == player.getID()){
+				finalPlayer = player;
+			}
+		}
+		return finalPlayer;
 		// TODO: implement
-		return null;
+
 	}
 
 
@@ -141,6 +148,12 @@ public class Game {
 	 *           This ID must correspond to the ID of the current player
 	 */
 	public void passTurn(int ID) {
+		Player player = players[ID];
+		if(player.isHasPassedLastTurn()){
+			player.setActive(false);
+		}else{
+			player.setHasPassedLastTurn(true);
+		}
 		// TODO: implement
 	}
 
@@ -152,16 +165,25 @@ public class Game {
 	 * @param isConnected The new status of the player
 	 */
 	public void setConnected(int playerID, boolean isConnected) {
+		NetworkPlayer player = (NetworkPlayer) players[playerID];
+		if(isConnected){
+			player.setConnected(true);
+		}else{
+			player.setActive(false);
+		}
+
 		// TODO: implement
 		// also change isactive if isconnected is false
 	}
 
 	public boolean isConnected(int playerID) {
-		return true;
+		NetworkPlayer player = (NetworkPlayer) players[playerID];
+		return player.isConnected();
 	}
 
 	public boolean isActive(int playerID) {
-		return true;
+		NetworkPlayer player = (NetworkPlayer) players[playerID];
+		return player.isActive();
 	}
 
 	/**
@@ -170,6 +192,8 @@ public class Game {
 	 * @param isActive the status of the player
 	 */
 	public void setActive(int playerID, boolean isActive) {
+		Player player = players[playerID];
+		player.setActive(isActive);
 
 	}
 
@@ -181,11 +205,15 @@ public class Game {
 	 *               the total size of a player's rack should never exceed 7.
 	 */
 	public void decreaseRack(int playerID, int amount) {
+		NetworkPlayer player = (NetworkPlayer) players[playerID];
+		int numTiles = player.getNumTiles() - amount;
+		player.setNumTiles(numTiles);
 
 	}
 
 	public int getNumTiles(int playerID) {
-		return 0;
+		NetworkPlayer player = (NetworkPlayer)players[playerID];
+		return player.getNumTiles();
 	}
 
 	/**
@@ -198,6 +226,7 @@ public class Game {
 	 *              playerID == LocalPlayer.ID
 	 */
 	public void addTiles(Tile[] tiles) {
+		self.addTiles(tiles);
 
 	}
 
@@ -207,6 +236,7 @@ public class Game {
 	 * @param tiles the tiles to remove. length <= 7
 	 */
 	public void removeTiles(Tile[] tiles) {
+		self.removeTiles(tiles);
 
 	}
 
