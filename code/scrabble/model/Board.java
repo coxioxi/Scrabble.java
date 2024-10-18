@@ -79,26 +79,22 @@ public class Board {
      *
      * @param tiles the tiles which are being placed on the board
      * @return the score of the word(s) played as an integer
-     * @throws InvalidPositionException when placed incorrectly. At least one tile
-     *                  must be adjacent to some other previously placed tile, or
+     * 			-1 if position is fails to meet following conditions:
+     * 					At least one tile must be adjacent to some other
+     * 					previously placed tile, or
      *                  one of the tiles must be at the starting tile (7,7).
      *                  No tile may be placed on an already occupied cell
+     *                  All tiles must be within the bounds of the board
+     *                  All tiles must have the same row (x) or column (y)
+     *                  All tiles must have differing points (no duplicates)
+     *                  All tiles must be adjacent to each other, or must have board tiles
+     *                  	in between them.
      */
-    public int playTiles(Tile[] tiles)
-            throws InvalidPositionException{
-        int score = 0;
-        /*TODO:
-            this method must score the words played appropriately
-                (implement score method)
-            it must change the lastWordsPlayed field with these word(s).
-            update the board with tiles
-         */
-        // It is very likely that this method will need helper methods.
-//        sameXorY(points);
-//        hasDuplicates(points);
-//        validatePositions(tiles);  // half implemented
-//        int score = score(tiles, points);   // not implemented
-//        addToBoard(tiles);      // half implemented
+    public int playTiles(Tile[] tiles) {
+        if (!validatePositions(tiles))
+            return -1;       // ensure positions are allowed
+        int score = score(tiles);       // calculate score of play
+        addToBoard(tiles);              // add to board
         return score;
     }
 
@@ -112,9 +108,8 @@ public class Board {
     helper method which adds tiles to the board at specified points.
     does not check scoring or validity of play.
      */
-    public void addToBoard(Tile[] tiles) throws InvalidPositionException {
-        for(int i = 0; i < tiles.length; ++i)
-            board[(int) tiles[i].getLocation().getX()][(int) tiles[i].getLocation().getY()] = tiles[i];
+    public void addToBoard(Tile[] tiles) {
+		for (Tile tile : tiles) board[(int) tile.getLocation().getX()][(int) tile.getLocation().getY()] = tile;
     }
 
     /*
@@ -139,7 +134,7 @@ public class Board {
             int row = originTiles[i].getLocation().y;
             int col = originTiles[i].getLocation().x;
 
-            while(board[row][col] != null){  // shouldn't this be null if a tile is being added here?
+            while(board[row][col] != null){     // Problem: shouldn't this be null if a tile is being added here?
                 if(board[row][col].getIsNew()){
                     row = originTiles[i].getLocation().y;
                     while (board[row][col] != null) {
@@ -211,55 +206,175 @@ public class Board {
             or 1 tile is adjacent to already placed tile
         all tiles are connected, either by adjacency, or adjacency to adjacency
      */
-    private void validatePositions(Tile[] tiles)
-            throws InvalidPositionException {
+    private boolean validatePositions(Tile[] tiles) {
+        return (arePointsInbounds(tiles) &&
+                (allSameRow(tiles) || allSameCol(tiles)) &&
+                hasNoDuplicates(tiles) &&
+                pointsNotOccupied(tiles) &&
+                arePointsStartingOrAdjacent(tiles) &&
+                arePointsConnected(tiles));
+    }
 
-        //TODO: add check that all tiles are connected
-        //  this means that all tiles are next to each other, or separated
-        //  by an already placed tile. There may not be gaps.
-        boolean areValid = true;
+    /*
+	helper method which checks that all tiles are adjacent
+	to each other or have gaps filled with board tiles
+	 */
+    private boolean arePointsConnected(Tile[] tiles) {
+        // check if they are all connected
 
-        // are any points already occupied?
-        for (Tile tile: tiles) {
-            if (board[(int) tile.getLocation().getX()][(int) tile.getLocation().getY()] != null)
-                throw new InvalidPositionException(
-                        "Illegal placement: some cells are already occupied"
-                );
+        // steps to check connection status:
+        // determine orientation of new tiles (vertical, horizontal)
+        // sort tiles by x or y component based on orientation
+        // start with top left tile. move to next tile, check that change is equal to 1;
+        //      if the change is greater, check that in between cells on the board are occupied.
+        //          check fails if any are blank. return false
+        // repeat with remainder of the list
+        // return true if all checks clear
+        if (allSameRow(tiles)) {     // horizontal
+            sortAscendingByCol(tiles);
+            for (int i = 1; i < tiles.length; i++) {
+                int oldY = tiles[i-1].getLocation().y;
+                int currentY = tiles[i].getLocation().y;
+                for (int j = oldY + 1; j < currentY; j++) {
+                    if (board[tiles[0].getLocation().x][j] == null) {
+                        return false;
+                    }
+                }
+            }
         }
+        else {                      // vertical
+            sortAscendingByRow(tiles);
+            for (int i = 1; i < tiles.length; i++) {
+                int oldX = tiles[i-1].getLocation().x;
+                int currentX = tiles[i].getLocation().x;
+                for (int j = oldX + 1; j < currentX; j++) {
+                    if (board[j][tiles[0].getLocation().y] == null) {
+                        return false;
+                    }
+                }
+            }
+        }
+        return true;
+    }
+
+    /*
+sorts the tiles so that each subsequent tile has a smaller
+column (x) value, with smallest at tiles[0]
+*/
+    private void sortAscendingByCol(Tile[] tiles) {
+        for (int i = 0; i < tiles.length-1; i++) {
+            for (int j = i; j < tiles.length-1; j++) {
+                if (tiles[j].getLocation().y > tiles[j+1].getLocation().y) {
+                    Tile temp = tiles[j];
+                    tiles[j] = tiles[j+1];
+                    tiles[j+1] = temp;
+                }
+            }
+        }
+    }
+
+    /*
+    sorts the tiles so that each subsequent tile has a smaller
+    row (y) value, with smallest at tiles[0]
+     */
+    private void sortAscendingByRow(Tile[] tiles) {
+        for (int i = 0; i < tiles.length-1; i++) {
+            for (int j = i; j < tiles.length-1; j++) {
+                if (tiles[j].getLocation().x > tiles[j+1].getLocation().x) {
+                    Tile temp = tiles[j];
+                    tiles[j] = tiles[j+1];
+                    tiles[j+1] = temp;
+                }
+            }
+        }
+    }
+
+    /*
+    helper method which checks if any spaces are not blank which are for new tiles
+    returns true if play is acceptable
+    false if one point already has a tile on it
+     */
+    private boolean pointsNotOccupied(Tile[] tiles) {
+        // are any points already occupied?
+        for (Tile t : tiles) {
+            if (board[(int) t.getLocation().getX()][(int) t.getLocation().getY()] != null)
+                return false;
+        }
+        return true;
+    }
+
+    /*
+    returns false if the new tiles are neither
+    adjacent to an old tile nor on the starting tile
+     */
+    private boolean arePointsStartingOrAdjacent(Tile[] tiles) {
 
         // is any tile played on the starting tile?
         boolean isStarting = false;
-        for (Tile tile: tiles) {
-            if ((int) tile.getLocation().getY() == 7 && (int) tile.getLocation().getX() == 7)
+        for (Tile t : tiles) {
+            if (t.getLocation().getY() == 7 && t.getLocation().getX() == 7)
                 isStarting = true;
         }
 
         // is any tile next to an already placed tile?
         boolean hasAdjacentTile = false;
         if (!isStarting) {
-            for (Tile tile: tiles) {
-                if (hasAdjacentTile(tile))
+            for (Tile t : tiles) {
+                if (hasAdjacentTile(t))
                     hasAdjacentTile = true;
             }
         }
 
-        // did both of last two checks fail? throw an exception
-        if (!hasAdjacentTile && !isStarting)
-            throw new InvalidPositionException(
-                    "Invalid placement: not adjacent to a cell and not starting"
-            );
-
-        // check if they are all connected
-
+        // did both of last two checks fail?
+        return (hasAdjacentTile || isStarting);
     }
 
     /*
-    helper method; checks if any of the four adjacent cells to point are occupied
+    checks that all the new tiles are within the confines of the Board
+    returns false if one tile is out of bounds
+     */
+    private boolean arePointsInbounds(Tile[] tiles) {
+        for (Tile t : tiles) {
+            int x = (int) t.getLocation().getX();
+            int y = (int) t.getLocation().getY();
+
+            if (x<0 || x>BOARD_ROWS-1 || y<0 || y>BOARD_COLUMNS-1)
+                return false;
+        }
+        return true;
+    }
+
+    /*
+    helper method; checks if any of the four adjacent cells to tile are occupied
     returns true if adjacent is occupied
      */
     private boolean hasAdjacentTile(Tile tile) {
-        int x = tile.getLocation().x;
-        int y = tile.getLocation().y;
+        int x = (int) tile.getLocation().getX();
+        int y = (int) tile.getLocation().getY();
+
+        if (x - 1 >= 0 && board[x - 1][y] != null && !board[x - 1][y].isBlank()) {
+            return true;
+        }
+        else if (x + 1 < BOARD_ROWS && board[x + 1][y] != null && !board[x + 1][y].isBlank()) {
+            return true;
+        }
+        else if (y - 1 >= 0 && board[x][y - 1] != null && !board[x][y - 1].isBlank()) {
+            return true;
+        }
+        else if (y + 1 < BOARD_COLUMNS && board[x][y + 1] != null && !board[x][y + 1].isBlank()){
+            return true;
+        }
+        else
+            return false;
+    }
+
+    /*
+   helper method; checks if any of the four adjacent cells to point are occupied
+   returns true if adjacent is occupied
+	*/
+    private boolean hasAdjacentTile(Point tile) {
+        int x = (int) tile.getX();
+        int y = (int) tile.getY();
 
         if (x - 1 >= 0 && board[x - 1][y] != null && !board[x - 1][y].isBlank()) {
             return true;
@@ -279,43 +394,47 @@ public class Board {
 
     /*
     helper method; checks if any points have same x and y value
-    throws exception if duplicates found
+    returns true if no duplicates found
+    false if any two tiles share locations
      */
-    private void hasDuplicates(Tile[] tiles)
-            throws InvalidPositionException {
+    private boolean hasNoDuplicates(Tile[] tiles) {
         boolean hasDuplicates = false;
         for (int i = 0; i < tiles.length - 1 && !hasDuplicates; i++) {
             for (int j = i + 1; j < tiles.length && !hasDuplicates; j++) {
-                Point point1 = tiles[i].getLocation();
-                Point point2 = tiles[j].getLocation();
-                if (point1.getX() == point2.getX() && point1.getY() == point2.getY())
+                Tile tile1 = tiles[i];
+                Tile tile2 = tiles[j];
+                if (tile1.getLocation().getX() == tile2.getLocation().getX() &&
+                        tile1.getLocation().getY() == tile2.getLocation().getY())
                     hasDuplicates = true;
             }
         }
-        if (hasDuplicates)
-            throw new InvalidPositionException(
-                    "Duplicate locations are not allowed"
-            );
+        return !hasDuplicates;
     }
 
     /*
-    helper method; checks that all points have either same x or y value
-    throws exception if points are not in a line.
+    checks if each tile in tiles has the same column (y) value as
+    each other tile in the array
      */
-    private void sameXorY(Tile[] tiles)
-            throws InvalidPositionException {
-        boolean hasSameX = true;
+    private boolean allSameCol(Tile[] tiles) {
         boolean hasSameY = true;
-        for (int i = 0; i < tiles.length - 1 && (hasSameX || hasSameY); i++) {
-            if (tiles[i].getLocation().getX() != tiles[i+1].getLocation().getX())
-                hasSameX = false;
+        for (int i = 0; i < tiles.length - 1 && hasSameY; i++) {
             if (tiles[i].getLocation().getY() != tiles[i+1].getLocation().getY())
                 hasSameY = false;
         }
-        if (!(hasSameX || hasSameY))
-            throw new InvalidPositionException(
-                "Illegal orientation: not all tiles are in a line"
-            );
+        return hasSameY;
+    }
+
+    /*
+    checks if each tile in tiles has the same row (x) value as
+    each other tile in the array
+     */
+    private boolean allSameRow(Tile[] tiles) {
+        boolean hasSameX = true;
+        for (int i = 0; i < tiles.length - 1 && hasSameX; i++) {
+            if (tiles[i].getLocation().getX() != tiles[i+1].getLocation().getX())
+                hasSameX = false;
+        }
+        return hasSameX;
     }
 
     /*
