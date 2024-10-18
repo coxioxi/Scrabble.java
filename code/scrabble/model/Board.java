@@ -147,9 +147,10 @@ public class Board {
      *                  	in between them.
      */
     public int playTiles(Tile[] tiles) {
+        System.out.println(validatePositions(tiles));
         if (!validatePositions(tiles))
             return -1;       // ensure positions are allowed
-        int score = score(tiles);       // calculate score of play
+        int score = score(findOrigin(tiles));       // calculate score of play
         addToBoard(tiles);              // add to board
         return score;
     }
@@ -231,6 +232,7 @@ public class Board {
 
     //helper method for score
     private int calculateWordScore(int row, int col, boolean isHorizontal) {
+        //initialize variables
         int wordPoints = 0;
         int totalMultiplier = 1;
         boolean newWord = false;
@@ -239,17 +241,6 @@ public class Board {
         // Scan in the desired direction
         int startRow = row;
         int startCol = col;
-
-        // Scan left (for horizontal) or up (for vertical) to account for previous tiles
-        if (isHorizontal) {
-            while (isWithinBounds(startCol - 1, row) && board[row][startCol - 1] != null) {
-                startCol--;
-            }
-        } else {
-            while (isWithinBounds(row, startRow - 1) && board[startRow - 1][col] != null) {
-                startRow--;
-            }
-        }
 
         // Scan through the tiles in the desired direction
         while (board[row][col] != null) {
@@ -377,6 +368,14 @@ public class Board {
         all tiles are connected, either by adjacency, or adjacency to adjacency
      */
     private boolean validatePositions(Tile[] tiles) {
+        System.out.println("Inbounds: " + arePointsInbounds(tiles));
+        System.out.println("SameRow: " + allSameRow(tiles));
+        System.out.println("SameCol: " + allSameCol(tiles));
+        System.out.println("notOccupied: " + pointsNotOccupied(tiles));
+        System.out.println("Starting or Adjacent: " + arePointsStartingOrAdjacent(tiles));
+        System.out.println("arePointsConnected: " + arePointsConnected(tiles));
+
+
         return (arePointsInbounds(tiles) &&
                 (allSameRow(tiles) || allSameCol(tiles)) &&
                 hasNoDuplicates(tiles) &&
@@ -613,8 +612,7 @@ column (x) value, with smallest at tiles[0]
     the top most and left most tiles of the given list
     and adds to board
     */
-    public Tile[] findOrigin(Tile[] tiles)
-            throws InvalidPositionException {
+    public Tile[] findOrigin(Tile[] tiles) {
         Set<Tile> parentTile = new HashSet<>();
         //adds tile to board for the purpose of finding previous tile location
         addToBoard(tiles);
@@ -654,6 +652,7 @@ column (x) value, with smallest at tiles[0]
         }
         //removeTiles(tiles);
         Tile[] parent = new Tile[parentTile.size()];
+
 
         parentTile.toArray(parent);
         return parent;
