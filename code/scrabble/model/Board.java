@@ -790,6 +790,10 @@ public class Board {
 				arePointsConnected(tiles));
     }
 
+	/*
+	helper method which checks that all tiles are adjacent
+	to each other or have gaps filled with board tiles
+	 */
     private boolean arePointsConnected(Tile[] tiles) {
         // check if they are all connected
 

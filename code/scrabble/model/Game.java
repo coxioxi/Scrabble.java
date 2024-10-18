@@ -46,6 +46,22 @@ public class Game {
 		int score = board.playTiles(tiles);
 	}
 
+	/**
+	 * This method will initiate a challenge on the
+	 * most recent turn from the local player.
+	 * The challenge will fail if any word from the turn
+	 * is not in the game dictionary.
+	 * The game object updates the Player and Board objects
+	 * according to the result of the challenge
+	 *
+	 * @return true if the challenge passes.
+	 * 			false if it fails
+	 */
+	public boolean challenge() {
+
+		return true;
+	}
+
 	public int getCurrentPlayerTime() {
 		return currentPlayerTime;
 	}
@@ -75,14 +91,38 @@ public class Game {
 		player.increaseScore(amount);
 	}
 
+	/*
+	this helper method returns a reference to the player object
+	whose ID is equal to the parameter
+	 */
 	private Player getPlayer(int playerID) {
 		return null;
 	}
 
-
+		/**
+		 * Passes the turn from this player to the next player
+		 * This method updates the player's status to inactive if they
+		 * have passed their previous turn, otherwise only their
+		 * passedLastTurn field is updated.
+		 * The current player changes to the next player in the order
+		 * @param ID The ID of the player for whom to pass a turn
+		 *           This ID must correspond to the ID of the current player
+		 */
 	public void passTurn(int ID) {
 		Player player = getPlayer(ID);
+		if (player.passedLastTurn()) {
+			player.setActive(false);
+		}
 		player.setPassedLastTurn(true);
+		this.nextTurn();
+	}
+
+	/*
+	this helper method changes whose turn it is to the next
+	person in the turn list.
+	 */
+	private void nextTurn() {
+		this.currentPlayer = (this.currentPlayer + 1) % this.players.length;
 	}
 
 	public void setConnected(int playerID, boolean isConnected) {
@@ -106,7 +146,11 @@ public class Game {
 	}
 
 	public void decreaseRack(int playerID, int amount) {
-
+		// TODO: Should this raise an error when not network player?
+		Player player = getPlayer(playerID);
+		if (player instanceof NetworkPlayer np) {
+			np.setNumTiles(np.getNumTiles()-amount);
+		}
 	}
 
 	public int getNumTiles(int playerID) {
