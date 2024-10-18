@@ -43,7 +43,7 @@ public class Board {
         points[3] = new Point(7,10);
 
         try {
-            board.playTiles(tiles, points);
+            board.playTiles(tiles);
 
         }
         catch (InvalidPositionException e) {
