@@ -144,7 +144,8 @@ public class TestBoard {
         System.out.printf(player1.getName()+"'s Turn:\n");
         if(validWordCheck(pointGetter(tiles))){
             score = board.playTiles(tiles);
-            player1.setScore(score);
+            System.out.println(score);
+            player1.increaseScore(score);
             System.out.println("Words formed this turn: " + board.getLastWordsPlayed() + "\nTurn Score: " + score);
             System.out.println(player1.getName()+"'s Total Score: "+ player1.getScore());
             board.getLastWordsPlayed().clear();
@@ -155,7 +156,7 @@ public class TestBoard {
         System.out.printf(player2.getName()+"'s Turn:\n");
         if(validWordCheck(pointGetter(tiles1))) {
             score = board.playTiles(tiles1);
-            player2.setScore(score);
+            player2.increaseScore(score);
             System.out.println("Words formed this turn: " + board.getLastWordsPlayed() + "\nTurn Score: " + score);
             System.out.println(player2.getName()+"'s Total Score: "+ player2.getScore());
             board.getLastWordsPlayed().clear();
@@ -166,7 +167,7 @@ public class TestBoard {
         System.out.printf(player3.getName()+"'s Turn:\n");
         if(validWordCheck(pointGetter(tiles2))) {
             score = board.playTiles(tiles2);
-            player3.setScore(score);
+            player3.increaseScore(score);
             System.out.println("Words formed this turn: " + board.getLastWordsPlayed() + "\nTurn Score: " + score);
             System.out.println(player3.getName()+"'s Total Score: "+ player3.getScore());
             board.getLastWordsPlayed().clear();
@@ -177,7 +178,7 @@ public class TestBoard {
         System.out.printf(player4.getName()+"'s Turn:\n");
         if(validWordCheck(pointGetter(tiles3))) {
             score = board.playTiles(tiles3);
-            player4.setScore(score);
+            player4.increaseScore(score);
             System.out.println("Words formed this turn: " + board.getLastWordsPlayed() + "\nTurn Score: " + score);
             System.out.println(player4.getName()+"'s Total Score: "+ player4.getScore());
             board.getLastWordsPlayed().clear();
@@ -193,7 +194,7 @@ public class TestBoard {
         System.out.printf(player1.getName()+"'s Turn:\n");
         if(validWordCheck(pointGetter(tiles4))){
             score = board.playTiles(tiles4);
-            player1.setScore(score);
+            player1.increaseScore(score);
             System.out.println("Words formed this turn: " + board.getLastWordsPlayed() + "\nTurn Score: " + score);
             System.out.println(player1.getName()+"'s Total Score: "+ player1.getScore());
             board.getLastWordsPlayed().clear();
@@ -204,7 +205,7 @@ public class TestBoard {
         System.out.printf(player2.getName()+"'s Turn:\n");
         if(validWordCheck(pointGetter(tiles5))) {
             score = board.playTiles(tiles5);
-            player2.setScore(score);
+            player2.increaseScore(score);
             System.out.println("Words formed this turn: " + board.getLastWordsPlayed() + "\nTurn Score: " + score);
             System.out.println(player2.getName()+"'s Total Score: "+ player2.getScore());
             board.getLastWordsPlayed().clear();
