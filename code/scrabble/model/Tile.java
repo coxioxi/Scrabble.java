@@ -1,4 +1,4 @@
-package scrabble.model;
+package model;
 /*
  * Authors: Ian Boyer, David Carr, Samuel Costa,
  * Maximus Latkovski, Jy'el Mason
@@ -28,7 +28,6 @@ public class Tile {
     public Tile() {
         this.isBlank = true;
         score = 0;
-
     }
 
     /**
@@ -60,7 +59,7 @@ public class Tile {
     public void setLetter(char letter)
             throws NotBlankException{
         if (!isBlank) {
-            throw new NotBlankException("scrabble.model.Tile already has value " + this.letter);
+            throw new NotBlankException("model.Tile already has value " + this.letter);
         }
         else this.letter = letter;
     }

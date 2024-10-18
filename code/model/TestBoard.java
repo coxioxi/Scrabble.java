@@ -2,7 +2,6 @@ package model;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import scrabble.model.Player;
 
 import java.awt.*;
 import java.util.*;
@@ -45,8 +44,8 @@ public class TestBoard {
         board.addToBoard(tiles);
         System.out.println("Tiles : Board");
         for (Tile tile: tiles) {
-            Assertions.assertEquals(tile, board.getTile((int)tile.getLocation().getX(),(int)tile.getLocation().getY()));
-            System.out.println(tile.getLetter() + " : " + board.getTile((int)tile.getLocation().getX(),(int)tile.getLocation().getY()).getLetter());
+            Assertions.assertEquals(tile, board.getXAndY((int)tile.getLocation().getX(),(int)tile.getLocation().getY()));
+            System.out.println(tile.getLetter() + " : " + board.getXAndY((int)tile.getLocation().getX(),(int)tile.getLocation().getY()).getLetter());
         }
         System.out.println();
     }
