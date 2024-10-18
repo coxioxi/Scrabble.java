@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 import java.awt.*;
 import java.util.HashMap;
 import java.util.Map;
+import scrabble.model.*;
 
 public class TileTest{
     private final Map<Character,Integer> letterValue = new HashMap<>();

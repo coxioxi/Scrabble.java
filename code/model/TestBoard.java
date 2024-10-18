@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 import java.awt.*;
 import java.util.*;
 import java.util.List;
+import scrabble.model.*;
 
 public class TestBoard {
     int score = 0;
