@@ -1,11 +1,10 @@
-package model;
+package scrabble.testing;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.awt.*;
 import java.util.*;
-import java.util.List;
 import scrabble.model.*;
 
 public class TestBoard {
@@ -40,18 +39,18 @@ public class TestBoard {
     Board board = new Board();
 
     @Test
-    public void testAddToBoard() throws InvalidPositionException {
+    public void testAddToBoard() {
         board.addToBoard(tiles);
         System.out.println("Tiles : Board");
         for (Tile tile: tiles) {
-            Assertions.assertEquals(tile, board.getXAndY((int)tile.getLocation().getX(),(int)tile.getLocation().getY()));
-            System.out.println(tile.getLetter() + " : " + board.getXAndY((int)tile.getLocation().getX(),(int)tile.getLocation().getY()).getLetter());
+            Assertions.assertEquals(tile, board.getTile((int)tile.getLocation().getX(),(int)tile.getLocation().getY()));
+            System.out.println(tile.getLetter() + " : " + board.getTile((int)tile.getLocation().getX(),(int)tile.getLocation().getY()).getLetter());
         }
         System.out.println();
     }
 
     @Test
-    public void testScore() throws InvalidPositionException {
+    public void testScore() {
         score = board.playTiles(tiles);
         Assertions.assertEquals(12, score);
 
@@ -72,7 +71,7 @@ public class TestBoard {
     }
 
     @Test
-    public void testHasAdjacentTile() throws InvalidPositionException {
+    public void testHasAdjacentTile() {
         board.playTiles(tiles);
         board.playTiles(tiles1);
 
@@ -92,9 +91,8 @@ public class TestBoard {
         Assertions.assertFalse(board.hasAdjacentCaller(new Point(14, 7)));
     }
 
-
     @Test
-    public void testHasDuplicates() throws InvalidPositionException {
+    public void testHasDuplicates() {
         //for if positions are right
         board.playTiles(tiles);
         System.out.println("hasDuplicates is working when positions are right");
@@ -102,32 +100,22 @@ public class TestBoard {
 
         //for if position is wrong
         tiles[1].setLocation(new Point(7,7));
-        try{
-            board.playTiles(tiles);
-            Assertions.fail();
-        }
-        catch (InvalidPositionException e){
-            System.out.println("Error message when and exception is thrown in hasDuplicates method: " + e.getMessage());
-            System.out.println();
-        }
+
+        board.playTiles(tiles);
+        Assertions.fail();
     }
 
     @Test
-    public void testSameXorY() throws InvalidPositionException {
+    public void testSameXorY() {
         //for if positions are right
         board.playTiles(tiles);
         System.out.println("sameXorY is working when positions are valid");
         System.out.println();
 
         tiles[1].setLocation(new Point(7,8));
-        try{
-            board.playTiles(tiles);
-            Assertions.fail();
-        }
-        catch (InvalidPositionException e){
-            System.out.println("Error message when and exception is thrown in sameXorY method: " + e.getMessage());
-            System.out.println();
-        }
+
+        board.playTiles(tiles);
+        Assertions.fail();
     }
 
     private Boolean validWordCheck(Set<Point> originPoints) throws InvalidPositionException {
@@ -229,7 +217,7 @@ public class TestBoard {
         System.out.println("Board State:");
         for (int row = 0; row < 15; row++) {
             for (int col = 0; col < 15; col++) {
-                Tile tile = board.getXAndY(row, col);
+                Tile tile = board.getTile(row, col);
                 if (tile != null) {
                     System.out.print(tile.getLetter() + " ");
                 } else {
