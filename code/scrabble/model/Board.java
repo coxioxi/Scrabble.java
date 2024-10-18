@@ -7,7 +7,6 @@ package scrabble.model;
  * Original date: 10/08/2024
  */
 
-import model.Tile;
 
 import java.awt.*;
 import java.io.File;
@@ -70,6 +69,10 @@ public class Board {
      * A caller method for testing purposes
      */
     public boolean hasAdjacentCaller(Tile tile){
+        return hasAdjacentTile(tile);
+    }
+
+    public boolean hasAdjacentCaller(Point tile){
         return hasAdjacentTile(tile);
     }
 

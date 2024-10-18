@@ -1,10 +1,11 @@
-package model;
+package scrabble.model;
 
+import scrabble.model.Tile;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import java.util.*;
 
 import java.awt.*;
+
 
 public class TestBoard {
     Tile[] tiles = {new Tile('N',new Point(7,7)),new Tile('I',new Point(8,7))
@@ -64,14 +65,10 @@ public class TestBoard {
 
         //for if position is wrong
         Point[] points = {new Point(7,7),/* wrong points*/new Point(7,7),new Point(9,7),new Point(10,7),new Point(11,7)};
-        try{
-            board.playTiles(tiles);
-            Assertions.fail();
-        }
-        catch (InvalidPositionException e){
-            System.out.println("Error message when and exception is thrown in hasDuplicates method: " + e.getMessage());
-            System.out.println();
-        }
+
+        board.playTiles(tiles);
+        Assertions.fail();
+
     }
 
     @Test
@@ -82,14 +79,9 @@ public class TestBoard {
         System.out.println();
 
         Point[] points = {new Point(7,7),/* wrong points*/new Point(7,8),new Point(9,7),new Point(10,7),new Point(11,7)};
-        try{
-            board.playTiles(tiles);
-            Assertions.fail();
-        }
-        catch (InvalidPositionException e){
-            System.out.println("Error message when and exception is thrown in sameXorY method: " + e.getMessage());
-            System.out.println();
-        }
+        board.playTiles(tiles);
+        Assertions.fail();
+
     }
 
     @Test
