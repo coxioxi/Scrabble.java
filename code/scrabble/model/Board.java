@@ -212,6 +212,8 @@ public class Board {
     public int score(Tile[] originTiles) {
         int finalSum = 0;
 
+        //addToBoard(originTiles);
+
         for (Tile originTile : originTiles) {
             Point location = originTile.getLocation();
             int row = location.x;
@@ -250,7 +252,7 @@ public class Board {
         }
 
         // Scan through the tiles in the desired direction
-        while (isWithinBounds(row, col) && board[row][col] != null) {
+        while (board[row][col] != null) {
             Tile tile = board[row][col];
             int tileScore = tile.getScore();
             boolean isNewTile = tile.getIsNew();
@@ -465,7 +467,8 @@ column (x) value, with smallest at tiles[0]
     private boolean pointsNotOccupied(Tile[] tiles) {
         // are any points already occupied?
         for (Tile t : tiles) {
-            if (board[(int) t.getLocation().getX()][(int) t.getLocation().getY()] != null)
+            if (board[(int) t.getLocation().getX()][(int) t.getLocation().getY()] != null &&
+                        !board[t.getLocation().x][t.getLocation().y].getIsNew())
                 return false;
         }
         return true;
