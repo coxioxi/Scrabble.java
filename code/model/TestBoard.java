@@ -230,7 +230,7 @@ public class TestBoard {
         System.out.println("Board State:");
         for (int row = 0; row < 15; row++) {
             for (int col = 0; col < 15; col++) {
-                Tile tile = board.getTile(row, col);
+                Tile tile = board.getXAndY(row, col);
                 if (tile != null) {
                     System.out.print(tile.getLetter() + " ");
                 } else {
