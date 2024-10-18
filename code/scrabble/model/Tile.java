@@ -1,4 +1,4 @@
-package scrabble.model;
+package model;
 /*
  * Authors: Ian Boyer, David Carr, Samuel Costa,
  * Maximus Latkovski, Jy'el Mason
@@ -57,7 +57,7 @@ public class Tile {
      *          to be set.
      */
     public void setLetter(char letter)
-        throws NotBlankException{
+            throws NotBlankException{
         if (!isBlank) {
             throw new NotBlankException("model.Tile already has value " + this.letter);
         }
