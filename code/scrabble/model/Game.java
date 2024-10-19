@@ -133,8 +133,6 @@ public class Game {
 			}
 		}
 		return finalPlayer;
-		// TODO: implement
-
 	}
 
 
@@ -154,7 +152,6 @@ public class Game {
 		}else{
 			player.setHasPassedLastTurn(true);
 		}
-		// TODO: implement
 	}
 
 	/**
@@ -171,9 +168,6 @@ public class Game {
 		}else{
 			player.setActive(false);
 		}
-
-		// TODO: implement
-		// also change isactive if isconnected is false
 	}
 
 	public boolean isConnected(int playerID) {
@@ -194,7 +188,6 @@ public class Game {
 	public void setActive(int playerID, boolean isActive) {
 		Player player = players[playerID];
 		player.setActive(isActive);
-
 	}
 
 	/**
