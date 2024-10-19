@@ -8,6 +8,7 @@ package scrabble.model;
  */
 
 import java.awt.*;
+import java.util.ArrayList;
 
 /**
  * This class represents the Scrabble game.
@@ -27,13 +28,14 @@ public class Game {
 	private Player[] players;
 	private Board board; 	// the game board
 	private Ruleset ruleset;	// game ruleset
-	private LocalPlayer self;	// the local player
+	private LocalPlayer self;// the local player
 
 	private int currentPlayerTime;	// how much time (in seconds) the current player has
 	private int gameTime;			// how much time (in seconds) remains in the game
 	private int currentPlayer;		// whose turn it is. Their ID and
 									//  	the player at players[currentPlayer]
 	private boolean isGameOver;		// whether the game has met any end conditions
+	private ArrayList<Tile> tileBag;
 
 	public Game(Player[] players, Board board, Ruleset ruleset, Player me){
 		this.players = players;
@@ -244,8 +246,19 @@ public class Game {
 	 * Gets the tiles of the local player
 	 * @return the tiles of the local player
 	 */
-	public Tile[] getPlayerTiles() {
+	public ArrayList<Tile> getPlayerTiles() {
 		return self.getRack();
+	}
+
+	private void fillTileBag(){
+
+	}
+
+	public boolean isGameOver() {
+		if (tileBag.isEmpty() && self.getRack().isEmpty()) {
+			isGameOver = true;
+		}
+		return isGameOver;
 	}
 
 

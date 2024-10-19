@@ -7,6 +7,11 @@ package scrabble.model;
  * Original date: 10/08/2024
  */
 
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Scanner;
+
 /**
  * This class is a representation of the options in a Scrabble game.
  * It holds information on the amount of time per turn, how much time is
@@ -14,11 +19,11 @@ package scrabble.model;
  * being used.
  */
 public class Ruleset {
-	private final int totalTime;
-	private final int turnTime;
+	private int totalTime;
+	private int turnTime;
 	private final boolean areChallengesAllowed;
 	private final String dictionaryFileName;
-	private String[] dictionary;
+	private ArrayList<String> dictionary;
 
 
 	/**
@@ -41,10 +46,15 @@ public class Ruleset {
 
 	/**
 	 * Checks to see if a word is in the dictionary
-	 * @param word the word to check
+	 * @param words the words to be checked
 	 * @return true if it is in dictionary, false otherwise
 	 */
-	public boolean isWordInDictionary(String word) {
+	public boolean isWordInDictionary(String[] words) {
+		for(String word: words){
+			if(!dictionary.contains(word)){
+				return false;
+			}
+		}
 		//TODO: binary search on dictionary
 		return true;
 	}
@@ -56,6 +66,9 @@ public class Ruleset {
 	public int getTotalTime() {
 		return totalTime;
 	}
+	public void setTotalTime(int time){
+		totalTime = time;
+	}
 
 	/**
 	 * getter for turn time
@@ -65,6 +78,9 @@ public class Ruleset {
 		return turnTime;
 	}
 
+	public void setTurnTime(int time){
+		turnTime = time;
+	}
 	/**
 	 * getter for challenges enabled
 	 * @return whether challenges are allowed
@@ -76,9 +92,21 @@ public class Ruleset {
 	/*
 	reads in the words in the dictionary using the pathname given
 	 */
-	private String[] readInDictionary() {
+	private ArrayList<String> readInDictionary() {
 		//TODO: read in the word list from dictionary. put into arraylist, then convert and return
-		return new String[0];
+		ArrayList<String> list = new ArrayList<>();
+		try{
+			File dictionary = new File("./code/scrabble/" + dictionaryFileName);
+			Scanner scanner = new Scanner(dictionary);
+			while(scanner.hasNext()){
+				list.add(scanner.nextLine());
+			}
+
+		}catch(IOException e){
+			System.out.println(e.getMessage());
+		}
+		return list;
+
 	}
 
 
