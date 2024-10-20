@@ -29,23 +29,110 @@ public class Board {
     public static final int BOARD_COLUMNS = 15;
 
     public static void main(String[] args) {
+        /*
+        Usage: Follow prompts in console. initial play is made,
+        subsequent plays are made by user.
+        user specifies starting row and column, orientation of play,
+        then the letters/tiles to be played. Exclude board tiles, only
+        input new tiles to be placed.
+         */
         Board board = new Board();
 
-        Tile[] tiles = new Tile[4];
-        Point[] points = new Point[4];
-        tiles[0] = new Tile('T');
-        points[0] = new Point(7,7);
-        tiles[1] = new Tile('I');
-        points[1] = new Point(7,8);
-        tiles[2] = new Tile('L');
-        points[2] = new Point(7,9);
-        tiles[3] = new Tile('E');
-        points[3] = new Point(7,10);
+        // initial play of "TILE", horizontal, starting at 7,7
+        Tile[] firstPlay = new Tile[4];
+        firstPlay[0] = new Tile('N', new Point(7,7 ));
+        firstPlay[1] = new Tile('I', new Point(7,8 ));
+        firstPlay[2] = new Tile('C', new Point(7,9 ));
+        firstPlay[3] = new Tile('E', new Point(7,10));
 
-        board.playTiles(tiles);
+        int score = board.playTiles(firstPlay);
+        System.out.println("Score:" + score);
 
         System.out.println(board);
+
+        // allow user to make plays on board
+        Scanner in = new Scanner (System.in);
+        System.out.print("Make a play (Y) or quit (Q): ");
+        char userInput = in.next().toUpperCase().charAt(0);
+        while (userInput != 'Q') {
+            // User makes a play at a starting row and column,
+            // specifies direction, then this function calculates
+            // the points of all letters given the board's state
+            System.out.println();
+            System.out.println("Starting point");
+            System.out.print("\tEnter row (integer): ");
+            int startingRow = in.nextInt();
+            System.out.print("\tEnter column (integer): ");
+            int startingColumn = in.nextInt();
+
+            System.out.println();
+            System.out.println("Orientation");
+            System.out.print("\tEnter 'V' for vertical, 'H' for horizontal: ");
+            boolean isVertical = 'V' == in.next().toUpperCase().charAt(0);
+
+            System.out.println();
+            System.out.print("Enter letters on this line: ");
+            char[] letters = in.next().trim().toUpperCase().toCharArray();
+
+
+            // Calculate Point object of each tile
+            Tile[] tiles = new Tile[letters.length];
+            int gap = 0;        // specifies gap from starting point to this tile
+            for (int i = 0; i < letters.length; i++) {
+                char letter = letters[i];
+                if (i == 0) {
+                    tiles[i] = new Tile(letter,
+                            new Point(startingRow, startingColumn));
+                    gap = 1;
+                }
+                else if (isVertical) {
+                    while (board.board[startingRow+gap][startingColumn] != null
+                                && !board.board[startingRow+gap][startingColumn].getIsNew()) {
+                        gap++;      // increment gap while board tiles exist
+                    }
+                    tiles[i] = new Tile(letter,
+                            new Point(startingRow+gap, startingColumn));
+                    gap++;
+                }
+                else {
+                    while (board.board[startingRow][startingColumn+gap] != null
+                            && !board.board[startingRow+gap][startingColumn].getIsNew()) {
+                        gap++;
+                    }
+                    tiles[i] = new Tile(letter,
+                            new Point(startingRow, startingColumn+gap));
+                    gap++;
+                }
+            }
+
+            score = board.playTiles(tiles);
+
+            if (score != -1) {
+                System.out.println("Score: " + score);
+                System.out.println("Words made: ");
+                for (String s : board.lastWordsPlayed) {
+                    System.out.println("\t" + s);
+                }
+                System.out.println();
+
+                System.out.print("Show board? ('Y' or 'N'): ");
+                boolean showBoard = 'Y' == in.next().toUpperCase().charAt(0);
+                System.out.println();
+
+                if (showBoard)
+                    System.out.println(board);
+                System.out.println();
+            }
+            else {
+                System.out.println("Play failed.");
+                System.out.println();
+            }
+
+            System.out.print("Make a play (Y) or quit (Q): ");
+            userInput = in.next().toUpperCase().charAt(0);
+        }
     }
+
     /**
      * Constructs a new model.Board object
      * getter for dictionary for testing purposes
@@ -149,7 +236,7 @@ public class Board {
     public int playTiles(Tile[] tiles) {
         if (!validatePositions(tiles))
             return -1;       // ensure positions are allowed
-        int score = score(tiles);       // calculate score of play
+        int score = score(findOrigin(tiles));       // calculate score of play
         addToBoard(tiles);              // add to board
         return score;
     }
@@ -231,25 +318,16 @@ public class Board {
 
     //helper method for score
     private int calculateWordScore(int row, int col, boolean isHorizontal) {
+        //initialize variables
         int wordPoints = 0;
         int totalMultiplier = 1;
         boolean newWord = false;
         StringBuilder stringBuilder = new StringBuilder();
+        ArrayList<String> words = new ArrayList<>();
 
         // Scan in the desired direction
         int startRow = row;
         int startCol = col;
-
-        // Scan left (for horizontal) or up (for vertical) to account for previous tiles
-        if (isHorizontal) {
-            while (isWithinBounds(startCol - 1, row) && board[row][startCol - 1] != null) {
-                startCol--;
-            }
-        } else {
-            while (isWithinBounds(row, startRow - 1) && board[startRow - 1][col] != null) {
-                startRow--;
-            }
-        }
 
         // Scan through the tiles in the desired direction
         while (board[row][col] != null) {
@@ -299,7 +377,8 @@ public class Board {
             }
         }
         // Update lastWordsPlayed
-        lastWordsPlayed.add(stringBuilder.toString());
+        words.add(stringBuilder.toString());
+        lastWordsPlayed = words;
 
         // Return the final word score, applying any word multipliers
         if (newWord) {
@@ -377,6 +456,15 @@ public class Board {
         all tiles are connected, either by adjacency, or adjacency to adjacency
      */
     private boolean validatePositions(Tile[] tiles) {
+        /*
+        System.out.println("Inbounds: " + arePointsInbounds(tiles));
+        System.out.println("SameRow: " + allSameRow(tiles));
+        System.out.println("SameCol: " + allSameCol(tiles));
+        System.out.println("notOccupied: " + pointsNotOccupied(tiles));
+        System.out.println("Starting or Adjacent: " + arePointsStartingOrAdjacent(tiles));
+        System.out.println("arePointsConnected: " + arePointsConnected(tiles));
+         */
+
         return (arePointsInbounds(tiles) &&
                 (allSameRow(tiles) || allSameCol(tiles)) &&
                 hasNoDuplicates(tiles) &&
@@ -613,8 +701,7 @@ column (x) value, with smallest at tiles[0]
     the top most and left most tiles of the given list
     and adds to board
     */
-    public Tile[] findOrigin(Tile[] tiles)
-            throws InvalidPositionException {
+    public Tile[] findOrigin(Tile[] tiles) {
         Set<Tile> parentTile = new HashSet<>();
         //adds tile to board for the purpose of finding previous tile location
         addToBoard(tiles);
@@ -654,6 +741,7 @@ column (x) value, with smallest at tiles[0]
         }
         //removeTiles(tiles);
         Tile[] parent = new Tile[parentTile.size()];
+
 
         parentTile.toArray(parent);
         return parent;
