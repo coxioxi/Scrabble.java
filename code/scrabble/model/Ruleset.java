@@ -7,6 +7,8 @@ package scrabble.model;
  * Original date: 10/08/2024
  */
 
+import java.util.HashSet;
+
 /**
  * This class is a representation of the options in a Scrabble game.
  * It holds information on the amount of time per turn, how much time is
@@ -16,9 +18,9 @@ package scrabble.model;
 public class Ruleset {
 	private final int totalTime;
 	private final int turnTime;
-	private final boolean areChallengesAllowed;
+	private final boolean challengesAllowed;
 	private final String dictionaryFileName;
-	private String[] dictionary;
+	private HashSet<String> dictionary;
 
 
 	/**
@@ -27,14 +29,14 @@ public class Ruleset {
 	 *                  Between 300 and 3600.
 	 * @param turnTime how much time (in seconds) a player may take on their turn.
 	 *                 Between 30 and 300
-	 * @param areChallengesAllowed whether challenges are allowed or not
+	 * @param challengesAllowed whether challenges are allowed or not
 	 * @param dictionaryFileName the path to the file which will be the dictionary
 	 */
 	public Ruleset(int totalTime, int turnTime,
-				   boolean areChallengesAllowed, String dictionaryFileName) {
+				   boolean challengesAllowed, String dictionaryFileName) {
 		this.totalTime = totalTime;
 		this.turnTime = turnTime;
-		this.areChallengesAllowed = areChallengesAllowed;
+		this.challengesAllowed = challengesAllowed;
 		this.dictionaryFileName = dictionaryFileName;
 		dictionary = readInDictionary();
 	}
@@ -69,16 +71,16 @@ public class Ruleset {
 	 * getter for challenges enabled
 	 * @return whether challenges are allowed
 	 */
-	public boolean isAreChallengesAllowed() {
-		return areChallengesAllowed;
+	public boolean areChallengesAllowed() {
+		return challengesAllowed;
 	}
 
 	/*
 	reads in the words in the dictionary using the pathname given
 	 */
-	private String[] readInDictionary() {
+	private HashSet<String> readInDictionary() {
 		//TODO: read in the word list from dictionary. put into arraylist, then convert and return
-		return new String[0];
+		return new HashSet<>(0);
 	}
 
 
