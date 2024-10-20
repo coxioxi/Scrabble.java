@@ -106,4 +106,15 @@ public class Tile {
         }
         return points;
     }
+
+    @Override
+    public String toString() {
+        return "Tile{" +
+                "score=" + score +
+                ", letter=" + letter +
+                ", isBlank=" + isBlank +
+                ", location=" + location +
+                ", isNew=" + isNew +
+                '}';
+    }
 }
