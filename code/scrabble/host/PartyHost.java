@@ -10,6 +10,7 @@ this class is the server side
 Usage: 	javac scrabble/host/PartyHost.java
 		java scrabble/host/PartyHost
 		Use ../controllers/NetworkController as client
+David: cd "OneDrive - Otterbein University\IdeaProjects\Scrabble\code"
 
  */
 public class PartyHost implements Runnable {
@@ -85,9 +86,11 @@ public class PartyHost implements Runnable {
 	}
 
 	public static void main(String[] args) throws UnknownHostException {
-		System.out.println("Your IP: " + Inet4Address.getLocalHost().getHostAddress());
-
 		int port = 5000;
+
+		System.out.println("Your IP: " + Inet4Address.getLocalHost().getHostAddress());
+		System.out.println("Listening at port " + port);
+
 		Thread thread = new Thread(new PartyHost(port));
 		thread.start();
 		try {
