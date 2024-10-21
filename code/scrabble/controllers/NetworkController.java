@@ -6,6 +6,12 @@ import java.io.IOException;
 import java.net.Socket;
 import java.util.Scanner;
 
+/*
+client side
+usage: 	javac scrabble/controllers/NetworkController.java
+		java scrabble/controllers/NetworkController [host_address] [port]
+		../host/PartyHost acts as server and prints out local IP for host address
+ */
 public class NetworkController {
 	private Socket socket;
 	private Scanner input;

@@ -5,6 +5,13 @@ import java.io.IOException;
 import java.net.*;
 import java.util.ArrayList;
 
+/*
+this class is the server side
+Usage: 	javac scrabble/host/PartyHost.java
+		java scrabble/host/PartyHost
+		Use ../controllers/NetworkController as client
+
+ */
 public class PartyHost implements Runnable {
 
 	private Socket[] socket;
