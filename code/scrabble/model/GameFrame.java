@@ -10,27 +10,6 @@ public class GameFrame extends JFrame {
     private static final Font labelFont = new Font("Arial", Font.PLAIN, 28);
     private static final Font titleFont = new Font("Times New Roman", Font.BOLD, 40);
 
-    public GameFrame() {
-        setTitle("Scrabble");
-
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
-        setLayout(new BorderLayout());
-
-        initializeComponents();
-
-        mainMenu();
-
-    }
-
-    public void initializeComponents() {
-        JPanel boardPanel = new JPanel();
-        boardPanel.setBackground(Color.LIGHT_GRAY);
-        boardPanel.setPreferredSize(new Dimension(600, 400));
-        add(boardPanel, BorderLayout.CENTER);
-
-    }
-
     public static void mainMenu() {
         JFrame menuFrame = new JFrame();
         JLabel menuTitle = new JLabel("Main Menu", SwingConstants.CENTER);
@@ -95,7 +74,7 @@ public class GameFrame extends JFrame {
         nameLabel.setBounds(25, 150, 100, 40);
         hostsIP.setBounds(245, 80, 200, 40);
         nameInput.setBounds(115, 150, 225, 40);
-        hostButton.setBounds(325, 480, 150, 60);
+        hostButton.setBounds(325, 490, 150, 50);
 
         hostFrame.add(yourIP);
         hostFrame.add(nameLabel);
