@@ -7,6 +7,9 @@ import java.awt.event.ActionListener;
 
 
 public class GameFrame extends JFrame {
+    private static final Font labelFont = new Font("Arial", Font.PLAIN, 28);
+    private static final Font titleFont = new Font("Times New Roman", Font.BOLD, 40);
+
     public GameFrame() {
         setTitle("Scrabble");
 
@@ -65,18 +68,41 @@ public class GameFrame extends JFrame {
 
 
     public static void hostScreen() {
-        JFrame hostFrame = new JFrame();
+        JFrame hostFrame = new JFrame("Scrabble");
         hostFrame.setSize(800,600);
+        hostFrame.setDefaultCloseOperation(EXIT_ON_CLOSE);
+
+        JPanel centerBackground = new JPanel();
 
         JLabel hostTitle = new JLabel("Host Game", SwingConstants.CENTER);
-        hostTitle.setFont(new Font("Arial", Font.BOLD, 24));
+        hostTitle.setFont(new Font("Arial", Font.BOLD, 40));
         hostFrame.add(hostTitle, BorderLayout.NORTH);
 
-        JLabel yourIP = new JLabel("Your IP Address");
-        JLabel name = new JLabel("Name:");
-        JLabel hostsIP = new JLabel("**Hosts IP**");
-        JTextField nameInput = new JTextField("Your Name");
+        JLabel yourIP = new JLabel("Your IP Address:");
+        JLabel nameLabel = new JLabel("Name:");
+        JLabel hostsIP = new JLabel("**Host's IP**");
+        JTextField nameInput = new JTextField();
         JButton hostButton = new JButton("Host");
+
+        hostTitle.setFont(titleFont);
+        yourIP.setFont(labelFont);
+        nameLabel.setFont(labelFont);
+        hostsIP.setFont(labelFont);
+        nameInput.setFont(labelFont);
+        hostButton.setFont(labelFont);
+
+        yourIP.setBounds(25, 80, 240, 40);
+        nameLabel.setBounds(25, 150, 100, 40);
+        hostsIP.setBounds(245, 80, 200, 40);
+        nameInput.setBounds(115, 150, 225, 40);
+        hostButton.setBounds(325, 480, 150, 60);
+
+        hostFrame.add(yourIP);
+        hostFrame.add(nameLabel);
+        hostFrame.add(hostsIP);
+        hostFrame.add(nameInput);
+        hostFrame.add(hostButton);
+        hostFrame.add(centerBackground, BorderLayout.CENTER);
 
         hostFrame.setVisible(true);
     }
@@ -102,9 +128,7 @@ public class GameFrame extends JFrame {
     }
 
     public static void main(String[] args) {
-        mainMenu();
-
-        //hostScreen();
+        hostScreen();
     }
 
 
