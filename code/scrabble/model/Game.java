@@ -22,19 +22,28 @@ public class Game {
 
 	 */
 
-	// the players of the game. The order is significant and represents the order in
+	// The players of the game. The order is significant and represents the order in
 	// which turns are taken
 	private Player[] players;
-	private Board board; 	// the game board
-	private Ruleset ruleset;	// game ruleset
-	private LocalPlayer self;	// the local player
+	private Board board; 	    // The game board
+	private Ruleset ruleset;	// The game ruleset
+	private LocalPlayer self;	// The local player
 
-	private int currentPlayerTime;	// how much time (in seconds) the current player has
-	private int gameTime;			// how much time (in seconds) remains in the game
-	private int currentPlayer;		// whose turn it is. Their ID and
-									//  	the player at players[currentPlayer]
-	private boolean isGameOver;		// whether the game has met any end conditions
+	private int currentPlayerTime;	// How much time (in seconds) the current player has
+	private int gameTime;			// How much time (in seconds) remains in the game
+	private int currentPlayer;		// Whose turn it is. Their ID and
+									// The player at players[currentPlayer]
+	private boolean isGameOver;		// Whether the game has met any end conditions
 
+	/**
+	 * Constructor for the Game class.
+	 * Initializes players, board, ruleset, and the local player.
+	 *
+	 * @param players Array of players participating in the game
+	 * @param board The game board
+	 * @param ruleset The ruleset for the game
+	 * @param me The local player
+	 */
 	public Game(Player[] players, Board board, Ruleset ruleset, Player me){
 		this.players = players;
 		this.board = new Board();
@@ -47,7 +56,8 @@ public class Game {
 	 * Plays tiles on the board for a player
 	 * @param playerID the ID of the player for whom to make a play
 	 * @param tiles the tiles to be placed. must have at least on tile
-	 * see Board.playTiles()
+	 * @return true if the play is successful, false otherwise
+	 * See Board.playTiles()
 	 */
 	public boolean playTiles(int playerID, Tile[] tiles) {
 		Player player = getPlayer(playerID);
@@ -70,42 +80,47 @@ public class Game {
 	 * The game object updates the Player and Board objects
 	 * according to the result of the challenge
 	 *
-	 * @return true if the challenge passes.
-	 * 			false if it fails
+	 * @return true if the challenge passes. False if it fails
 	 */
 	public boolean challenge() {
-
+		// TODO: Implement challenge logic
 		return true;
 	}
 
 	/*
-	this helper method changes whose turn it is to the next
-	person in the turn list.
+	  This helper method changes whose turn it is to the next
+	  person in the turn list.
  	*/
 	private void nextTurn() {
 		this.currentPlayer = (this.currentPlayer + 1) % this.players.length;
 	}
 
+	// Getter and setter methods for the current player time
 	public int getCurrentPlayerTime() {
 		return currentPlayerTime;
 	}
 
+	// Set current player time
 	public void setCurrentPlayerTime(int currentPlayerTime) {
 		this.currentPlayerTime = currentPlayerTime;
 	}
 
+	// Getter and setter methods for the game time
 	public int getGameTime() {
 		return gameTime;
 	}
 
+	// Set total game time
 	public void setGameTime(int gameTime) {
 		this.gameTime = gameTime;
 	}
 
+	// Getter for the current player's index
 	public int getCurrentPlayer() {
 		return currentPlayer;
 	}
 
+	// Set the current player index
 	public void setCurrentPlayer(int currentPlayer) {
 		this.currentPlayer = currentPlayer;
 	}
@@ -122,17 +137,17 @@ public class Game {
 	}
 
 	/*
-	this helper method returns a reference to the player object
-	whose ID is equal to the parameter
+	  This helper method returns a reference to the player object
+	  whose ID is equal to the parameter.
  	*/
 	private Player getPlayer(int playerID) {
-		Player finalPlayer = null;
-		for(Player player: players){
-			if(playerID == player.getID()){
-				finalPlayer = player;
+		Player finalPlayer = null; // Variable to hold the found player
+		for(Player player: players){ // Loop through players
+			if(playerID == player.getID()){ // Check if the player ID matches
+				finalPlayer = player; // Assign the matching player
 			}
 		}
-		return finalPlayer;
+		return finalPlayer; // Return the found player
 	}
 
 
@@ -141,43 +156,55 @@ public class Game {
 	 * This method updates the player's status to inactive if they
 	 * have passed their previous turn, otherwise only their
 	 * passedLastTurn field is updated.
-	 * The current player changes to the next player in the order
+	 * The current player changes to the next player in the order.
 	 * @param ID The ID of the player for whom to pass a turn
 	 *           This ID must correspond to the ID of the current player
 	 */
 	public void passTurn(int ID) {
-		Player player = players[ID];
-		if(player.isHasPassedLastTurn()){
-			player.setActive(false);
+		Player player = players[ID]; // Retrieve the current player
+		if(player.isHasPassedLastTurn()){ // Check if they have already passed
+			player.setActive(false); // Set to inactive
 		}else{
-			player.setHasPassedLastTurn(true);
+			player.setHasPassedLastTurn(true); // Mark that they have passed this turn
 		}
 	}
 
 	/**
 	 * Changes the status of the player's connection
 	 * Note this change should only be made for NetworkPlayers,
-	 * and not for the local player. the latter will cause errors
+	 * and not for the local player. The latter will cause errors.
 	 * @param playerID the player to change the status of
 	 * @param isConnected The new status of the player
 	 */
 	public void setConnected(int playerID, boolean isConnected) {
-		NetworkPlayer player = (NetworkPlayer) players[playerID];
+		NetworkPlayer player = (NetworkPlayer) players[playerID]; // Cast player to NetworkPlayer
 		if(isConnected){
-			player.setConnected(true);
+			player.setConnected(true); // Set connected status to true
 		}else{
-			player.setActive(false);
+			player.setActive(false); // Set active status to false if disconnected
 		}
 	}
 
+	/**
+	 * Checks if a player is connected.
+	 *
+	 * @param playerID The ID of the player to check
+	 * @return true if the player is connected, false otherwise
+	 */
 	public boolean isConnected(int playerID) {
-		NetworkPlayer player = (NetworkPlayer) players[playerID];
-		return player.isConnected();
+		NetworkPlayer player = (NetworkPlayer) players[playerID]; // Cast player to NetworkPlayer
+		return player.isConnected(); // Return network status
 	}
 
+	/**
+	 * Checks if a player is active.
+	 *
+	 * @param playerID The ID of the player to check
+	 * @return true if the player is active, false otherwise
+	 */
 	public boolean isActive(int playerID) {
-		NetworkPlayer player = (NetworkPlayer) players[playerID];
-		return player.isActive();
+		NetworkPlayer player = (NetworkPlayer) players[playerID]; // Cast player to NetworkPlayer
+		return player.isActive(); // Return activity status
 	}
 
 	/**
@@ -186,26 +213,32 @@ public class Game {
 	 * @param isActive the status of the player
 	 */
 	public void setActive(int playerID, boolean isActive) {
-		Player player = players[playerID];
-		player.setActive(isActive);
+		Player player = players[playerID]; // Retrieve the player by ID
+		player.setActive(isActive); // Set the player's active status
 	}
 
 	/**
 	 * changes the rack size of specified player.
-	 * This method should only be called on NetworkPlayers
+	 * This method should only be called on NetworkPlayers.
 	 * @param playerID the player for whom to change the rack size.
 	 * @param amount the amount to change the rack size by. Note that
 	 *               the total size of a player's rack should never exceed 7.
 	 */
 	public void decreaseRack(int playerID, int amount) {
-		NetworkPlayer player = (NetworkPlayer) players[playerID];
-		int numTiles = player.getNumTiles() - amount;
-		player.setNumTiles(numTiles);
+		NetworkPlayer player = (NetworkPlayer) players[playerID]; // Cast player to NetworkPlayer
+		int numTiles = player.getNumTiles() - amount; // Calculate new number of tiles
+		player.setNumTiles(numTiles); // Update the player's tile count
 
 	}
 
+	/**
+	 * Gets the number of tiles the specified player has.
+	 *
+	 * @param playerID The ID of the player to check
+	 * @return The number of tiles the player has
+	 */
 	public int getNumTiles(int playerID) {
-		NetworkPlayer player = (NetworkPlayer)players[playerID];
+		NetworkPlayer player = (NetworkPlayer)players[playerID]; // Cast player to NetworkPlayer
 		return player.getNumTiles();
 	}
 

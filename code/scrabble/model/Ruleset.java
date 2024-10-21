@@ -16,11 +16,11 @@ import java.util.HashSet;
  * being used.
  */
 public class Ruleset {
-	private final int totalTime;
-	private final int turnTime;
-	private final boolean challengesAllowed;
-	private final String dictionaryFileName;
-	private HashSet<String> dictionary;
+	private final int totalTime;				// Total time allotted for the whole game (in seconds)
+	private final int turnTime;					// Time allotted per turn for each player (in seconds)
+	private final boolean challengesAllowed;	// Indicates if challenges are allowed during gameplay
+	private final String dictionaryFileName;	// Path to the dictionary file
+	private HashSet<String> dictionary;			// Set of valid words from the dictionary
 
 
 	/**
@@ -34,11 +34,11 @@ public class Ruleset {
 	 */
 	public Ruleset(int totalTime, int turnTime,
 				   boolean challengesAllowed, String dictionaryFileName) {
-		this.totalTime = totalTime;
-		this.turnTime = turnTime;
-		this.challengesAllowed = challengesAllowed;
-		this.dictionaryFileName = dictionaryFileName;
-		dictionary = readInDictionary();
+		this.totalTime = totalTime;						// Initialize total game time
+		this.turnTime = turnTime;						// Initialize turn time
+		this.challengesAllowed = challengesAllowed;		// Set challenge allowed
+		this.dictionaryFileName = dictionaryFileName;	// Set dictionary file name
+		dictionary = readInDictionary();				// Load words from the dictionary file
 	}
 
 	/**
@@ -52,7 +52,7 @@ public class Ruleset {
 	}
 
 	/**
-	 * getter for total time
+	 * Getter for total time
 	 * @return the total time of the game (in seconds)
 	 */
 	public int getTotalTime() {
@@ -60,7 +60,7 @@ public class Ruleset {
 	}
 
 	/**
-	 * getter for turn time
+	 * Getter for turn time
 	 * @return the turn time for players (in seconds)
 	 */
 	public int getTurnTime() {
@@ -68,15 +68,15 @@ public class Ruleset {
 	}
 
 	/**
-	 * getter for challenges enabled
+	 * Getter for challenges enabled
 	 * @return whether challenges are allowed
 	 */
 	public boolean areChallengesAllowed() {
 		return challengesAllowed;
 	}
 
-	/*
-	reads in the words in the dictionary using the pathname given
+	 /*
+		Reads in the words in the dictionary using the pathname given
 	 */
 	private HashSet<String> readInDictionary() {
 		//TODO: read in the word list from dictionary. put into arraylist, then convert and return
