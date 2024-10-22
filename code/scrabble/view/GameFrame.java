@@ -1,4 +1,4 @@
-package scrabble.model;
+package scrabble.view;
 
 import javax.swing.*;
 import javax.swing.border.LineBorder;
