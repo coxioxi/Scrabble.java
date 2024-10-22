@@ -23,7 +23,10 @@ public class Board {
     private Map<Point,ModifierType> boardSpecialCell;   // Map of modifier cells
     private ArrayList<String> lastWordsPlayed = new ArrayList<>();   // The words which have most recently been played
     private final ArrayList<String> dictionary; // Stores the Scrabble dictionary used to check work logic
-    public ArrayList<String> allWordsPlayed = new ArrayList<>(); // Keeps track of all the words played throughout the game
+    public ArrayList<String> allWordsPlayed = new ArrayList<>();
+    public ArrayList<Point> newTileLocations = new ArrayList<>();
+    private final String HORIZONTAL = "horizontal";
+    private final String VERTICAL = "vertical";
 
     // Constants for the number of rows and columns on the Scrabble board
     public static final int BOARD_ROWS = 15;
@@ -303,41 +306,61 @@ public class Board {
     }
 
     /*
-    Helper method; calculates the score of tiles played with words and modifier cells.
-    Returns score as an int
-    Also updates lastWordsPlayed
+    calculates the score of tiles played with words and modifier cells.
+    returns score as an int
      */
     public int score(Tile[] originTiles) {
         int finalSum = 0;
 
-        // Loop through origin tiles and score them based on position and direction
         for (Tile originTile : originTiles) {
             Point location = originTile.getLocation();
             int row = location.x;
             int col = location.y;
 
-            // Check for both horizontal and vertical words and calculate scores
-            if(isHorizontal(row,col))
+            for(Point point: newTileLocations)
+                board[point.x][point.y].setIsNew(false);
+
+            // Check for horizontal words
+            if(isHorizontal(row,col).equals(HORIZONTAL)) {
+
+                for (Point point : newTileLocations)
+                    board[point.x][point.y].setIsNew(true);
+
                 finalSum += calculateWordScore(row, col, true);  // Horizontal
-            else
+            }
+            // Check for vertical words
+            else if(isHorizontal(row,col).equals(VERTICAL)) {
+
+                for (Point point : newTileLocations)
+                    board[point.x][point.y].setIsNew(true);
+
                 finalSum += calculateWordScore(row, col, false); // Vertical
+            }
         }
 
-        return finalSum; // Return final score
+        return finalSum;
     }
 
     //Helper method for score
     private int calculateWordScore(int row, int col, boolean isHorizontal) {
-        //Initialize variables
-        int wordPoints = 0; // Base score for the word
-        int totalMultiplier = 1; // Multiplier for word score (from special cells)
-        boolean newWord = false; // Tracks if this is a new word
-        StringBuilder stringBuilder = new StringBuilder(); // Builds the word string
-        ArrayList<String> words = new ArrayList<>(); // Stores the words created
+        int wordPoints = 0;
+        int totalMultiplier = 1;
+        boolean newWord = false;
+        StringBuilder stringBuilder = new StringBuilder();
 
-        // Scan in the desired direction
-        int startRow = row;
-        int startCol = col;
+        int tempRow = row;
+        int tempCol = col;
+        int newTileCount = 0;
+        while (board[tempRow][tempCol] != null) {
+            if (board[tempRow][tempCol].getIsNew())
+                ++newTileCount;
+
+            if (isHorizontal) {
+                tempCol++;
+            } else {
+                tempRow++;
+            }
+        }
 
         // Scan through the tiles in the desired direction
         while (board[row][col] != null) {
@@ -368,10 +391,23 @@ public class Board {
                             totalMultiplier *= 3; // Triple the word score
                             break;
                     }
-                    tile.setIsNew(false);
+                    if ((newTileCount == 1 && ((isHorizontal && isWithinBounds(row+1,col) && isWithinBounds(row-1,col) && (board[row+1][col] != null || board[row-1][col] != null))
+                            || (!isHorizontal && isWithinBounds(row, col+1) && isWithinBounds(row, col-1) && (board[row][col+1] != null || board[row][col-1] != null)))) ||
+                            ((newTileCount > 1 && ((isHorizontal && isWithinBounds(row+1,col) && isWithinBounds(row-1,col) && (board[row+1][col] != null || board[row-1][col] != null))
+                                    || (!isHorizontal && isWithinBounds(row, col+1) && isWithinBounds(row, col-1) && (board[row][col+1] != null || board[row][col-1] != null)))))){
+                        newTileLocations.add(tile.getLocation());
+                    }
+                    else
+                        tile.setIsNew(false);
+
                 } else {
                     wordPoints += tileScore; // Normal tile without modifier
-                    tile.setIsNew(false);
+
+                    if(newTileCount == 1 && ((isHorizontal && isWithinBounds(row+1,col) && isWithinBounds(row-1,col) && (board[row+1][col] != null || board[row-1][col] != null))
+                            || (!isHorizontal && isWithinBounds(row, col+1) && isWithinBounds(row, col-1) && (board[row][col+1] != null || board[row][col-1] != null))))
+                        newTileLocations.add(tile.getLocation());
+                    else
+                        tile.setIsNew(false);
                 }
             } else {
                 wordPoints += tileScore; // Add points for existing tiles
@@ -386,9 +422,8 @@ public class Board {
                 row++;
             }
         }
-        // Update lastWordsPlayed with the word formed
-        words.add(stringBuilder.toString());
-        lastWordsPlayed = words;
+        // Update lastWordsPlayed
+        lastWordsPlayed.add(stringBuilder.toString());
 
         // Return the final word score, applying any word multipliers
         if (newWord) {
@@ -398,26 +433,26 @@ public class Board {
         }
     }
 
-    //Helper method for score
+    //helper method for score
     private boolean isWithinBounds(int row, int col) {
         return row >= 0 && row < board.length && col >= 0 && col < board[0].length;
     }
 
-    //Helper method to see if the word formed is horizontal
-    private boolean isHorizontal(int row, int col) {
+    //helper method for score
+    private String isHorizontal(int row, int col) {
         // Check for horizontal
         for (int i = col; i < board[0].length && board[row][i] != null; i++) {
             if (board[row][i].getIsNew())
-                return true; // Found a new tile in a horizontal line
+                return HORIZONTAL; // Found a new tile in a horizontal line
         }
 
         // Check for vertical
         for (int j = row; j < board.length && board[j][col] != null; j++) {
             if (board[j][col].getIsNew())
-                return false; // Found a new tile in a vertical line
+                return VERTICAL; // Found a new tile in a vertical line
         }
 
-        return false;
+        return VERTICAL;
     }
 
     // Validates if a given set of points forms valid words based on the dictionary
@@ -438,27 +473,26 @@ public class Board {
             int row = (int)originPoint.getX();
             int column = (int)originPoint.getY();
 
-            // Build the word horizontally or vertically
-            if(isHorizontal(row,column)) {
+            if(isHorizontal(row,column).equals(HORIZONTAL)) {
                 while (board[row][column] != null) {
                     tempString.append(board[row][column].getLetter());
                     ++column;
                 }
 
-			}
-            else{
+            }
+            else if (isHorizontal(row,column).equals(VERTICAL)){
                 while (board[row][column] != null) {
                     tempString.append(board[row][column].getLetter());
                     ++row;
                 }
 
-			}
-            // Add the formed word to the list if it's more than one letter
-			if (tempString.length() > 1) {
-				string.add(tempString.toString());
-			}
-		}
-        return string; // Return the list of words
+            }
+
+            if (tempString.length() > 1) {
+                string.add(tempString.toString());
+            }
+        }
+        return string;
     }
 
     /*

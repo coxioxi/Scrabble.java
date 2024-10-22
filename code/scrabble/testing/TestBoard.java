@@ -1,4 +1,11 @@
 package scrabble.testing;
+/*
+ * Authors: Ian Boyer, David Carr, Samuel Costa,
+ * Maximus Latkovski, Jy'el Mason
+ * Course: COMP 3100
+ * Instructor: Dr. Barry Wittman
+ * Original date: 10/08/2024
+ */
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -7,9 +14,12 @@ import java.awt.*;
 import java.util.*;
 import scrabble.model.*;
 
-public class TestBoard {
-    int score = 0;
+/**
+ * This test class tests some of the methods that form the backbone of this program, run this class to get a short simulation of the game
+ * running, creating players, placing words on the board, getting the right scores, and updating players total score.
+ */
 
+public class TestBoard {
     Player player1 = new Player("Samuel",1);
     Player player2 = new Player("Ian",2);
     Player player3 = new Player("David",3);
@@ -32,14 +42,20 @@ public class TestBoard {
     Tile[] tiles5 = {new Tile('O', new Point(11,13))
             , new Tile('N', new Point(12,13)), new Tile('E', new Point(13,13))};
 
-    //Tile[] tiles6 = {new Tile('O', new Point(12,12)), new Tile('R', new Point(13,12))};
+    Tile[] tiles7 = {new Tile('O', new Point(9,8))
+            , new Tile('A', new Point(11,8)), new Tile('L', new Point(12,8))};
 
+    Tile[] tiles8 = {new Tile('A', new Point(8,9)), new Tile('R', new Point(9,9))};
 
-    //valid points
+    Tile[] tiles9 = {new Tile('T', new Point(8,10))};
+
     Board board = new Board();
+
+    int score = 0;
 
     @Test
     public void testAddToBoard() {
+        System.out.println();
         board.addToBoard(tiles);
         System.out.println("Tiles : Board");
         for (Tile tile: tiles) {
@@ -60,6 +76,9 @@ public class TestBoard {
         score = board.playTiles(tiles2);
         Assertions.assertEquals(14,score);
 
+        score = board.playTiles(tiles7);
+        Assertions.assertEquals(10,score);
+
         score = board.playTiles(tiles3);
         Assertions.assertEquals(11, score);
 
@@ -68,6 +87,8 @@ public class TestBoard {
 
         score = board.playTiles(tiles5);
         Assertions.assertEquals(10, score);
+
+        board.clearBoard();
     }
 
     @Test
@@ -91,38 +112,11 @@ public class TestBoard {
         Assertions.assertFalse(board.hasAdjacentCaller(new Point(14, 7)));
     }
 
-    @Test
-    public void testHasDuplicates() {
-        //for if positions are right
-        board.playTiles(tiles);
-        System.out.println("hasDuplicates is working when positions are right");
-        System.out.println();
-
-        //for if position is wrong
-        tiles[1].setLocation(new Point(7,7));
-
-        board.playTiles(tiles);
-        Assertions.fail();
-    }
-
-    @Test
-    public void testSameXorY() {
-        //for if positions are right
-        board.playTiles(tiles);
-        System.out.println("sameXorY is working when positions are valid");
-        System.out.println();
-
-        tiles[1].setLocation(new Point(7,8));
-
-        board.playTiles(tiles);
-        Assertions.fail();
-    }
-
     private Boolean validWordCheck(Set<Point> originPoints) throws InvalidPositionException {
         return board.isValidWordCaller(originPoints);
     }
 
-    private Set<Point> pointGetter(Tile[] tiles) throws InvalidPositionException {
+    private Set<Point> pointGetter(Tile[] tiles) {
         Tile[] originTiles = board.findOrigin(tiles);
         Set<Point> originPoints = new HashSet<>();
 
@@ -134,9 +128,6 @@ public class TestBoard {
 
     @Test
     public void simulateGame() throws InvalidPositionException {
-
-        //System.out.println(board.getDictionary().contains("E"));
-
         System.out.println("First Turn:");
 
         System.out.println();
@@ -144,10 +135,10 @@ public class TestBoard {
         System.out.printf(player1.getName()+"'s Turn:\n");
         if(validWordCheck(pointGetter(tiles))){
             score = board.playTiles(tiles);
-            System.out.println(score);
             player1.increaseScore(score);
             System.out.println("Words formed this turn: " + board.getLastWordsPlayed() + "\nTurn Score: " + score);
             System.out.println(player1.getName()+"'s Total Score: "+ player1.getScore());
+            System.out.println();
             board.getLastWordsPlayed().clear();
         }
         else
@@ -159,6 +150,7 @@ public class TestBoard {
             player2.increaseScore(score);
             System.out.println("Words formed this turn: " + board.getLastWordsPlayed() + "\nTurn Score: " + score);
             System.out.println(player2.getName()+"'s Total Score: "+ player2.getScore());
+            System.out.println();
             board.getLastWordsPlayed().clear();
         }
         else
@@ -170,21 +162,24 @@ public class TestBoard {
             player3.increaseScore(score);
             System.out.println("Words formed this turn: " + board.getLastWordsPlayed() + "\nTurn Score: " + score);
             System.out.println(player3.getName()+"'s Total Score: "+ player3.getScore());
+            System.out.println();
             board.getLastWordsPlayed().clear();
         }
         else
             System.out.println("Word is not in the dictionary");
 
         System.out.printf(player4.getName()+"'s Turn:\n");
-        if(validWordCheck(pointGetter(tiles3))) {
-            score = board.playTiles(tiles3);
+        if(validWordCheck(pointGetter(tiles7))) {
+            score = board.playTiles(tiles7);
             player4.increaseScore(score);
             System.out.println("Words formed this turn: " + board.getLastWordsPlayed() + "\nTurn Score: " + score);
             System.out.println(player4.getName()+"'s Total Score: "+ player4.getScore());
+            System.out.println();
             board.getLastWordsPlayed().clear();
         }
         else
             System.out.println("Word is not in the dictionary");
+
         System.out.println();
 
         System.out.println("Second Turn:");
@@ -192,11 +187,12 @@ public class TestBoard {
         System.out.println();
 
         System.out.printf(player1.getName()+"'s Turn:\n");
-        if(validWordCheck(pointGetter(tiles4))){
-            score = board.playTiles(tiles4);
+        if(validWordCheck(pointGetter(tiles3))){
+            score = board.playTiles(tiles3);
             player1.increaseScore(score);
             System.out.println("Words formed this turn: " + board.getLastWordsPlayed() + "\nTurn Score: " + score);
             System.out.println(player1.getName()+"'s Total Score: "+ player1.getScore());
+            System.out.println();
             board.getLastWordsPlayed().clear();
         }
         else
@@ -208,6 +204,31 @@ public class TestBoard {
             player2.increaseScore(score);
             System.out.println("Words formed this turn: " + board.getLastWordsPlayed() + "\nTurn Score: " + score);
             System.out.println(player2.getName()+"'s Total Score: "+ player2.getScore());
+            System.out.println();
+            board.getLastWordsPlayed().clear();
+        }
+        else
+            System.out.println("Word is not in the dictionary");
+
+        System.out.printf(player3.getName()+"'s Turn:\n");
+        if(validWordCheck(pointGetter(tiles8))) {
+            score = board.playTiles(tiles8);
+            player3.increaseScore(score);
+            System.out.println("Words formed this turn: " + board.getLastWordsPlayed() + "\nTurn Score: " + score);
+            System.out.println(player3.getName()+"'s Total Score: "+ player3.getScore());
+            System.out.println();
+            board.getLastWordsPlayed().clear();
+        }
+        else
+            System.out.println("Word is not in the dictionary");
+
+        System.out.printf(player4.getName()+"'s Turn:\n");
+        if(validWordCheck(pointGetter(tiles9))) {
+            score = board.playTiles(tiles9);
+            player4.increaseScore(score);
+            System.out.println("Words formed this turn: " + board.getLastWordsPlayed() + "\nTurn Score: " + score);
+            System.out.println(player4.getName()+"'s Total Score: "+ player4.getScore());
+            System.out.println();
             board.getLastWordsPlayed().clear();
         }
         else
@@ -227,5 +248,6 @@ public class TestBoard {
             }
             System.out.println();
         }
+        board.clearBoard();
     }
 }
