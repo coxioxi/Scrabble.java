@@ -14,6 +14,7 @@ public class GameFrame extends JFrame {
     public static void mainMenu() {
         JFrame menuFrame = new JFrame();
         JLabel menuTitle = new JLabel("Main Menu", SwingConstants.CENTER);
+        JPanel background = new JPanel();
         menuTitle.setFont(titleFont);
         menuFrame.add(menuTitle, BorderLayout.NORTH);
 
@@ -28,7 +29,7 @@ public class GameFrame extends JFrame {
         audioButton.setBounds(95, 230, 200, 60);
         fxButton.setBounds(95, 300, 200, 60);
         quitButton.setBounds(95, 370, 200, 60);
-        center.setBounds(100, 100, 200, 100);
+        background.setBounds(100, 100, 200, 100);
 
         hostButton.setFont(labelFont);
         joinButton.setFont(labelFont);
@@ -41,7 +42,7 @@ public class GameFrame extends JFrame {
         menuFrame.add(audioButton);
         menuFrame.add(fxButton);
         menuFrame.add(quitButton);
-        menuFrame.add(center);
+        menuFrame.add(background);
 
         quitButton.addActionListener(new ActionListener() {
             @Override
