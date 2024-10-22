@@ -67,9 +67,7 @@ public class Ruleset {
 	public int getTotalTime() {
 		return totalTime;
 	}
-	public void setTotalTime(int time){
-		totalTime = time;
-	}
+
 
 	/**
 	 * Getter for turn time
@@ -79,9 +77,7 @@ public class Ruleset {
 		return turnTime;
 	}
 
-	public void setTurnTime(int time){
-		turnTime = time;
-	}
+
 	/**
 	 * Getter for challenges enabled
 	 * @return whether challenges are allowed
