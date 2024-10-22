@@ -1,4 +1,11 @@
 package scrabble.testing;
+/*
+ * Authors: Ian Boyer, David Carr, Samuel Costa,
+ * Maximus Latkovski, Jy'el Mason
+ * Course: COMP 3100
+ * Instructor: Dr. Barry Wittman
+ * Original date: 10/08/2024
+ */
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -7,6 +14,11 @@ import java.awt.*;
 import java.util.HashMap;
 import java.util.Map;
 import scrabble.model.*;
+
+/**
+ * This test class tests some methods of tile, was initially designed to make sure tiles
+ * had the right values being set inside of them before testing other core components of the program
+ */
 
 public class TileTest{
     private final Map<Character,Integer> letterValue = new HashMap<>();
