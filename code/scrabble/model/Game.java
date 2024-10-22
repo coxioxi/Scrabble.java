@@ -8,6 +8,7 @@ package scrabble.model;
  */
 
 import java.awt.*;
+import java.util.ArrayList;
 
 /**
  * This class represents the Scrabble game.
@@ -22,7 +23,7 @@ public class Game {
 
 	 */
 
-	// The players of the game. The order is significant and represents the order in
+	// the players of the game. The order is significant and represents the order in
 	// which turns are taken
 	private Player[] players;
 	private Board board; 	    // The game board
@@ -88,8 +89,8 @@ public class Game {
 	}
 
 	/*
-	  This helper method changes whose turn it is to the next
-	  person in the turn list.
+	this helper method changes whose turn it is to the next
+	person in the turn list.
  	*/
 	private void nextTurn() {
 		this.currentPlayer = (this.currentPlayer + 1) % this.players.length;
@@ -137,8 +138,8 @@ public class Game {
 	}
 
 	/*
-	  This helper method returns a reference to the player object
-	  whose ID is equal to the parameter.
+	this helper method returns a reference to the player object
+	whose ID is equal to the parameter
  	*/
 	private Player getPlayer(int playerID) {
 		Player finalPlayer = null; // Variable to hold the found player
@@ -270,8 +271,15 @@ public class Game {
 	 * Gets the tiles of the local player
 	 * @return the tiles of the local player
 	 */
-	public Tile[] getPlayerTiles() {
+	public ArrayList<Tile> getPlayerTiles() {
 		return self.getRack();
+	}
+
+	public boolean isGameOver() {
+		if (tileBag.isEmpty() && self.getRack().isEmpty()) {
+			isGameOver = true;
+		}
+		return isGameOver;
 	}
 
 
