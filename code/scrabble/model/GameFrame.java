@@ -14,7 +14,8 @@ public class GameFrame extends JFrame {
     public static void mainMenu() {
         JFrame menuFrame = new JFrame();
         JLabel menuTitle = new JLabel("Main Menu", SwingConstants.CENTER);
-        menuTitle.setFont(new Font("Arial", Font.BOLD, 16));
+        JPanel background = new JPanel();
+        menuTitle.setFont(titleFont);
         menuFrame.add(menuTitle, BorderLayout.NORTH);
 
         JButton hostButton = new JButton("Host");
@@ -23,17 +24,25 @@ public class GameFrame extends JFrame {
         JButton fxButton = new JButton("Audio FX");
         JButton quitButton = new JButton("Quit");
 
-        hostButton.setBounds(250, 150, 100, 40);
-        joinButton.setBounds(250, 220, 100, 40);
-        audioButton.setBounds(250, 290, 100, 40);
-        fxButton.setBounds(250, 360, 100, 40);
-        quitButton.setBounds(250, 430, 100, 40);
+        hostButton.setBounds(95, 90, 200, 60);
+        joinButton.setBounds(95, 160, 200, 60);
+        audioButton.setBounds(95, 230, 200, 60);
+        fxButton.setBounds(95, 300, 200, 60);
+        quitButton.setBounds(95, 370, 200, 60);
+        background.setBounds(100, 100, 200, 100);
 
-        menuFrame.add(hostButton, BorderLayout.CENTER);
-        menuFrame.add(joinButton, BorderLayout.CENTER);
-        menuFrame.add(audioButton, BorderLayout.CENTER);
-        menuFrame.add(fxButton, BorderLayout.CENTER);
-        menuFrame.add(quitButton, BorderLayout.CENTER);
+        hostButton.setFont(labelFont);
+        joinButton.setFont(labelFont);
+        audioButton.setFont(labelFont);
+        fxButton.setFont(labelFont);
+        quitButton.setFont(labelFont);
+
+        menuFrame.add(hostButton);
+        menuFrame.add(joinButton);
+        menuFrame.add(audioButton);
+        menuFrame.add(fxButton);
+        menuFrame.add(quitButton);
+        menuFrame.add(background);
 
         quitButton.addActionListener(new ActionListener() {
             @Override
@@ -41,8 +50,7 @@ public class GameFrame extends JFrame {
                 System.exit(0);
             }
         });
-
-        menuFrame.setSize(500, 700);
+        menuFrame.setSize(400, 500);
         menuFrame.setVisible(true);
     }
 
@@ -183,9 +191,59 @@ public class GameFrame extends JFrame {
         hostFrame.setVisible(true);
     }
 
-    public void joinScreen() {
-        JPanel joinPanel = new JPanel();
+    public static void joinScreen() {
+        // Highest level frame and panel
+        JFrame joinFrame = new JFrame("Player Joining Screen");
+        joinFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        joinFrame.setSize(800, 800);
+        joinFrame.setLayout(null);
 
+        // Add title at the top of the frame
+        JLabel joinTitle = new JLabel("Player Joining Screen", SwingConstants.CENTER);
+        joinTitle.setFont(titleFont);
+        joinTitle.setBounds(200, 30, 400, 50);
+        joinFrame.add(joinTitle);
+
+        // Name label and text field
+        JLabel nameLabel = new JLabel("Name:");
+        nameLabel.setBounds(150, 100, 100, 40);
+        nameLabel.setFont(labelFont);
+        joinFrame.add(nameLabel);
+
+        JTextField enterName = new JTextField();
+        enterName.setBounds(250, 100, 200, 40);
+        joinFrame.add(enterName);
+
+        // Panel for border with Host IP text field and Join button inside
+        JPanel borderPanel = new JPanel();
+        borderPanel.setBorder(new LineBorder(Color.BLACK, 2));
+        borderPanel.setBounds(150, 200, 500, 500);
+        borderPanel.setLayout(null);
+        joinFrame.add(borderPanel);
+
+        // Labels for Join party and Host IP inside bordered box
+        JLabel joinPartyLabel = new JLabel("Join Party");
+        joinPartyLabel.setBounds(200, 20, 100, 30);
+        joinPartyLabel.setFont(labelFont);
+        borderPanel.add(joinPartyLabel);
+
+        JLabel enterIPLabel = new JLabel("Enter Host IP:");
+        enterIPLabel.setBounds(50, 80, 150, 30);
+        enterIPLabel.setFont(labelFont);
+        borderPanel.add(enterIPLabel);
+
+        // Text field for entering Host IP
+        JTextField hostIPText = new JTextField();
+        hostIPText.setBounds(200, 80, 200, 30);
+        borderPanel.add(hostIPText);
+
+        // Join button
+        JButton joinButton = new JButton("Join");
+        joinButton.setBounds(150, 150, 200, 40);
+        joinButton.setFont(labelFont);
+        borderPanel.add(joinButton);
+
+        joinFrame.setVisible(true);
     }
 
     public void waitingScreen() {
@@ -204,7 +262,9 @@ public class GameFrame extends JFrame {
     }
 
     public static void main(String[] args) {
-
+        mainMenu();
+        joinScreen();
+        //hostScreen();
     }
 
 
