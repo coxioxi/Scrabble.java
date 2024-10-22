@@ -12,7 +12,7 @@ public class GameFrame extends JFrame {
     private static final Font titleFont = new Font("Times New Roman", Font.BOLD, 40);
 
     public static void mainMenu() {
-        JFrame menuFrame = new JFrame();
+        JFrame menuFrame = new JFrame("Scrabble");
         JLabel menuTitle = new JLabel("Main Menu", SwingConstants.CENTER);
         JPanel background = new JPanel();
         menuTitle.setFont(titleFont);
@@ -44,12 +44,30 @@ public class GameFrame extends JFrame {
         menuFrame.add(quitButton);
         menuFrame.add(background);
 
+
+        hostButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                menuFrame.dispose();  // Close the main menu
+                hostScreen();  // Open host screen
+            }
+        });
+
+        joinButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                menuFrame.dispose();  // Close the main menu
+                joinScreen();  // Open join screen
+            }
+        });
+
         quitButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 System.exit(0);
             }
         });
+
         menuFrame.setSize(400, 500);
         menuFrame.setVisible(true);
     }
@@ -193,7 +211,7 @@ public class GameFrame extends JFrame {
 
     public static void joinScreen() {
         // Highest level frame and panel
-        JFrame joinFrame = new JFrame("Player Joining Screen");
+        JFrame joinFrame = new JFrame("Scrabble");
         joinFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         joinFrame.setSize(800, 800);
         joinFrame.setLayout(null);
@@ -201,7 +219,7 @@ public class GameFrame extends JFrame {
         // Add title at the top of the frame
         JLabel joinTitle = new JLabel("Player Joining Screen", SwingConstants.CENTER);
         joinTitle.setFont(titleFont);
-        joinTitle.setBounds(200, 30, 400, 50);
+        joinTitle.setBounds(150, 30, 500, 50);
         joinFrame.add(joinTitle);
 
         // Name label and text field
@@ -222,19 +240,19 @@ public class GameFrame extends JFrame {
         joinFrame.add(borderPanel);
 
         // Labels for Join party and Host IP inside bordered box
-        JLabel joinPartyLabel = new JLabel("Join Party");
-        joinPartyLabel.setBounds(200, 20, 100, 30);
+        JLabel joinPartyLabel = new JLabel("Join Party", SwingConstants.CENTER);
+        joinPartyLabel.setBounds(160, 20, 180, 30);
         joinPartyLabel.setFont(labelFont);
         borderPanel.add(joinPartyLabel);
 
         JLabel enterIPLabel = new JLabel("Enter Host IP:");
-        enterIPLabel.setBounds(50, 80, 150, 30);
+        enterIPLabel.setBounds(40, 80, 180, 30);
         enterIPLabel.setFont(labelFont);
         borderPanel.add(enterIPLabel);
 
         // Text field for entering Host IP
         JTextField hostIPText = new JTextField();
-        hostIPText.setBounds(200, 80, 200, 30);
+        hostIPText.setBounds(240, 80, 200, 30);
         borderPanel.add(hostIPText);
 
         // Join button
@@ -263,7 +281,7 @@ public class GameFrame extends JFrame {
 
     public static void main(String[] args) {
         mainMenu();
-        joinScreen();
+        //joinScreen();
         //hostScreen();
     }
 
