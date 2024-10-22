@@ -1,10 +1,12 @@
 package scrabble.model;
 
+import java.util.ArrayList;
+
 /**
  * This class represents the player who is on this computer
  */
 public class LocalPlayer extends Player{
-	private Tile[] rack; 	// The tiles the player has
+	private ArrayList<Tile> rack; 	// the tiles the player has
 
 	/**
 	 * Constructs a localPlayer object
@@ -12,7 +14,7 @@ public class LocalPlayer extends Player{
 	 * @param ID the player's id, which corresponds to their order
 	 * @param rack the tiles the player has
 	 */
-	public LocalPlayer(String name, int ID, Tile[] rack) {
+	public LocalPlayer(String name, int ID,ArrayList<Tile> rack) {
 		super(name, ID); 	// Call the constructor of the superclass Player
 		this.rack = rack; 	// Initialize the player's rack with the given tiles
 	}
@@ -31,7 +33,7 @@ public class LocalPlayer extends Player{
 	 * Getter for the player's rack of tiles.
 	 * @return an array of tiles currently held by the player.
 	 */
-	public Tile[] getRack() {
+	public ArrayList<Tile> getRack() {
 		return rack;
 	}
 
@@ -41,6 +43,11 @@ public class LocalPlayer extends Player{
 	 *              This method will need to be implemented to update the rack accordingly.
 	 */
 	public void removeTiles(Tile[] tiles) {
+		for(Tile tile: tiles){
+			if(rack.contains(tile)){
+				rack.remove((tile));
+			}
+		}
 
 	}
 
@@ -50,6 +57,11 @@ public class LocalPlayer extends Player{
 	 *              This method will need to be implemented to update the rack accordingly.
 	 */
 	public void addTiles(Tile[] tiles) {
+		for(Tile tile: tiles){
+			if(rack.size() <= 7){
+				rack.add(tile);
+			}
+		}
 
 	}
 }
