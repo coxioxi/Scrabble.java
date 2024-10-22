@@ -276,9 +276,6 @@ public class Game {
 	}
 
 	public boolean isGameOver() {
-		if (tileBag.isEmpty() && self.getRack().isEmpty()) {
-			isGameOver = true;
-		}
 		return isGameOver;
 	}
 
