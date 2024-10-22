@@ -5,6 +5,8 @@ import javax.swing.border.LineBorder;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
 
 public class GameFrame extends JFrame {
@@ -15,6 +17,7 @@ public class GameFrame extends JFrame {
         JFrame menuFrame = new JFrame("Scrabble");
         JLabel menuTitle = new JLabel("Main Menu", SwingConstants.CENTER);
         JPanel background = new JPanel();
+        menuFrame.setDefaultCloseOperation(EXIT_ON_CLOSE);
         menuTitle.setFont(titleFont);
         menuFrame.add(menuTitle, BorderLayout.NORTH);
 
@@ -76,7 +79,7 @@ public class GameFrame extends JFrame {
     public static void hostScreen() {
         JFrame hostFrame = new JFrame("Scrabble");
         hostFrame.setSize(800,600);
-        hostFrame.setDefaultCloseOperation(EXIT_ON_CLOSE);
+        //hostFrame.setDefaultCloseOperation(EXIT_ON_CLOSE);
         hostFrame.setLayout(null);
         JPanel mainPanel = new JPanel();
         mainPanel.setBounds(0,0,800,600);
@@ -207,6 +210,14 @@ public class GameFrame extends JFrame {
         mainPanel.add(customizations);
 
         hostFrame.setVisible(true);
+
+        hostFrame.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                hostFrame.dispose();
+                mainMenu();
+            }
+        });
     }
 
     public static void joinScreen() {
@@ -260,6 +271,14 @@ public class GameFrame extends JFrame {
         joinButton.setBounds(150, 150, 200, 40);
         joinButton.setFont(labelFont);
         borderPanel.add(joinButton);
+
+        joinFrame.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                joinFrame.dispose();
+                mainMenu();
+            }
+        });
 
         joinFrame.setVisible(true);
     }
