@@ -237,7 +237,6 @@ public class GameFrame extends JFrame {
     public static void joinScreen() {
         // Highest level frame and panel
         JFrame joinFrame = new JFrame("Scrabble");
-        joinFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         joinFrame.setSize(700, 500);
         joinFrame.setLayout(null);
 
@@ -287,6 +286,15 @@ public class GameFrame extends JFrame {
         joinButton.setFont(labelFont);
         borderPanel.add(joinButton);
 
+        // Makes join button switch to the waiting screen
+        joinButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                joinFrame.dispose();  // Close the main menu
+                waitingScreen();  // Open join screen
+            }
+        });
+
         // Changes the "X" in the top right to make the Join Screen return to the Main Menu
         joinFrame.addWindowListener(new WindowAdapter() {
             @Override
@@ -299,9 +307,59 @@ public class GameFrame extends JFrame {
         joinFrame.setVisible(true);
     }
 
-    public void waitingScreen() {
-        JPanel waitPanel = new JPanel();
+    public static void waitingScreen() {
+        JFrame waitFrame = new JFrame("Scrabble");
+        waitFrame.setSize(500, 500);
+        waitFrame.setLayout(null);
 
+        // Add title at the top of the frame
+        JLabel waitTitle = new JLabel("Player Waiting Screen", SwingConstants.CENTER);
+        waitTitle.setFont(titleFont);
+        waitTitle.setBounds(55, 5, 390, 50);
+        waitFrame.add(waitTitle);
+
+        // Players title label setup
+        JLabel playerTitle = new JLabel("Players in Game", SwingConstants.CENTER);
+        playerTitle.setBounds(145, 80, 210, 40);
+        playerTitle.setFont(labelFont);
+
+        // Players Names in this game setup
+        JLabel player1Label = new JLabel("**Player 1**", SwingConstants.CENTER);
+        JLabel player2Label = new JLabel("**Player 2**", SwingConstants.CENTER);
+        JLabel player3Label = new JLabel("**Player 3**", SwingConstants.CENTER);
+        JLabel player4Label = new JLabel("**Player 4**", SwingConstants.CENTER);
+
+        player1Label.setBounds(100, 150, 300, 45);
+        player2Label.setBounds(100, 220, 300, 45);
+        player3Label.setBounds(100, 290, 300, 45);
+        player4Label.setBounds(100, 360, 300, 45);
+
+        player1Label.setBorder(BorderFactory.createLineBorder(Color.BLACK, 2));
+        player2Label.setBorder(BorderFactory.createLineBorder(Color.BLACK, 2));
+        player3Label.setBorder(BorderFactory.createLineBorder(Color.BLACK, 2));
+        player4Label.setBorder(BorderFactory.createLineBorder(Color.BLACK, 2));
+
+        player1Label.setFont(labelFont);
+        player2Label.setFont(labelFont);
+        player3Label.setFont(labelFont);
+        player4Label.setFont(labelFont);
+
+        // Adding labels to the screen
+        waitFrame.add(playerTitle);
+        waitFrame.add(player1Label);
+        waitFrame.add(player2Label);
+        waitFrame.add(player3Label);
+        waitFrame.add(player4Label);
+
+        waitFrame.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                waitFrame.dispose();
+                joinScreen();
+            }
+        });
+
+        waitFrame.setVisible(true);
     }
 
     public void gameScreen() {
@@ -318,6 +376,7 @@ public class GameFrame extends JFrame {
         mainMenu();
         //joinScreen();
         //hostScreen();
+        //waitingScreen();
     }
 
 
