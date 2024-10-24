@@ -49,6 +49,9 @@ public class TestBoard {
 
     Tile[] tiles9 = {new Tile('T', new Point(8,10))};
 
+    Tile[] tiles10 = {new Tile('Q',new Point(3,7)), new Tile('U', new Point(4,7))
+            , new Tile('E', new Point(5,7)), new Tile('E', new Point(6,7))};
+
     Board board = new Board();
 
     int score = 0;
