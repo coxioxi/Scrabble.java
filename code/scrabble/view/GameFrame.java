@@ -14,12 +14,16 @@ public class GameFrame extends JFrame {
     private static final Font titleFont = new Font("Times New Roman", Font.BOLD, 40);
 
     public static void mainMenu() {
-        JFrame menuFrame = new JFrame("Scrabble");
-        JLabel menuTitle = new JLabel("Main Menu", SwingConstants.CENTER);
-        JPanel background = new JPanel();
-        menuFrame.setDefaultCloseOperation(EXIT_ON_CLOSE);
+        JFrame frame = new JFrame("Scrabble");
+        frame.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+        JPanel mainPanel = new JPanel(new FlowLayout());
+        mainPanel.setBorder(BorderFactory.createTitledBorder("Main Menu"));
+        JPanel menuFrame = new JPanel(new GridLayout(5,1, 20,20));
+
+        /* JLabel menuTitle = new JLabel("Main Menu", SwingConstants.CENTER);
         menuTitle.setFont(titleFont);
-        menuFrame.add(menuTitle, BorderLayout.NORTH);
+        frame.add(menuTitle, BorderLayout.NORTH);
+         */
 
         JButton hostButton = new JButton("Host");
         JButton joinButton = new JButton("Join");
@@ -27,7 +31,7 @@ public class GameFrame extends JFrame {
         JButton fxButton = new JButton("Audio FX");
         JButton quitButton = new JButton("Quit");
 
-        hostButton.setBounds(95, 90, 200, 60);
+        /* hostButton.setBounds(95, 90, 200, 60);
         joinButton.setBounds(95, 160, 200, 60);
         audioButton.setBounds(95, 230, 200, 60);
         fxButton.setBounds(95, 300, 200, 60);
@@ -39,19 +43,20 @@ public class GameFrame extends JFrame {
         audioButton.setFont(labelFont);
         fxButton.setFont(labelFont);
         quitButton.setFont(labelFont);
+         */
 
         menuFrame.add(hostButton);
         menuFrame.add(joinButton);
         menuFrame.add(audioButton);
         menuFrame.add(fxButton);
         menuFrame.add(quitButton);
-        menuFrame.add(background);
-
+        mainPanel.add(menuFrame);
+        frame.add(mainPanel, BorderLayout.CENTER);
 
         hostButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                menuFrame.dispose();  // Close the main menu
+                frame.dispose();  // Close the main menu
                 hostScreen();  // Open host screen
             }
         });
@@ -59,7 +64,7 @@ public class GameFrame extends JFrame {
         joinButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                menuFrame.dispose();  // Close the main menu
+                frame.dispose();  // Close the main menu
                 joinScreen();  // Open join screen
             }
         });
@@ -67,148 +72,140 @@ public class GameFrame extends JFrame {
         quitButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                System.exit(0);
+                frame.dispose();
             }
         });
 
-        menuFrame.setSize(400, 500);
-        menuFrame.setVisible(true);
+        //frame.setSize(400, 500);
+        frame.setMinimumSize(new Dimension(250,250));
+        frame.pack();
+        frame.setLocationRelativeTo(null);
+        frame.setVisible(true);
     }
 
 
     public static void hostScreen() {
         // Frame setup
-        JFrame hostFrame = new JFrame("Scrabble");
-        hostFrame.setSize(800,600);
-        hostFrame.setLayout(null);
+        JFrame frame = new JFrame("Scrabble");
 
         // Main Panel setup
         JPanel mainPanel = new JPanel();
-        mainPanel.setBounds(0,0,800,600);
+        mainPanel.setBorder(BorderFactory.createTitledBorder("Main Menu"));
         mainPanel.setLayout(null);
 
-        // Page Title
+        JPanel southPanel = new JPanel(new GridLayout());
+
+        /*Page Title
         JLabel hostTitle = new JLabel("Host Game", SwingConstants.CENTER);
         hostTitle.setFont(titleFont);
         hostTitle.setBounds(275,5,250,45);
         mainPanel.add(hostTitle);
+         */
 
         // Main Frame details
-        // IP Address Labels setup
+        // Instantiating the Labels and the TextField
         JLabel yourIP = new JLabel("Your IP Address:");
-        yourIP.setFont(labelFont);
-        yourIP.setBounds(25, 80, 240, 30);
-
         JLabel hostsIP = new JLabel("**Host's IP**");
-        hostsIP.setFont(labelFont);
-        hostsIP.setBounds(245, 80, 200, 30);
-
-        // Name Label and TextField setup
         JLabel nameLabel = new JLabel("Name:");
-        nameLabel.setFont(labelFont);
-        nameLabel.setBounds(25, 150, 100, 30);
-
         JTextField nameInput = new JTextField();
-        nameInput.setFont(labelFont);
-        nameInput.setBounds(115, 150, 220, 30);
-
-        // Host Button setup
         JButton hostButton = new JButton("Host");
-        hostButton.setFont(labelFont);
-        hostButton.setBounds(325, 490, 150, 40);
-
-        // Player Waiting Label setup
         JLabel waitingLabel = new JLabel("Players Waiting");
-        waitingLabel.setFont(labelFont);
-        waitingLabel.setBounds(50, 215, 200, 30);
-
-        // Player Names Waiting labels setup
         JLabel player1Waiting = new JLabel("**Player 1 Name**", SwingConstants.CENTER);
         JLabel player2Waiting = new JLabel("**Player 2 Name**", SwingConstants.CENTER);
         JLabel player3Waiting = new JLabel("**Player 3 Name**", SwingConstants.CENTER);
         JLabel player4Waiting = new JLabel("**Player 4 Name**", SwingConstants.CENTER);
-
-        Font waitingFont = new Font("Arial", Font.PLAIN, 20);
-        player1Waiting.setFont(waitingFont);
-        player2Waiting.setFont(waitingFont);
-        player3Waiting.setFont(waitingFont);
-        player4Waiting.setFont(waitingFont);
 
         player1Waiting.setBorder(BorderFactory.createLineBorder(Color.BLACK, 2));
         player2Waiting.setBorder(BorderFactory.createLineBorder(Color.BLACK, 2));
         player3Waiting.setBorder(BorderFactory.createLineBorder(Color.BLACK, 2));
         player4Waiting.setBorder(BorderFactory.createLineBorder(Color.BLACK, 2));
 
+        /*yourIP.setFont(labelFont);
+        yourIP.setBounds(25, 80, 240, 30);
+        hostsIP.setFont(labelFont);
+        hostsIP.setBounds(245, 80, 200, 30);
+        nameLabel.setFont(labelFont);
+        nameLabel.setBounds(25, 150, 100, 30);
+        nameInput.setFont(labelFont);
+        nameInput.setBounds(115, 150, 220, 30);
+        hostButton.setFont(labelFont);
+        hostButton.setBounds(325, 490, 150, 40);
+        waitingLabel.setFont(labelFont);
+        waitingLabel.setBounds(50, 215, 200, 30);
+        Font waitingFont = new Font("Arial", Font.PLAIN, 20);
+        player1Waiting.setFont(waitingFont);
+        player2Waiting.setFont(waitingFont);
+        player3Waiting.setFont(waitingFont);
+        player4Waiting.setFont(waitingFont);
         player1Waiting.setBounds(25, 270, 250, 40);
         player2Waiting.setBounds(25, 330, 250, 40);
         player3Waiting.setBounds(25, 390, 250, 40);
         player4Waiting.setBounds(25, 450, 250, 40);
+         */
 
         // Customization Panel details
         JPanel customizations = new JPanel();
-        customizations.setBounds(450, 150, 300, 250);
         customizations.setBorder(new LineBorder(Color.BLACK, 2));
         customizations.setLayout(null);
 
-        Font customizationFont = new Font("Arial", Font.PLAIN, 16);
+        //customizations.setBounds(450, 150, 300, 250);
+        //Font customizationFont = new Font("Arial", Font.PLAIN, 16);
 
-        // Customizations Label setup
+        // Instantiating Customizations Labels and Combo Boxes
         JLabel customizationLabel = new JLabel("Customizations");
-        customizationLabel.setFont(labelFont);
-        customizationLabel.setBounds(50, 10, 200, 30);
-
-        // Challenge Label and Combo Box setup
         JLabel challengeLabel = new JLabel("Challenges Allowed:");
-        challengeLabel.setFont(customizationFont);
-        challengeLabel.setBounds(10, 80, 150, 20);
-
         String[] challengeChoices = {"Challenges on", "Challenges off"};
         JComboBox<String> challengeComboBox = new JComboBox<>(challengeChoices);
-        challengeComboBox.setFont(customizationFont);
-        challengeComboBox.setBounds(160, 78, 130, 25);
-
-        // Dictionary Label and Combo Box setup
         JLabel dictionaryLabel = new JLabel("Dictionary Used:");
-        dictionaryLabel.setFont(customizationFont);
-        dictionaryLabel.setBounds(10, 120, 150, 20);
-
         String[] dictionaryChoices = {"Dictionary 1", "Dictionary 2"};
         JComboBox<String> dictionaryComboBox = new JComboBox<>(dictionaryChoices);
-        dictionaryComboBox.setFont(customizationFont);
-        dictionaryComboBox.setBounds(133, 118, 120, 25);
-
-        // Player Time Label and Combo Box setup
         JLabel playerTimeLabel = new JLabel("Player Time:");
-        playerTimeLabel.setFont(customizationFont);
-        playerTimeLabel.setBounds(10, 160, 150, 20);
-
         String[] playerTimeChoices = {"2 Minutes", "3 Minutes", "4 Minutes", "5 Minutes"};
         JComboBox<String> playerTimeComboBox = new JComboBox<>(playerTimeChoices);
-        playerTimeComboBox.setFont(customizationFont);
-        playerTimeComboBox.setBounds(105, 158, 105, 25);
-
-        // Game Time Label and Combo Box setup
         JLabel gameTimeLabel = new JLabel("Game Time:");
-        gameTimeLabel.setFont(customizationFont);
-        gameTimeLabel.setBounds(10, 200, 150, 20);
-
         String[] gameTimeChoices = {"30 Minutes", "45 Minutes", "60 Minutes", "75 Minutes"};
         JComboBox<String> gameTimeComboBox = new JComboBox<>(gameTimeChoices);
+
+
+
+        /*
+        customizationLabel.setFont(labelFont);
+        customizationLabel.setBounds(50, 10, 200, 30);
+        Challenge Label and Combo Box setup
+        challengeLabel.setFont(customizationFont);
+        challengeLabel.setBounds(10, 80, 150, 20);
+        challengeComboBox.setFont(customizationFont);
+        challengeComboBox.setBounds(160, 78, 130, 25);
+        Dictionary Label and Combo Box setup
+        dictionaryLabel.setFont(customizationFont);
+        dictionaryLabel.setBounds(10, 120, 150, 20);
+        dictionaryComboBox.setFont(customizationFont);
+        dictionaryComboBox.setBounds(133, 118, 120, 25);
+        Player Time Label and Combo Box setup
+        playerTimeLabel.setFont(customizationFont);
+        playerTimeLabel.setBounds(10, 160, 150, 20);
+        playerTimeComboBox.setFont(customizationFont);
+        playerTimeComboBox.setBounds(105, 158, 105, 25);
+        Game Time Label and Combo Box setup
+        gameTimeLabel.setBounds(10, 200, 150, 20);
+        gameTimeLabel.setFont(customizationFont);
         gameTimeComboBox.setFont(customizationFont);
         gameTimeComboBox.setBounds(105, 198, 105, 25);
+         */
 
         // adds items to the main panel
         mainPanel.add(yourIP);
         mainPanel.add(nameLabel);
         mainPanel.add(hostsIP);
         mainPanel.add(nameInput);
-        mainPanel.add(hostButton);
         mainPanel.add(waitingLabel);
         mainPanel.add(player1Waiting);
         mainPanel.add(player2Waiting);
         mainPanel.add(player3Waiting);
         mainPanel.add(player4Waiting);
-        hostFrame.add(mainPanel);
+        frame.add(mainPanel, BorderLayout.CENTER);
+        southPanel.add(hostButton);
+        frame.add(southPanel, BorderLayout.SOUTH);
 
         // adds items to the customization panel
         customizations.add(customizationLabel);
@@ -222,13 +219,16 @@ public class GameFrame extends JFrame {
         customizations.add(gameTimeComboBox);
         mainPanel.add(customizations);
 
-        hostFrame.setVisible(true);
+        frame.setMinimumSize(new Dimension(800,600));
+        frame.pack();
+        frame.setLocationRelativeTo(null);
+        frame.setVisible(true);
 
         // Changes the "X" in the top right to make the Host Screen return to the Main Menu
-        hostFrame.addWindowListener(new WindowAdapter() {
+        frame.addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
-                hostFrame.dispose();
+                frame.dispose();
                 mainMenu();
             }
         });
@@ -368,11 +368,37 @@ public class GameFrame extends JFrame {
     }
 
     public void winnerScreen() {
-        JPanel winnerPanel = new JPanel();
+        JFrame winnerFrame = new JFrame("Scrabble");
+        winnerFrame.setSize(600,600);
 
+        JButton returnToMain = new JButton("Return to Main Menu");
+        returnToMain.setFont(labelFont);
+        //returnToMain.setBounds(150, );
+
+        // Makes join button switch to the waiting screen
+        returnToMain.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                winnerFrame.dispose();  // Close the main menu
+                mainMenu();  // Open join screen
+            }
+        });
+
+        // Changes the "X" in the top right to make the Join Screen return to the Main Menu
+        winnerFrame.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                winnerFrame.dispose();
+                mainMenu();
+            }
+        });
     }
 
     public static void main(String[] args) {
+        try {
+            // Set the look and feel to the system's default
+            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException ignore) {}
         mainMenu();
         //joinScreen();
         //hostScreen();
