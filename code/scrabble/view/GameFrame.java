@@ -9,8 +9,8 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
 public class GameFrame extends JFrame {
-    private static final Font labelFont = new Font("Arial", Font.PLAIN, 28);
-    private static final Font titleFont = new Font("Times New Roman", Font.BOLD, 40);
+    public static boolean audioOn = true;
+    public static boolean fxOn = true;
 
     public static void mainMenu() {
         JFrame frame = new JFrame("Scrabble");
@@ -26,8 +26,8 @@ public class GameFrame extends JFrame {
 
         JButton hostButton = new JButton("Host");
         JButton joinButton = new JButton("Join");
-        JButton audioButton = new JButton("Game Audio");
-        JButton fxButton = new JButton("Audio FX");
+        JCheckBox audioCheck = new JCheckBox("Game Audio", audioOn);
+        JCheckBox fxCheck = new JCheckBox("Audio FX", fxOn);
         JButton quitButton = new JButton("Quit");
 
         /* hostButton.setBounds(95, 90, 200, 60);
@@ -46,8 +46,8 @@ public class GameFrame extends JFrame {
 
         menuFrame.add(hostButton);
         menuFrame.add(joinButton);
-        menuFrame.add(audioButton);
-        menuFrame.add(fxButton);
+        menuFrame.add(audioCheck);
+        menuFrame.add(fxCheck);
         menuFrame.add(quitButton);
         mainPanel.add(menuFrame);
         frame.add(mainPanel, BorderLayout.CENTER);
@@ -75,7 +75,6 @@ public class GameFrame extends JFrame {
             }
         });
 
-        //frame.setSize(400, 500);
         frame.setMinimumSize(new Dimension(250,250));
         frame.pack();
         frame.setLocationRelativeTo(null);
@@ -119,10 +118,10 @@ public class GameFrame extends JFrame {
         JLabel player3Waiting = new JLabel("**Player 3 Name**", SwingConstants.CENTER);
         JLabel player4Waiting = new JLabel("**Player 4 Name**", SwingConstants.CENTER);
 
-        player1Waiting.setBorder(BorderFactory.createLineBorder(Color.BLACK, 2));
-        player2Waiting.setBorder(BorderFactory.createLineBorder(Color.BLACK, 2));
-        player3Waiting.setBorder(BorderFactory.createLineBorder(Color.BLACK, 2));
-        player4Waiting.setBorder(BorderFactory.createLineBorder(Color.BLACK, 2));
+        player1Waiting.setBorder(BorderFactory.createEtchedBorder());
+        player2Waiting.setBorder(BorderFactory.createEtchedBorder());
+        player3Waiting.setBorder(BorderFactory.createEtchedBorder());
+        player4Waiting.setBorder(BorderFactory.createEtchedBorder());
 
         // Adds Name and IP items to North
         JPanel nameAndIP = new JPanel(new GridLayout(2,2,7,10));
@@ -258,10 +257,12 @@ public class GameFrame extends JFrame {
         joinFrame.add(joinTitle);
          */
 
-        JLabel nameLabel = new JLabel("Name:");
+        JLabel nameLabel = new JLabel("Name:", SwingConstants.RIGHT);
         JTextField enterName = new JTextField();
-        JLabel hostIPLabel = new JLabel("Enter Host IP:");
+        enterName.setColumns(10);
+        JLabel hostIPLabel = new JLabel("Enter Host IP:", SwingConstants.RIGHT);
         JTextField enterIP = new JTextField();
+        enterIP.setColumns(10);
         JButton joinButton = new JButton("Join");
 
         JPanel namePanel = new JPanel(new GridLayout(1,2, 7, 0));
@@ -344,10 +345,10 @@ public class GameFrame extends JFrame {
         JLabel player3Label = new JLabel("**Player 3**", SwingConstants.CENTER);
         JLabel player4Label = new JLabel("**Player 4**", SwingConstants.CENTER);
 
-        player1Label.setBorder(BorderFactory.createLineBorder(Color.BLACK, 2));
-        player2Label.setBorder(BorderFactory.createLineBorder(Color.BLACK, 2));
-        player3Label.setBorder(BorderFactory.createLineBorder(Color.BLACK, 2));
-        player4Label.setBorder(BorderFactory.createLineBorder(Color.BLACK, 2));
+        player1Label.setBorder(BorderFactory.createEtchedBorder());
+        player2Label.setBorder(BorderFactory.createEtchedBorder());
+        player3Label.setBorder(BorderFactory.createEtchedBorder());
+        player4Label.setBorder(BorderFactory.createEtchedBorder());
 
         /*
         playerTitle.setBounds(145, 80, 210, 40);
@@ -371,6 +372,11 @@ public class GameFrame extends JFrame {
         centerPanel.add(playersWaiting);
         frame.add(centerPanel, BorderLayout.CENTER);
 
+        frame.setMinimumSize(new Dimension(250,250));
+        frame.pack();
+        frame.setLocationRelativeTo(null);
+        frame.setVisible(true);
+
         frame.addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
@@ -378,11 +384,6 @@ public class GameFrame extends JFrame {
                 joinScreen();
             }
         });
-
-        frame.setMinimumSize(new Dimension(250,250));
-        frame.pack();
-        frame.setLocationRelativeTo(null);
-        frame.setVisible(true);
     }
 
     public void gameScreen() {
@@ -390,28 +391,62 @@ public class GameFrame extends JFrame {
 
     }
 
-    public void winnerScreen() {
-        JFrame winnerFrame = new JFrame("Scrabble");
-        winnerFrame.setSize(600,600);
+    public static void winnerScreen() {
+        JFrame frame = new JFrame("Scrabble");
 
+        JPanel centerPanel = new JPanel(new FlowLayout());
+        centerPanel.setBorder(BorderFactory.createTitledBorder("Podium"));
+        JPanel southPanel = new JPanel(new FlowLayout());
+        JPanel podium = new JPanel(new GridLayout(4,1, 7, 10));
+
+        /* JLabel firstPlaceLabel = new JLabel("1st:", SwingConstants.RIGHT);
+        JLabel secondPlaceLabel = new JLabel("2nd:", SwingConstants.RIGHT);
+        JLabel thirdPlaceLabel = new JLabel("3rd:", SwingConstants.RIGHT);
+        JLabel fourthPlaceLabel = new JLabel("4th:", SwingConstants.RIGHT); */
+        JLabel firstPlaceName = new JLabel("1st: *Player* | *Score*");
+        JLabel secondPlaceName = new JLabel("2nd: *Player* | *Score*");
+        JLabel thirdPlaceName = new JLabel("3rd: *Player* | *Score*");
+        JLabel fourthPlaceName = new JLabel("4th: *Player* | *Score*");
         JButton returnToMain = new JButton("Return to Main Menu");
-        returnToMain.setFont(labelFont);
-        //returnToMain.setBounds(150, );
+
+        firstPlaceName.setBorder(BorderFactory.createEtchedBorder());
+        secondPlaceName.setBorder(BorderFactory.createEtchedBorder());
+        thirdPlaceName.setBorder(BorderFactory.createEtchedBorder());
+        fourthPlaceName.setBorder(BorderFactory.createEtchedBorder());
+
+        //podium.add(firstPlaceLabel);
+        podium.add(firstPlaceName);
+        //podium.add(secondPlaceLabel);
+        podium.add(secondPlaceName);
+        //podium.add(thirdPlaceLabel);
+        podium.add(thirdPlaceName);
+        //podium.add(fourthPlaceLabel);
+        podium.add(fourthPlaceName);
+        centerPanel.add(podium);
+        frame.add(centerPanel, BorderLayout.CENTER);
+
+        southPanel.add(returnToMain);
+        frame.add(southPanel, BorderLayout.SOUTH);
+
+        frame.setMinimumSize(new Dimension(250,175));
+        frame.pack();
+        frame.setLocationRelativeTo(null);
+        frame.setVisible(true);
 
         // Makes join button switch to the waiting screen
         returnToMain.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                winnerFrame.dispose();  // Close the main menu
+                frame.dispose();  // Close the main menu
                 mainMenu();  // Open join screen
             }
         });
 
         // Changes the "X" in the top right to make the Join Screen return to the Main Menu
-        winnerFrame.addWindowListener(new WindowAdapter() {
+        frame.addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
-                winnerFrame.dispose();
+                frame.dispose();
                 mainMenu();
             }
         });
@@ -422,10 +457,11 @@ public class GameFrame extends JFrame {
             // Set the look and feel to the system's default
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException ignore) {}
-        mainMenu();
+        //mainMenu();
         //joinScreen();
         //hostScreen();
         //waitingScreen();
+        winnerScreen();
     }
 
 
