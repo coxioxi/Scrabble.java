@@ -8,7 +8,6 @@ import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
-
 public class GameFrame extends JFrame {
     private static final Font labelFont = new Font("Arial", Font.PLAIN, 28);
     private static final Font titleFont = new Font("Times New Roman", Font.BOLD, 40);
@@ -18,7 +17,7 @@ public class GameFrame extends JFrame {
         frame.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         JPanel mainPanel = new JPanel(new FlowLayout());
         mainPanel.setBorder(BorderFactory.createTitledBorder("Main Menu"));
-        JPanel menuFrame = new JPanel(new GridLayout(5,1, 20,20));
+        JPanel menuFrame = new JPanel(new GridLayout(5,1, 0,15));
 
         /* JLabel menuTitle = new JLabel("Main Menu", SwingConstants.CENTER);
         menuTitle.setFont(titleFont);
@@ -90,10 +89,16 @@ public class GameFrame extends JFrame {
 
         // Main Panel setup
         JPanel mainPanel = new JPanel();
-        mainPanel.setBorder(BorderFactory.createTitledBorder("Main Menu"));
+        mainPanel.setBorder(BorderFactory.createTitledBorder("Host A Game"));
         mainPanel.setLayout(null);
 
-        JPanel southPanel = new JPanel(new GridLayout());
+        JPanel southPanel = new JPanel(new FlowLayout());
+        JPanel northPanel = new JPanel(new FlowLayout());
+        northPanel.setBorder(BorderFactory.createTitledBorder("Host A Game"));
+        JPanel eastPanel = new JPanel(new FlowLayout());
+        eastPanel.setBorder(BorderFactory.createTitledBorder("Customizations"));
+        JPanel westPanel = new JPanel(new FlowLayout());
+        westPanel.setBorder(BorderFactory.createTitledBorder("Players Waiting"));
 
         /*Page Title
         JLabel hostTitle = new JLabel("Host Game", SwingConstants.CENTER);
@@ -104,12 +109,11 @@ public class GameFrame extends JFrame {
 
         // Main Frame details
         // Instantiating the Labels and the TextField
-        JLabel yourIP = new JLabel("Your IP Address:");
+        JLabel yourIP = new JLabel("Your IP Address:", SwingConstants.RIGHT);
         JLabel hostsIP = new JLabel("**Host's IP**");
-        JLabel nameLabel = new JLabel("Name:");
+        JLabel nameLabel = new JLabel("Name:", SwingConstants.RIGHT);
         JTextField nameInput = new JTextField();
         JButton hostButton = new JButton("Host");
-        JLabel waitingLabel = new JLabel("Players Waiting");
         JLabel player1Waiting = new JLabel("**Player 1 Name**", SwingConstants.CENTER);
         JLabel player2Waiting = new JLabel("**Player 2 Name**", SwingConstants.CENTER);
         JLabel player3Waiting = new JLabel("**Player 3 Name**", SwingConstants.CENTER);
@@ -120,7 +124,31 @@ public class GameFrame extends JFrame {
         player3Waiting.setBorder(BorderFactory.createLineBorder(Color.BLACK, 2));
         player4Waiting.setBorder(BorderFactory.createLineBorder(Color.BLACK, 2));
 
-        /*yourIP.setFont(labelFont);
+        // Adds Name and IP items to North
+        JPanel nameAndIP = new JPanel(new GridLayout(2,2,7,10));
+        //nameAndIP.setBorder(BorderFactory.createTitledBorder("Host A Game"));
+        nameAndIP.add(yourIP);
+        nameAndIP.add(hostsIP);
+        nameAndIP.add(nameLabel);
+        nameAndIP.add(nameInput);
+        northPanel.add(nameAndIP);
+        frame.add(northPanel, BorderLayout.NORTH);
+
+        // Adds Players Waiting to the West
+        JPanel playersWaiting = new JPanel(new GridLayout(4,1,0,10));
+        //playersWaiting.setBorder(BorderFactory.createTitledBorder("Players Waiting"));
+        playersWaiting.add(player1Waiting);
+        playersWaiting.add(player2Waiting);
+        playersWaiting.add(player3Waiting);
+        playersWaiting.add(player4Waiting);
+        westPanel.add(playersWaiting);
+        frame.add(westPanel, BorderLayout.WEST);
+
+        // Adds Host Button to the South
+        southPanel.add(hostButton);
+        frame.add(southPanel, BorderLayout.SOUTH);
+
+        /* yourIP.setFont(labelFont);
         yourIP.setBounds(25, 80, 240, 30);
         hostsIP.setFont(labelFont);
         hostsIP.setBounds(245, 80, 200, 30);
@@ -141,32 +169,24 @@ public class GameFrame extends JFrame {
         player2Waiting.setBounds(25, 330, 250, 40);
         player3Waiting.setBounds(25, 390, 250, 40);
         player4Waiting.setBounds(25, 450, 250, 40);
+        customizations.setBounds(450, 150, 300, 250);
+        Font customizationFont = new Font("Arial", Font.PLAIN, 16);
          */
 
-        // Customization Panel details
-        JPanel customizations = new JPanel();
-        customizations.setBorder(new LineBorder(Color.BLACK, 2));
-        customizations.setLayout(null);
-
-        //customizations.setBounds(450, 150, 300, 250);
-        //Font customizationFont = new Font("Arial", Font.PLAIN, 16);
-
         // Instantiating Customizations Labels and Combo Boxes
-        JLabel customizationLabel = new JLabel("Customizations");
-        JLabel challengeLabel = new JLabel("Challenges Allowed:");
+        // JLabel customizationLabel = new JLabel("Customizations");
+        JLabel challengeLabel = new JLabel("Challenges Allowed:", SwingConstants.RIGHT);
         String[] challengeChoices = {"Challenges on", "Challenges off"};
         JComboBox<String> challengeComboBox = new JComboBox<>(challengeChoices);
-        JLabel dictionaryLabel = new JLabel("Dictionary Used:");
+        JLabel dictionaryLabel = new JLabel("Dictionary Used:", SwingConstants.RIGHT);
         String[] dictionaryChoices = {"Dictionary 1", "Dictionary 2"};
         JComboBox<String> dictionaryComboBox = new JComboBox<>(dictionaryChoices);
-        JLabel playerTimeLabel = new JLabel("Player Time:");
+        JLabel playerTimeLabel = new JLabel("Player Time:", SwingConstants.RIGHT);
         String[] playerTimeChoices = {"2 Minutes", "3 Minutes", "4 Minutes", "5 Minutes"};
         JComboBox<String> playerTimeComboBox = new JComboBox<>(playerTimeChoices);
-        JLabel gameTimeLabel = new JLabel("Game Time:");
+        JLabel gameTimeLabel = new JLabel("Game Time:", SwingConstants.RIGHT);
         String[] gameTimeChoices = {"30 Minutes", "45 Minutes", "60 Minutes", "75 Minutes"};
         JComboBox<String> gameTimeComboBox = new JComboBox<>(gameTimeChoices);
-
-
 
         /*
         customizationLabel.setFont(labelFont);
@@ -193,33 +213,21 @@ public class GameFrame extends JFrame {
         gameTimeComboBox.setBounds(105, 198, 105, 25);
          */
 
-        // adds items to the main panel
-        mainPanel.add(yourIP);
-        mainPanel.add(nameLabel);
-        mainPanel.add(hostsIP);
-        mainPanel.add(nameInput);
-        mainPanel.add(waitingLabel);
-        mainPanel.add(player1Waiting);
-        mainPanel.add(player2Waiting);
-        mainPanel.add(player3Waiting);
-        mainPanel.add(player4Waiting);
-        frame.add(mainPanel, BorderLayout.CENTER);
-        southPanel.add(hostButton);
-        frame.add(southPanel, BorderLayout.SOUTH);
-
-        // adds items to the customization panel
-        customizations.add(customizationLabel);
+        // Adds Customization Items to the East
+        JPanel customizations = new JPanel(new GridLayout(4,2, 7, 10));
+        //customizations.setBorder(BorderFactory.createTitledBorder("Customizations"));
         customizations.add(challengeLabel);
-        customizations.add(dictionaryLabel);
-        customizations.add(playerTimeLabel);
-        customizations.add(gameTimeLabel);
         customizations.add(challengeComboBox);
+        customizations.add(dictionaryLabel);
         customizations.add(dictionaryComboBox);
+        customizations.add(playerTimeLabel);
         customizations.add(playerTimeComboBox);
+        customizations.add(gameTimeLabel);
         customizations.add(gameTimeComboBox);
-        mainPanel.add(customizations);
+        eastPanel.add(customizations);
+        frame.add(eastPanel, BorderLayout.EAST);
 
-        frame.setMinimumSize(new Dimension(800,600));
+        frame.setMinimumSize(new Dimension(370,300));
         frame.pack();
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
@@ -236,130 +244,145 @@ public class GameFrame extends JFrame {
 
     public static void joinScreen() {
         // Highest level frame and panel
-        JFrame joinFrame = new JFrame("Scrabble");
-        joinFrame.setSize(700, 500);
-        joinFrame.setLayout(null);
+        JFrame frame = new JFrame("Scrabble");
 
-        // Add title at the top of the frame
-        JLabel joinTitle = new JLabel("Player Joining Screen", SwingConstants.CENTER);
+        JPanel northPanel = new JPanel(new FlowLayout());
+        northPanel.setBorder(BorderFactory.createTitledBorder("Join A Game"));
+        JPanel centerPanel = new JPanel(new FlowLayout());
+        centerPanel.setBorder(BorderFactory.createTitledBorder("IP"));
+        JPanel southPanel = new JPanel(new FlowLayout());
+
+        /* JLabel joinTitle = new JLabel("Player Joining Screen");
         joinTitle.setFont(titleFont);
         joinTitle.setBounds(160, 5, 380, 50);
         joinFrame.add(joinTitle);
+         */
 
-        // Name label and text field
         JLabel nameLabel = new JLabel("Name:");
+        JTextField enterName = new JTextField();
+        JLabel hostIPLabel = new JLabel("Enter Host IP:");
+        JTextField enterIP = new JTextField();
+        JButton joinButton = new JButton("Join");
+
+        JPanel namePanel = new JPanel(new GridLayout(1,2, 7, 0));
+        namePanel.add(nameLabel);
+        namePanel.add(enterName);
+        northPanel.add(namePanel);
+        frame.add(northPanel, BorderLayout.NORTH);
+
+        JPanel ipPanel = new JPanel(new GridLayout(1,2,7,0));
+        ipPanel.add(hostIPLabel);
+        ipPanel.add(enterIP);
+        centerPanel.add(ipPanel);
+        frame.add(centerPanel, BorderLayout.CENTER);
+
+        southPanel.add(joinButton);
+        frame.add(southPanel, BorderLayout.SOUTH);
+
+        /*
         nameLabel.setBounds(190, 80, 80, 30);
         nameLabel.setFont(labelFont);
         joinFrame.add(nameLabel);
-
-        JTextField enterName = new JTextField();
         enterName.setBounds(290, 75, 220, 40);
         enterName.setFont(labelFont);
         joinFrame.add(enterName);
 
-        // Panel for border with Host IP text field and Join button inside
         JPanel borderPanel = new JPanel();
         borderPanel.setBorder(new LineBorder(Color.BLACK, 2));
         borderPanel.setBounds(125, 140, 450, 300);
         borderPanel.setLayout(null);
         joinFrame.add(borderPanel);
 
-        // Labels for Join party and Host IP inside bordered box
         JLabel joinPartyLabel = new JLabel("Join Party", SwingConstants.CENTER);
         joinPartyLabel.setBounds(135, 15, 180, 30);
         joinPartyLabel.setFont(labelFont);
         borderPanel.add(joinPartyLabel);
 
-        JLabel enterIPLabel = new JLabel("Enter Host IP:");
         enterIPLabel.setBounds(30, 80, 180, 30);
         enterIPLabel.setFont(labelFont);
         borderPanel.add(enterIPLabel);
-
-        // Text field for entering Host IP
-        JTextField hostIPText = new JTextField();
         hostIPText.setBounds(220, 75, 200, 40);
         borderPanel.add(hostIPText);
-
-        // Join button
-        JButton joinButton = new JButton("Join");
         joinButton.setBounds(150, 150, 150, 50);
         joinButton.setFont(labelFont);
         borderPanel.add(joinButton);
+         */
 
         // Makes join button switch to the waiting screen
         joinButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                joinFrame.dispose();  // Close the main menu
+                frame.dispose();  // Close the main menu
                 waitingScreen();  // Open join screen
             }
         });
 
         // Changes the "X" in the top right to make the Join Screen return to the Main Menu
-        joinFrame.addWindowListener(new WindowAdapter() {
+        frame.addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
-                joinFrame.dispose();
+                frame.dispose();
                 mainMenu();
             }
         });
 
-        joinFrame.setVisible(true);
+        frame.setMinimumSize(new Dimension(250,150));
+        frame.pack();
+        frame.setLocationRelativeTo(null);
+        frame.setVisible(true);
     }
 
     public static void waitingScreen() {
-        JFrame waitFrame = new JFrame("Scrabble");
-        waitFrame.setSize(500, 500);
-        waitFrame.setLayout(null);
+        JFrame frame = new JFrame("Scrabble");
 
-        // Add title at the top of the frame
-        JLabel waitTitle = new JLabel("Player Waiting Screen", SwingConstants.CENTER);
-        waitTitle.setFont(titleFont);
-        waitTitle.setBounds(55, 5, 390, 50);
-        waitFrame.add(waitTitle);
+        JPanel centerPanel = new JPanel(new FlowLayout());
+        centerPanel.setBorder(BorderFactory.createTitledBorder("Player Waiting Screen"));
 
-        // Players title label setup
-        JLabel playerTitle = new JLabel("Players in Game", SwingConstants.CENTER);
-        playerTitle.setBounds(145, 80, 210, 40);
-        playerTitle.setFont(labelFont);
-
-        // Players Names in this game setup
+        JLabel playerTitle = new JLabel("Players in the Game:", SwingConstants.CENTER);
         JLabel player1Label = new JLabel("**Player 1**", SwingConstants.CENTER);
         JLabel player2Label = new JLabel("**Player 2**", SwingConstants.CENTER);
         JLabel player3Label = new JLabel("**Player 3**", SwingConstants.CENTER);
         JLabel player4Label = new JLabel("**Player 4**", SwingConstants.CENTER);
-
-        player1Label.setBounds(100, 150, 300, 45);
-        player2Label.setBounds(100, 220, 300, 45);
-        player3Label.setBounds(100, 290, 300, 45);
-        player4Label.setBounds(100, 360, 300, 45);
 
         player1Label.setBorder(BorderFactory.createLineBorder(Color.BLACK, 2));
         player2Label.setBorder(BorderFactory.createLineBorder(Color.BLACK, 2));
         player3Label.setBorder(BorderFactory.createLineBorder(Color.BLACK, 2));
         player4Label.setBorder(BorderFactory.createLineBorder(Color.BLACK, 2));
 
+        /*
+        playerTitle.setBounds(145, 80, 210, 40);
+        playerTitle.setFont(labelFont);
+        player1Label.setBounds(100, 150, 300, 45);
+        player2Label.setBounds(100, 220, 300, 45);
+        player3Label.setBounds(100, 290, 300, 45);
+        player4Label.setBounds(100, 360, 300, 45);
         player1Label.setFont(labelFont);
         player2Label.setFont(labelFont);
         player3Label.setFont(labelFont);
         player4Label.setFont(labelFont);
+         */
 
-        // Adding labels to the screen
-        waitFrame.add(playerTitle);
-        waitFrame.add(player1Label);
-        waitFrame.add(player2Label);
-        waitFrame.add(player3Label);
-        waitFrame.add(player4Label);
+        JPanel playersWaiting = new JPanel(new GridLayout(5,1,0,15));
+        playersWaiting.add(playerTitle);
+        playersWaiting.add(player1Label);
+        playersWaiting.add(player2Label);
+        playersWaiting.add(player3Label);
+        playersWaiting.add(player4Label);
+        centerPanel.add(playersWaiting);
+        frame.add(centerPanel, BorderLayout.CENTER);
 
-        waitFrame.addWindowListener(new WindowAdapter() {
+        frame.addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
-                waitFrame.dispose();
+                frame.dispose();
                 joinScreen();
             }
         });
 
-        waitFrame.setVisible(true);
+        frame.setMinimumSize(new Dimension(250,250));
+        frame.pack();
+        frame.setLocationRelativeTo(null);
+        frame.setVisible(true);
     }
 
     public void gameScreen() {
