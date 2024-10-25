@@ -27,7 +27,7 @@ public class GameFrame extends JFrame {
         JButton hostButton = new JButton("Host");
         JButton joinButton = new JButton("Join");
         JCheckBox audioCheck = new JCheckBox("Game Audio", audioOn);
-        JCheckBox fxCheck = new JCheckBox("Audio FX", fxOn);
+        JCheckBox fxCheck = new JCheckBox("Game FX", fxOn);
         JButton quitButton = new JButton("Quit");
 
         /* hostButton.setBounds(95, 90, 200, 60);
@@ -83,10 +83,8 @@ public class GameFrame extends JFrame {
 
 
     public static void hostScreen() {
-        // Frame setup
         JFrame frame = new JFrame("Scrabble");
 
-        // Main Panel setup
         JPanel mainPanel = new JPanel();
         mainPanel.setBorder(BorderFactory.createTitledBorder("Host A Game"));
         mainPanel.setLayout(null);
@@ -99,15 +97,6 @@ public class GameFrame extends JFrame {
         JPanel westPanel = new JPanel(new FlowLayout());
         westPanel.setBorder(BorderFactory.createTitledBorder("Players Waiting"));
 
-        /*Page Title
-        JLabel hostTitle = new JLabel("Host Game", SwingConstants.CENTER);
-        hostTitle.setFont(titleFont);
-        hostTitle.setBounds(275,5,250,45);
-        mainPanel.add(hostTitle);
-         */
-
-        // Main Frame details
-        // Instantiating the Labels and the TextField
         JLabel yourIP = new JLabel("Your IP Address:", SwingConstants.RIGHT);
         JLabel hostsIP = new JLabel("**Host's IP**");
         JLabel nameLabel = new JLabel("Name:", SwingConstants.RIGHT);
@@ -123,9 +112,7 @@ public class GameFrame extends JFrame {
         player3Waiting.setBorder(BorderFactory.createEtchedBorder());
         player4Waiting.setBorder(BorderFactory.createEtchedBorder());
 
-        // Adds Name and IP items to North
         JPanel nameAndIP = new JPanel(new GridLayout(2,2,7,10));
-        //nameAndIP.setBorder(BorderFactory.createTitledBorder("Host A Game"));
         nameAndIP.add(yourIP);
         nameAndIP.add(hostsIP);
         nameAndIP.add(nameLabel);
@@ -133,9 +120,7 @@ public class GameFrame extends JFrame {
         northPanel.add(nameAndIP);
         frame.add(northPanel, BorderLayout.NORTH);
 
-        // Adds Players Waiting to the West
         JPanel playersWaiting = new JPanel(new GridLayout(4,1,0,10));
-        //playersWaiting.setBorder(BorderFactory.createTitledBorder("Players Waiting"));
         playersWaiting.add(player1Waiting);
         playersWaiting.add(player2Waiting);
         playersWaiting.add(player3Waiting);
@@ -143,37 +128,9 @@ public class GameFrame extends JFrame {
         westPanel.add(playersWaiting);
         frame.add(westPanel, BorderLayout.WEST);
 
-        // Adds Host Button to the South
         southPanel.add(hostButton);
         frame.add(southPanel, BorderLayout.SOUTH);
 
-        /* yourIP.setFont(labelFont);
-        yourIP.setBounds(25, 80, 240, 30);
-        hostsIP.setFont(labelFont);
-        hostsIP.setBounds(245, 80, 200, 30);
-        nameLabel.setFont(labelFont);
-        nameLabel.setBounds(25, 150, 100, 30);
-        nameInput.setFont(labelFont);
-        nameInput.setBounds(115, 150, 220, 30);
-        hostButton.setFont(labelFont);
-        hostButton.setBounds(325, 490, 150, 40);
-        waitingLabel.setFont(labelFont);
-        waitingLabel.setBounds(50, 215, 200, 30);
-        Font waitingFont = new Font("Arial", Font.PLAIN, 20);
-        player1Waiting.setFont(waitingFont);
-        player2Waiting.setFont(waitingFont);
-        player3Waiting.setFont(waitingFont);
-        player4Waiting.setFont(waitingFont);
-        player1Waiting.setBounds(25, 270, 250, 40);
-        player2Waiting.setBounds(25, 330, 250, 40);
-        player3Waiting.setBounds(25, 390, 250, 40);
-        player4Waiting.setBounds(25, 450, 250, 40);
-        customizations.setBounds(450, 150, 300, 250);
-        Font customizationFont = new Font("Arial", Font.PLAIN, 16);
-         */
-
-        // Instantiating Customizations Labels and Combo Boxes
-        // JLabel customizationLabel = new JLabel("Customizations");
         JLabel challengeLabel = new JLabel("Challenges Allowed:", SwingConstants.RIGHT);
         String[] challengeChoices = {"Challenges on", "Challenges off"};
         JComboBox<String> challengeComboBox = new JComboBox<>(challengeChoices);
@@ -187,34 +144,7 @@ public class GameFrame extends JFrame {
         String[] gameTimeChoices = {"30 Minutes", "45 Minutes", "60 Minutes", "75 Minutes"};
         JComboBox<String> gameTimeComboBox = new JComboBox<>(gameTimeChoices);
 
-        /*
-        customizationLabel.setFont(labelFont);
-        customizationLabel.setBounds(50, 10, 200, 30);
-        Challenge Label and Combo Box setup
-        challengeLabel.setFont(customizationFont);
-        challengeLabel.setBounds(10, 80, 150, 20);
-        challengeComboBox.setFont(customizationFont);
-        challengeComboBox.setBounds(160, 78, 130, 25);
-        Dictionary Label and Combo Box setup
-        dictionaryLabel.setFont(customizationFont);
-        dictionaryLabel.setBounds(10, 120, 150, 20);
-        dictionaryComboBox.setFont(customizationFont);
-        dictionaryComboBox.setBounds(133, 118, 120, 25);
-        Player Time Label and Combo Box setup
-        playerTimeLabel.setFont(customizationFont);
-        playerTimeLabel.setBounds(10, 160, 150, 20);
-        playerTimeComboBox.setFont(customizationFont);
-        playerTimeComboBox.setBounds(105, 158, 105, 25);
-        Game Time Label and Combo Box setup
-        gameTimeLabel.setBounds(10, 200, 150, 20);
-        gameTimeLabel.setFont(customizationFont);
-        gameTimeComboBox.setFont(customizationFont);
-        gameTimeComboBox.setBounds(105, 198, 105, 25);
-         */
-
-        // Adds Customization Items to the East
         JPanel customizations = new JPanel(new GridLayout(4,2, 7, 10));
-        //customizations.setBorder(BorderFactory.createTitledBorder("Customizations"));
         customizations.add(challengeLabel);
         customizations.add(challengeComboBox);
         customizations.add(dictionaryLabel);
@@ -242,7 +172,6 @@ public class GameFrame extends JFrame {
     }
 
     public static void joinScreen() {
-        // Highest level frame and panel
         JFrame frame = new JFrame("Scrabble");
 
         JPanel northPanel = new JPanel(new FlowLayout());
@@ -250,12 +179,6 @@ public class GameFrame extends JFrame {
         JPanel centerPanel = new JPanel(new FlowLayout());
         centerPanel.setBorder(BorderFactory.createTitledBorder("IP"));
         JPanel southPanel = new JPanel(new FlowLayout());
-
-        /* JLabel joinTitle = new JLabel("Player Joining Screen");
-        joinTitle.setFont(titleFont);
-        joinTitle.setBounds(160, 5, 380, 50);
-        joinFrame.add(joinTitle);
-         */
 
         JLabel nameLabel = new JLabel("Name:", SwingConstants.RIGHT);
         JTextField enterName = new JTextField();
@@ -279,35 +202,6 @@ public class GameFrame extends JFrame {
 
         southPanel.add(joinButton);
         frame.add(southPanel, BorderLayout.SOUTH);
-
-        /*
-        nameLabel.setBounds(190, 80, 80, 30);
-        nameLabel.setFont(labelFont);
-        joinFrame.add(nameLabel);
-        enterName.setBounds(290, 75, 220, 40);
-        enterName.setFont(labelFont);
-        joinFrame.add(enterName);
-
-        JPanel borderPanel = new JPanel();
-        borderPanel.setBorder(new LineBorder(Color.BLACK, 2));
-        borderPanel.setBounds(125, 140, 450, 300);
-        borderPanel.setLayout(null);
-        joinFrame.add(borderPanel);
-
-        JLabel joinPartyLabel = new JLabel("Join Party", SwingConstants.CENTER);
-        joinPartyLabel.setBounds(135, 15, 180, 30);
-        joinPartyLabel.setFont(labelFont);
-        borderPanel.add(joinPartyLabel);
-
-        enterIPLabel.setBounds(30, 80, 180, 30);
-        enterIPLabel.setFont(labelFont);
-        borderPanel.add(enterIPLabel);
-        hostIPText.setBounds(220, 75, 200, 40);
-        borderPanel.add(hostIPText);
-        joinButton.setBounds(150, 150, 150, 50);
-        joinButton.setFont(labelFont);
-        borderPanel.add(joinButton);
-         */
 
         // Makes join button switch to the waiting screen
         joinButton.addActionListener(new ActionListener() {
@@ -350,19 +244,6 @@ public class GameFrame extends JFrame {
         player3Label.setBorder(BorderFactory.createEtchedBorder());
         player4Label.setBorder(BorderFactory.createEtchedBorder());
 
-        /*
-        playerTitle.setBounds(145, 80, 210, 40);
-        playerTitle.setFont(labelFont);
-        player1Label.setBounds(100, 150, 300, 45);
-        player2Label.setBounds(100, 220, 300, 45);
-        player3Label.setBounds(100, 290, 300, 45);
-        player4Label.setBounds(100, 360, 300, 45);
-        player1Label.setFont(labelFont);
-        player2Label.setFont(labelFont);
-        player3Label.setFont(labelFont);
-        player4Label.setFont(labelFont);
-         */
-
         JPanel playersWaiting = new JPanel(new GridLayout(5,1,0,15));
         playersWaiting.add(playerTitle);
         playersWaiting.add(player1Label);
@@ -386,9 +267,142 @@ public class GameFrame extends JFrame {
         });
     }
 
-    public void gameScreen() {
-        JPanel gamePanel = new JPanel();
+    public static void gameScreen() {
+        JFrame frame = new JFrame("Scrabble");
 
+        JMenuBar menuBar = new JMenuBar();
+        JMenu optionsMenu = new JMenu("Options");
+        JMenuItem rulesItem = new JMenuItem("Rules");
+        JMenuItem gameAudioItem = new JMenuItem("Game Audio");
+        JMenuItem gameFXItem = new JMenuItem("Game FX");
+        JMenuItem quitItem = new JMenuItem("Quit");
+        optionsMenu.add(rulesItem);
+        optionsMenu.add(gameAudioItem);
+        optionsMenu.add(gameFXItem);
+        optionsMenu.add(quitItem);
+        menuBar.add(optionsMenu);
+
+        JPanel northPanel = new JPanel(new FlowLayout());
+        JLabel gameTime = new JLabel("00:00");
+        gameTime.setBorder(BorderFactory.createEtchedBorder());
+        northPanel.add(gameTime);
+
+        JPanel centerPanel = new JPanel(new FlowLayout());
+        centerPanel.setBorder(BorderFactory.createTitledBorder("Game Board"));
+        JPanel gamePanel = new JPanel(new GridLayout(15,15,1,1));
+        for (int i = 0; i < 15; i++) {
+            for(int j = 0; j < 15; j++) {
+                JLabel boardTile = new JLabel("$$");
+                boardTile.setBorder(BorderFactory.createEtchedBorder());
+                gamePanel.add(boardTile);
+            }
+        }
+        centerPanel.add(gamePanel);
+
+        JPanel westPanel = new JPanel(new GridLayout(2,1,0,175));
+        JPanel player1Panel = new JPanel(new GridLayout(3,2,7,10));
+        player1Panel.setBorder(BorderFactory.createEtchedBorder());
+        JLabel player1NameLabel = new JLabel("Player Name:", SwingConstants.RIGHT);
+        JLabel player1Name = new JLabel("*Player Name*");
+        JLabel player1TimeLabel = new JLabel("Time:", SwingConstants.RIGHT);
+        JLabel player1Time = new JLabel("0:00 ");
+        JLabel player1ScoreLabel = new JLabel("Score:", SwingConstants.RIGHT);
+        JLabel player1Score = new JLabel("0000");
+        player1Panel.add(player1NameLabel);
+        player1Panel.add(player1Name);
+        player1Panel.add(player1TimeLabel);
+        player1Panel.add(player1Time);
+        player1Panel.add(player1ScoreLabel);
+        player1Panel.add(player1Score);
+        westPanel.add(player1Panel);
+
+        JPanel player4Panel = new JPanel(new GridLayout(3,2,7,10));
+        player4Panel.setBorder(BorderFactory.createEtchedBorder());
+        JLabel player4NameLabel = new JLabel("Player Name:", SwingConstants.RIGHT);
+        JLabel player4Name = new JLabel("*Player Name*");
+        JLabel player4TimeLabel = new JLabel("Time:", SwingConstants.RIGHT);
+        JLabel player4Time = new JLabel("0:00");
+        JLabel player4ScoreLabel = new JLabel("Score:", SwingConstants.RIGHT);
+        JLabel player4Score = new JLabel("0000");
+        player4Panel.add(player4NameLabel);
+        player4Panel.add(player4Name);
+        player4Panel.add(player4TimeLabel);
+        player4Panel.add(player4Time);
+        player4Panel.add(player4ScoreLabel);
+        player4Panel.add(player4Score);
+        westPanel.add(player4Panel);
+
+        JPanel eastPanel = new JPanel(new GridLayout(2,1,0,175));
+        JPanel player2Panel = new JPanel(new GridLayout(3,2,7,10));
+        player2Panel.setBorder(BorderFactory.createEtchedBorder());
+        JLabel player2NameLabel = new JLabel("Player Name:", SwingConstants.RIGHT);
+        JLabel player2Name = new JLabel("*Player Name*");
+        JLabel player2TimeLabel = new JLabel("Time:", SwingConstants.RIGHT);
+        JLabel player2Time = new JLabel("0:00");
+        JLabel player2ScoreLabel = new JLabel("Score:", SwingConstants.RIGHT);
+        JLabel player2Score = new JLabel("0000");
+        player2Panel.add(player2NameLabel);
+        player2Panel.add(player2Name);
+        player2Panel.add(player2TimeLabel);
+        player2Panel.add(player2Time);
+        player2Panel.add(player2ScoreLabel);
+        player2Panel.add(player2Score);
+        eastPanel.add(player2Panel);
+
+        JPanel player3Panel = new JPanel(new GridLayout(3,2,7,10));
+        player3Panel.setBorder(BorderFactory.createEtchedBorder());
+        JLabel player3NameLabel = new JLabel("Player Name:", SwingConstants.RIGHT);
+        JLabel player3Name = new JLabel("*Player Name*");
+        JLabel player3TimeLabel = new JLabel("Time:", SwingConstants.RIGHT);
+        JLabel player3Time = new JLabel("0:00");
+        JLabel player3ScoreLabel = new JLabel("Score:", SwingConstants.RIGHT);
+        JLabel player3Score = new JLabel("0000");
+        player3Panel.add(player3NameLabel);
+        player3Panel.add(player3Name);
+        player3Panel.add(player3TimeLabel);
+        player3Panel.add(player3Time);
+        player3Panel.add(player3ScoreLabel);
+        player3Panel.add(player3Score);
+        eastPanel.add(player3Panel);
+
+        JPanel southPanel = new JPanel(new FlowLayout());
+        JPanel submitAndRack = new JPanel(new GridLayout(2,1,0,10));
+        JButton submitButton = new JButton("Submit");
+        JPanel rackPanel = new JPanel(new GridLayout(1,7,10,0));
+        for (int i = 0; i < 7; i++) {
+            JLabel rackTile = new JLabel("$$");
+            rackTile.setBorder(BorderFactory.createEtchedBorder());
+            rackPanel.add(rackTile);
+        }
+        submitAndRack.add(submitButton);
+        submitAndRack.add(rackPanel);
+        southPanel.add(submitAndRack);
+
+        frame.setJMenuBar(menuBar);
+        frame.add(northPanel, BorderLayout.NORTH);
+        frame.add(centerPanel, BorderLayout.CENTER);
+        frame.add(westPanel, BorderLayout.WEST);
+        frame.add(eastPanel, BorderLayout.EAST);
+        frame.add(southPanel, BorderLayout.SOUTH);
+
+        quitItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                frame.dispose();
+            }
+        });
+
+        frame.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                frame.dispose();
+            }
+        });
+
+        frame.setMinimumSize(new Dimension(400,400));
+        frame.pack();
+        frame.setLocationRelativeTo(null);
+        frame.setVisible(true);
     }
 
     public static void winnerScreen() {
@@ -461,7 +475,8 @@ public class GameFrame extends JFrame {
         //joinScreen();
         //hostScreen();
         //waitingScreen();
-        winnerScreen();
+        //winnerScreen();
+        gameScreen();
     }
 
 
