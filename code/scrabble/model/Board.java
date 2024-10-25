@@ -246,12 +246,13 @@ public class Board {
      */
     public int playTiles(Tile[] tiles) {
         System.out.println(validatePositions(tiles));
-        if (!validatePositions(tiles))
-            return -1;       // ensure positions are allowed
-        int score = score(findOrigin(tiles));       // calculate score of play
-        allWordsPlayed.addAll(lastWordsPlayed);
-        addToBoard(tiles);              // add to board
-        return score;
+        if (validatePositions(tiles)){
+            int score = score(findOrigin(tiles));       // calculate score of play
+            allWordsPlayed.addAll(lastWordsPlayed);
+            addToBoard(tiles);              // add to board
+            return score;
+        }
+        return -1;
     }
 
 
@@ -335,6 +336,8 @@ public class Board {
 
         for(Point point: newTileLocations)
             board[point.x][point.y].setIsNew(false);
+
+        newTileLocations.clear();
 
         return finalSum;
     }

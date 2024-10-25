@@ -53,6 +53,12 @@ public class TestBoard {
 
     Tile[] tiles11 = {new Tile('O',new Point(12,12)), new Tile('R', new Point(13,12))};
 
+    Tile[] tiles12 = {new Tile('M', new Point(4,8))
+            , new Tile('I', new Point(5,8)), new Tile('N', new Point(6,8))};
+
+    Tile[] tiles13 = {new Tile('M', new Point(3,9))
+            , new Tile('A', new Point(4,9)), new Tile('N', new Point(5,9))};
+
     Board board = new Board();
 
     int score = 0;
@@ -260,6 +266,30 @@ public class TestBoard {
             player2.increaseScore(score);
             System.out.println("Words formed this turn: " + board.getLastWordsPlayed() + "\nTurn Score: " + score);
             System.out.println(player2.getName()+"'s Total Score: "+ player2.getScore());
+            System.out.println();
+            board.getLastWordsPlayed().clear();
+        }
+        else
+            System.out.println("Word is not in the dictionary");
+
+        System.out.printf(player3.getName()+"'s Turn:\n");
+        if(validWordCheck(pointGetter(tiles12))) {
+            score = board.playTiles(tiles12);
+            player3.increaseScore(score);
+            System.out.println("Words formed this turn: " + board.getLastWordsPlayed() + "\nTurn Score: " + score);
+            System.out.println(player3.getName()+"'s Total Score: "+ player3.getScore());
+            System.out.println();
+            board.getLastWordsPlayed().clear();
+        }
+        else
+            System.out.println("Word is not in the dictionary");
+
+        System.out.printf(player4.getName()+"'s Turn:\n");
+        if(validWordCheck(pointGetter(tiles13))) {
+            score = board.playTiles(tiles13);
+            player4.increaseScore(score);
+            System.out.println("Words formed this turn: " + board.getLastWordsPlayed() + "\nTurn Score: " + score);
+            System.out.println(player4.getName()+"'s Total Score: "+ player4.getScore());
             System.out.println();
             board.getLastWordsPlayed().clear();
         }
