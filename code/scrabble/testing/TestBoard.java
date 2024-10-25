@@ -49,8 +49,9 @@ public class TestBoard {
 
     Tile[] tiles9 = {new Tile('T', new Point(8,10))};
 
-    Tile[] tiles10 = {new Tile('Q',new Point(3,7)), new Tile('U', new Point(4,7))
-            , new Tile('E', new Point(5,7)), new Tile('E', new Point(6,7))};
+    Tile[] tiles10 = {new Tile('C',new Point(11,11)), new Tile('E', new Point(12,11))};
+
+    Tile[] tiles11 = {new Tile('O',new Point(12,12)), new Tile('R', new Point(13,12))};
 
     Board board = new Board();
 
@@ -231,6 +232,34 @@ public class TestBoard {
             player4.increaseScore(score);
             System.out.println("Words formed this turn: " + board.getLastWordsPlayed() + "\nTurn Score: " + score);
             System.out.println(player4.getName()+"'s Total Score: "+ player4.getScore());
+            System.out.println();
+            board.getLastWordsPlayed().clear();
+        }
+        else
+            System.out.println("Word is not in the dictionary");
+
+        System.out.println("Third Turn:");
+
+        System.out.println();
+
+        System.out.printf(player1.getName()+"'s Turn:\n");
+        if(validWordCheck(pointGetter(tiles10))){
+            score = board.playTiles(tiles10);
+            player1.increaseScore(score);
+            System.out.println("Words formed this turn: " + board.getLastWordsPlayed() + "\nTurn Score: " + score);
+            System.out.println(player1.getName()+"'s Total Score: "+ player1.getScore());
+            System.out.println();
+            board.getLastWordsPlayed().clear();
+        }
+        else
+            System.out.println("Word is not in the dictionary");
+
+        System.out.printf(player2.getName()+"'s Turn:\n");
+        if(validWordCheck(pointGetter(tiles11))) {
+            score = board.playTiles(tiles11);
+            player2.increaseScore(score);
+            System.out.println("Words formed this turn: " + board.getLastWordsPlayed() + "\nTurn Score: " + score);
+            System.out.println(player2.getName()+"'s Total Score: "+ player2.getScore());
             System.out.println();
             board.getLastWordsPlayed().clear();
         }

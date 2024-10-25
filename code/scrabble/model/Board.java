@@ -314,6 +314,10 @@ public class Board {
     public int score(Tile[] originTiles) {
         int finalSum = 0;
 
+        //find origin is not getting all origin tiles
+        //for(Tile tile: originTiles)
+        //    System.out.println(tile.getLetter());
+
         for (Tile originTile : originTiles) {
             Point location = originTile.getLocation();
             int row = location.x;
@@ -385,11 +389,13 @@ public class Board {
                             totalMultiplier *= 3; // Triple the word score
                             break;
                     }
-                    if (((newTileCount == 1 && ((isHorizontal && isWithinBounds(row+1,col) && isWithinBounds(row-1,col) && (board[row+1][col] != null || board[row-1][col] != null))
+                    if ((newTileCount == 1 && ((isHorizontal && isWithinBounds(row+1,col) && isWithinBounds(row-1,col) && (board[row+1][col] != null || board[row-1][col] != null))
                             || (!isHorizontal && isWithinBounds(row, col+1) && isWithinBounds(row, col-1) && (board[row][col+1] != null || board[row][col-1] != null)))) ||
                             ((newTileCount > 1 && ((isHorizontal && isWithinBounds(row+1,col) && isWithinBounds(row-1,col) && (board[row+1][col] != null || board[row-1][col] != null))
-                                    || (!isHorizontal && isWithinBounds(row, col+1) && isWithinBounds(row, col-1) && (board[row][col+1] != null || board[row][col-1] != null)))))) && !newTileLocations.contains(tile.getLocation())){
-                        newTileLocations.add(tile.getLocation());
+                                    || (!isHorizontal && isWithinBounds(row, col+1) && isWithinBounds(row, col-1) && (board[row][col+1] != null || board[row][col-1] != null)))))){
+
+                        if(!newTileLocations.contains(tile.getLocation()))
+                            newTileLocations.add(tile.getLocation());
                     }
                     else
                         tile.setIsNew(false);
@@ -397,11 +403,13 @@ public class Board {
                 } else {
                     wordPoints += tileScore; // Normal tile without modifier
 
-                    if (((newTileCount == 1 && ((isHorizontal && isWithinBounds(row+1,col) && isWithinBounds(row-1,col) && (board[row+1][col] != null || board[row-1][col] != null))
+                    if ((newTileCount == 1 && ((isHorizontal && isWithinBounds(row+1,col) && isWithinBounds(row-1,col) && (board[row+1][col] != null || board[row-1][col] != null))
                             || (!isHorizontal && isWithinBounds(row, col+1) && isWithinBounds(row, col-1) && (board[row][col+1] != null || board[row][col-1] != null)))) ||
                             ((newTileCount > 1 && ((isHorizontal && isWithinBounds(row+1,col) && isWithinBounds(row-1,col) && (board[row+1][col] != null || board[row-1][col] != null))
-                                    || (!isHorizontal && isWithinBounds(row, col+1) && isWithinBounds(row, col-1) && (board[row][col+1] != null || board[row][col-1] != null)))))) && !newTileLocations.contains(tile.getLocation())){
-                        newTileLocations.add(tile.getLocation());
+                                    || (!isHorizontal && isWithinBounds(row, col+1) && isWithinBounds(row, col-1) && (board[row][col+1] != null || board[row][col-1] != null)))))){
+
+                        if(!newTileLocations.contains(tile.getLocation()))
+                            newTileLocations.add(tile.getLocation());
                     }
                     else
                         tile.setIsNew(false);
