@@ -37,6 +37,15 @@ public class PartyHost implements Runnable, PropertyChangeListener {
 	private ArrayList<Thread> listeners;
 
 
+	public static void main(String[] args) {
+		PartyHost partyHost = new PartyHost(5000);
+	}
+
+
+	public void startGame() {
+		this.inGame = true;
+	}
+
 	public PartyHost(int port) {
 		inGame = false;
 		server = null;
@@ -60,8 +69,6 @@ public class PartyHost implements Runnable, PropertyChangeListener {
 
 	}
 
-	private void acceptClients() {
-	}
 
 	@Override
 	public void propertyChange(PropertyChangeEvent evt) {
@@ -74,19 +81,19 @@ public class PartyHost implements Runnable, PropertyChangeListener {
 		if (message instanceof Challenge){
 			handleChallenge((ClientHandler) evt.getSource(),(Message) evt.getNewValue());
 		}
-		else if(message instanceof ExchangeTiles){
+		else if (message instanceof ExchangeTiles){
 			hendleExchangeTiles((ClientHandler) evt.getSource(),(Message) evt.getNewValue());
 		}
-		else if(message instanceof ExitParty){
+		else if (message instanceof ExitParty){
 			hendleExitParty((ClientHandler) evt.getSource(),(Message) evt.getNewValue());
 		}
-		else if(message instanceof NewTiles){
+		else if (message instanceof NewTiles){
 			hendleNewTiles((ClientHandler) evt.getSource(),(Message) evt.getNewValue());
 		}
-		else if(message instanceof PassTurn){
+		else if (message instanceof PassTurn){
 			hendlePassTurn((ClientHandler) evt.getSource(),(Message) evt.getNewValue());
 		}
-		else if(message instanceof PlayTiles) {
+		else if (message instanceof PlayTiles) {
 			hendlePlayTiles((ClientHandler) evt.getSource(),(Message) evt.getNewValue());
 		}
 	}
@@ -115,12 +122,8 @@ public class PartyHost implements Runnable, PropertyChangeListener {
 
 	}
 
-
-	public void startGame() {
-		this.inGame = true;
+	private void acceptClients() {
 	}
 
-	public static void main(String[] args) {
-		PartyHost partyHost = new PartyHost(5000);
-	}
+
 }
