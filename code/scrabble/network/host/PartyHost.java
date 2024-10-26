@@ -9,11 +9,14 @@ David: cd "OneDrive - Otterbein University\IdeaProjects\Scrabble\code"
 
  */
 
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+
 /**
  * PartyHost receives messages from clients (via ClientHandler) and sends them to clients
  * This class processes messages as needed depending on the type
  */
-public class PartyHost implements Runnable {
+public class PartyHost implements Runnable, PropertyChangeListener {
 	/*
 	Some message processing is likely to be needed depending on the messages received.
 	For example, when a PlayTiles message is received, the host must send a NewTiles message
@@ -27,6 +30,11 @@ public class PartyHost implements Runnable {
 	 */
 	@Override
 	public void run() {
+
+	}
+
+	@Override
+	public void propertyChange(PropertyChangeEvent evt) {
 
 	}
 }

@@ -1,5 +1,11 @@
 package scrabble.network.host;
 
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.net.Socket;
+
 /**
  * ClientHandler is responsible for listening for new messages coming in from the clients
  * It maintains a reference to the PartyHost to notify it when messages are received.
@@ -18,6 +24,20 @@ public class ClientHandler  implements Runnable {
 	potentially helper methods being called. See ../networkPrototype/ClientHandler for
 	an example of implementation, and ../networkPrototype/PartyHost for example of usage
 	 */
+
+	private PropertyChangeSupport notifier;		// notifies listener of messages received
+	private Socket socket; 	// the socket of the client
+	private ObjectInputStream input;	// the stream from which message objects are read
+
+	public ClientHandler(Socket socket, PropertyChangeListener listener)
+			throws IOException {
+		this.socket = socket;
+		this.input = new ObjectInputStream(socket.getInputStream());
+		notifier = new PropertyChangeSupport(this);
+		notifier.addPropertyChangeListener(listener);
+	}
+
+
 	@Override
 	public void run() {
 
