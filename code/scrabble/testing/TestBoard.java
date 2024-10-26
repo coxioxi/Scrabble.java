@@ -112,7 +112,7 @@ public class TestBoard {
         Assertions.assertFalse(board.hasAdjacentCaller(new Point(14, 7)));
     }
 
-    private Boolean validWordCheck(Set<Point> originPoints) throws InvalidPositionException {
+    private Boolean validWordCheck(Set<Point> originPoints) {
         return board.isValidWordCaller(originPoints);
     }
 
@@ -127,7 +127,7 @@ public class TestBoard {
     }
 
     @Test
-    public void simulateGame() throws InvalidPositionException {
+    public void simulateGame() {
         System.out.println("First Turn:");
 
         System.out.println();
