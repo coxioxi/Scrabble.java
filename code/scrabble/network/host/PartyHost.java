@@ -22,6 +22,8 @@ public class PartyHost implements Runnable {
 
 	It seems reasonable to me (david) to have helper methods for each individual type of method and
 	call it using a switch or if-else-if structure based on the type of class
+
+	For example implementation, see the class of the same name in ../networkPrototype
 	 */
 	@Override
 	public void run() {
