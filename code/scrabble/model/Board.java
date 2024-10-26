@@ -151,7 +151,7 @@ public class Board {
     /**
      * Getter for isValidWord for testing purposes
      */
-    public boolean isValidWordCaller(Set<Point> originPoints) throws InvalidPositionException {
+    public boolean isValidWordCaller(Set<Point> originPoints) {
         return isValidWord(originPoints);
     }
 
@@ -456,7 +456,7 @@ public class Board {
     }
 
     // Validates if a given set of points forms valid words based on the dictionary
-    private boolean isValidWord(Set<Point> originPoints) throws InvalidPositionException {
+    private boolean isValidWord(Set<Point> originPoints){
         ArrayList<String> strings = stringBuild(originPoints); // Build strings from tiles
         for(String string: strings) {
             if (!dictionary.contains(string))
