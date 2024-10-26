@@ -245,11 +245,14 @@ public class Board {
      *                  	in between them.
      */
     public int playTiles(Tile[] tiles) {
-        if (!validatePositions(tiles))
-            return -1;       // ensure positions are allowed
-        int score = score(findOrigin(tiles));       // calculate score of play
-        addToBoard(tiles);              // add to board
-        return score;
+        System.out.println(validatePositions(tiles));
+        if (validatePositions(tiles)){
+            int score = score(findOrigin(tiles));       // calculate score of play
+            allWordsPlayed.addAll(lastWordsPlayed);
+            addToBoard(tiles);              // add to board
+            return score;
+        }
+        return -1;
     }
 
 
@@ -312,31 +315,29 @@ public class Board {
     public int score(Tile[] originTiles) {
         int finalSum = 0;
 
+        //find origin is not getting all origin tiles
+        //for(Tile tile: originTiles)
+        //    System.out.println(tile.getLetter());
+
         for (Tile originTile : originTiles) {
             Point location = originTile.getLocation();
             int row = location.x;
             int col = location.y;
 
-            for(Point point: newTileLocations)
-                board[point.x][point.y].setIsNew(false);
-
             // Check for horizontal words
             if(isHorizontal(row,col).equals(HORIZONTAL)) {
-
-                for (Point point : newTileLocations)
-                    board[point.x][point.y].setIsNew(true);
-
                 finalSum += calculateWordScore(row, col, true);  // Horizontal
             }
             // Check for vertical words
             else if(isHorizontal(row,col).equals(VERTICAL)) {
-
-                for (Point point : newTileLocations)
-                    board[point.x][point.y].setIsNew(true);
-
                 finalSum += calculateWordScore(row, col, false); // Vertical
             }
         }
+
+        for(Point point: newTileLocations)
+            board[point.x][point.y].setIsNew(false);
+
+        newTileLocations.clear();
 
         return finalSum;
     }
@@ -395,7 +396,9 @@ public class Board {
                             || (!isHorizontal && isWithinBounds(row, col+1) && isWithinBounds(row, col-1) && (board[row][col+1] != null || board[row][col-1] != null)))) ||
                             ((newTileCount > 1 && ((isHorizontal && isWithinBounds(row+1,col) && isWithinBounds(row-1,col) && (board[row+1][col] != null || board[row-1][col] != null))
                                     || (!isHorizontal && isWithinBounds(row, col+1) && isWithinBounds(row, col-1) && (board[row][col+1] != null || board[row][col-1] != null)))))){
-                        newTileLocations.add(tile.getLocation());
+
+                        if(!newTileLocations.contains(tile.getLocation()))
+                            newTileLocations.add(tile.getLocation());
                     }
                     else
                         tile.setIsNew(false);
@@ -403,9 +406,14 @@ public class Board {
                 } else {
                     wordPoints += tileScore; // Normal tile without modifier
 
-                    if(newTileCount == 1 && ((isHorizontal && isWithinBounds(row+1,col) && isWithinBounds(row-1,col) && (board[row+1][col] != null || board[row-1][col] != null))
-                            || (!isHorizontal && isWithinBounds(row, col+1) && isWithinBounds(row, col-1) && (board[row][col+1] != null || board[row][col-1] != null))))
-                        newTileLocations.add(tile.getLocation());
+                    if ((newTileCount == 1 && ((isHorizontal && isWithinBounds(row+1,col) && isWithinBounds(row-1,col) && (board[row+1][col] != null || board[row-1][col] != null))
+                            || (!isHorizontal && isWithinBounds(row, col+1) && isWithinBounds(row, col-1) && (board[row][col+1] != null || board[row][col-1] != null)))) ||
+                            ((newTileCount > 1 && ((isHorizontal && isWithinBounds(row+1,col) && isWithinBounds(row-1,col) && (board[row+1][col] != null || board[row-1][col] != null))
+                                    || (!isHorizontal && isWithinBounds(row, col+1) && isWithinBounds(row, col-1) && (board[row][col+1] != null || board[row][col-1] != null)))))){
+
+                        if(!newTileLocations.contains(tile.getLocation()))
+                            newTileLocations.add(tile.getLocation());
+                    }
                     else
                         tile.setIsNew(false);
                 }
@@ -422,6 +430,7 @@ public class Board {
                 row++;
             }
         }
+
         // Update lastWordsPlayed
         lastWordsPlayed.add(stringBuilder.toString());
 
@@ -440,19 +449,20 @@ public class Board {
 
     //helper method for score
     private String isHorizontal(int row, int col) {
-        // Check for horizontal
-        for (int i = col; i < board[0].length && board[row][i] != null; i++) {
-            if (board[row][i].getIsNew())
-                return HORIZONTAL; // Found a new tile in a horizontal line
-        }
 
         // Check for vertical
         for (int j = row; j < board.length && board[j][col] != null; j++) {
-            if (board[j][col].getIsNew())
+            if (board[j][col].getIsNew() && isWithinBounds(j+1, col) && isWithinBounds(j-1, col) && (board[j+1][col] != null || board[j-1][col] != null))
                 return VERTICAL; // Found a new tile in a vertical line
         }
 
-        return VERTICAL;
+        // Check for horizontal
+        for (int i = col; i < board.length && board[row][i] != null; i++) {
+            if (board[row][i].getIsNew() && isWithinBounds(row, i+1) && isWithinBounds(row, i-1) && (board[row][i+1] != null || board[row][i-1] != null))
+                return HORIZONTAL; // Found a new tile in a horizontal line
+        }
+
+        return "";
     }
 
     // Validates if a given set of points forms valid words based on the dictionary
@@ -562,6 +572,7 @@ public class Board {
         }
         return true;
     }
+
     /*
     Sorts the tiles so that each subsequent tile has a smaller
     column (x) value, with smallest at tiles[0]
@@ -792,6 +803,8 @@ public class Board {
         }
         // Convert the parentTile set to an array and return it
         Tile[] parent = new Tile[parentTile.size()];
+
+
         parentTile.toArray(parent);
         return parent;
     }
