@@ -12,7 +12,10 @@ import scrabble.network.messages.*;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.io.IOException;
 import java.net.ServerSocket;
+import java.net.Socket;
+import java.net.SocketTimeoutException;
 import java.util.ArrayList;
 
 /**
@@ -35,27 +38,29 @@ public class PartyHost implements Runnable, PropertyChangeListener {
 	private ServerSocket server;
 	private boolean inGame;
 	private ArrayList<Thread> listeners;
+	private ArrayList<Socket> clientSockets;
 
 
 	public static void main(String[] args) {
 		PartyHost partyHost = new PartyHost(5000);
 	}
 
-
-	public void startGame() {
-		this.inGame = true;
-	}
-
 	public PartyHost(int port) {
 		inGame = false;
 		server = null;
 		listeners = new ArrayList<>(4);
+		clientSockets = new ArrayList<>(4);
 		try {
 			server = new ServerSocket(port);
 			server.setSoTimeout(1000);
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
+	}
+
+
+	public void startGame() {
+		this.inGame = true;
 	}
 
 	@Override
@@ -98,6 +103,11 @@ public class PartyHost implements Runnable, PropertyChangeListener {
 		}
 	}
 
+
+	/*********************************************************
+	 * 				Private Methods							 *
+	 *********************************************************/
+
 	private void hendlePlayTiles(ClientHandler source, Message newValue) {
 
 	}
@@ -123,6 +133,28 @@ public class PartyHost implements Runnable, PropertyChangeListener {
 	}
 
 	private void acceptClients() {
+		try {
+
+			// establish connection with the client
+			System.out.println("Looking for clients...");
+			Socket client = server.accept();
+			clientSockets.add(client);
+
+			// client handler creation for the listening of messages
+			System.out.println("New client added");
+			ClientHandler clientHandler = new ClientHandler(client, this);
+
+			// start the thread
+			Thread clientThread = new Thread(clientHandler);
+			listeners.add(clientThread);
+			clientThread.start();
+		}
+		catch (SocketTimeoutException e) {
+			System.out.println("\ttrying again..");
+		}
+		catch (IOException e) {
+			throw new RuntimeException(e);
+		}
 	}
 
 
