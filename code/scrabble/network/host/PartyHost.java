@@ -6,8 +6,9 @@ Usage: 	javac scrabble/network/host/PartyHost.java
 		java scrabble/network/host/PartyHost
 		Use ../controllers/NetworkController as client
 David: cd "OneDrive - Otterbein University\IdeaProjects\Scrabble\code"
+*/
 
- */
+import scrabble.network.messages.*;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
@@ -67,7 +68,53 @@ public class PartyHost implements Runnable, PropertyChangeListener {
 		// called from ClientHandler when a new message is received.
 		// get the message type, do processing and return a message if necessary,
 		// send message to other clients.
+
+		Message message = (Message) evt.getNewValue();
+
+		if (message instanceof Challenge){
+			handleChallenge((ClientHandler) evt.getSource(),(Message) evt.getNewValue());
+		}
+		else if(message instanceof ExchangeTiles){
+			hendleExchangeTiles((ClientHandler) evt.getSource(),(Message) evt.getNewValue());
+		}
+		else if(message instanceof ExitParty){
+			hendleExitParty((ClientHandler) evt.getSource(),(Message) evt.getNewValue());
+		}
+		else if(message instanceof NewTiles){
+			hendleNewTiles((ClientHandler) evt.getSource(),(Message) evt.getNewValue());
+		}
+		else if(message instanceof PassTurn){
+			hendlePassTurn((ClientHandler) evt.getSource(),(Message) evt.getNewValue());
+		}
+		else if(message instanceof PlayTiles) {
+			hendlePlayTiles((ClientHandler) evt.getSource(),(Message) evt.getNewValue());
+		}
 	}
+
+	private void hendlePlayTiles(ClientHandler source, Message newValue) {
+
+	}
+
+	private void hendlePassTurn(ClientHandler source, Message newValue) {
+
+	}
+
+	private void hendleNewTiles(ClientHandler source, Message newValue) {
+
+	}
+
+	private void hendleExitParty(ClientHandler source, Message newValue) {
+
+	}
+
+	private void hendleExchangeTiles(ClientHandler source, Message newValue) {
+
+	}
+
+	private void handleChallenge(ClientHandler source, Message newValue) {
+
+	}
+
 
 	public void startGame() {
 		this.inGame = true;
