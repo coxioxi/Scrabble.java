@@ -84,22 +84,31 @@ public class PartyHost implements Runnable, PropertyChangeListener {
 		Message message = (Message) evt.getNewValue();
 
 		if (message instanceof Challenge){
+			System.out.println("Challenge");
 			handleChallenge((ClientHandler) evt.getSource(),(Message) evt.getNewValue());
 		}
 		else if (message instanceof ExchangeTiles){
-			hendleExchangeTiles((ClientHandler) evt.getSource(),(Message) evt.getNewValue());
+			System.out.println("Exchange");
+
+			handleExchangeTiles((ClientHandler) evt.getSource(),(Message) evt.getNewValue());
 		}
 		else if (message instanceof ExitParty){
-			hendleExitParty((ClientHandler) evt.getSource(),(Message) evt.getNewValue());
+			System.out.println("Exit");
+
+			handleExitParty((ClientHandler) evt.getSource(),(Message) evt.getNewValue());
 		}
 		else if (message instanceof NewTiles){
-			hendleNewTiles((ClientHandler) evt.getSource(),(Message) evt.getNewValue());
+			System.out.println("NewTiles");
+
+			handleNewTiles((ClientHandler) evt.getSource(),(Message) evt.getNewValue());
 		}
 		else if (message instanceof PassTurn){
-			hendlePassTurn((ClientHandler) evt.getSource(),(Message) evt.getNewValue());
+			System.out.println("Pass");
+			handlePassTurn((ClientHandler) evt.getSource(),(Message) evt.getNewValue());
 		}
 		else if (message instanceof PlayTiles) {
-			hendlePlayTiles((ClientHandler) evt.getSource(),(Message) evt.getNewValue());
+			System.out.println("PlayTiles");
+			handlePlayTiles((ClientHandler) evt.getSource(),(Message) evt.getNewValue());
 		}
 	}
 
@@ -108,23 +117,23 @@ public class PartyHost implements Runnable, PropertyChangeListener {
 	 * 				Private Methods							 *
 	 *********************************************************/
 
-	private void hendlePlayTiles(ClientHandler source, Message newValue) {
+	private void handlePlayTiles(ClientHandler source, Message newValue) {
 
 	}
 
-	private void hendlePassTurn(ClientHandler source, Message newValue) {
+	private void handlePassTurn(ClientHandler source, Message newValue) {
 
 	}
 
-	private void hendleNewTiles(ClientHandler source, Message newValue) {
+	private void handleNewTiles(ClientHandler source, Message newValue) {
 
 	}
 
-	private void hendleExitParty(ClientHandler source, Message newValue) {
+	private void handleExitParty(ClientHandler source, Message newValue) {
 
 	}
 
-	private void hendleExchangeTiles(ClientHandler source, Message newValue) {
+	private void handleExchangeTiles(ClientHandler source, Message newValue) {
 
 	}
 
