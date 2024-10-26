@@ -1,0 +1,9 @@
+scrabble.controllers
+scrabble.model
+scrabble.network.client
+scrabble.network.experimenting
+scrabble.network.host
+scrabble.network.messages
+scrabble.network.networkPrototype
+scrabble.testing
+scrabble.view
