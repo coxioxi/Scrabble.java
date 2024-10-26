@@ -8,6 +8,9 @@ usage: 	javac scrabble/network/client/ClientMessenger.java
 		David: cd "OneDrive - Otterbein University\IdeaProjects\Scrabble\code"
  */
 
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+
 /**
  * This class is responsible for sending and receiving messages from the host
  * after a socket has already been established.
@@ -18,4 +21,7 @@ public class ClientMessenger {
 	// Use ObjectOutputStream and ObjectInputStream for sending and receiving messages
 	// Pass in a socket to the host, get input and output streams from socket,
 	// then create OOS and OIS.
+	// Design: should this class use threads to listen to the host?
+	private ObjectOutputStream outputStream;
+	private ObjectInputStream inputStream;
 }
