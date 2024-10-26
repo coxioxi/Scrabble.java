@@ -1,6 +1,5 @@
-package scrabble.controllers;
+package scrabble.network.networkPrototype;
 
-import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
@@ -8,9 +7,10 @@ import java.util.Scanner;
 
 /*
 client side
-usage: 	javac scrabble/controllers/NetworkController.java
-		java scrabble/controllers/NetworkController [host_address] [port]
+usage: 	javac scrabble/network/networkPrototype/NetworkController.java
+		java scrabble/network/networkPrototype/NetworkController [host_address] [port]
 		../host/PartyHost acts as server and prints out local IP for host address
+		David: cd "OneDrive - Otterbein University\IdeaProjects\Scrabble\code"
  */
 public class NetworkController {
 	private Socket socket;

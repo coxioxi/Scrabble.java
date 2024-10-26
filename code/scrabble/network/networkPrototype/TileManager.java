@@ -1,4 +1,4 @@
-package scrabble.host;
+package scrabble.network.networkPrototype;
 
 import scrabble.model.Tile;
 
