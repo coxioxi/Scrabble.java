@@ -15,7 +15,8 @@ package scrabble.network.host;
 public class ClientHandler  implements Runnable {
 	/*
 	The majority of the work for this class will be handled inside the run() method, with
-	potentially helper methods being called.
+	potentially helper methods being called. See ../networkPrototype/ClientHandler for
+	an example of implementation, and ../networkPrototype/PartyHost for example of usage
 	 */
 	@Override
 	public void run() {
