@@ -1,4 +1,6 @@
 package scrabble.network.messages;
 
-public class Message {
+import java.io.Serializable;
+
+public abstract class Message implements Serializable {
 }
