@@ -24,7 +24,14 @@ public class Controller {
 	private ClientMessenger messenger;
 	private Socket hostSocket;
 
+	/*
+	reference to the party host
+	when this controller is the manager of the party.
+	note that this field is null when this computer is not the host
+	 */
 	private PartyHost host;
+
+
 
 	public static void main(String[] args) {
 		new Controller();
