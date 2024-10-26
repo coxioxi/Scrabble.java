@@ -11,6 +11,8 @@ David: cd "OneDrive - Otterbein University\IdeaProjects\Scrabble\code"
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.net.ServerSocket;
+import java.util.ArrayList;
 
 /**
  * PartyHost receives messages from clients (via ClientHandler) and sends them to clients
@@ -28,13 +30,50 @@ public class PartyHost implements Runnable, PropertyChangeListener {
 
 	For example implementation, see the class of the same name in ../networkPrototype
 	 */
+
+	private ServerSocket server;
+	private boolean inGame;
+	private ArrayList<Thread> listeners;
+
+
+	public PartyHost(int port) {
+		inGame = false;
+		server = null;
+		listeners = new ArrayList<>(4);
+		try {
+			server = new ServerSocket(port);
+			server.setSoTimeout(1000);
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
+
 	@Override
 	public void run() {
+		// accept clients if not in a game.
+		// once game starts, stop accepting clients.
+		while (!inGame) {
+			acceptClients();
+		}
+		// game has started
 
+	}
+
+	private void acceptClients() {
 	}
 
 	@Override
 	public void propertyChange(PropertyChangeEvent evt) {
+		// called from ClientHandler when a new message is received.
+		// get the message type, do processing and return a message if necessary,
+		// send message to other clients.
+	}
 
+	public void startGame() {
+		this.inGame = true;
+	}
+
+	public static void main(String[] args) {
+		PartyHost partyHost = new PartyHost(5000);
 	}
 }
