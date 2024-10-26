@@ -1,5 +1,13 @@
 package scrabble.network.client;
 
+/*
+client side
+usage: 	javac scrabble/network/client/ClientMessenger.java
+		java scrabble/network/client/ClientMessenger [host_address] [port]
+		../host/PartyHost acts as server and prints out local IP for host address
+		David: cd "OneDrive - Otterbein University\IdeaProjects\Scrabble\code"
+ */
+
 /**
  * This class is responsible for sending and receiving messages from the host
  * after a socket has already been established.
