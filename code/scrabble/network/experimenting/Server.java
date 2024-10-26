@@ -1,4 +1,4 @@
-package scrabble.network.host.experimenting;
+package scrabble.network.experimenting;
 
 import java.io.EOFException;
 import java.io.IOException;

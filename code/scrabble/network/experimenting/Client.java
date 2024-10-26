@@ -1,7 +1,6 @@
-package scrabble.network.host.experimenting;
+package scrabble.network.experimenting;
 
 import java.io.IOException;
-import java.io.ObjectOutput;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.util.Objects;
