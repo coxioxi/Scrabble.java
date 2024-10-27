@@ -17,10 +17,10 @@ David: cd "OneDrive - Otterbein University\IdeaProjects\Scrabble\code"
 
 /**
  * ClientHandler is responsible for listening for new messages coming in from the clients
- * It maintains a reference to the PartyHost to notify it when messages are received.
+ * It maintains a reference to the PartyHost (PropertyChangeListener) to notify it when messages are received.
  * For example,
  * <code>
- * 		Message message = inputStream.readUTF();
+ * 		Message message = inputStream.readObject();
  * 		partyHost.sendMessage(message)
  * 	</code>
  * The party host is then responsible for handling the message that was received.
