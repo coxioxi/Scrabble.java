@@ -1,7 +1,11 @@
 package scrabble.model;
 
 /**
- * Generalized representation of a Player in the Scrabble game.
+ * Generalized representation of a Player.
+ * Players have a name, and ID, a score, and fields for
+ * ability to make plays and whether they passed their previous turn.
+ * Clients can change the score of the player and set their
+ * activity status and their behavior on their previous turn.
  */
 public class Player {
 	public static int DEFAULT_SCORE = 0;  // Default starting score for players
@@ -15,7 +19,7 @@ public class Player {
 		If a player passes two consecutive turns, they will become
 		inactive, not able to make plays on the board.
 	 */
-	private boolean hasPassedLastTurn;	// Did they pass their last turn?
+	private boolean passedLastTurn;	// Did they pass their last turn?
 	private boolean isActive;		// Can they make plays on the board?
 
 	/**
@@ -27,7 +31,7 @@ public class Player {
 		this.score = DEFAULT_SCORE; // Initializes score to default
 		this.name = name;			// Set the player's name
 		this.ID = ID;				// Assign the player's ID
-		hasPassedLastTurn = false;	// Initialize passed last turn status
+		passedLastTurn = false;	// Initialize passed last turn status
 		isActive = true;			// Set player as active by default
 	}
 
@@ -48,11 +52,15 @@ public class Player {
 	}
 
 	/**
-	 * Increases the player's score by the specified amount.
-	 * @param score the amount to increase the player's score.
+	 * Increases the player's score by a specified amount.
+	 * note that score may be decreased by passing a negative number
+	 * no limits are imposed on the score field. Use this method responsibly
+	 * @param amount the amount by which to increase this player's
+	 *               score. Must be between the negative and positive
+	 *               limits of int.
 	 */
-	public void increaseScore(int score) {
-		this.score += score;
+	public void increaseScore(int amount) {
+		this.score += amount;
 	}
 
 	/**
@@ -64,32 +72,33 @@ public class Player {
 	}
 
 	/**
-	 * Checks if the player passed their last turn.
-	 * @return true if the player passed their last turn, false otherwise.
+	 * getter for hasPassedLastTurn.
+	 * @return boolean value of the field
 	 */
-	public boolean isHasPassedLastTurn() {
-		return hasPassedLastTurn;
+	public boolean passedLastTurn() {
+		return passedLastTurn;
 	}
 
 	/**
-	 * Sets the status of whether the player passed their last turn.
-	 * @param hasPassedLastTurn the new status of the player's last turn pass.
+	 * changes the value of hasPassedLastTurn.
+	 * @param passedLastTurn the new value of this object's field
 	 */
-	public void setHasPassedLastTurn(boolean hasPassedLastTurn) {
-		this.hasPassedLastTurn = hasPassedLastTurn;
+	public void setPassedLastTurn(boolean passedLastTurn) {
+		this.passedLastTurn = passedLastTurn;
 	}
 
 	/**
-	 * Checks if the player is currently active.
-	 * @return true if the player can make plays, false if inactive.
+	 * getter for isActive, the ability of the player to make plays
+	 * @return the boolean value of isActive. True if they can make plays,
+	 * false otherwise
 	 */
 	public boolean isActive() {
 		return isActive;
 	}
 
 	/**
-	 * Sets the activity status of the player.
-	 * @param active the new activity status for the player.
+	 * setter for isActive, the ability of the player to make plays
+	 * @param active the new value of this object's field
 	 */
 	public void setActive(boolean active) {
 		isActive = active;

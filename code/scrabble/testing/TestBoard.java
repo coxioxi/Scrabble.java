@@ -122,19 +122,6 @@ public class TestBoard {
         Assertions.assertFalse(board.hasAdjacentCaller(new Point(14, 7)));
     }
 
-    private Boolean validWordCheck(Set<Point> originPoints) throws InvalidPositionException {
-        return board.isValidWordCaller(originPoints);
-    }
-
-    private Set<Point> pointGetter(Tile[] tiles) {
-        Tile[] originTiles = board.findOrigin(tiles);
-        Set<Point> originPoints = new HashSet<>();
-
-        for(Tile tile: originTiles)
-            originPoints.add(new Point(tile.getLocation().x, tile.getLocation().y));
-
-        return originPoints;
-    }
 
     @Test
     public void simulateGame() throws InvalidPositionException {
@@ -143,52 +130,41 @@ public class TestBoard {
         System.out.println();
 
         System.out.printf(player1.getName()+"'s Turn:\n");
-        if(validWordCheck(pointGetter(tiles))){
-            score = board.playTiles(tiles);
-            player1.increaseScore(score);
-            System.out.println("Words formed this turn: " + board.getLastWordsPlayed() + "\nTurn Score: " + score);
-            System.out.println(player1.getName()+"'s Total Score: "+ player1.getScore());
-            System.out.println();
-            board.getLastWordsPlayed().clear();
-        }
-        else
-            System.out.println("Word is not in the dictionary");
+        score = board.playTiles(tiles);
+        player1.increaseScore(score);
+        System.out.println("Words formed this turn: " + board.getLastWordsPlayed() + "\nTurn Score: " + score);
+        System.out.println(player1.getName()+"'s Total Score: "+ player1.getScore());
+        System.out.println();
+        board.getLastWordsPlayed().clear();
+
+
 
         System.out.printf(player2.getName()+"'s Turn:\n");
-        if(validWordCheck(pointGetter(tiles1))) {
-            score = board.playTiles(tiles1);
-            player2.increaseScore(score);
-            System.out.println("Words formed this turn: " + board.getLastWordsPlayed() + "\nTurn Score: " + score);
-            System.out.println(player2.getName()+"'s Total Score: "+ player2.getScore());
-            System.out.println();
-            board.getLastWordsPlayed().clear();
-        }
-        else
-            System.out.println("Word is not in the dictionary");
+        score = board.playTiles(tiles1);
+        player2.increaseScore(score);
+        System.out.println("Words formed this turn: " + board.getLastWordsPlayed() + "\nTurn Score: " + score);
+        System.out.println(player2.getName()+"'s Total Score: "+ player2.getScore());
+        System.out.println();
+        board.getLastWordsPlayed().clear();
 
         System.out.printf(player3.getName()+"'s Turn:\n");
-        if(validWordCheck(pointGetter(tiles2))) {
-            score = board.playTiles(tiles2);
-            player3.increaseScore(score);
-            System.out.println("Words formed this turn: " + board.getLastWordsPlayed() + "\nTurn Score: " + score);
-            System.out.println(player3.getName()+"'s Total Score: "+ player3.getScore());
-            System.out.println();
-            board.getLastWordsPlayed().clear();
-        }
-        else
-            System.out.println("Word is not in the dictionary");
+
+        score = board.playTiles(tiles2);
+        player3.increaseScore(score);
+        System.out.println("Words formed this turn: " + board.getLastWordsPlayed() + "\nTurn Score: " + score);
+        System.out.println(player3.getName()+"'s Total Score: "+ player3.getScore());
+        System.out.println();
+        board.getLastWordsPlayed().clear();
+
 
         System.out.printf(player4.getName()+"'s Turn:\n");
-        if(validWordCheck(pointGetter(tiles7))) {
-            score = board.playTiles(tiles7);
-            player4.increaseScore(score);
-            System.out.println("Words formed this turn: " + board.getLastWordsPlayed() + "\nTurn Score: " + score);
-            System.out.println(player4.getName()+"'s Total Score: "+ player4.getScore());
-            System.out.println();
-            board.getLastWordsPlayed().clear();
-        }
-        else
-            System.out.println("Word is not in the dictionary");
+        score = board.playTiles(tiles7);
+        player4.increaseScore(score);
+        System.out.println("Words formed this turn: " + board.getLastWordsPlayed() + "\nTurn Score: " + score);
+        System.out.println(player4.getName()+"'s Total Score: "+ player4.getScore());
+        System.out.println();
+        board.getLastWordsPlayed().clear();
+
 
         System.out.println();
 
@@ -197,104 +173,79 @@ public class TestBoard {
         System.out.println();
 
         System.out.printf(player1.getName()+"'s Turn:\n");
-        if(validWordCheck(pointGetter(tiles3))){
-            score = board.playTiles(tiles3);
-            player1.increaseScore(score);
-            System.out.println("Words formed this turn: " + board.getLastWordsPlayed() + "\nTurn Score: " + score);
-            System.out.println(player1.getName()+"'s Total Score: "+ player1.getScore());
-            System.out.println();
-            board.getLastWordsPlayed().clear();
-        }
-        else
-            System.out.println("Word is not in the dictionary");
+        score = board.playTiles(tiles3);
+        player1.increaseScore(score);
+        System.out.println("Words formed this turn: " + board.getLastWordsPlayed() + "\nTurn Score: " + score);
+        System.out.println(player1.getName()+"'s Total Score: "+ player1.getScore());
+        System.out.println();
+        board.getLastWordsPlayed().clear();
+
 
         System.out.printf(player2.getName()+"'s Turn:\n");
-        if(validWordCheck(pointGetter(tiles5))) {
-            score = board.playTiles(tiles5);
-            player2.increaseScore(score);
-            System.out.println("Words formed this turn: " + board.getLastWordsPlayed() + "\nTurn Score: " + score);
-            System.out.println(player2.getName()+"'s Total Score: "+ player2.getScore());
-            System.out.println();
-            board.getLastWordsPlayed().clear();
-        }
-        else
-            System.out.println("Word is not in the dictionary");
+        score = board.playTiles(tiles5);
+        player2.increaseScore(score);
+        System.out.println("Words formed this turn: " + board.getLastWordsPlayed() + "\nTurn Score: " + score);
+        System.out.println(player2.getName()+"'s Total Score: "+ player2.getScore());
+        System.out.println();
+        board.getLastWordsPlayed().clear();
+
 
         System.out.printf(player3.getName()+"'s Turn:\n");
-        if(validWordCheck(pointGetter(tiles8))) {
-            score = board.playTiles(tiles8);
-            player3.increaseScore(score);
-            System.out.println("Words formed this turn: " + board.getLastWordsPlayed() + "\nTurn Score: " + score);
-            System.out.println(player3.getName()+"'s Total Score: "+ player3.getScore());
-            System.out.println();
-            board.getLastWordsPlayed().clear();
-        }
-        else
-            System.out.println("Word is not in the dictionary");
+
+        score = board.playTiles(tiles8);
+        player3.increaseScore(score);
+        System.out.println("Words formed this turn: " + board.getLastWordsPlayed() + "\nTurn Score: " + score);
+        System.out.println(player3.getName()+"'s Total Score: "+ player3.getScore());
+        System.out.println();
+        board.getLastWordsPlayed().clear();
+
 
         System.out.printf(player4.getName()+"'s Turn:\n");
-        if(validWordCheck(pointGetter(tiles9))) {
-            score = board.playTiles(tiles9);
-            player4.increaseScore(score);
-            System.out.println("Words formed this turn: " + board.getLastWordsPlayed() + "\nTurn Score: " + score);
-            System.out.println(player4.getName()+"'s Total Score: "+ player4.getScore());
-            System.out.println();
-            board.getLastWordsPlayed().clear();
-        }
-        else
-            System.out.println("Word is not in the dictionary");
+        score = board.playTiles(tiles9);
+        player4.increaseScore(score);
+        System.out.println("Words formed this turn: " + board.getLastWordsPlayed() + "\nTurn Score: " + score);
+        System.out.println(player4.getName()+"'s Total Score: "+ player4.getScore());
+        System.out.println();
+        board.getLastWordsPlayed().clear();
+
 
         System.out.println("Third Turn:");
 
         System.out.println();
 
         System.out.printf(player1.getName()+"'s Turn:\n");
-        if(validWordCheck(pointGetter(tiles10))){
-            score = board.playTiles(tiles10);
-            player1.increaseScore(score);
-            System.out.println("Words formed this turn: " + board.getLastWordsPlayed() + "\nTurn Score: " + score);
-            System.out.println(player1.getName()+"'s Total Score: "+ player1.getScore());
-            System.out.println();
-            board.getLastWordsPlayed().clear();
-        }
-        else
-            System.out.println("Word is not in the dictionary");
+        score = board.playTiles(tiles10);
+        player1.increaseScore(score);
+        System.out.println("Words formed this turn: " + board.getLastWordsPlayed() + "\nTurn Score: " + score);
+        System.out.println(player1.getName()+"'s Total Score: "+ player1.getScore());
+        System.out.println();
+        board.getLastWordsPlayed().clear();
+
 
         System.out.printf(player2.getName()+"'s Turn:\n");
-        if(validWordCheck(pointGetter(tiles11))) {
-            score = board.playTiles(tiles11);
-            player2.increaseScore(score);
-            System.out.println("Words formed this turn: " + board.getLastWordsPlayed() + "\nTurn Score: " + score);
-            System.out.println(player2.getName()+"'s Total Score: "+ player2.getScore());
-            System.out.println();
-            board.getLastWordsPlayed().clear();
-        }
-        else
-            System.out.println("Word is not in the dictionary");
+        score = board.playTiles(tiles11);
+        player2.increaseScore(score);
+        System.out.println("Words formed this turn: " + board.getLastWordsPlayed() + "\nTurn Score: " + score);
+        System.out.println(player2.getName()+"'s Total Score: "+ player2.getScore());
+        System.out.println();
+        board.getLastWordsPlayed().clear();
 
         System.out.printf(player3.getName()+"'s Turn:\n");
-        if(validWordCheck(pointGetter(tiles12))) {
-            score = board.playTiles(tiles12);
-            player3.increaseScore(score);
-            System.out.println("Words formed this turn: " + board.getLastWordsPlayed() + "\nTurn Score: " + score);
-            System.out.println(player3.getName()+"'s Total Score: "+ player3.getScore());
-            System.out.println();
-            board.getLastWordsPlayed().clear();
-        }
-        else
-            System.out.println("Word is not in the dictionary");
+        score = board.playTiles(tiles12);
+        player3.increaseScore(score);
+        System.out.println("Words formed this turn: " + board.getLastWordsPlayed() + "\nTurn Score: " + score);
+        System.out.println(player3.getName()+"'s Total Score: "+ player3.getScore());
+        System.out.println();
+        board.getLastWordsPlayed().clear();
+
 
         System.out.printf(player4.getName()+"'s Turn:\n");
-        if(validWordCheck(pointGetter(tiles13))) {
-            score = board.playTiles(tiles13);
-            player4.increaseScore(score);
-            System.out.println("Words formed this turn: " + board.getLastWordsPlayed() + "\nTurn Score: " + score);
-            System.out.println(player4.getName()+"'s Total Score: "+ player4.getScore());
-            System.out.println();
-            board.getLastWordsPlayed().clear();
-        }
-        else
-            System.out.println("Word is not in the dictionary");
+        score = board.playTiles(tiles13);
+        player4.increaseScore(score);
+        System.out.println("Words formed this turn: " + board.getLastWordsPlayed() + "\nTurn Score: " + score);
+        System.out.println(player4.getName()+"'s Total Score: "+ player4.getScore());
+        System.out.println();
+        board.getLastWordsPlayed().clear();
 
         System.out.println();
 
