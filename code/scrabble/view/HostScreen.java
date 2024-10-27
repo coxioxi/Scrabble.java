@@ -73,7 +73,7 @@ public class HostScreen extends JPanel {
         players = new JLabel[4];
 
         for (int i = 0; i < players.length; i++) {
-            players[i] = new JLabel("**Player "+i+ " Name**", SwingConstants.CENTER);
+            players[i] = new JLabel("**Player "+(i+1)+ " Name**", SwingConstants.CENTER);
             players[i].setBorder(BorderFactory.createEtchedBorder());
             playersWaiting.add(players[i]);
         }
