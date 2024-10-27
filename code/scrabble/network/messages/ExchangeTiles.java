@@ -3,12 +3,10 @@ package scrabble.network.messages;
 import scrabble.model.NotBlankException;
 import scrabble.model.Tile;
 
-import java.awt.*;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serial;
-import java.util.ArrayList;
 
 public class ExchangeTiles extends Message{
 	@Serial
