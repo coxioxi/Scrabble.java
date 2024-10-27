@@ -3,10 +3,17 @@ package scrabble.model;
 import java.util.ArrayList;
 
 /**
- * This class represents the player who is on this computer
+ * this class represents the player who is on this computer
+ * it maintains the tiles which the player has access to
+ * it permits plays to be made to update this rack, and plays
+ * to be undone as is the case for failed challenges
  */
 public class LocalPlayer extends Player{
 	private ArrayList<Tile> rack; 	// the tiles the player has
+	private Tile[] lastPlay, 	// The tiles which were played on the previous turn
+								// this field is used to undo plays for failed challenges.
+			   newTiles;		// The tiles which have most recently been added to the rack;
+								// these will need to be removed in the case of a failed challenge.
 
 	/**
 	 * Constructs a localPlayer object
@@ -43,8 +50,8 @@ public class LocalPlayer extends Player{
 	 *              This method will need to be implemented to update the rack accordingly.
 	 */
 	public void removeTiles(Tile[] tiles) {
-		for(Tile tile: tiles){
-			if(rack.contains(tile)){
+		for (Tile tile : tiles) {
+			if (rack.contains(tile)){
 				rack.remove((tile));
 			}
 		}
@@ -62,6 +69,25 @@ public class LocalPlayer extends Player{
 				rack.add(tile);
 			}
 		}
+	}
 
+	public Tile[] getLastPlay() {
+		return lastPlay;
+	}
+
+	/**
+	 * Resets the state of rack to before the most recent play.
+	 * if this method is called next after playTiles,
+	 * this.getRack() will contain all the same tiles
+	 * before call to playTiles. Ordering is not enforced
+	 */
+	public void undoLastPlay() {
+		//TODO: implement
+
+		/*
+		Implementation notes/details:
+			Remove newTiles from rack
+			add lastPlay to rack
+		 */
 	}
 }
