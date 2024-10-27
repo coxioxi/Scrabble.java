@@ -8,8 +8,6 @@ package scrabble.model;
  */
 
 import java.awt.*;
-import java.io.File;
-import java.io.IOException;
 import java.util.*;
 
 /**
@@ -200,9 +198,9 @@ public class Board {
     /**
      * A caller method for testing purposes
      */
-    public boolean hasAdjacentCaller(Tile t){
-        return hasAdjacentTile(t);
-    }
+   	public boolean hasAdjacentCaller(Point t){
+		return hasAdjacentTile(t);
+	}
 
     /**
      * This method places tiles at positions on the board and returns the score of
@@ -262,7 +260,7 @@ public class Board {
                 }
                 else {
                     // Append the letter of the tile at the current position
-                    sb.append(" " + board[i][j].getLetter() + "  ");
+                    sb.append(" ").append(board[i][j].getLetter()).append("  ");
                 }
             }
             sb.append("\n"); // New line for each row
@@ -763,34 +761,6 @@ public class Board {
             }
         }
     }
-
-    public ArrayList<String> stringBuild(Set<Point> originTiles, Tile[] newTiles, Point[] newTilePoints) throws InvalidPositionException {
-        ArrayList<String> string = new ArrayList<>();
-        for(Point originPoint : originTiles){
-            String tempString = "";
-            int row = (int)originPoint.getX();
-            int column = (int)originPoint.getX();
-
-            while(board[row][column] != null){
-                tempString += board[row][column].getLetter();
-                row = row + 1;
-            }
-            row = (int)originPoint.getX();
-            if(tempString.length() > 1){
-                string.add(tempString);
-            }
-            tempString = "";
-            while(board[row][column] != null){
-                tempString += board[row][column].getLetter();
-                column = column + 1;
-            }
-            if(tempString.length() > 1){
-                string.add(tempString);
-            }
-        }
-        return string;
-    }
-
 
     /*
     helper method; checks that points meet valid positions requirements of Scrabble.
