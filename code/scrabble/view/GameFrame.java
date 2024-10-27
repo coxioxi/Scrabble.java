@@ -9,41 +9,29 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
 public class GameFrame extends JFrame {
+    // Static variables to control audio and FX settings
     public static boolean audioOn = true;
     public static boolean fxOn = true;
 
+    // Main Menu screen method
     public static void mainMenu() {
+        // Create the main frame and set default close operation
         JFrame frame = new JFrame("Scrabble");
         frame.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+
+        // Panel setup for the menu layout
         JPanel mainPanel = new JPanel(new FlowLayout());
         mainPanel.setBorder(BorderFactory.createTitledBorder("Main Menu"));
         JPanel menuFrame = new JPanel(new GridLayout(5,1, 0,15));
 
-        /* JLabel menuTitle = new JLabel("Main Menu", SwingConstants.CENTER);
-        menuTitle.setFont(titleFont);
-        frame.add(menuTitle, BorderLayout.NORTH);
-         */
-
+        // Main Menu buttons and checkboxes
         JButton hostButton = new JButton("Host");
         JButton joinButton = new JButton("Join");
         JCheckBox audioCheck = new JCheckBox("Game Audio", audioOn);
         JCheckBox fxCheck = new JCheckBox("Game FX", fxOn);
         JButton quitButton = new JButton("Quit");
 
-        /* hostButton.setBounds(95, 90, 200, 60);
-        joinButton.setBounds(95, 160, 200, 60);
-        audioButton.setBounds(95, 230, 200, 60);
-        fxButton.setBounds(95, 300, 200, 60);
-        quitButton.setBounds(95, 370, 200, 60);
-        background.setBounds(100, 100, 200, 100);
-
-        hostButton.setFont(labelFont);
-        joinButton.setFont(labelFont);
-        audioButton.setFont(labelFont);
-        fxButton.setFont(labelFont);
-        quitButton.setFont(labelFont);
-         */
-
+        // Add components to menu panel and frame
         menuFrame.add(hostButton);
         menuFrame.add(joinButton);
         menuFrame.add(audioCheck);
@@ -52,6 +40,7 @@ public class GameFrame extends JFrame {
         mainPanel.add(menuFrame);
         frame.add(mainPanel, BorderLayout.CENTER);
 
+        // Action Listeners for each button
         hostButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -75,6 +64,7 @@ public class GameFrame extends JFrame {
             }
         });
 
+        // Set frame properties and display it
         frame.setMinimumSize(new Dimension(250,250));
         frame.pack();
         frame.setLocationRelativeTo(null);
@@ -396,6 +386,7 @@ public class GameFrame extends JFrame {
             @Override
             public void windowClosing(WindowEvent e) {
                 frame.dispose();
+                mainMenu();
             }
         });
 
@@ -413,10 +404,6 @@ public class GameFrame extends JFrame {
         JPanel southPanel = new JPanel(new FlowLayout());
         JPanel podium = new JPanel(new GridLayout(4,1, 7, 10));
 
-        /* JLabel firstPlaceLabel = new JLabel("1st:", SwingConstants.RIGHT);
-        JLabel secondPlaceLabel = new JLabel("2nd:", SwingConstants.RIGHT);
-        JLabel thirdPlaceLabel = new JLabel("3rd:", SwingConstants.RIGHT);
-        JLabel fourthPlaceLabel = new JLabel("4th:", SwingConstants.RIGHT); */
         JLabel firstPlaceName = new JLabel("1st: *Player* | *Score*");
         JLabel secondPlaceName = new JLabel("2nd: *Player* | *Score*");
         JLabel thirdPlaceName = new JLabel("3rd: *Player* | *Score*");
@@ -472,11 +459,11 @@ public class GameFrame extends JFrame {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException ignore) {}
         //mainMenu();
-        //joinScreen();
+        joinScreen();
         //hostScreen();
         //waitingScreen();
         //winnerScreen();
-        gameScreen();
+        //gameScreen();
     }
 
 
