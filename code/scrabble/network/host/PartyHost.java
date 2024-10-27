@@ -13,10 +13,12 @@ import scrabble.network.messages.*;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketTimeoutException;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * PartyHost receives messages from clients (via ClientHandler) and sends them to clients
@@ -39,6 +41,8 @@ public class PartyHost implements Runnable, PropertyChangeListener {
 	private boolean inGame;
 	private ArrayList<Thread> listeners;
 	private ArrayList<Socket> clientSockets;
+	private HashMap<ClientHandler, ObjectOutputStream> outputStreamMap;
+	private TileBag tileBag;
 
 
 	public static void main(String[] args) {
@@ -50,6 +54,7 @@ public class PartyHost implements Runnable, PropertyChangeListener {
 		server = null;
 		listeners = new ArrayList<>(4);
 		clientSockets = new ArrayList<>(4);
+		outputStreamMap = new HashMap<>(4);
 		try {
 			server = new ServerSocket(port);
 			server.setSoTimeout(1000);
@@ -82,33 +87,35 @@ public class PartyHost implements Runnable, PropertyChangeListener {
 		// send message to other clients.
 
 		Message message = (Message) evt.getNewValue();
+		ClientHandler handler = (ClientHandler) evt.getSource();
+		//ObjectOutputStream outputStream = outputStreamMap.get(handler);
 
 		if (message instanceof Challenge){
 			System.out.println("Challenge");
-			handleChallenge((ClientHandler) evt.getSource(),(Message) evt.getNewValue());
+			handleChallenge(handler, (Challenge) message);
 		}
 		else if (message instanceof ExchangeTiles){
 			System.out.println("Exchange");
 
-			handleExchangeTiles((ClientHandler) evt.getSource(),(Message) evt.getNewValue());
+			handleExchangeTiles(handler, (ExchangeTiles) message);
 		}
 		else if (message instanceof ExitParty){
 			System.out.println("Exit");
 
-			handleExitParty((ClientHandler) evt.getSource(),(Message) evt.getNewValue());
+			handleExitParty(handler, (ExitParty) message);
 		}
 		else if (message instanceof NewTiles){
 			System.out.println("NewTiles");
 
-			handleNewTiles((ClientHandler) evt.getSource(),(Message) evt.getNewValue());
+			handleNewTiles(handler, (NewTiles) message);
 		}
 		else if (message instanceof PassTurn){
 			System.out.println("Pass");
-			handlePassTurn((ClientHandler) evt.getSource(),(Message) evt.getNewValue());
+			handlePassTurn(handler, (PassTurn) message);
 		}
 		else if (message instanceof PlayTiles) {
 			System.out.println("PlayTiles");
-			handlePlayTiles((ClientHandler) evt.getSource(),(Message) evt.getNewValue());
+			handlePlayTiles(handler, (PlayTiles) message);
 		}
 	}
 
@@ -117,41 +124,20 @@ public class PartyHost implements Runnable, PropertyChangeListener {
 	 * 				Private Methods							 *
 	 *********************************************************/
 
-	private void handlePlayTiles(ClientHandler source, Message newValue) {
-
-	}
-
-	private void handlePassTurn(ClientHandler source, Message newValue) {
-
-	}
-
-	private void handleNewTiles(ClientHandler source, Message newValue) {
-
-	}
-
-	private void handleExitParty(ClientHandler source, Message newValue) {
-
-	}
-
-	private void handleExchangeTiles(ClientHandler source, Message newValue) {
-
-	}
-
-	private void handleChallenge(ClientHandler source, Message newValue) {
-
-	}
-
 	private void acceptClients() {
 		try {
 
 			// establish connection with the client
 			System.out.println("Looking for clients...");
 			Socket client = server.accept();
-			clientSockets.add(client);
-
-			// client handler creation for the listening of messages
 			System.out.println("New client added");
+
+			clientSockets.add(client);
+			ObjectOutputStream outputStream = new ObjectOutputStream(
+					client.getOutputStream()
+			);
 			ClientHandler clientHandler = new ClientHandler(client, this);
+			this.outputStreamMap.put(clientHandler, outputStream);
 
 			// start the thread
 			Thread clientThread = new Thread(clientHandler);
@@ -166,5 +152,37 @@ public class PartyHost implements Runnable, PropertyChangeListener {
 		}
 	}
 
+	/*
+	IMPLEMENTATION NOTES FOR handle_____ METHODS
+	often need to relay unchanged message to other clients.
+	This can be done by calling outputStreamMap.keys(), iterating
+	over the keys and sending to outputStream when key != source
 
+	In other cases, we need to send a different message to the source client, which
+	will require tileBag gets.
+	 */
+
+	private void handlePlayTiles(ClientHandler source, PlayTiles newValue) {
+
+	}
+
+	private void handlePassTurn(ClientHandler source, PassTurn newValue) {
+
+	}
+
+	private void handleNewTiles(ClientHandler source, NewTiles newValue) {
+
+	}
+
+	private void handleExitParty(ClientHandler source, ExitParty newValue) {
+
+	}
+
+	private void handleExchangeTiles(ClientHandler source, ExchangeTiles newValue) {
+
+	}
+
+	private void handleChallenge(ClientHandler source, Challenge newValue) {
+
+	}
 }
