@@ -14,7 +14,6 @@ public class WinnerScreen extends JPanel {
         JPanel southPanel = new JPanel(new FlowLayout());
         JPanel podium = new JPanel(new GridLayout(4,1, 7, 10));
 
-
         JLabel firstPlaceName = new JLabel("1st: " + players[0].getName() + " | " + players[0].getScore());
         JLabel secondPlaceName = new JLabel("2nd: " + players[1].getName() + " | " + players[1].getScore());
         JLabel thirdPlaceName = new JLabel("3rd: " + players[2].getName() + " | " + players[2].getScore());
