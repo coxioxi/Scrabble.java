@@ -1,4 +1,4 @@
-package scrabble.controllers;
+package scrabble.controller;
 
 
 import scrabble.model.Game;
