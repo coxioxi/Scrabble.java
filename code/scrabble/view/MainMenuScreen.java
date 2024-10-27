@@ -6,7 +6,7 @@ import java.awt.*;
 import static scrabble.view.GameFrame.audioOn;
 import static scrabble.view.GameFrame.fxOn;
 
-public class MainMenu extends JPanel {
+public class MainMenuScreen extends JPanel {
 
     private JButton hostButton;
     private JButton joinButton;
@@ -14,7 +14,7 @@ public class MainMenu extends JPanel {
     private JCheckBox fxCheck;
     private JButton quitButton;
 
-    public MainMenu() {
+    public MainMenuScreen() {
 
 
         // Panel setup for the menu layout
