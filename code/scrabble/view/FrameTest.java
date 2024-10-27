@@ -7,6 +7,7 @@ public class FrameTest extends JFrame {
     public FrameTest() {
         JoinScreen join = new JoinScreen();
         this.add(join);
+        this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 
         this.setMinimumSize(new Dimension(250,150));
         this.pack();
