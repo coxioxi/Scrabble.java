@@ -38,7 +38,7 @@ public class TileTest{
 
     @Test
     public void testIsNew() throws InvalidPositionException {
-        int score = board.score(board.findOrigin(tiles));
+        int score = board.playTiles(tiles);
 
         for (Tile tile : tiles) {
             Assertions.assertFalse(tile.getIsNew());

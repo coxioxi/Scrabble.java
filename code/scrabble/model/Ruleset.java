@@ -77,7 +77,6 @@ public class Ruleset {
 		return turnTime;
 	}
 
-
 	/**
 	 * Getter for challenges enabled
 	 * @return whether challenges are allowed
