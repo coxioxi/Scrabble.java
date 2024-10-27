@@ -1,4 +1,4 @@
-package scrabble.host;
+package scrabble.network.networkPrototype;
 
 import java.io.BufferedInputStream;
 import java.io.DataInputStream;

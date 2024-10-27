@@ -1,4 +1,4 @@
-package scrabble.host;
+package scrabble.network.networkPrototype;
 
 import java.io.BufferedOutputStream;
 import java.io.IOException;
@@ -7,8 +7,8 @@ import java.util.ArrayList;
 
 /*
 this class is the server side
-Usage: 	javac scrabble/host/PartyHost.java
-		java scrabble/host/PartyHost
+Usage: 	javac scrabble/network/networkPrototype/PartyHost.java
+		java scrabble/network/networkPrototype/PartyHost
 		Use ../controllers/NetworkController as client
 David: cd "OneDrive - Otterbein University\IdeaProjects\Scrabble\code"
 

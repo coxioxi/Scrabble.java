@@ -261,7 +261,7 @@ public class Game {
 	/**
 	 * Removes tiles from the LocalPlayer (necessary in the case of
 	 * a failed challenge)
-	 * @param tiles the tiles to remove. length <= 7
+	 * @param tiles the tiles to remove. length less than or equal to 7
 	 */
 	public void removeTiles(Tile[] tiles) {
 		self.removeTiles(tiles);
