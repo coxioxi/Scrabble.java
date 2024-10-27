@@ -1,10 +1,10 @@
-package scrabble.view;
+package scrabble.view.panel;
 
 import javax.swing.*;
 import java.awt.*;
 
-import static scrabble.view.GameFrame.audioOn;
-import static scrabble.view.GameFrame.fxOn;
+import static scrabble.view.frame.GameFrame.audioOn;
+import static scrabble.view.frame.GameFrame.fxOn;
 
 public class MainMenuScreen extends JPanel {
 

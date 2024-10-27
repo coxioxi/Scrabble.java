@@ -1,10 +1,10 @@
-package scrabble.view.experimenting;
+package scrabble.view.frame;
 
 import javax.swing.*;
 import java.awt.*;
 
 import scrabble.model.Player;
-import scrabble.view.*;
+import scrabble.view.panel.*;
 
 public class ScrabbleView extends JFrame {
 

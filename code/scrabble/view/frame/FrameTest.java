@@ -1,6 +1,7 @@
-package scrabble.view;
+package scrabble.view.frame;
 
 import scrabble.model.Player;
+import scrabble.view.panel.*;
 
 import javax.swing.*;
 import java.awt.*;
