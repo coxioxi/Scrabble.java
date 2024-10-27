@@ -71,7 +71,6 @@ public class GameFrame extends JFrame {
         frame.setVisible(true);
     }
 
-
     public static void hostScreen() {
         JFrame frame = new JFrame("Scrabble");
 
@@ -459,10 +458,10 @@ public class GameFrame extends JFrame {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException ignore) {}
         //mainMenu();
-        joinScreen();
+        //joinScreen();
         //hostScreen();
         //waitingScreen();
-        //winnerScreen();
+        winnerScreen();
         //gameScreen();
     }
 
