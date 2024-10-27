@@ -1,5 +1,6 @@
 package scrabble.network.messages;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -7,4 +8,18 @@ import java.io.Serializable;
  	Serializable Documentation</a>
  */
 public abstract class Message implements Serializable {
+
+	public static final int HOST_ID = -1;
+	@Serial
+	private static final long serialVersionUID = 1L;
+
+	private final int senderID;
+
+	protected Message(int senderID) {
+		this.senderID = senderID;
+	}
+
+	public int getSenderID() {
+		return senderID;
+	}
 }
