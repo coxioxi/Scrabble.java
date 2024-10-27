@@ -1,6 +1,5 @@
-package scrabble.controllers;
+package scrabble.controller;
 
-import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
