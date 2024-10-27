@@ -4,8 +4,26 @@ import javax.swing.*;
 import java.awt.*;
 
 public class HostScreen extends JPanel {
-    public HostScreen() {
 
+    public static final String[] gameTimeChoices =
+            {"30 Minutes", "45 Minutes", "60 Minutes", "75 Minutes"};
+    public static final String[] playerTimeChoices =
+            {"2 Minutes", "3 Minutes", "4 Minutes", "5 Minutes"};
+    public static final String[] challengeChoices =
+            {"Challenges on", "Challenges off"};
+    public static final String[] dictionaryChoices =
+            {"Dictionary 1", "Dictionary 2"};
+
+    private JTextField name;
+    private JLabel[] players;
+    private JComboBox<String> challengeBox;
+    private JComboBox<String> dictionaryBox;
+    private JComboBox<String> playerTimeBox;
+    private JComboBox<String> gameTimeBox;
+    private JButton hostButton;
+
+    public HostScreen() {
+        this.setLayout(new BorderLayout());
         JPanel mainPanel = new JPanel();
         mainPanel.setBorder(BorderFactory.createTitledBorder("Host A Game"));
         mainPanel.setLayout(null);
@@ -18,64 +36,96 @@ public class HostScreen extends JPanel {
         JPanel westPanel = new JPanel(new FlowLayout());
         westPanel.setBorder(BorderFactory.createTitledBorder("Players Waiting"));
 
-        JLabel yourIP = new JLabel("Your IP Address:", SwingConstants.RIGHT);
-        JLabel hostsIP = new JLabel("**Host's IP**");
-        JLabel nameLabel = new JLabel("Name:", SwingConstants.RIGHT);
-        JTextField nameInput = new JTextField();
-        JButton hostButton = new JButton("Host");
-        JLabel player1Waiting = new JLabel("**Player 1 Name**", SwingConstants.CENTER);
-        JLabel player2Waiting = new JLabel("**Player 2 Name**", SwingConstants.CENTER);
-        JLabel player3Waiting = new JLabel("**Player 3 Name**", SwingConstants.CENTER);
-        JLabel player4Waiting = new JLabel("**Player 4 Name**", SwingConstants.CENTER);
+        name = new JTextField();
+        hostButton = new JButton("Host");
 
-        player1Waiting.setBorder(BorderFactory.createEtchedBorder());
-        player2Waiting.setBorder(BorderFactory.createEtchedBorder());
-        player3Waiting.setBorder(BorderFactory.createEtchedBorder());
-        player4Waiting.setBorder(BorderFactory.createEtchedBorder());
-
-        JPanel nameAndIP = new JPanel(new GridLayout(2,2,7,10));
-        nameAndIP.add(yourIP);
-        nameAndIP.add(hostsIP);
-        nameAndIP.add(nameLabel);
-        nameAndIP.add(nameInput);
-        northPanel.add(nameAndIP);
-        this.add(northPanel, BorderLayout.NORTH);
-
-        JPanel playersWaiting = new JPanel(new GridLayout(4,1,0,10));
-        playersWaiting.add(player1Waiting);
-        playersWaiting.add(player2Waiting);
-        playersWaiting.add(player3Waiting);
-        playersWaiting.add(player4Waiting);
-        westPanel.add(playersWaiting);
+        westPanel.add(setupPlayersWaiting());
         this.add(westPanel, BorderLayout.WEST);
+
+        northPanel.add(setupNameAndIP());
+        this.add(northPanel, BorderLayout.NORTH);
 
         southPanel.add(hostButton);
         this.add(southPanel, BorderLayout.SOUTH);
 
-        JLabel challengeLabel = new JLabel("Challenges Allowed:", SwingConstants.RIGHT);
-        String[] challengeChoices = {"Challenges on", "Challenges off"};
-        JComboBox<String> challengeComboBox = new JComboBox<>(challengeChoices);
-        JLabel dictionaryLabel = new JLabel("Dictionary Used:", SwingConstants.RIGHT);
-        String[] dictionaryChoices = {"Dictionary 1", "Dictionary 2"};
-        JComboBox<String> dictionaryComboBox = new JComboBox<>(dictionaryChoices);
-        JLabel playerTimeLabel = new JLabel("Player Time:", SwingConstants.RIGHT);
-        String[] playerTimeChoices = {"2 Minutes", "3 Minutes", "4 Minutes", "5 Minutes"};
-        JComboBox<String> playerTimeComboBox = new JComboBox<>(playerTimeChoices);
-        JLabel gameTimeLabel = new JLabel("Game Time:", SwingConstants.RIGHT);
-        String[] gameTimeChoices = {"30 Minutes", "45 Minutes", "60 Minutes", "75 Minutes"};
-        JComboBox<String> gameTimeComboBox = new JComboBox<>(gameTimeChoices);
-
-        JPanel customizations = new JPanel(new GridLayout(4,2, 7, 10));
-        customizations.add(challengeLabel);
-        customizations.add(challengeComboBox);
-        customizations.add(dictionaryLabel);
-        customizations.add(dictionaryComboBox);
-        customizations.add(playerTimeLabel);
-        customizations.add(playerTimeComboBox);
-        customizations.add(gameTimeLabel);
-        customizations.add(gameTimeComboBox);
-        eastPanel.add(customizations);
+        eastPanel.add(setupCustomizations());
         this.add(eastPanel, BorderLayout.EAST);
+    }
 
+    private JPanel setupNameAndIP() {
+        JPanel nameAndIP = new JPanel(new GridLayout(2,2,7,10));
+
+        JLabel yourIP = new JLabel("Your IP Address:", SwingConstants.RIGHT);
+        JLabel hostsIP = new JLabel("**Host's IP**");
+        JLabel nameLabel = new JLabel("Name:", SwingConstants.RIGHT);
+
+        nameAndIP.add(yourIP);
+        nameAndIP.add(hostsIP);
+        nameAndIP.add(nameLabel);
+        nameAndIP.add(name);
+        return nameAndIP;
+    }
+
+    private JPanel setupPlayersWaiting() {
+        JPanel playersWaiting = new JPanel(new GridLayout(4,1,0,10));
+        players = new JLabel[4];
+
+        for (int i = 0; i < players.length; i++) {
+            players[i] = new JLabel("**Player "+i+ " Name**", SwingConstants.CENTER);
+            players[i].setBorder(BorderFactory.createEtchedBorder());
+            playersWaiting.add(players[i]);
+        }
+        return playersWaiting;
+    }
+
+    private JPanel setupCustomizations() {
+        JPanel customizations = new JPanel(new GridLayout(4,2, 7, 10));
+
+        JLabel challengeLabel = new JLabel("Challenges Allowed:", SwingConstants.RIGHT);
+        challengeBox = new JComboBox<>(challengeChoices);
+        JLabel dictionaryLabel = new JLabel("Dictionary Used:", SwingConstants.RIGHT);
+        dictionaryBox = new JComboBox<>(dictionaryChoices);
+        JLabel playerTimeLabel = new JLabel("Player Time:", SwingConstants.RIGHT);
+        playerTimeBox = new JComboBox<>(playerTimeChoices);
+        JLabel gameTimeLabel = new JLabel("Game Time:", SwingConstants.RIGHT);
+        gameTimeBox = new JComboBox<>(gameTimeChoices);
+
+        customizations.add(challengeLabel);
+        customizations.add(challengeBox);
+        customizations.add(dictionaryLabel);
+        customizations.add(dictionaryBox);
+        customizations.add(playerTimeLabel);
+        customizations.add(playerTimeBox);
+        customizations.add(gameTimeLabel);
+        customizations.add(gameTimeBox);
+        return customizations;
+    }
+
+    public JTextField getNameTextField() {
+        return name;
+    }
+
+    public JLabel[] getPlayers() {
+        return players;
+    }
+
+    public JComboBox<String> getChallengeBox() {
+        return challengeBox;
+    }
+
+    public JComboBox<String> getDictionaryBox() {
+        return dictionaryBox;
+    }
+
+    public JComboBox<String> getPlayerTimeBox() {
+        return playerTimeBox;
+    }
+
+    public JComboBox<String> getGameTimeBox() {
+        return gameTimeBox;
+    }
+
+    public JButton getHostButton() {
+        return hostButton;
     }
 }
