@@ -20,6 +20,7 @@ public class ScrabbleView extends JFrame {
 		JPanel host = new HostScreen();
 		JPanel join = new JoinScreen();
 		JPanel waiting = new WaitingScreen();
+		JPanel game = new GameScreen();
 		JPanel winner = new WinnerScreen(new Player[]{new Player("Ian", 1),
 				new Player("David", 2),
 				new Player("Max", 3),
@@ -28,9 +29,9 @@ public class ScrabbleView extends JFrame {
 		contentPane.add(host, "HOST");
 		contentPane.add(join, "JOIN");
 		contentPane.add(waiting, "WAITING");
+		contentPane.add(game, "GAME");
 		contentPane.add(winner, "WINNER");
 		layoutManager.first(contentPane);
-
 
 		this.pack();
 		this.setVisible(true);
