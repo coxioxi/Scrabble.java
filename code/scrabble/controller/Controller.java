@@ -1,6 +1,7 @@
 package scrabble.controller;
 
 
+
 import scrabble.model.Game;
 import scrabble.network.client.ClientMessenger;
 import scrabble.network.networkPrototype.PartyHost;
@@ -18,6 +19,7 @@ public class Controller {
 	// Main is super important
 
 	// Controller creates the view and adds listeners
+
 	private GameFrame view;
 	private Game model;
 
