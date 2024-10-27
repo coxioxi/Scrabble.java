@@ -5,7 +5,7 @@ package scrabble.controller;
 import scrabble.model.Game;
 import scrabble.network.client.ClientMessenger;
 import scrabble.network.networkPrototype.PartyHost;
-import scrabble.view.GameFrame;
+import scrabble.view.frame.GameFrame;
 
 import java.net.Socket;
 
