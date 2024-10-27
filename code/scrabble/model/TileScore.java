@@ -10,7 +10,7 @@ public enum TileScore {
 	P(3), Q(10), R(1), S(1), T(1),
 	U(1), V(4), W(4), X(8), Y(4), Z(10);
 
-	private final int score;	// the value of the letter
+	private final int score;	// The value of the letter
 
 	/**
 	 * Creates a scrabble.model.TileScore object with a score
@@ -21,7 +21,7 @@ public enum TileScore {
 	}
 
 	/**
-	 * gives the value of the letter
+	 * Gives the value of the letter
 	 * @return the value of the letter
 	 */
 	public int getScore() {

@@ -1,6 +1,6 @@
 package scrabble.model;
 
-import scrabble.model.exceptions.NoTileFoundException;
+import java.util.ArrayList;
 
 /**
  * this class represents the player who is on this computer
@@ -8,61 +8,71 @@ import scrabble.model.exceptions.NoTileFoundException;
  * it permits plays to be made to update this rack, and plays
  * to be undone as is the case for failed challenges
  */
-public class LocalPlayer extends Player {
-	private Tile[] rack, 		// The tiles the player has.
-			   lastPlay, 		// The tiles which were played on the previous turn
+public class LocalPlayer extends Player{
+	private ArrayList<Tile> rack; 	// the tiles the player has
+	private Tile[] lastPlay, 	// The tiles which were played on the previous turn
 								// this field is used to undo plays for failed challenges.
 			   newTiles;		// The tiles which have most recently been added to the rack;
 								// these will need to be removed in the case of a failed challenge.
 
 	/**
-	 * constructs a localPlayer object from their name and ID, and
-	 * sets their rack
+	 * Constructs a localPlayer object
 	 * @param name the name of the player. Must be at least three characters
 	 * @param ID the player's id, which corresponds to their order
 	 * @param rack the tiles the player has
 	 */
-	public LocalPlayer(String name, int ID, Tile[] rack) {
+	public LocalPlayer(String name, int ID,ArrayList<Tile> rack) {
+		super(name, ID); 	// Call the constructor of the superclass Player
+		this.rack = rack; 	// Initialize the player's rack with the given tiles
+	}
+
+	/**
+	 * Constructs a LocalPlayer object with a specified name and ID.
+	 * The player's rack will be initialized to null.
+	 * @param name the name of the player. Must be at least three characters
+	 * @param ID the player's ID, which corresponds to their order of play.
+	 */
+	public LocalPlayer(String name, int ID) {
 		super(name, ID);
-		this.rack = rack;
 	}
 
 	/**
-	 * Provides access to the tiles contained in rack
-	 * without the ability to change rack
-	 * @return a cloned copy of rack, the tiles of this player
+	 * Getter for the player's rack of tiles.
+	 * @return an array of tiles currently held by the player.
 	 */
-	public Tile[] getRack() {
-		return rack.clone();
+	public ArrayList<Tile> getRack() {
+		return rack;
 	}
 
 	/**
-	 * Updates the player's information after they have
-	 * played specified tiles from their rack and added new ones to it
-	 * @param toPlay the tiles which the player plays and no longer has.
-	 *               Must be non-empty. All tiles in toPlay must have
-	 *               letter values which correspond to tiles in the
-	 *               player's rack
-	 * @param addToRack the tiles which will be added to the rack after
-	 *                  the played tiles are removed.
-	 *                  this array must be the same size or smaller than toPlay.
+	 * Removes specified tiles from the player's rack.
+	 * @param tiles the tiles to remove from the rack.
+	 *              This method will need to be implemented to update the rack accordingly.
 	 */
-	public void playTiles(Tile[] toPlay, Tile[] addToRack)
-			throws NoTileFoundException {
-		//TODO: Implement playTiles
+	public void removeTiles(Tile[] tiles) {
+		for (Tile tile : tiles) {
+			if (rack.contains(tile)){
+				rack.remove((tile));
+			}
+		}
 
-		/*
-		Implementation notes/details:
-			for each tile in toPlay, get letter and is blank.
-			see if a matching tile exists in rack. Remove or throw exception.
-			remember to add this tile to lastPlay
-			This process may be easier if rack is converted to an ArrayList,
-			but this option is left to the developer
+	}
 
-			add tiles from second array to the rack AFTER above.
-			remember to add these tiles to newTiles
-		 */
+	/**
+	 * Adds specified tiles to the player's rack.
+	 * @param tiles the tiles to add to the rack.
+	 *              This method will need to be implemented to update the rack accordingly.
+	 */
+	public void addTiles(Tile[] tiles) {
+		for(Tile tile: tiles){
+			if(rack.size() <= 7){
+				rack.add(tile);
+			}
+		}
+	}
 
+	public Tile[] getLastPlay() {
+		return lastPlay;
 	}
 
 	/**
@@ -79,9 +89,5 @@ public class LocalPlayer extends Player {
 			Remove newTiles from rack
 			add lastPlay to rack
 		 */
-	}
-
-	public Tile[] getLastPlay() {
-		return lastPlay;
 	}
 }

@@ -4,8 +4,8 @@ package scrabble.model;
  * This class represents a player over a network.
  */
 public class NetworkPlayer extends Player {
-	private int numTiles;	// how many tiles the player has
-	private boolean isConnected;	// whether they are connected to the host
+	private int numTiles;		 // How many tiles the player has
+	private boolean isConnected; // Whether they are connected to the host
 
 	/**
 	 * Constructs a NetworkPlayer object
@@ -19,7 +19,7 @@ public class NetworkPlayer extends Player {
 	}
 
 	/**
-	 * getter for isConnected
+	 * Getter for isConnected
 	 * @return isConnected
 	 */
 	public boolean isConnected() {
@@ -27,7 +27,7 @@ public class NetworkPlayer extends Player {
 	}
 
 	/**
-	 * setter for isConnected
+	 * Setter for isConnected
 	 * @param connected the value to change isConnected to.
 	 *                  false if they have lost connection, true otherwise
 	 */
@@ -45,7 +45,7 @@ public class NetworkPlayer extends Player {
 	}
 
 	/**
-	 * setter for numTiles
+	 * Setter for numTiles
 	 * @param numTiles how many tiles the player has. must be between 0-7
 	 */
 	public void setNumTiles(int numTiles) {

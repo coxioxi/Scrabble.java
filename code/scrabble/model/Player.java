@@ -8,19 +8,19 @@ package scrabble.model;
  * activity status and their behavior on their previous turn.
  */
 public class Player {
-	public static int DEFAULT_SCORE = 0;	// the starting score
+	public static int DEFAULT_SCORE = 0;  // Default starting score for players
 
-	private final String name;	// player name
-	private int score;		// player score
-	private final int ID;		// player ID, their turn in play
+	private final String name;	// Player's name
+	private int score;			// Player's score
+	private final int ID;		// Player's ID, their turn in play
 
 	/*
-	hasPassed and isActive are for the requirements on turn passing.
-	if a player passes two consecutive turns, they will become
-	inactive, not able to make plays on the board.
+		hasPassedLastTurn and isActive are for the requirements on turn passing.
+		If a player passes two consecutive turns, they will become
+		inactive, not able to make plays on the board.
 	 */
-	private boolean passedLastTurn;	// did they pass their last turn?
-	private boolean isActive;		// can they make plays on the board?
+	private boolean hasPassedLastTurn;	// Did they pass their last turn?
+	private boolean isActive;		// Can they make plays on the board?
 
 	/**
 	 * Constructs a Player object
@@ -28,15 +28,15 @@ public class Player {
 	 * @param ID the id of the player, their order in play
 	 */
 	public Player(String name, int ID) {
-		this.score = DEFAULT_SCORE;
-		this.name = name;
-		this.ID = ID;
-		passedLastTurn = false;
-		isActive = true;
+		this.score = DEFAULT_SCORE; // Initializes score to default
+		this.name = name;			// Set the player's name
+		this.ID = ID;				// Assign the player's ID
+		hasPassedLastTurn = false;	// Initialize passed last turn status
+		isActive = true;			// Set player as active by default
 	}
 
 	/**
-	 * getter for player name
+	 * Getter for player name
 	 * @return name of player as String
 	 */
 	public String getName() {
@@ -44,8 +44,8 @@ public class Player {
 	}
 
 	/**
-	 * getter for score
-	 * @return the player's score as an integer
+	 * Getter for the player's current score.
+	 * @return the player's score as an integer.
 	 */
 	public int getScore() {
 		return score;
@@ -64,9 +64,8 @@ public class Player {
 	}
 
 	/**
-	 * getter for ID
-	 * @return the player ID, which is unique and represents the order
-	 * in which they play.
+	 * Getter for the player's unique ID.
+	 * @return the player's ID as an integer.
 	 */
 	public int getID() {
 		return ID;

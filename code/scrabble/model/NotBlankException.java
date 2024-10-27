@@ -1,4 +1,8 @@
+<<<<<<<< HEAD:code/scrabble/model/exceptions/NotBlankException.java
 package scrabble.model.exceptions;
+========
+package scrabble.model;
+>>>>>>>> origin/ScoreUpdates:code/scrabble/model/NotBlankException.java
 
 /**
  * Exception for trying to set a tile to have a letter value when it is not blank
