@@ -19,7 +19,7 @@ public class Player {
 		If a player passes two consecutive turns, they will become
 		inactive, not able to make plays on the board.
 	 */
-	private boolean hasPassedLastTurn;	// Did they pass their last turn?
+	private boolean passedLastTurn;	// Did they pass their last turn?
 	private boolean isActive;		// Can they make plays on the board?
 
 	/**
@@ -31,7 +31,7 @@ public class Player {
 		this.score = DEFAULT_SCORE; // Initializes score to default
 		this.name = name;			// Set the player's name
 		this.ID = ID;				// Assign the player's ID
-		hasPassedLastTurn = false;	// Initialize passed last turn status
+		passedLastTurn = false;	// Initialize passed last turn status
 		isActive = true;			// Set player as active by default
 	}
 

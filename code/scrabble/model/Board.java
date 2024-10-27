@@ -136,21 +136,6 @@ public class Board {
     }
 
     /**
-     * Constructs a new model.Board object
-     * Getter for dictionary for testing purposes
-     */
-    public ArrayList<String> getDictionary() {
-        return dictionary;
-    }
-
-    /**
-     * Getter for isValidWord for testing purposes
-     */
-    public boolean isValidWordCaller(Set<Point> originPoints) throws InvalidPositionException {
-        return isValidWord(originPoints);
-    }
-
-    /**
      * Constructs a new scrabble.model.Board object
      */
     public Board() {
