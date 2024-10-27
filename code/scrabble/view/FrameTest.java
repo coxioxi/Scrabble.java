@@ -15,11 +15,16 @@ public class FrameTest extends JFrame {
 //        this.add(mainMenu);
 //        WaitingScreen waitingScreen = new WaitingScreen();
 //        this.add(waitingScreen);
+        /*
         WinnerScreen winnerScreen = new WinnerScreen(new Player[]{new Player("Ian", 1),
                 new Player("David", 2),
                 new Player("Max", 3),
                 new Player("Sam", 4)});
         this.add(winnerScreen);
+
+         */
+        GameScreen gameScreen = new GameScreen();
+        this.add(gameScreen);
         this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 
         this.setMinimumSize(new Dimension(250,150));
