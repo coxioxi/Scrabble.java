@@ -28,28 +28,30 @@ public class HostScreen extends JPanel {
         mainPanel.setBorder(BorderFactory.createTitledBorder("Host A Game"));
         mainPanel.setLayout(null);
 
-        JPanel southPanel = new JPanel(new FlowLayout());
-        JPanel northPanel = new JPanel(new FlowLayout());
-        northPanel.setBorder(BorderFactory.createTitledBorder("Host A Game"));
-        JPanel eastPanel = new JPanel(new FlowLayout());
-        eastPanel.setBorder(BorderFactory.createTitledBorder("Customizations"));
-        JPanel westPanel = new JPanel(new FlowLayout());
-        westPanel.setBorder(BorderFactory.createTitledBorder("Players Waiting"));
-
         name = new JTextField();
         hostButton = new JButton("Host");
 
-        westPanel.add(setupPlayersWaiting());
-        this.add(westPanel, BorderLayout.WEST);
-
-        northPanel.add(setupNameAndIP());
-        this.add(northPanel, BorderLayout.NORTH);
-
+        JPanel southPanel = new JPanel(new FlowLayout());
         southPanel.add(hostButton);
         this.add(southPanel, BorderLayout.SOUTH);
 
+        JPanel northPanel = setupBorderedPanel("Host A Game");
+        northPanel.add(setupNameAndIP());
+        this.add(northPanel, BorderLayout.NORTH);
+
+        JPanel eastPanel = setupBorderedPanel("Customizations");
         eastPanel.add(setupCustomizations());
         this.add(eastPanel, BorderLayout.EAST);
+
+        JPanel westPanel = setupBorderedPanel("Players Waiting");
+        westPanel.add(setupPlayersWaiting());
+        this.add(westPanel, BorderLayout.WEST);
+    }
+
+    private JPanel setupBorderedPanel(String title) {
+        JPanel panel = new JPanel(new FlowLayout());
+        panel.setBorder(BorderFactory.createTitledBorder(title));
+        return panel;
     }
 
     private JPanel setupNameAndIP() {
