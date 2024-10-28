@@ -1,10 +1,13 @@
 package scrabble.network.host;
 
+import scrabble.network.messages.Message;
+
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.io.EOFException;
 import java.io.IOException;
 import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.net.Socket;
 
 /*
@@ -37,12 +40,14 @@ public class ClientHandler  implements Runnable {
 	private PropertyChangeSupport notifier;		// notifies listener of messages received
 	private Socket socket; 	// the socket of the client
 	private ObjectInputStream inputStream;	// the stream from which message objects are read
+	private ObjectOutputStream outputStream;
 	private int clientID;		// the ID of this player
 
 	public ClientHandler(Socket socket, PropertyChangeListener listener)
 			throws IOException {
 		this.socket = socket;
 		this.inputStream = new ObjectInputStream(socket.getInputStream());
+		this.outputStream = new ObjectOutputStream(socket.getOutputStream());
 		notifier = new PropertyChangeSupport(this);
 		notifier.addPropertyChangeListener(listener);
 	}
@@ -55,7 +60,6 @@ public class ClientHandler  implements Runnable {
 	public void setClientID(int clientID) {
 		this.clientID = clientID;
 	}
-
 
 	@Override
 	public void run() {
@@ -80,5 +84,10 @@ public class ClientHandler  implements Runnable {
 			throw new RuntimeException(e);
 		}
 		notifier.firePropertyChange("message", null, newMessage);
+	}
+
+	public void sendMessage(Message message) throws IOException {
+		outputStream.writeObject(message);
+		outputStream.flush();
 	}
 }
