@@ -3,6 +3,7 @@ package scrabble.network.networkPrototype;
 import java.io.BufferedInputStream;
 import java.io.DataInputStream;
 import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.util.Objects;
 
@@ -49,6 +50,11 @@ public class ClientHandler implements Runnable{
 			partyHost.handleMessage(line, this.clientSocket);
 		try {
 			inputStream.close();
+			ObjectOutputStream oos = new ObjectOutputStream(
+					clientSocket.getOutputStream()
+			);
+			oos.flush();
+			oos.close();
 			clientSocket.close();
 		} catch (IOException e) {
 			System.out.println(e);

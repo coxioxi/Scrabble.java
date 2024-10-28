@@ -2,6 +2,7 @@ package scrabble.network.networkPrototype;
 
 import java.io.BufferedOutputStream;
 import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.net.*;
 import java.util.ArrayList;
 
@@ -20,11 +21,13 @@ public class PartyHost implements Runnable {
 	private ServerSocket server;
 	private boolean inGame;
 	private ArrayList<Thread> listeners;
+	private ArrayList<ClientHandler> handlers;
 
 	public PartyHost(int port) {
 		inGame = false;
 		server = null;
 		listeners = new ArrayList<>(4);
+		handlers = new ArrayList<>(4);
 		try {
 			server = new ServerSocket(port);
 			server.setSoTimeout(1000);
@@ -47,6 +50,7 @@ public class PartyHost implements Runnable {
 				clientSockets.add(client);
 				System.out.println("New client added");
 				ClientHandler clientHandler = new ClientHandler(client, this);
+				handlers.add(clientHandler);
 				Thread clientThread = new Thread(clientHandler);
 				listeners.add(clientThread);
 				clientThread.start();
@@ -69,7 +73,7 @@ public class PartyHost implements Runnable {
 				t.join();
 			}
 		} catch (Exception e) {
-			System.out.println(e);
+			throw new RuntimeException(e);
 		}
 	}
 
