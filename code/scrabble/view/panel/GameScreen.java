@@ -7,6 +7,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.lang.invoke.StringConcatFactory;
 import java.sql.Time;
 import java.util.ArrayList;
 import java.util.List;
@@ -94,6 +95,10 @@ public class GameScreen extends JPanel {
 		submitAndRack.add(rackPanel);
 		southPanel.add(submitAndRack);
 
+		//Drop down menu
+		JComboBox<String> comboBox = getStringJComboBox();
+
+		this.add(comboBox);
 		this.add(northPanel, BorderLayout.NORTH);
 		this.add(centerPanel, BorderLayout.CENTER);
 		this.add(westPanel, BorderLayout.WEST);
@@ -102,6 +107,28 @@ public class GameScreen extends JPanel {
 
 		boardTilesActionListener();
 		rackTilesActionListener();
+	}
+
+	private static JComboBox<String> getStringJComboBox() {
+		String[] options = {"Rules", "Game Audio", "Game FX", "Quit"};
+		JComboBox<String> comboBox = new JComboBox<>(options);
+		comboBox.setBounds(0, 0, 100, 25);
+
+		comboBox.setAction(new AbstractAction() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if(e.getSource() == comboBox) {
+					String menu = options[comboBox.getSelectedIndex()];
+					switch (menu) {
+						case "Rules" -> System.out.println("There are no rules man, We laust!");
+						case "Game Audio" -> System.out.println("No audio for now :( ");
+						case "Game FX" -> System.out.println("No FX either :( ");
+						case "Quit" -> System.out.println("I wish dude!");
+                    }
+				}
+			}
+		});
+		return comboBox;
 	}
 
 	public void boardTilesActionListener(){

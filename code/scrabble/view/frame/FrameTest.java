@@ -63,7 +63,7 @@ public class FrameTest extends JFrame {
 
     public static void main(String[] args) {
         Scanner in = new Scanner(System.in);
-        System.out.print("Enter screen to view: ");
+        System.out.print("Enter screen to view: (game, host, join, main, waiting, winner) ");
         String screen = in.next();
         if (screen.equalsIgnoreCase("game")) {
             new FrameTest().showGame();
