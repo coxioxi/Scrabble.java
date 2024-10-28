@@ -2,6 +2,8 @@ package scrabble.view.panel;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 
 public class GameScreen extends JPanel {
 
@@ -21,16 +23,35 @@ public class GameScreen extends JPanel {
 		JPanel centerPanel = new JPanel(new FlowLayout());
 		centerPanel.setBorder(BorderFactory.createTitledBorder("Game Board"));
 		JPanel gamePanel = new JPanel(new GridLayout(15,15,1,1));
+		gamePanel.setBackground(new Color(244,164,96));
+		gamePanel.setOpaque(true);
+		centerPanel.setPreferredSize(new Dimension(400, 300));
 		gameCells = new JButton[15][15];
 		for (int i = 0; i < 15; i++) {
 			for(int j = 0; j < 15; j++) {
 				JButton boardTile = new JButton("$$");
+				boardTile.setPreferredSize(new Dimension(20,20));
+				boardTile.setMinimumSize(new Dimension(15, 15));
+				boardTile.setMaximumSize(new Dimension(30, 30));
 				gameCells[i][j] = boardTile;
 				//boardTile.setBorder(BorderFactory.createEtchedBorder());
 				gamePanel.add(boardTile);
 			}
 		}
 		centerPanel.add(gamePanel);
+		centerPanel.addComponentListener(new ComponentAdapter() {
+			@Override
+			public void componentResized(ComponentEvent componentEvent) {
+
+				GridLayout layout = (GridLayout) gamePanel.getLayout();
+//				layout.setHgap(5);
+//				layout.setVgap(5);
+
+				gamePanel.validate();
+				gamePanel.repaint();
+
+			}
+		});
 
 		JPanel eastPanel = new JPanel(new GridLayout(2,1,0,175));
 		JPanel westPanel = new JPanel(new GridLayout(2,1,0,175));
