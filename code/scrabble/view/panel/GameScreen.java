@@ -1,9 +1,16 @@
 package scrabble.view.panel;
 
+import scrabble.model.Board;
+import scrabble.model.ModifierType;
+
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.sql.Time;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Timer;
 
 public class GameScreen extends JPanel {
 
@@ -11,6 +18,13 @@ public class GameScreen extends JPanel {
 	private JButton[][] gameCells;
 	private JButton[] rack;
 	private JButton submitButton;
+	private Board board = new Board();
+	private String value = " ";
+	private final Color doubleWord = new Color(255, 102, 102);
+	private final Color tripleWord = new Color(255, 0, 0);
+	private final Color doubleLetter = new Color(88, 117, 255);
+	private final Color getTripleLetter = new Color(0, 41, 255);
+	private final Color normalCell = new Color(255, 255, 255);
 
 	public GameScreen() {
 		this.setLayout(new BorderLayout());
@@ -23,35 +37,33 @@ public class GameScreen extends JPanel {
 		JPanel centerPanel = new JPanel(new FlowLayout());
 		centerPanel.setBorder(BorderFactory.createTitledBorder("Game Board"));
 		JPanel gamePanel = new JPanel(new GridLayout(15,15,1,1));
-		gamePanel.setBackground(new Color(244,164,96));
-		gamePanel.setOpaque(true);
-		centerPanel.setPreferredSize(new Dimension(400, 300));
 		gameCells = new JButton[15][15];
 		for (int i = 0; i < 15; i++) {
 			for(int j = 0; j < 15; j++) {
-				JButton boardTile = new JButton("$$");
-				boardTile.setPreferredSize(new Dimension(20,20));
-				boardTile.setMinimumSize(new Dimension(15, 15));
-				boardTile.setMaximumSize(new Dimension(30, 30));
+
+				// Get modifier for special cells like Double Word, Triple Word, etc.
+				JButton boardTile = new JButton(" ");
+
+				ModifierType mt = board.getBoardSpecialCell().get(new Point(i, j));
+				if(mt != null) {
+					if (mt == ModifierType.DOUBLE_WORD)
+						boardTile.setBackground(doubleWord);
+					else if (mt == ModifierType.TRIPLE_WORD)
+						boardTile.setBackground(tripleWord);
+					else if (mt == ModifierType.DOUBLE_LETTER)
+						boardTile.setBackground(doubleLetter);
+					else if (mt == ModifierType.TRIPLE_LETTER)
+						boardTile.setBackground(getTripleLetter);
+					else
+						boardTile.setBackground(normalCell);
+				}
+
 				gameCells[i][j] = boardTile;
 				//boardTile.setBorder(BorderFactory.createEtchedBorder());
 				gamePanel.add(boardTile);
 			}
 		}
 		centerPanel.add(gamePanel);
-		centerPanel.addComponentListener(new ComponentAdapter() {
-			@Override
-			public void componentResized(ComponentEvent componentEvent) {
-
-				GridLayout layout = (GridLayout) gamePanel.getLayout();
-//				layout.setHgap(5);
-//				layout.setVgap(5);
-
-				gamePanel.validate();
-				gamePanel.repaint();
-
-			}
-		});
 
 		JPanel eastPanel = new JPanel(new GridLayout(2,1,0,175));
 		JPanel westPanel = new JPanel(new GridLayout(2,1,0,175));
@@ -73,7 +85,7 @@ public class GameScreen extends JPanel {
 		JPanel rackPanel = new JPanel(new GridLayout(1,7,10,0));
 		rack = new JButton[7];
 		for (int i = 0; i < 7; i++) {
-			JButton rackTile = new JButton("$$");
+			JButton rackTile = new JButton(""+i);
 			rack[i] = rackTile;
 			//rackTile.setBorder(BorderFactory.createEtchedBorder());
 			rackPanel.add(rackTile);
@@ -87,6 +99,73 @@ public class GameScreen extends JPanel {
 		this.add(westPanel, BorderLayout.WEST);
 		this.add(eastPanel, BorderLayout.EAST);
 		this.add(southPanel, BorderLayout.SOUTH);
+
+		boardTilesActionListener();
+		rackTilesActionListener();
+	}
+
+	public void boardTilesActionListener(){
+		for (int i = 0; i < 15; i++) {
+			for (int j = 0; j < 15; j++) {
+				JButton boardTile = gameCells[i][j];
+				ModifierType mt = board.getBoardSpecialCell().get(new Point(i, j));
+				if(mt == null)
+					mt = ModifierType.NONE;
+				ModifierType finalMt = mt;
+
+				boardTile.addActionListener(new ActionListener() {
+					@Override
+					public void actionPerformed(ActionEvent e) {
+						if((boardTile.getText().equals(" ") || !boardTile.getText().equals(finalMt.name())) && !value.equals(" ")){
+							for (int k = 0; k < 7; k++) {
+								if(rack[k].getText().equals(" ")){
+									rack[k].setText(boardTile.getText());
+									break;
+								}
+							}
+							boardTile.setText(value);
+							value = " ";
+						}
+						else if(value.equals(" ")){
+							for (int k = 0; k < 7; k++) {
+								if(rack[k].getText().equals(" ")){
+									rack[k].setText(boardTile.getText());
+									value = " ";
+									break;
+								}
+							}
+							if(!boardTile.getText().equals(finalMt.name())){
+								boardTile.setText(" ");
+							}
+							else
+								boardTile.setText(finalMt.name());
+						}
+                    }
+				});
+			}
+		}
+	}
+
+	public void rackTilesActionListener(){
+		for (int i = 0; i < 7; i++) {
+			JButton rackTile = rack[i];
+			int finalI = i;
+			rackTile.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					if(!value.equals(" ")){
+						for (int j = 0; j < 7; j++){
+							if(rack[j].getText().equals(" ")){
+								rack[j].setText(value);
+								break;
+							}
+						}
+					}
+					value = rackTile.getText();
+					rack[finalI].setText(" ");
+				}
+			});
+		}
 	}
 
 	public JLabel getGameTime() {

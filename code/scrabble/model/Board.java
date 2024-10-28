@@ -202,6 +202,10 @@ public class Board {
 		return hasAdjacentTile(t);
 	}
 
+    public Map<Point, ModifierType> getBoardSpecialCell(){
+           return boardSpecialCell;
+    }
+
     /**
      * This method places tiles at positions on the board and returns the score of
      * the play made
@@ -1046,7 +1050,7 @@ public class Board {
         boardSpecialCell.put(new Point(1,9), ModifierType.TRIPLE_LETTER);
         boardSpecialCell.put(new Point(5,9), ModifierType.TRIPLE_LETTER);
         boardSpecialCell.put(new Point(9,9), ModifierType.TRIPLE_LETTER);
-        boardSpecialCell.put(new Point(13,8), ModifierType.TRIPLE_LETTER);
+        boardSpecialCell.put(new Point(13,9), ModifierType.TRIPLE_LETTER);
         boardSpecialCell.put(new Point(2,8), ModifierType.DOUBLE_LETTER);
         boardSpecialCell.put(new Point(6,8), ModifierType.DOUBLE_LETTER);
         boardSpecialCell.put(new Point(8,8), ModifierType.DOUBLE_LETTER);
