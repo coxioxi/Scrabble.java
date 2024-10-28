@@ -1,6 +1,8 @@
 package scrabble.network.networkPrototype;
 
+import java.io.DataInputStream;
 import java.io.DataOutputStream;
+import java.io.EOFException;
 import java.io.IOException;
 import java.net.Socket;
 import java.util.Scanner;
@@ -16,14 +18,16 @@ public class NetworkController {
 	private Socket socket;
 	private Scanner input;
 	private DataOutputStream out;
+	private DataInputStream inputStream;
 
 	public NetworkController(String address, int port) {
 		try {
 			socket = new Socket(address, port);
 			System.out.println("Connected");
-			input = new Scanner(System.in);
 			out = new DataOutputStream(
 					socket.getOutputStream());
+			inputStream = new DataInputStream(socket.getInputStream());
+			input = new Scanner(System.in);
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
@@ -34,11 +38,34 @@ public class NetworkController {
 			try {
 				line = input.next();
 				out.writeUTF(line);
+				if (inputStream.available() > 0) {
+					try {
+						System.out.println("Server says: " +
+								inputStream.readUTF());
+
+					}
+					catch (EOFException e) {
+						inputStream.close();
+						socket.close();
+					}
+				}
+			}
+			catch (EOFException e) {
+				try {
+					input.close();
+					out.close();
+					socket.close();
+				}
+				catch (IOException i) {
+					System.out.println(i);
+					System.out.println("error in stream closing");
+				}
 			}
 			catch (IOException i) {
 				System.out.println(i);
 				System.out.println("Error in line IO");
 			}
+
 		}
 		try {
 			input.close();
