@@ -44,7 +44,7 @@ public class ClientHandler  implements Runnable {
 	private ObjectInputStream inputStream;	// the stream from which message objects are read
 	private ObjectOutputStream outputStream;
 	private int clientID;		// the ID of this player
-	private boolean listening;
+	private boolean listening;	// whether we are listening for new messages from client
 
 	public ClientHandler(Socket socket, PropertyChangeListener listener)
 			throws IOException {
@@ -70,20 +70,14 @@ public class ClientHandler  implements Runnable {
 		// listen for objects from the stream
 		// use the ObjectInputStream to get the objects.
 		// send a notification to the listener via PropertyChangeSupport object
+
+		// listen for new messages. stop when this is told to halt, or when socket has been closed
 		listening = true;
-		Object newMessage = null;
+		Message newMessage = null;
 		while (listening) {
 			try {
-				newMessage = inputStream.readObject();
-
-			} catch (EOFException e) {
-				System.out.println("Eof found");
-				try {
-					inputStream.close();
-				} catch (IOException ex) {
-					throw new RuntimeException(ex);
-				}
-			} catch (SocketException e) {
+				newMessage = (Message) inputStream.readObject();
+			} catch (EOFException | SocketException e) {
 				// The client has closed their connection
 				// TODO: pass on a message to the host that this player has closed their socket
 				// 	i.e. disconnect them on other ppl's models
@@ -92,10 +86,12 @@ public class ClientHandler  implements Runnable {
 			} catch (IOException | ClassNotFoundException e) {
 				throw new RuntimeException(e);
 			}
+			// got a message. tell the listener
 			notifier.firePropertyChange("message", null, newMessage);
 			newMessage = null;
 		}
 
+		// we have stopped listening. close streams
 		try {
 			closeStreams();
 		} catch (IOException e) {
@@ -103,6 +99,7 @@ public class ClientHandler  implements Runnable {
 		}
 	}
 
+	// closes socket and associated streams
 	private void closeStreams() throws IOException {
 		inputStream.close();
 		outputStream.flush();
@@ -110,13 +107,15 @@ public class ClientHandler  implements Runnable {
 		socket.close();
 	}
 
+	// send a message to the client
 	public void sendMessage(Message message) throws IOException {
 		outputStream.writeObject(message);
 		outputStream.flush();
 	}
 
+	// stop the run method's execution
 	public void halt() {
-		System.out.println("Halting");
+//		System.out.println("Halting");
 		listening = false;
 	}
 }

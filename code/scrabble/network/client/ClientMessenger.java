@@ -1,12 +1,5 @@
 package scrabble.network.client;
 
-/*
-client side
-usage: 	javac scrabble/network/client/ClientMessenger.java
-		java scrabble/network/client/ClientMessenger [host_address] [port]
-		../host/PartyHost acts as server and prints out local IP for host address
-		David: cd "OneDrive - Otterbein University\IdeaProjects\Scrabble\code"
- */
 import scrabble.model.Tile;
 import scrabble.network.messages.*;
 
@@ -25,20 +18,19 @@ import java.util.Scanner;
  * when new messages are received.
  */
 public class ClientMessenger implements Runnable {
-	// Use ObjectOutputStream and ObjectInputStream for sending and receiving messages
-	// Pass in a socket to the host, get input and output streams from socket,
-	// then create OOS and OIS.
 
-	private Socket server;
+	private final Socket server;	// socket to server/host
 
-	private ObjectOutputStream outputStream;
-	private ObjectInputStream inputStream;
+	private final ObjectOutputStream outputStream;		// stream for sending objects to host
+	private final ObjectInputStream inputStream;		// stream for receiving objects from host
 
-	private PropertyChangeSupport notifier;
-	private boolean isListening;
+	private final PropertyChangeSupport notifier;		// notifies listener of property changes
+														// that is, when messages are received
+	private boolean isListening;		// whether this object is listening for new messages
 
 	public ClientMessenger(Socket server, PropertyChangeListener listener)
 			throws IOException {
+		// setting up streams
 		this.server = server;
 		outputStream = new ObjectOutputStream(server.getOutputStream());
 		inputStream = new ObjectInputStream(server.getInputStream());
@@ -49,34 +41,44 @@ public class ClientMessenger implements Runnable {
 
 	@Override
 	public void run() {
+		// here we start listening for new messages to come in
 		isListening = true;
-		Object object = null;
-
+		// container for new message.
+		Message message = null;
 		do {
-				try {
-					object = inputStream.readObject();
-					Message message = (Message) object;
-					printInstance(message);
-				} catch (EOFException e) {
-					System.out.println("Eof found");
-					this.halt();
-				}
-				catch (SocketException e) {
-					// The host has closed their connection
-					// TODO: pass on a message to the controller that host has closed their socket
-					// 	i.e. end the game
-					//newMessage = new ExitParty();
-					this.halt();
-				}
-				catch (IOException | ClassNotFoundException e) {
-					throw new RuntimeException(e);
-				}
-
-			if (object != null) {
-				notifier.firePropertyChange("Message", null, object);
+			try {
+				message = (Message) inputStream.readObject();
+				//printInstance(message);
+			} catch (EOFException e) {
+				System.out.println("Eof found");
+				this.halt();
 			}
-			object = null;
+			catch (SocketException e) {
+				// Thrown when the host has closed their connection
+				// TODO: pass on a message to the controller that host has closed their socket
+				// 	i.e. end the game
+				//newMessage = new ExitParty();
+				this.halt();
+			}
+			catch (IOException | ClassNotFoundException e) {
+				throw new RuntimeException(e);
+			}
+
+			// we have received a message; tell listener so they can do stuff with it
+			if (message != null) {
+				notifier.firePropertyChange("Message", null, message);
+			}
+			message = null;		// reset message
 		} while (isListening);
+
+		/*
+		 this has stopped listening for new messages, perhaps because we have disconnected,
+		 perhaps the host has disconnected. either will have been handled by the controller
+		 In the former case, the controller would have sent a disconnect signal; in the latter, this
+		 will have notified the controller (see socketException catch clause)
+
+		 now, simply close the streams and end execution of this run().
+		 */
 		try {
 			closeStreams();
 		} catch (IOException e) {
@@ -84,15 +86,19 @@ public class ClientMessenger implements Runnable {
 		}
 	}
 
+	// send a message to the host
 	public void sendMessage(Message message) throws IOException {
 		outputStream.writeObject(message);
 		outputStream.flush();
 	}
 
+	// stop listening for new messages.
+	// allows run to handle closing streams
 	public void halt() {
 		isListening = false;
 	}
 
+	// close socket and associated streams
 	private void closeStreams() throws IOException {
 		inputStream.close();
 		outputStream.flush();
@@ -100,6 +106,7 @@ public class ClientMessenger implements Runnable {
 		if (!server.isClosed()) server.close();
 	}
 
+	// prints the subclass of Message that message is
 	public static void printInstance(Message message ) {
 		if (message instanceof Challenge) {
 			System.out.println("Challenge");
@@ -116,6 +123,7 @@ public class ClientMessenger implements Runnable {
 		}
 	}
 
+	// driver for sending and receiving messages.
 	public static void main(String[] args) throws IOException {
 		Scanner in = new Scanner(System.in);
 		System.out.print("Enter host IP: ");

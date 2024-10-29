@@ -8,17 +8,13 @@ Usage: 	javac scrabble/network/host/PartyHost.java
 David: cd "OneDrive - Otterbein University\IdeaProjects\Scrabble\code"
 */
 
-import scrabble.model.Tile;
 import scrabble.network.messages.*;
 
-import java.awt.*;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.IOException;
-import java.io.ObjectOutputStream;
 import java.net.*;
 import java.util.ArrayList;
-import java.util.HashMap;
 
 /**
  * PartyHost receives messages from clients (via ClientHandler) and sends them to clients
@@ -44,7 +40,6 @@ public class PartyHost implements Runnable, PropertyChangeListener {
 	//private HashMap<ClientHandler, ObjectOutputStream> outputStreamMap;
 	private TileBag tileBag;
 
-
 	public static void main(String[] args) throws UnknownHostException {
 		int port = 5000;
 
@@ -62,6 +57,9 @@ public class PartyHost implements Runnable, PropertyChangeListener {
 		listeners = new ArrayList<>(4);
 		clientSockets = new ArrayList<>(4);
 		//outputStreamMap = new HashMap<>(4);
+
+		// create a server socket that refreshes every second
+		// refreshes allow the run to stop execution once we are no longer looking for clients
 		try {
 			server = new ServerSocket(port);
 			server.setSoTimeout(1000);
@@ -71,6 +69,7 @@ public class PartyHost implements Runnable, PropertyChangeListener {
 	}
 
 
+	// transfer state to start the game: no longer accepting clients
 	public void startGame() {
 		this.inGame = true;
 	}
@@ -83,16 +82,15 @@ public class PartyHost implements Runnable, PropertyChangeListener {
 		while (!inGame) {
 			acceptClients();
 		}
-		// game has started
+		// game has started, stop looking
+		// all future changes handled through ClientHandler objects' calls to property change
 
 	}
-
 
 	@Override
 	public void propertyChange(PropertyChangeEvent evt) {
 		// called from ClientHandler when a new message is received.
-		// get the message type, do processing and return a message if necessary,
-		// send message to other clients.
+		// determine the message subclass then call appropriate helper method for processing
 
 		Message message = (Message) evt.getNewValue();
 		ClientHandler handler = (ClientHandler) evt.getSource();
@@ -131,6 +129,7 @@ public class PartyHost implements Runnable, PropertyChangeListener {
 	 *********************************************************/
 
 	private void acceptClients() {
+		// look for clients. Socket may time out, returns out of method
 		try {
 			// establish connection with the client
 			Socket client = server.accept();
@@ -166,7 +165,6 @@ public class PartyHost implements Runnable, PropertyChangeListener {
 	In other cases, we need to send a different message to the source client, which
 	will require tileBag gets.
 	 */
-
 
 	/*
 	stubs
