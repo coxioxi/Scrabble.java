@@ -127,7 +127,6 @@ public class PartyHost implements Runnable, PropertyChangeListener {
 		}
 	}
 
-
 	/*********************************************************
 	 * 				Private Methods							 *
 	 *********************************************************/
