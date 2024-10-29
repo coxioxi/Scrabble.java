@@ -120,7 +120,9 @@ public class PartyHost implements Runnable, PropertyChangeListener {
 					handlePlayTiles(handler, (PlayTiles) message);
 				}
 				success = true;
-			} catch (IOException e) {}
+			} catch (IOException e) {
+				System.out.println("uhhhhh");
+			}
 		}
 	}
 
@@ -183,7 +185,8 @@ public class PartyHost implements Runnable, PropertyChangeListener {
 	}
 
 	private void handleExitParty(ClientHandler source, ExitParty newValue) throws IOException {
-		source.sendMessage(newValue);
+		//source.sendMessage(newValue);
+		source.halt();
 	}
 
 	private void handleExchangeTiles(ClientHandler source, ExchangeTiles newValue) throws IOException {
