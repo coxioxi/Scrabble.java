@@ -7,12 +7,14 @@ import scrabble.network.client.ClientMessenger;
 import scrabble.network.networkPrototype.PartyHost;
 import scrabble.view.frame.GameFrame;
 
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.net.Socket;
 
 /**
  * Run the other classes
  */
-public class Controller {
+public class Controller implements PropertyChangeListener  {
 
 	// Runs View and Game.
 
@@ -48,6 +50,11 @@ public class Controller {
 	}
 
 	private void hostGame() {
+
+	}
+
+	@Override
+	public void propertyChange(PropertyChangeEvent evt) {
 
 	}
 }
