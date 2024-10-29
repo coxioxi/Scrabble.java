@@ -11,11 +11,11 @@ import scrabble.model.Tile;
 import scrabble.network.messages.*;
 
 import java.awt.*;
-import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.io.*;
 import java.net.Socket;
+import java.net.SocketException;
 import java.util.Scanner;
 
 /**
@@ -35,6 +35,7 @@ public class ClientMessenger implements Runnable {
 	private ObjectInputStream inputStream;
 
 	private PropertyChangeSupport notifier;
+	private boolean isListening;
 
 	public ClientMessenger(Socket server, PropertyChangeListener listener)
 			throws IOException {
@@ -43,50 +44,44 @@ public class ClientMessenger implements Runnable {
 		inputStream = new ObjectInputStream(server.getInputStream());
 		notifier = new PropertyChangeSupport(this);
 		notifier.addPropertyChangeListener(listener);
+		isListening = false;
 	}
-
 
 	@Override
 	public void run() {
+		isListening = true;
 		Object object = null;
-		boolean isClosed = false;
+
 		do {
-			try {
 				try {
 					object = inputStream.readObject();
 					Message message = (Message) object;
-					if (message instanceof Challenge) {
-						System.out.println("Challenge");
-					} else if (message instanceof ExchangeTiles) {
-						System.out.println("Exchange");
-					} else if (message instanceof ExitParty) {
-						System.out.println("Exit");
-					} else if (message instanceof NewTiles) {
-						System.out.println("NewTiles");
-					} else if (message instanceof PassTurn) {
-						System.out.println("Pass");
-					} else if (message instanceof PlayTiles) {
-						System.out.println("PlayTiles");
-					}
+					printInstance(message);
 				} catch (EOFException e) {
 					System.out.println("Eof found");
-					inputStream.close();
-					isClosed = true;
+					this.halt();
 				}
-			} catch (StreamCorruptedException e) {
-				System.out.println("Stream corrupted: " + e);
-				try {
-					inputStream = new ObjectInputStream(server.getInputStream());
-				} catch (IOException ex) {
-					throw new RuntimeException(ex);
+				catch (SocketException e) {
+					// The host has closed their connection
+					// TODO: pass on a message to the controller that host has closed their socket
+					// 	i.e. end the game
+					//newMessage = new ExitParty();
+					this.halt();
 				}
-			} catch (ClassNotFoundException | IOException e) {
-				throw new RuntimeException(e);
-			}
-			if (object instanceof Message) {
+				catch (IOException | ClassNotFoundException e) {
+					throw new RuntimeException(e);
+				}
+
+			if (object != null) {
 				notifier.firePropertyChange("Message", null, object);
 			}
-		} while (!isClosed);
+			object = null;
+		} while (isListening);
+		try {
+			closeStreams();
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
 	}
 
 	public void sendMessage(Message message) throws IOException {
@@ -94,11 +89,31 @@ public class ClientMessenger implements Runnable {
 		outputStream.flush();
 	}
 
-	public void closeStreams() throws IOException {
+	public void halt() {
+		isListening = false;
+	}
+
+	private void closeStreams() throws IOException {
+		inputStream.close();
 		outputStream.flush();
 		outputStream.close();
-		inputStream.close();
-		server.close();
+		if (!server.isClosed()) server.close();
+	}
+
+	public static void printInstance(Message message ) {
+		if (message instanceof Challenge) {
+			System.out.println("Challenge");
+		} else if (message instanceof ExchangeTiles) {
+			System.out.println("Exchange");
+		} else if (message instanceof ExitParty) {
+			System.out.println("Exit");
+		} else if (message instanceof NewTiles) {
+			System.out.println("NewTiles");
+		} else if (message instanceof PassTurn) {
+			System.out.println("Pass");
+		} else if (message instanceof PlayTiles) {
+			System.out.println("PlayTiles");
+		}
 	}
 
 	public static void main(String[] args) throws IOException {
@@ -108,7 +123,7 @@ public class ClientMessenger implements Runnable {
 		System.out.print("Enter port: ");
 		int port = in.nextInt();
 
-		Socket socket = null;
+		Socket socket;
 		try {
 			socket = new Socket(host, port);
 		}
@@ -117,77 +132,75 @@ public class ClientMessenger implements Runnable {
 			throw new RuntimeException(e);
 		}
 
-
 		ClientMessenger clientMessenger = new ClientMessenger(socket, evt -> {
-			try {
-				((ClientMessenger) evt.getSource()).sendMessage((Message)evt.getNewValue());
-			} catch (IOException e) {
-				throw new RuntimeException(e);
-			}
+			printInstance((Message) evt.getNewValue());
 		});
 
 		Thread thread = new Thread(clientMessenger);
 		thread.start();
 
-		System.out.println("Message type (challenge, exchange, exit, newTiles, pass,\n\tplay, start): ");
-		String messageType = in.next();
+		String messageType;
+		do {
+			System.out.println("Message type (challenge, exchange, exit, newTiles, pass,\n\tplay, start): ");
+			messageType = in.next();
 
-		if (messageType.equalsIgnoreCase("challenge")) {
-			System.out.print("Enter senderID, challengingPlayerID, challengedPlayerID: ");
-			int sID, cpID, cdpID;
-			sID = in.nextInt();
-			cpID = in.nextInt();
-			cdpID = in.nextInt();
-			clientMessenger.sendMessage(new Challenge(sID, cpID, cdpID));
-		} else if (messageType.equalsIgnoreCase("exchange")) {
-			System.out.print("Enter senderID, playerID: ");
-			int sID, pID;
-			sID = in.nextInt();
-			pID = in.nextInt();
-			System.out.println("Enter tile letter, x and y: ");
-			int tL, x, y;
-			tL = in.next().charAt(0);
-			x = in.nextInt();
-			y = in.nextInt();
-			clientMessenger.sendMessage(new ExchangeTiles(sID, pID,
-					new Tile[]{new Tile((char)tL, new Point(x, y))}));
-		} else if (messageType.equalsIgnoreCase("exit")) {
-			System.out.print(" sender, player: ");
-			int sID, pID;
-			sID = in.nextInt();
-			pID = in.nextInt();
-			clientMessenger.sendMessage(new ExitParty(sID, pID));
-		} else if (messageType.equalsIgnoreCase("newTiles")) {
-			System.out.print("Enter senderID: ");
-			int sID = in.nextInt();
-			System.out.println("Enter tile letter, x and y: ");
-			int tL, x, y;
-			tL = in.next().charAt(0);
-			x = in.nextInt();
-			y = in.nextInt();
-			clientMessenger.sendMessage(new NewTiles(sID,
-					new Tile[]{new Tile((char)tL, new Point(x, y))}));
-		} else if (messageType.equalsIgnoreCase("pass")) {
-			System.out.print(" sender, player: ");
-			int sID, pID;
-			sID = in.nextInt();
-			pID = in.nextInt();
-			clientMessenger.sendMessage(new PassTurn(sID, pID));
-		} else if (messageType.equalsIgnoreCase("play")) {
-			System.out.print("Enter senderID, playerID: ");
-			int sID, pID;
-			sID = in.nextInt();
-			pID = in.nextInt();
-			System.out.println("Enter tile letter, x and y: ");
-			int tL, x, y;
-			tL = in.next().charAt(0);
-			x = in.nextInt();
-			y = in.nextInt();
-			clientMessenger.sendMessage(new PlayTiles(sID, pID,
-					new Tile[]{new Tile((char)tL, new Point(x, y))}));
-		} else if (messageType.equalsIgnoreCase("start")) {
-			System.out.print("Not implemented");
-		}
-
+			if (messageType.equalsIgnoreCase("challenge")) {
+				System.out.print("Enter senderID, challengingPlayerID, challengedPlayerID: ");
+				int sID, cpID, cdpID;
+				sID = in.nextInt();
+				cpID = in.nextInt();
+				cdpID = in.nextInt();
+				clientMessenger.sendMessage(new Challenge(sID, cpID, cdpID));
+			} else if (messageType.equalsIgnoreCase("exchange")) {
+				System.out.print("Enter senderID, playerID: ");
+				int sID, pID;
+				sID = in.nextInt();
+				pID = in.nextInt();
+				System.out.println("Enter tile letter, x and y: ");
+				int tL, x, y;
+				tL = in.next().charAt(0);
+				x = in.nextInt();
+				y = in.nextInt();
+				clientMessenger.sendMessage(new ExchangeTiles(sID, pID,
+						new Tile[]{new Tile((char) tL, new Point(x, y))}));
+			} else if (messageType.equalsIgnoreCase("exit") || messageType.equalsIgnoreCase("quit")) {
+				System.out.print(" sender, player: ");
+				int sID, pID;
+				sID = in.nextInt();
+				pID = in.nextInt();
+				clientMessenger.sendMessage(new ExitParty(sID, pID));
+				clientMessenger.halt();
+			} else if (messageType.equalsIgnoreCase("newTiles")) {
+				System.out.print("Enter senderID: ");
+				int sID = in.nextInt();
+				System.out.println("Enter tile letter, x and y: ");
+				int tL, x, y;
+				tL = in.next().charAt(0);
+				x = in.nextInt();
+				y = in.nextInt();
+				clientMessenger.sendMessage(new NewTiles(sID,
+						new Tile[]{new Tile((char) tL, new Point(x, y))}));
+			} else if (messageType.equalsIgnoreCase("pass")) {
+				System.out.print(" sender, player: ");
+				int sID, pID;
+				sID = in.nextInt();
+				pID = in.nextInt();
+				clientMessenger.sendMessage(new PassTurn(sID, pID));
+			} else if (messageType.equalsIgnoreCase("play")) {
+				System.out.print("Enter senderID, playerID: ");
+				int sID, pID;
+				sID = in.nextInt();
+				pID = in.nextInt();
+				System.out.println("Enter tile letter, x and y: ");
+				int tL, x, y;
+				tL = in.next().charAt(0);
+				x = in.nextInt();
+				y = in.nextInt();
+				clientMessenger.sendMessage(new PlayTiles(sID, pID,
+						new Tile[]{new Tile((char) tL, new Point(x, y))}));
+			} else if (messageType.equalsIgnoreCase("start")) {
+				System.out.print("Not implemented");
+			}
+		} while (!messageType.equalsIgnoreCase("quit") && !messageType.equalsIgnoreCase("exit"));
 	}
 }
