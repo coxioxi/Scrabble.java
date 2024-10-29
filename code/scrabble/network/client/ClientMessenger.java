@@ -54,6 +54,20 @@ public class ClientMessenger implements Runnable {
 			try {
 				try {
 					object = inputStream.readObject();
+					Message message = (Message) object;
+					if (message instanceof Challenge) {
+						System.out.println("Challenge");
+					} else if (message instanceof ExchangeTiles) {
+						System.out.println("Exchange");
+					} else if (message instanceof ExitParty) {
+						System.out.println("Exit");
+					} else if (message instanceof NewTiles) {
+						System.out.println("NewTiles");
+					} else if (message instanceof PassTurn) {
+						System.out.println("Pass");
+					} else if (message instanceof PlayTiles) {
+						System.out.println("PlayTiles");
+					}
 				} catch (EOFException e) {
 					System.out.println("Eof found");
 					inputStream.close();

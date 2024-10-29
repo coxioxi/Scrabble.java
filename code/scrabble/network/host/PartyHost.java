@@ -105,15 +105,12 @@ public class PartyHost implements Runnable, PropertyChangeListener {
 					handleChallenge(handler, (Challenge) message);
 				} else if (message instanceof ExchangeTiles) {
 					System.out.println("Exchange");
-
 					handleExchangeTiles(handler, (ExchangeTiles) message);
 				} else if (message instanceof ExitParty) {
 					System.out.println("Exit");
-
 					handleExitParty(handler, (ExitParty) message);
 				} else if (message instanceof NewTiles) {
 					System.out.println("NewTiles");
-
 					handleNewTiles(handler, (NewTiles) message);
 				} else if (message instanceof PassTurn) {
 					System.out.println("Pass");
@@ -140,9 +137,9 @@ public class PartyHost implements Runnable, PropertyChangeListener {
 
 			//clientSockets.add(client);
 			ClientHandler clientHandler = new ClientHandler(client, this);
-			clientHandler.sendMessage(new NewTiles(-1, new Tile[] {
-					new Tile('A', new Point(7, 7))
-			}));
+			//clientHandler.sendMessage(new NewTiles(-1, new Tile[] {
+					//new Tile('A', new Point(7, 7))
+			//}));
 			//this.outputStreamMap.put(clientHandler, outputStream);
 
 			// start the thread
