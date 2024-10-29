@@ -8,13 +8,14 @@ package scrabble.model;
  */
 
 import java.awt.*;
+import java.io.Serializable;
 
 /**
  * This class represents the tiles of the Scrabble game.
  * Each tile can either be a blank tile or contain a letter,
  * and it holds information about its score and location.
  */
-public class Tile {
+public class Tile implements Serializable {
 
     private final int score;        // How many points this tile scores
     private char letter;            // The letter on the tile
