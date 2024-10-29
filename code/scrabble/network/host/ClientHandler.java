@@ -1,5 +1,6 @@
 package scrabble.network.host;
 
+import scrabble.network.messages.ExitParty;
 import scrabble.network.messages.Message;
 
 import java.beans.PropertyChangeListener;
@@ -9,6 +10,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
+import java.net.SocketException;
 
 /*
 this class is the server side client listening
@@ -42,6 +44,7 @@ public class ClientHandler  implements Runnable {
 	private ObjectInputStream inputStream;	// the stream from which message objects are read
 	private ObjectOutputStream outputStream;
 	private int clientID;		// the ID of this player
+	private boolean listening;
 
 	public ClientHandler(Socket socket, PropertyChangeListener listener)
 			throws IOException {
@@ -50,6 +53,7 @@ public class ClientHandler  implements Runnable {
 		this.outputStream = new ObjectOutputStream(socket.getOutputStream());
 		notifier = new PropertyChangeSupport(this);
 		notifier.addPropertyChangeListener(listener);
+		listening = false;
 	}
 
 
@@ -66,28 +70,53 @@ public class ClientHandler  implements Runnable {
 		// listen for objects from the stream
 		// use the ObjectInputStream to get the objects.
 		// send a notification to the listener via PropertyChangeSupport object
+		listening = true;
 		Object newMessage = null;
+		while (listening) {
+			try {
+				newMessage = inputStream.readObject();
+
+			} catch (EOFException e) {
+				System.out.println("Eof found");
+				try {
+					inputStream.close();
+				} catch (IOException ex) {
+					throw new RuntimeException(ex);
+				}
+			} catch (SocketException e) {
+				// The client has closed their connection
+				// TODO: pass on a message to the host that this player has closed their socket
+				// 	i.e. disconnect them on other ppl's models
+				//newMessage = new ExitParty();
+				this.halt();
+			} catch (IOException | ClassNotFoundException e) {
+				throw new RuntimeException(e);
+			}
+			notifier.firePropertyChange("message", null, newMessage);
+			newMessage = null;
+		}
 
 		try {
-			newMessage = inputStream.readObject();
-
-		}
-		catch (EOFException e) {
-			System.out.println("Eof found");
-			try{
-				inputStream.close();
-			} catch (IOException ex) {
-				throw new RuntimeException(ex);
-			}
-		}
-		catch (IOException | ClassNotFoundException e) {
+			closeStreams();
+		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
-		notifier.firePropertyChange("message", null, newMessage);
+	}
+
+	private void closeStreams() throws IOException {
+		inputStream.close();
+		outputStream.flush();
+		outputStream.close();
+		socket.close();
 	}
 
 	public void sendMessage(Message message) throws IOException {
 		outputStream.writeObject(message);
 		outputStream.flush();
+	}
+
+	public void halt() {
+		System.out.println("Halting");
+		listening = false;
 	}
 }
