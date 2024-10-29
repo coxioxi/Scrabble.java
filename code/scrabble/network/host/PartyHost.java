@@ -8,15 +8,15 @@ Usage: 	javac scrabble/network/host/PartyHost.java
 David: cd "OneDrive - Otterbein University\IdeaProjects\Scrabble\code"
 */
 
+import scrabble.model.Tile;
 import scrabble.network.messages.*;
 
+import java.awt.*;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
-import java.net.ServerSocket;
-import java.net.Socket;
-import java.net.SocketTimeoutException;
+import java.net.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -41,12 +41,19 @@ public class PartyHost implements Runnable, PropertyChangeListener {
 	private boolean inGame;
 	private ArrayList<Thread> listeners;
 	private ArrayList<Socket> clientSockets;
-	private HashMap<ClientHandler, ObjectOutputStream> outputStreamMap;
+	//private HashMap<ClientHandler, ObjectOutputStream> outputStreamMap;
 	private TileBag tileBag;
 
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws UnknownHostException {
+		int port = 5000;
+
+		System.out.println("Your IP: " + Inet4Address.getLocalHost().getHostAddress());
+		System.out.println("Listening at port " + port);
+
 		PartyHost partyHost = new PartyHost(5000);
+		Thread thread = new Thread(partyHost);
+		thread.start();
 	}
 
 	public PartyHost(int port) {
@@ -54,7 +61,7 @@ public class PartyHost implements Runnable, PropertyChangeListener {
 		server = null;
 		listeners = new ArrayList<>(4);
 		clientSockets = new ArrayList<>(4);
-		outputStreamMap = new HashMap<>(4);
+		//outputStreamMap = new HashMap<>(4);
 		try {
 			server = new ServerSocket(port);
 			server.setSoTimeout(1000);
@@ -72,6 +79,7 @@ public class PartyHost implements Runnable, PropertyChangeListener {
 	public void run() {
 		// accept clients if not in a game.
 		// once game starts, stop accepting clients.
+		System.out.println("Looking for clients...");
 		while (!inGame) {
 			acceptClients();
 		}
@@ -89,33 +97,33 @@ public class PartyHost implements Runnable, PropertyChangeListener {
 		Message message = (Message) evt.getNewValue();
 		ClientHandler handler = (ClientHandler) evt.getSource();
 		//ObjectOutputStream outputStream = outputStreamMap.get(handler);
+		boolean success = false;
+		while (!success) {
+			try {
+				if (message instanceof Challenge) {
+					System.out.println("Challenge");
+					handleChallenge(handler, (Challenge) message);
+				} else if (message instanceof ExchangeTiles) {
+					System.out.println("Exchange");
 
-		if (message instanceof Challenge){
-			System.out.println("Challenge");
-			handleChallenge(handler, (Challenge) message);
-		}
-		else if (message instanceof ExchangeTiles){
-			System.out.println("Exchange");
+					handleExchangeTiles(handler, (ExchangeTiles) message);
+				} else if (message instanceof ExitParty) {
+					System.out.println("Exit");
 
-			handleExchangeTiles(handler, (ExchangeTiles) message);
-		}
-		else if (message instanceof ExitParty){
-			System.out.println("Exit");
+					handleExitParty(handler, (ExitParty) message);
+				} else if (message instanceof NewTiles) {
+					System.out.println("NewTiles");
 
-			handleExitParty(handler, (ExitParty) message);
-		}
-		else if (message instanceof NewTiles){
-			System.out.println("NewTiles");
-
-			handleNewTiles(handler, (NewTiles) message);
-		}
-		else if (message instanceof PassTurn){
-			System.out.println("Pass");
-			handlePassTurn(handler, (PassTurn) message);
-		}
-		else if (message instanceof PlayTiles) {
-			System.out.println("PlayTiles");
-			handlePlayTiles(handler, (PlayTiles) message);
+					handleNewTiles(handler, (NewTiles) message);
+				} else if (message instanceof PassTurn) {
+					System.out.println("Pass");
+					handlePassTurn(handler, (PassTurn) message);
+				} else if (message instanceof PlayTiles) {
+					System.out.println("PlayTiles");
+					handlePlayTiles(handler, (PlayTiles) message);
+				}
+				success = true;
+			} catch (IOException e) {}
 		}
 	}
 
@@ -126,18 +134,17 @@ public class PartyHost implements Runnable, PropertyChangeListener {
 
 	private void acceptClients() {
 		try {
-
 			// establish connection with the client
-			System.out.println("Looking for clients...");
 			Socket client = server.accept();
 			System.out.println("New client added");
 
-			clientSockets.add(client);
-			ObjectOutputStream outputStream = new ObjectOutputStream(
-					client.getOutputStream()
-			);
+
+			//clientSockets.add(client);
 			ClientHandler clientHandler = new ClientHandler(client, this);
-			this.outputStreamMap.put(clientHandler, outputStream);
+			clientHandler.sendMessage(new NewTiles(-1, new Tile[] {
+					new Tile('A', new Point(7, 7))
+			}));
+			//this.outputStreamMap.put(clientHandler, outputStream);
 
 			// start the thread
 			Thread clientThread = new Thread(clientHandler);
@@ -145,7 +152,7 @@ public class PartyHost implements Runnable, PropertyChangeListener {
 			clientThread.start();
 		}
 		catch (SocketTimeoutException e) {
-			System.out.println("\ttrying again..");
+			//System.out.println("\ttrying again..");
 		}
 		catch (IOException e) {
 			throw new RuntimeException(e);
@@ -162,27 +169,32 @@ public class PartyHost implements Runnable, PropertyChangeListener {
 	will require tileBag gets.
 	 */
 
-	private void handlePlayTiles(ClientHandler source, PlayTiles newValue) {
 
+	/*
+	stubs
+	 */
+
+	private void handlePlayTiles(ClientHandler source, PlayTiles newValue) throws IOException {
+		source.sendMessage(newValue);
 	}
 
-	private void handlePassTurn(ClientHandler source, PassTurn newValue) {
-
+	private void handlePassTurn(ClientHandler source, PassTurn newValue) throws IOException {
+		source.sendMessage(newValue);
 	}
 
-	private void handleNewTiles(ClientHandler source, NewTiles newValue) {
-
+	private void handleNewTiles(ClientHandler source, NewTiles newValue) throws IOException {
+		source.sendMessage(newValue);
 	}
 
-	private void handleExitParty(ClientHandler source, ExitParty newValue) {
-
+	private void handleExitParty(ClientHandler source, ExitParty newValue) throws IOException {
+		source.sendMessage(newValue);
 	}
 
-	private void handleExchangeTiles(ClientHandler source, ExchangeTiles newValue) {
-
+	private void handleExchangeTiles(ClientHandler source, ExchangeTiles newValue) throws IOException {
+		source.sendMessage(newValue);
 	}
 
-	private void handleChallenge(ClientHandler source, Challenge newValue) {
-
+	private void handleChallenge(ClientHandler source, Challenge newValue) throws IOException {
+		source.sendMessage(newValue);
 	}
 }
