@@ -106,23 +106,6 @@ public class ClientMessenger implements Runnable {
 		if (!server.isClosed()) server.close();
 	}
 
-	// prints the subclass of Message that message is
-	public static void printInstance(Message message ) {
-		if (message instanceof Challenge) {
-			System.out.println("Challenge");
-		} else if (message instanceof ExchangeTiles) {
-			System.out.println("Exchange");
-		} else if (message instanceof ExitParty) {
-			System.out.println("Exit");
-		} else if (message instanceof NewTiles) {
-			System.out.println("NewTiles");
-		} else if (message instanceof PassTurn) {
-			System.out.println("Pass");
-		} else if (message instanceof PlayTiles) {
-			System.out.println("PlayTiles");
-		}
-	}
-
 	// driver for sending and receiving messages.
 	public static void main(String[] args) throws IOException {
 		Scanner in = new Scanner(System.in);
@@ -141,7 +124,7 @@ public class ClientMessenger implements Runnable {
 		}
 
 		ClientMessenger clientMessenger = new ClientMessenger(socket, evt -> {
-			printInstance((Message) evt.getNewValue());
+			Message.printInstance((Message) evt.getNewValue());
 		});
 
 		Thread thread = new Thread(clientMessenger);
