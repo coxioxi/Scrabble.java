@@ -522,6 +522,9 @@ public class Board {
 
         // final scoring for the main word...
         mainWordScore *= wordMultiplier;
+		if (tiles.length == 7) {
+			mainWordScore += 50;
+		}
 
         // add this main word to string list
         ArrayList<String> words = new ArrayList<>();
