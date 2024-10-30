@@ -282,6 +282,7 @@ public class GameFrame extends JFrame {
         optionsMenu.add(quitItem);
         menuBar.add(optionsMenu);
 
+
         JPanel northPanel = new JPanel(new FlowLayout());
         JLabel gameTime = new JLabel("00:00");
         gameTime.setBorder(BorderFactory.createEtchedBorder());
@@ -385,10 +386,26 @@ public class GameFrame extends JFrame {
         frame.add(eastPanel, BorderLayout.EAST);
         frame.add(southPanel, BorderLayout.SOUTH);
 
+        frame.setMinimumSize(new Dimension(400,400));
+        frame.pack();
+        frame.setLocationRelativeTo(null);
+        frame.setVisible(true);
+
+        JOptionPane.showMessageDialog(frame,"1. ~~~~~~~~~~~~\n" + "2. ~~~~~~~~~~~~\n" +
+                "3. ~~~~~~~~~~~~\n" + "4. ~~~~~~~~~~~~", "Rules", JOptionPane.INFORMATION_MESSAGE);
+
         quitItem.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 frame.dispose();
+            }
+        });
+
+        rulesItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                JOptionPane.showMessageDialog(frame,"1. ~~~~~~~~~~~~\n" + "2. ~~~~~~~~~~~~\n" +
+                        "3. ~~~~~~~~~~~~\n" + "4. ~~~~~~~~~~~~", "Rules", JOptionPane.INFORMATION_MESSAGE);
             }
         });
 
@@ -398,11 +415,6 @@ public class GameFrame extends JFrame {
                 frame.dispose();
             }
         });
-
-        frame.setMinimumSize(new Dimension(400,400));
-        frame.pack();
-        frame.setLocationRelativeTo(null);
-        frame.setVisible(true);
     }
 
     public static void winnerScreen() {
