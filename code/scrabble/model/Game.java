@@ -1,7 +1,7 @@
 package scrabble.model;
 /*
  * Authors: Ian Boyer, David Carr, Samuel Costa,
- * Maximus Latkovski, Jy'el Mason
+ *      Maximus Latkovski, Jy'el Mason
  * Course: COMP 3100
  * Instructor: Dr. Barry Wittman
  * Original date: 10/08/2024
@@ -47,7 +47,7 @@ public class Game {
 	 */
 	public Game(Player[] players, Board board, Ruleset ruleset, Player me){
 		this.players = players;
-		this.board = new Board();
+		this.board = board;
 		this.ruleset = ruleset;
 		this.self = (LocalPlayer) me;
 		// TODO: From ruleset, set times
@@ -163,11 +163,12 @@ public class Game {
 	 */
 	public void passTurn(int ID) {
 		Player player = players[ID]; // Retrieve the current player
-		if(player.isHasPassedLastTurn()){ // Check if they have already passed
+		if(player.passedLastTurn()){ // Check if they have already passed
 			player.setActive(false); // Set to inactive
 		}else{
-			player.setHasPassedLastTurn(true); // Mark that they have passed this turn
+			player.setPassedLastTurn(true); // Mark that they have passed this turn
 		}
+		this.nextTurn();
 	}
 
 	/**
@@ -260,7 +261,7 @@ public class Game {
 	/**
 	 * Removes tiles from the LocalPlayer (necessary in the case of
 	 * a failed challenge)
-	 * @param tiles the tiles to remove. length <= 7
+	 * @param tiles the tiles to remove. length less than or equal to 7
 	 */
 	public void removeTiles(Tile[] tiles) {
 		self.removeTiles(tiles);
