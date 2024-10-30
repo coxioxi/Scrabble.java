@@ -1,6 +1,5 @@
 package scrabble.network.host;
 
-import scrabble.network.messages.ExitParty;
 import scrabble.network.messages.Message;
 
 import java.beans.PropertyChangeListener;
@@ -32,7 +31,7 @@ David: cd "OneDrive - Otterbein University\IdeaProjects\Scrabble\code"
  * Party host creates one ClientHandler thread for each client who joins the game
  *
  */
-public class ClientHandler  implements Runnable {
+public class HostReceiver implements Runnable {
 	/*
 	The majority of the work for this class will be handled inside the run() method, with
 	potentially helper methods being called. See ../networkPrototype/ClientHandler for
@@ -46,7 +45,7 @@ public class ClientHandler  implements Runnable {
 	private int clientID;		// the ID of this player
 	private boolean listening;	// whether we are listening for new messages from client
 
-	public ClientHandler(Socket socket, PropertyChangeListener listener)
+	public HostReceiver(Socket socket, PropertyChangeListener listener)
 			throws IOException {
 		this.socket = socket;
 		this.inputStream = new ObjectInputStream(socket.getInputStream());

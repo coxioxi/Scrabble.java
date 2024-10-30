@@ -93,7 +93,7 @@ public class PartyHost implements Runnable, PropertyChangeListener {
 		// determine the message subclass then call appropriate helper method for processing
 
 		Message message = (Message) evt.getNewValue();
-		ClientHandler handler = (ClientHandler) evt.getSource();
+		HostReceiver handler = (HostReceiver) evt.getSource();
 		//ObjectOutputStream outputStream = outputStreamMap.get(handler);
 		boolean success = false;
 		while (!success) {
@@ -137,7 +137,7 @@ public class PartyHost implements Runnable, PropertyChangeListener {
 
 
 			//clientSockets.add(client);
-			ClientHandler clientHandler = new ClientHandler(client, this);
+			HostReceiver clientHandler = new HostReceiver(client, this);
 			//clientHandler.sendMessage(new NewTiles(-1, new Tile[] {
 					//new Tile('A', new Point(7, 7))
 			//}));
@@ -170,28 +170,28 @@ public class PartyHost implements Runnable, PropertyChangeListener {
 	stubs
 	 */
 
-	private void handlePlayTiles(ClientHandler source, PlayTiles newValue) throws IOException {
+	private void handlePlayTiles(HostReceiver source, PlayTiles newValue) throws IOException {
 		source.sendMessage(newValue);
 	}
 
-	private void handlePassTurn(ClientHandler source, PassTurn newValue) throws IOException {
+	private void handlePassTurn(HostReceiver source, PassTurn newValue) throws IOException {
 		source.sendMessage(newValue);
 	}
 
-	private void handleNewTiles(ClientHandler source, NewTiles newValue) throws IOException {
+	private void handleNewTiles(HostReceiver source, NewTiles newValue) throws IOException {
 		source.sendMessage(newValue);
 	}
 
-	private void handleExitParty(ClientHandler source, ExitParty newValue) throws IOException {
+	private void handleExitParty(HostReceiver source, ExitParty newValue) throws IOException {
 		//source.sendMessage(newValue);
 		source.halt();
 	}
 
-	private void handleExchangeTiles(ClientHandler source, ExchangeTiles newValue) throws IOException {
+	private void handleExchangeTiles(HostReceiver source, ExchangeTiles newValue) throws IOException {
 		source.sendMessage(newValue);
 	}
 
-	private void handleChallenge(ClientHandler source, Challenge newValue) throws IOException {
+	private void handleChallenge(HostReceiver source, Challenge newValue) throws IOException {
 		source.sendMessage(newValue);
 	}
 }
