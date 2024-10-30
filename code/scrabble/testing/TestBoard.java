@@ -124,7 +124,7 @@ public class TestBoard {
 
 
     @Test
-    public void simulateGame() throws InvalidPositionException {
+    public void simulateGame() {
         System.out.println("First Turn:");
 
         System.out.println();

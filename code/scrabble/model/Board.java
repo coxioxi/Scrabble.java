@@ -202,6 +202,10 @@ public class Board {
 		return hasAdjacentTile(t);
 	}
 
+    public Map<Point, ModifierType> getBoardSpecialCell(){
+           return boardSpecialCell;
+    }
+
     /**
      * This method places tiles at positions on the board and returns the score of
      * the play made
@@ -372,10 +376,10 @@ public class Board {
 				topMostTile--;
 			}
 
-			System.out.println("Horizontal collateral. topmost for tile " +
-					tile.getLocation().x + ", " + tile.getLocation().y +
-					" is location " + topMostTile + " with value " +
-					(board[topMostTile][y] == null ? "none" : board[topMostTile][y].getLetter()));
+//			System.out.println("Horizontal collateral. topmost for tile " +
+//					tile.getLocation().x + ", " + tile.getLocation().y +
+//					" is location " + topMostTile + " with value " +
+//					(board[topMostTile][y] == null ? "none" : board[topMostTile][y].getLetter()));
 
 			// move down from topmost, accumulating score.
 			// only stop when no letters below current tile
@@ -518,6 +522,9 @@ public class Board {
 
         // final scoring for the main word...
         mainWordScore *= wordMultiplier;
+		if (tiles.length == 7) {
+			mainWordScore += 50;
+		}
 
         // add this main word to string list
         ArrayList<String> words = new ArrayList<>();
@@ -571,10 +578,10 @@ public class Board {
 				leftMostTile--;
 			}
 
-			System.out.println("Vertical collateral. leftmost for tile " +
-					tile.getLocation().x + ", " + tile.getLocation().y +
-					" is location " + leftMostTile + " with value " +
-					(board[x][leftMostTile] == null ? "none" : board[x][leftMostTile].getLetter()));
+//			System.out.println("Vertical collateral. leftmost for tile " +
+//					tile.getLocation().x + ", " + tile.getLocation().y +
+//					" is location " + leftMostTile + " with value " +
+//					(board[x][leftMostTile] == null ? "none" : board[x][leftMostTile].getLetter()));
 			// move right from leftmost, accumulating score.
 			// only stop when no letters to right of current
 			int currentWordScore = 0;
@@ -691,7 +698,7 @@ public class Board {
             // Handle modifiers on current tile's cell, add tile value to counter
             // Add letter to string at end
             ModifierType cellMod = boardSpecialCell.get(placement);
-            System.out.println(cellMod);
+            //System.out.println(cellMod);
             int letterMultiplier = 1;
             if (cellMod == ModifierType.DOUBLE_LETTER) {
                 letterMultiplier *= 2;
@@ -719,8 +726,11 @@ public class Board {
         }
 
         // final scoring for the main word...
-        System.out.println("Word multiplier: " + wordMultiplier);
+        //System.out.println("Word multiplier: " + wordMultiplier);
         mainWordScore *= wordMultiplier;
+		if (tiles.length == 7) {
+			mainWordScore += 50;
+		}
 
         // add this main word to string list
         ArrayList<String> words = new ArrayList<>();
@@ -1046,7 +1056,7 @@ public class Board {
         boardSpecialCell.put(new Point(1,9), ModifierType.TRIPLE_LETTER);
         boardSpecialCell.put(new Point(5,9), ModifierType.TRIPLE_LETTER);
         boardSpecialCell.put(new Point(9,9), ModifierType.TRIPLE_LETTER);
-        boardSpecialCell.put(new Point(13,8), ModifierType.TRIPLE_LETTER);
+        boardSpecialCell.put(new Point(13,9), ModifierType.TRIPLE_LETTER);
         boardSpecialCell.put(new Point(2,8), ModifierType.DOUBLE_LETTER);
         boardSpecialCell.put(new Point(6,8), ModifierType.DOUBLE_LETTER);
         boardSpecialCell.put(new Point(8,8), ModifierType.DOUBLE_LETTER);
