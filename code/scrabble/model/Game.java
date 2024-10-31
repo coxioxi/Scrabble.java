@@ -261,7 +261,7 @@ public class Game {
 	/**
 	 * Removes tiles from the LocalPlayer (necessary in the case of
 	 * a failed challenge)
-	 * @param tiles the tiles to remove. length <= 7
+	 * @param tiles the tiles to remove. length less than or equal to 7
 	 */
 	public void removeTiles(Tile[] tiles) {
 		self.removeTiles(tiles);
@@ -277,7 +277,25 @@ public class Game {
 	}
 
 	public boolean isGameOver() {
+		isGameOver = false;
+		if ( self.getRack().isEmpty()) {
+			isGameOver = true;
+		}
+		else if(allPlayersInactive()){
+			isGameOver = true;
+		} else if (ruleset.getTotalTime() == 0) {
+			isGameOver = true;
+		}
 		return isGameOver;
+	}
+
+	private boolean allPlayersInactive(){
+		for(Player player: players){
+			if(player.isActive()){
+				return false;
+			}
+		}
+		return true;
 	}
 
 

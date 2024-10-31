@@ -1,0 +1,7 @@
+https://docs.oracle.com/javase/8/docs/api/java/io/ObjectOutputStream.html
+https://docs.oracle.com/javase/8/docs/api/java/io/ObjectInputStream.html
+https://docs.oracle.com/javase/8/docs/api/java/net/Socket.html
+https://docs.oracle.com/javase/8/docs/api/java/net/ServerSocket.html
+https://docs.oracle.com/javase/8/docs/api/java/lang/Thread.html
+https://www.geeksforgeeks.org/java-threads/
+https://www.geeksforgeeks.org/java-networking/
