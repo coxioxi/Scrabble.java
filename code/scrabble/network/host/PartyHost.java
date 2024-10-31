@@ -41,6 +41,7 @@ public class PartyHost implements Runnable, PropertyChangeListener {
 	private ArrayList<Socket> clientSockets;
 	private HashMap<HostReceiver, Integer> playerIdMap;
 	private TileBag tileBag;
+	private HashMap<HostReceiver, ArrayList<Tile>> playerTiles;
 	public static final int HOST_ID = -1;
 
 	public static void main(String[] args) throws UnknownHostException {
@@ -110,9 +111,6 @@ public class PartyHost implements Runnable, PropertyChangeListener {
 				} else if (message instanceof ExitParty) {
 					System.out.println("Exit");
 					handleExitParty(handler, (ExitParty) message);
-				} else if (message instanceof NewTiles) {
-					System.out.println("NewTiles");
-					handleNewTiles(handler, (NewTiles) message);
 				} else if (message instanceof PassTurn) {
 					System.out.println("Pass");
 					handlePassTurn(handler, (PassTurn) message);
@@ -187,23 +185,46 @@ public class PartyHost implements Runnable, PropertyChangeListener {
 	}
 
 	private void handlePassTurn(HostReceiver source, PassTurn newValue) throws IOException {
-		source.sendMessage(newValue);
-	}
-
-	private void handleNewTiles(HostReceiver source, NewTiles newValue) throws IOException {
-		source.sendMessage(newValue);
+		for (HostReceiver host: playerIdMap.keySet()) {
+			if(!playerIdMap.get(host).equals(playerIdMap.get(source))) {
+				PassTurn passTurnMessage = new PassTurn(HOST_ID, newValue.getPlayerID());
+				host.sendMessage(passTurnMessage);
+			}
+		}
 	}
 
 	private void handleExitParty(HostReceiver source, ExitParty newValue) throws IOException {
-		//source.sendMessage(newValue);
+		for (HostReceiver host: playerIdMap.keySet()) {
+			if(!playerIdMap.get(host).equals(playerIdMap.get(source))) {
+				ExitParty passTurnMessage = new ExitParty(HOST_ID, newValue.getPlayerID());
+				host.sendMessage(passTurnMessage);
+			}
+		}
+		ArrayList<Tile> playerRack = playerTiles.get(source);
+		tileBag.addTiles(playerRack.toArray(new Tile[0]));
 		source.halt();
 	}
 
 	private void handleExchangeTiles(HostReceiver source, ExchangeTiles newValue) throws IOException {
-		source.sendMessage(newValue);
-	}
+		Tile[] exchangedTiles = newValue.getToExchange();
+		for(Tile oldTile: exchangedTiles) {
+			playerTiles.get(source).remove(oldTile);
+		}
+		Tile[] newTiles = tileBag.getNext(exchangedTiles.length);
+		tileBag.addTiles(exchangedTiles);
+		NewTiles newTilesMessage = new NewTiles(newValue.getPlayerID(),newTiles);
+		for(Tile newTile: newTiles) {
+			playerTiles.get(source).add(newTile);
+		}
+		source.sendMessage(newTilesMessage);
 
+	}
+	/*
+	Leave for later.
+	is extension feature.
+	 */
 	private void handleChallenge(HostReceiver source, Challenge newValue) throws IOException {
+
 		source.sendMessage(newValue);
 	}
 }
