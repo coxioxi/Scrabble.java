@@ -15,6 +15,10 @@ import java.util.Random;
 public class TileBag {
     private HashMap<Tile,Integer> tileBag;
 
+    public TileBag() {
+        fillTileBag();
+    }
+
     public void addTiles(Tile[] tiles) {
         for(Tile tile: tiles){
             tileBag.replace(tile,tileBag.replace(tile,tileBag.get(tile)+1));
@@ -42,7 +46,7 @@ public class TileBag {
         return newTiles;
     }
 
-    private void fillTileBag(){
+    private void fillTileBag() {
         tileBag = new HashMap<>();
         tileBag.put(new Tile('A'),9);
         tileBag.put(new Tile('B'),2);
