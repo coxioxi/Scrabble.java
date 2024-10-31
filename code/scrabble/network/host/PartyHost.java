@@ -8,6 +8,7 @@ Usage: 	javac scrabble/network/host/PartyHost.java
 David: cd "OneDrive - Otterbein University\IdeaProjects\Scrabble\code"
 */
 
+import scrabble.model.Tile;
 import scrabble.network.messages.*;
 
 import java.beans.PropertyChangeEvent;
@@ -15,6 +16,7 @@ import java.beans.PropertyChangeListener;
 import java.io.IOException;
 import java.net.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * PartyHost receives messages from clients (via ClientHandler) and sends them to clients
@@ -37,8 +39,9 @@ public class PartyHost implements Runnable, PropertyChangeListener {
 	private boolean inGame;
 	private ArrayList<Thread> listeners;
 	private ArrayList<Socket> clientSockets;
-	//private HashMap<ClientHandler, ObjectOutputStream> outputStreamMap;
+	private HashMap<HostReceiver, Integer> playerIdMap;
 	private TileBag tileBag;
+	public static final int HOST_ID = -1;
 
 	public static void main(String[] args) throws UnknownHostException {
 		int port = 5000;
@@ -171,7 +174,16 @@ public class PartyHost implements Runnable, PropertyChangeListener {
 	 */
 
 	private void handlePlayTiles(HostReceiver source, PlayTiles newValue) throws IOException {
-		source.sendMessage(newValue);
+		for (HostReceiver host: playerIdMap.keySet()) {
+			if(!playerIdMap.get(host).equals(playerIdMap.get(source))) {
+				PlayTiles playTilesMessage = new PlayTiles(HOST_ID, newValue.getPlayerID(), newValue.getTiles());
+				host.sendMessage(playTilesMessage);
+			}
+		}
+
+		Tile[] sendTiles = tileBag.getNext(newValue.getTiles().length);
+		NewTiles message = new NewTiles(HOST_ID, sendTiles);
+		source.sendMessage(message);
 	}
 
 	private void handlePassTurn(HostReceiver source, PassTurn newValue) throws IOException {
