@@ -89,13 +89,14 @@ public class PartyHost implements Runnable, PropertyChangeListener {
 		}
 
 		//shuffle randomNumbers array so the player order is randomised
-		for (int i = 0; i < randomNumbers.length; i++) {
-			int index = random.nextInt(randomNumbers.length-1);
+		for (int i = 0; i < randomNumbers.length;) {
+			int index = random.nextInt(randomNumbers.length);
 			int temp;
 			if (index != i) {
 				temp = randomNumbers[index];
 				randomNumbers[index] = randomNumbers[i];
 				randomNumbers[i] = temp;
+				++i;
 			}
 		}
 
