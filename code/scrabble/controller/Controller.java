@@ -41,6 +41,26 @@ public class Controller implements PropertyChangeListener  {
 		new Controller();
 	}
 
+	public GameFrame getView() {
+		return view;
+	}
+
+	public Game getModel() {
+		return model;
+	}
+
+	public ClientMessenger getMessenger() {
+		return messenger;
+	}
+
+	public Socket getHostSocket() {
+		return hostSocket;
+	}
+
+	public PartyHost getHost() {
+		return host;
+	}
+
 	public Controller() {
 
 	}
@@ -57,4 +77,5 @@ public class Controller implements PropertyChangeListener  {
 	public void propertyChange(PropertyChangeEvent evt) {
 
 	}
+
 }
