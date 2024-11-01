@@ -22,20 +22,6 @@ public class NewTiles extends Message {
 		return tiles;
 	}
 
-	@Serial
-	private void readObject(ObjectInputStream in)
-			throws IOException, ClassNotFoundException {
-		in.defaultReadObject();
-		tiles = readTile(in);
-	}
-
-	@Serial
-	private void writeObject(ObjectOutputStream out)
-			throws IOException {
-		out.defaultWriteObject();
-		writeTiles(out, tiles);
-	}
-
 	@Override
 	public void execute(Controller controller) {
 
