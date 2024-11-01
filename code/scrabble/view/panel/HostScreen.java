@@ -24,9 +24,6 @@ public class HostScreen extends JPanel {
 
     public HostScreen() {
         this.setLayout(new BorderLayout());
-        JPanel mainPanel = new JPanel();
-        mainPanel.setBorder(BorderFactory.createTitledBorder("Host A Game"));
-        mainPanel.setLayout(null);
 
         name = new JTextField();
         hostButton = new JButton("Host");

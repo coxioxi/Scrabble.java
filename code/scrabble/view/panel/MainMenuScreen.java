@@ -18,8 +18,8 @@ public class MainMenuScreen extends JPanel {
 
 
         // Panel setup for the menu layout
-        JPanel mainPanel = new JPanel(new FlowLayout());
-        mainPanel.setBorder(BorderFactory.createTitledBorder("Main Menu"));
+//        JPanel mainPanel = new JPanel(new FlowLayout());
+//        mainPanel.setBorder(BorderFactory.createTitledBorder("Main Menu"));
         JPanel menuFrame = new JPanel(new GridLayout(5,1, 0,15));
 
         // Main Menu buttons and checkboxes
@@ -35,8 +35,7 @@ public class MainMenuScreen extends JPanel {
         menuFrame.add(audioCheck);
         menuFrame.add(fxCheck);
         menuFrame.add(quitButton);
-        mainPanel.add(menuFrame);
-        this.add(mainPanel, BorderLayout.CENTER);
+        this.add(menuFrame, BorderLayout.CENTER);
     }
 
     public JButton getHostButton() {

@@ -37,7 +37,7 @@ public class GameScreen extends JPanel {
 
 		JPanel centerPanel = new JPanel(new FlowLayout());
 		centerPanel.setBorder(BorderFactory.createTitledBorder("Game Board"));
-		JPanel gamePanel = new JPanel(new GridLayout(15,15,1,1));
+		JPanel gamePanel = new JPanel(new GridLayout(15,15,3,3));
 		gameCells = new JButton[15][15];
 		for (int i = 0; i < 15; i++) {
 			for(int j = 0; j < 15; j++) {
@@ -47,20 +47,28 @@ public class GameScreen extends JPanel {
 
 				ModifierType mt = board.getBoardSpecialCell().get(new Point(i, j));
 				if(mt != null) {
-					if (mt == ModifierType.DOUBLE_WORD)
+					if (mt == ModifierType.DOUBLE_WORD) {
 						boardTile.setBackground(doubleWord);
-					else if (mt == ModifierType.TRIPLE_WORD)
+						boardTile.setText("DW");
+						boardTile.setBorderPainted(false);
+					} else if (mt == ModifierType.TRIPLE_WORD) {
 						boardTile.setBackground(tripleWord);
-					else if (mt == ModifierType.DOUBLE_LETTER)
+						boardTile.setText("TW");
+						boardTile.setBorderPainted(false);
+					} else if (mt == ModifierType.DOUBLE_LETTER) {
 						boardTile.setBackground(doubleLetter);
-					else if (mt == ModifierType.TRIPLE_LETTER)
+						boardTile.setText("DL");
+						boardTile.setBorderPainted(false);
+					} else if (mt == ModifierType.TRIPLE_LETTER) {
 						boardTile.setBackground(getTripleLetter);
-					else
+						boardTile.setText("TL");
+						boardTile.setBorderPainted(false);
+					} else {
 						boardTile.setBackground(normalCell);
+					}
 				}
 
 				gameCells[i][j] = boardTile;
-				//boardTile.setBorder(BorderFactory.createEtchedBorder());
 				gamePanel.add(boardTile);
 			}
 		}
