@@ -1,5 +1,7 @@
 package scrabble.network.messages;
 
+import scrabble.controller.Controller;
+
 import java.io.Serial;
 
 public class PassTurn extends Message{
@@ -14,5 +16,10 @@ public class PassTurn extends Message{
 
 	public int getPlayerID() {
 		return playerID;
+	}
+
+	@Override
+	public void execute(Controller controller) {
+
 	}
 }

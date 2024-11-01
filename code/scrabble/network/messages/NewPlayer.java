@@ -1,5 +1,7 @@
 package scrabble.network.messages;
 
+import scrabble.controller.Controller;
+
 import java.io.Serializable;
 
 public class NewPlayer extends Message implements Serializable {
@@ -18,4 +20,9 @@ public class NewPlayer extends Message implements Serializable {
     }
 
     public String getPlayerName(){return playerName;}
+
+    @Override
+    public void execute(Controller controller) {
+
+    }
 }

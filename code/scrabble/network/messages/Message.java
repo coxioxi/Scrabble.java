@@ -44,5 +44,14 @@ public abstract class Message implements Serializable {
 		return senderID;
 	}
 
+	/**
+	 * This method operates on the controller to make changes to the GUI
+	 * and the view based on what type of message this is. For example,
+	 * a play tiles message will update the board model to have the tiles placed on it
+	 * and change the view for the player
+	 * @param controller the controller on which to make changes. Note that this object
+	 *                   must use public getter methods for all the components
+	 *                   (for example, the GUI components, the model components etc.)
+	 */
 	public abstract void execute(Controller controller);
 }

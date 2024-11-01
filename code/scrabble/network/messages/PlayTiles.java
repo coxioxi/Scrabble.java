@@ -1,5 +1,6 @@
 package scrabble.network.messages;
 
+import scrabble.controller.Controller;
 import scrabble.model.Tile;
 
 import java.io.IOException;
@@ -26,6 +27,11 @@ public class PlayTiles extends Message {
 
 	public Tile[] getTiles() {
 		return tiles;
+	}
+
+	@Override
+	public void execute(Controller controller) {
+
 	}
 
 	//Add method does the damn thing for all of the messages

@@ -1,5 +1,6 @@
 package scrabble.network.messages;
 
+import scrabble.controller.Controller;
 import scrabble.model.Ruleset;
 import scrabble.model.Tile;
 
@@ -35,5 +36,10 @@ public class StartGame extends Message {
 
 	public int getReceivingID() {
 		return receivingID;
+	}
+
+	@Override
+	public void execute(Controller controller) {
+
 	}
 }

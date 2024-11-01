@@ -1,5 +1,6 @@
 package scrabble.network.messages;
 
+import scrabble.controller.Controller;
 import scrabble.model.Tile;
 
 import java.io.IOException;
@@ -33,5 +34,10 @@ public class NewTiles extends Message {
 			throws IOException {
 		out.defaultWriteObject();
 		writeTiles(out, tiles);
+	}
+
+	@Override
+	public void execute(Controller controller) {
+
 	}
 }
