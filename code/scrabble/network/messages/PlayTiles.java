@@ -28,17 +28,5 @@ public class PlayTiles extends Message {
 		return tiles;
 	}
 
-	@Serial
-	private void readObject(ObjectInputStream in)
-			throws IOException, ClassNotFoundException {
-		in.defaultReadObject();
-		tiles = readTile(in);
-	}
-
-	@Serial
-	private void writeObject(ObjectOutputStream out)
-			throws IOException {
-		out.defaultWriteObject();
-		writeTiles(out, tiles);
-	}
+	//Add method does the damn thing for all of the messages
 }
