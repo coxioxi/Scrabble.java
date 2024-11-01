@@ -8,6 +8,8 @@ Usage: 	javac scrabble/network/host/PartyHost.java
 David: cd "OneDrive - Otterbein University\IdeaProjects\Scrabble\code"
 */
 
+import org.junit.Rule;
+import scrabble.model.Ruleset;
 import scrabble.model.Tile;
 import scrabble.network.messages.*;
 
@@ -15,8 +17,11 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.IOException;
 import java.net.*;
+import java.sql.ClientInfoStatus;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Random;
 
 /**
  * PartyHost receives messages from clients (via ClientHandler) and sends them to clients
@@ -39,6 +44,7 @@ public class PartyHost implements Runnable, PropertyChangeListener {
 	private HashMap<HostReceiver, Integer> playerIdMap;
 	private HashMap<HostReceiver, ArrayList<Tile>> playerTiles;
 	private boolean inGame;
+	private final int TILE_RACK_SIZE = 7;
 
 	public static void main(String[] args) throws UnknownHostException {
 		int port = 5000;
@@ -69,8 +75,47 @@ public class PartyHost implements Runnable, PropertyChangeListener {
 	}
 
 	// transfer state to start the game: no longer accepting clients
-	public void startGame() {
+	public void startGame(Ruleset ruleset) throws IOException {
 		this.inGame = true;
+
+		for (HostReceiver host: playerIdMap.keySet()){
+			playerTiles.put(host, (ArrayList<Tile>) Arrays.stream(tileBag.getNext(TILE_RACK_SIZE)).toList());
+		}
+
+		Random random = new Random();
+		int[] randomNumbers = new int[playerIdMap.size()];
+		for (int i = 0; i < randomNumbers.length; i++) {
+			randomNumbers[i] = i;
+		}
+
+		//shuffle randomNumbers array so the player order is randomised
+		for (int i = 0; i < randomNumbers.length; i++) {
+			int index = random.nextInt(randomNumbers.length-1);
+			int temp;
+			if (index != i) {
+				temp = randomNumbers[index];
+				randomNumbers[index] = randomNumbers[i];
+				randomNumbers[i] = temp;
+			}
+		}
+
+		int i = 0;
+		for (HostReceiver host: playerIdMap.keySet()){
+			playerIdMap.replace(host, randomNumbers[i]);
+			++i;
+		}
+
+		int j = 0;
+		int[] playerID = new int[playerIdMap.size()];
+		for (HostReceiver host: playerIdMap.keySet()) {
+			playerID[j] = playerIdMap.get(host);
+			++j;
+		}
+
+		for (HostReceiver host: playerIdMap.keySet()) {
+			StartGame startGameMessage = new StartGame(HOST_ID, playerIdMap.get(host), playerID, ruleset, playerTiles.get(host).toArray(new Tile[0]));
+			host.sendMessage(startGameMessage);
+		}
 	}
 
 	@Override
@@ -83,7 +128,6 @@ public class PartyHost implements Runnable, PropertyChangeListener {
 		}
 		// game has started, stop looking
 		// all future changes handled through ClientHandler objects' calls to property change
-
 	}
 
 	@Override
@@ -112,6 +156,10 @@ public class PartyHost implements Runnable, PropertyChangeListener {
 					System.out.println("PlayTiles");
 					handlePlayTiles(handler, (PlayTiles) message);
 				}
+				else if(message instanceof NewPlayer){
+					System.out.println("NewPlayer");
+					handleNewPlayer(handler, (NewPlayer) message);
+				}
 				success = true;
 			} catch (IOException e) {
 				System.out.println("uhhhhh");
@@ -120,7 +168,7 @@ public class PartyHost implements Runnable, PropertyChangeListener {
 	}
 
 	/*********************************************************
-	 * 				Private Methods							 *
+	 * 					Private Methods						 *
 	 *********************************************************/
 
 	private void acceptClients() {
@@ -135,6 +183,9 @@ public class PartyHost implements Runnable, PropertyChangeListener {
 			// start the thread
 			Thread clientThread = new Thread(clientHandler);
 			clientThread.start();
+
+			//populate playerIdMap
+			playerIdMap.put(clientHandler, playerIdMap.size());
 		}
 		catch (SocketTimeoutException e) {
 			// This is fine. don't do anything.
@@ -204,6 +255,16 @@ public class PartyHost implements Runnable, PropertyChangeListener {
 		}
 		source.sendMessage(newTilesMessage);
 
+	}
+
+	private void handleNewPlayer(HostReceiver source, NewPlayer message) throws IOException {
+		for (HostReceiver host: playerIdMap.keySet()) {
+			NewPlayer newPlayerMessage = new NewPlayer(HOST_ID, playerIdMap.get(host), message.getPlayerName());
+
+			if(!playerIdMap.get(host).equals(playerIdMap.get(source))){
+				host.sendMessage(newPlayerMessage);
+			}
+		}
 	}
 
 	/*
