@@ -3,6 +3,7 @@ package scrabble.network.messages;
 import scrabble.controller.Controller;
 import scrabble.model.NotBlankException;
 import scrabble.model.Tile;
+import scrabble.network.host.PartyHost;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -10,6 +11,23 @@ import java.io.ObjectOutputStream;
 import java.io.Serial;
 import java.util.ArrayList;
 
+/**
+ * Message sent when a player chooses to exchange one or all tiles from their rack.
+ * <p>
+ *     This class contains the ID of the sending player, the requesting player,
+ *     and the tiles to be exchanged. The <code>execute(Controller)</code> sends this
+ *     message to the host when
+ *     <code>Controller.getModel.getSelf.getPlayerID == this.playerID</code>. On another
+ *     client's application, an update to the GUI may appear indicating that the player
+ *     has exchanged tiles.
+ * </p>
+ * <p>
+ *     The <code>execute(PartyHost)</code> method generates and returns
+ *     a {@link NewTiles} object to the original sender. This generation must
+ *     be handled by calling the appropriate methods on <code>TileBag</code>
+ *     from the <code>PartyHost</code>.
+ * </p>
+ */
 public class ExchangeTiles extends Message{
 	@Serial
 	private static final long serialVersionUID = 3L;
@@ -41,6 +59,11 @@ public class ExchangeTiles extends Message{
 		}
 
 		controller.getModel().nextTurn();
+	}
+
+	@Override
+	public void execute(PartyHost partyHost) {
+
 	}
 
 	private void themExecute(Controller controller) {
