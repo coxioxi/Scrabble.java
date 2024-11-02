@@ -13,5 +13,8 @@
  *     {@link scrabble.network.host.PartyHost}, then controller maintains a reference to
  *     the party host for convenience.
  * </p>
+ * <p>
+ * @see scrabble.network networking package
+ * </p>
  */
 package scrabble.controller;
