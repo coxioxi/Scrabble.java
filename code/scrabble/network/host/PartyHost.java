@@ -1,14 +1,5 @@
 package scrabble.network.host;
 
-/*
-this class is the server side
-Usage: 	javac scrabble/network/host/PartyHost.java
-		java scrabble/network/host/PartyHost
-		Use ../controllers/NetworkController as client
-David: cd "OneDrive - Otterbein University\IdeaProjects\Scrabble\code"
-*/
-
-import org.junit.Rule;
 import scrabble.model.Ruleset;
 import scrabble.model.Tile;
 import scrabble.network.messages.*;
@@ -17,17 +8,23 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.IOException;
 import java.net.*;
-import java.sql.ClientInfoStatus;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Random;
 
 /**
- * PartyHost receives messages from clients (via ClientHandler) and sends them to clients
- * This class processes messages as needed depending on the type
+ * This class implements host responsibilities for a Scrabble game. It accepts
+ * messages from clients, executes any changes on the host end, and relays messages
+ * to other clients. It uses threads of {@link HostReceiver} to listen for new messages
+ * and {@link TileBag} to randomly send tiles to replenish player racks.
+ * <p>
+ *     A running thread of this class continuously accepts new clients until
+ *     this is signalled to start the game. Only 4 clients can be accepted into a game.
+ * </p>
+ * @see scrabble.network.messages
  */
-public class PartyHost implements Runnable, PropertyChangeListener {
+public class PartyHost extends Thread implements PropertyChangeListener {
 	/*
 	Some message processing is likely to be needed depending on the messages received.
 	For example, when a PlayTiles message is received, the host must send a NewTiles message
@@ -37,9 +34,13 @@ public class PartyHost implements Runnable, PropertyChangeListener {
 	For example implementation, see the class of the same name in ../networkPrototype
 	 */
 
+	/**
+	 * The identifying number of the host. Used in <code>Message</code> objects to
+	 * signify the sender.
+	 */
 	public static final int HOST_ID = -1;
 
-	private final String IPAdress;
+	private final String IPAddress;
 	private ServerSocket server;
 	private TileBag tileBag;
 	private HashMap<HostReceiver, Integer> playerIdMap;
@@ -58,8 +59,13 @@ public class PartyHost implements Runnable, PropertyChangeListener {
 		thread.start();
 	}
 
-	public PartyHost(int port) throws UnknownHostException {
-		IPAdress = Inet4Address.getLocalHost().getHostAddress();
+	/**
+	 * Constructs a PartyHost object listening to a port.
+	 *
+	 * @param port the port on which to accept clients
+	 */
+	public PartyHost(int port) {
+		super();
 		server = null;
 		tileBag = new TileBag();
 		playerIdMap = new HashMap<>(4);
@@ -71,32 +77,51 @@ public class PartyHost implements Runnable, PropertyChangeListener {
 		try {
 			server = new ServerSocket(port);
 			server.setSoTimeout(1000);
+			IPAddress = server.getInetAddress().getHostAddress();
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
 	}
 
-	public String getIPAdress() {
-		return IPAdress;
+	/**
+	 * Gets the local host's IP address.
+	 * @return the raw IP address in a String format.
+	 */
+	public String getIPAddress() {
+		return IPAddress;
 	}
 
+	/**
+	 * Gets the listening port.
+	 * @return the port number which accepts clients.
+	 */
 	public int getPort() { return server.getLocalPort();}
 
-	// transfer state to start the game: no longer accepting clients
+	/**
+	 * Starts a game with a given <code>Ruleset</code>.
+	 * <p>
+	 *     This method assigns random IDs to the connected players and signals them to
+	 *     start their <code>Game</code> model instance. This method also prevents
+	 *     more clients from joining the game.
+	 * </p>
+	 * @param ruleset the ruleset which dictates gameplay rules.
+	 * @throws IOException if an error occurs in messaging clients.
+	 */
 	public void startGame(Ruleset ruleset) throws IOException {
-		this.inGame = true;
+		this.inGame = true;		// stop looking for clients.
 
+		// Make a starting rack for each player.
 		for (HostReceiver host: playerIdMap.keySet()){
 			playerTiles.put(host, (ArrayList<Tile>) Arrays.stream(tileBag.getNext(TILE_RACK_SIZE)).toList());
 		}
 
-		Random random = new Random();
 		int[] randomNumbers = new int[playerIdMap.size()];
 		for (int i = 0; i < randomNumbers.length; i++) {
 			randomNumbers[i] = i;
 		}
 
 		//shuffle randomNumbers array so the player order is randomised
+		Random random = new Random();
 		for (int i = 0; i < randomNumbers.length;) {
 			int index = random.nextInt(randomNumbers.length);
 			int temp;
@@ -132,7 +157,7 @@ public class PartyHost implements Runnable, PropertyChangeListener {
 		// accept clients if not in a game.
 		// once game starts, stop accepting clients.
 		System.out.println("Looking for clients...");
-		while (!inGame) {
+		while (!inGame && playerIdMap.size()<4) {
 			acceptClients();
 		}
 		// game has started, stop looking
