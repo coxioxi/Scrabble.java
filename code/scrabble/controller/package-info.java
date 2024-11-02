@@ -5,7 +5,7 @@
  * </p>
  * <p>
  *     {@link scrabble.controller.Controller} makes the application runnable. It uses
- *     other packages as implementors and takes on the role of the client.
+ *     the classes of other packages as implementers and dons the role of client.
  *     The controller adds action listeners to components of view objects. Each action
  *     listener is responsible for updating the model as necessary and sending
  *     {@link scrabble.network.messages} objects to the host, who then relays the messages to the

@@ -5,7 +5,7 @@
  * <p>
  *     All message objects extend the abstract class {@link scrabble.network.messages.Message}.
  *     The GUI generates Message objects in response to events. Each message object implements
- *     the abstract {@link scrabble.network.messages.Message#execute(scrabble.controller.Controller)}
+ *     the abstract {@link scrabble.network.messages.Message#execute}
  *     method, which operates on the controller.
  *     This execute method updates the game model dynamically; if the player who creates the message
  *     is the same as the application's Local player object, then the message is relayed to the host.
