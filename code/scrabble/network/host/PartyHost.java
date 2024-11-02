@@ -173,6 +173,10 @@ public class PartyHost extends Thread implements PropertyChangeListener {
 		}
 	}
 
+	public int getPlayerID(HostReceiver hr) {
+		return playerIdMap.get(hr);
+	}
+
 	/*********************************************************
 	 * 					Private Methods						 *
 	 *********************************************************/
