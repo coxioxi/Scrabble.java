@@ -39,6 +39,7 @@ public class PartyHost implements Runnable, PropertyChangeListener {
 
 	public static final int HOST_ID = -1;
 
+	private final String IPAdress;
 	private ServerSocket server;
 	private TileBag tileBag;
 	private HashMap<HostReceiver, Integer> playerIdMap;
@@ -57,7 +58,8 @@ public class PartyHost implements Runnable, PropertyChangeListener {
 		thread.start();
 	}
 
-	public PartyHost(int port) {
+	public PartyHost(int port) throws UnknownHostException {
+		IPAdress = Inet4Address.getLocalHost().getHostAddress();
 		server = null;
 		tileBag = new TileBag();
 		playerIdMap = new HashMap<>(4);
@@ -73,6 +75,12 @@ public class PartyHost implements Runnable, PropertyChangeListener {
 			throw new RuntimeException(e);
 		}
 	}
+
+	public String getIPAdress() {
+		return IPAdress;
+	}
+
+	public int getPort() { return server.getLocalPort();}
 
 	// transfer state to start the game: no longer accepting clients
 	public void startGame(Ruleset ruleset) throws IOException {
