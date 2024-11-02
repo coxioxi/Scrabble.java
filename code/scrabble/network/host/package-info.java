@@ -17,7 +17,7 @@
  *     PartyHost should be used as follows:
  *     	<ol>
  *     	    <li>Create a PartyHost object.</li>
- *     	    <li>Get the PartyHost IP address and port for display ({@link scrabble.network.host.PartyHost#getIPAdress},
+ *     	    <li>Get the PartyHost IP address and port for display ({@link scrabble.network.host.PartyHost#getIPAddress},
  *     	    		{@link scrabble.network.host.PartyHost#getPort}). </li>
  *     	    <li>Call {@link scrabble.network.host.PartyHost#run}.</li>
  *     	    <li>Call {@link scrabble.network.host.PartyHost#startGame}.</li>
