@@ -45,6 +45,7 @@ public class PartyHost extends Thread implements PropertyChangeListener {
 	private TileBag tileBag;
 	private HashMap<HostReceiver, Integer> playerIdMap;
 	private HashMap<HostReceiver, ArrayList<Tile>> playerTiles;
+	private Ruleset ruleset;
 	private boolean inGame;
 	private final int TILE_RACK_SIZE = 7;
 
@@ -109,47 +110,7 @@ public class PartyHost extends Thread implements PropertyChangeListener {
 	 */
 	public void startGame(Ruleset ruleset) throws IOException {
 		this.inGame = true;		// stop looking for clients.
-
-		// Make a starting rack for each player.
-		for (HostReceiver host: playerIdMap.keySet()){
-			playerTiles.put(host, (ArrayList<Tile>) Arrays.stream(tileBag.getNext(TILE_RACK_SIZE)).toList());
-		}
-
-		int[] randomNumbers = new int[playerIdMap.size()];
-		for (int i = 0; i < randomNumbers.length; i++) {
-			randomNumbers[i] = i;
-		}
-
-		//shuffle randomNumbers array so the player order is randomised
-		Random random = new Random();
-		for (int i = 0; i < randomNumbers.length;) {
-			int index = random.nextInt(randomNumbers.length);
-			int temp;
-			if (index != i) {
-				temp = randomNumbers[index];
-				randomNumbers[index] = randomNumbers[i];
-				randomNumbers[i] = temp;
-				++i;
-			}
-		}
-
-		int i = 0;
-		for (HostReceiver host: playerIdMap.keySet()){
-			playerIdMap.replace(host, randomNumbers[i]);
-			++i;
-		}
-
-		int j = 0;
-		int[] playerID = new int[playerIdMap.size()];
-		for (HostReceiver host: playerIdMap.keySet()) {
-			playerID[j] = playerIdMap.get(host);
-			++j;
-		}
-
-		for (HostReceiver host: playerIdMap.keySet()) {
-			StartGame startGameMessage = new StartGame(HOST_ID, playerIdMap.get(host), playerID, ruleset, playerTiles.get(host).toArray(new Tile[0]));
-			host.sendMessage(startGameMessage);
-		}
+		this.ruleset = ruleset;
 	}
 
 	@Override
@@ -157,11 +118,22 @@ public class PartyHost extends Thread implements PropertyChangeListener {
 		// accept clients if not in a game.
 		// once game starts, stop accepting clients.
 		System.out.println("Looking for clients...");
-		while (!inGame && playerIdMap.size()<4) {
-			acceptClients();
+		while (!inGame) {
+			while (!inGame && playerIdMap.size()<4) {
+				acceptClients();
+			}
 		}
+
 		// game has started, stop looking
 		// all future changes handled through ClientHandler objects' calls to property change
+
+		try {
+			startGame();
+		} catch (IOException e) {
+			// error in writing to client
+			throw new RuntimeException(e);
+		}
+
 	}
 
 	@Override
@@ -204,6 +176,50 @@ public class PartyHost extends Thread implements PropertyChangeListener {
 	/*********************************************************
 	 * 					Private Methods						 *
 	 *********************************************************/
+
+	private void startGame() throws IOException {
+
+		// Make a starting rack for each player.
+		for (HostReceiver host: playerIdMap.keySet()){
+			playerTiles.put(host, (ArrayList<Tile>) Arrays.stream(tileBag.getNext(TILE_RACK_SIZE)).toList());
+		}
+
+		int[] randomNumbers = new int[playerIdMap.size()];
+		for (int i = 0; i < randomNumbers.length; i++) {
+			randomNumbers[i] = i;
+		}
+
+		//shuffle randomNumbers array so the player order is randomised
+		Random random = new Random();
+		for (int i = 0; i < randomNumbers.length;) {
+			int index = random.nextInt(randomNumbers.length);
+			int temp;
+			if (index != i) {
+				temp = randomNumbers[index];
+				randomNumbers[index] = randomNumbers[i];
+				randomNumbers[i] = temp;
+				++i;
+			}
+		}
+
+		int i = 0;
+		for (HostReceiver host: playerIdMap.keySet()){
+			playerIdMap.replace(host, randomNumbers[i]);
+			++i;
+		}
+
+		int j = 0;
+		int[] playerID = new int[playerIdMap.size()];
+		for (HostReceiver host: playerIdMap.keySet()) {
+			playerID[j] = playerIdMap.get(host);
+			++j;
+		}
+
+		for (HostReceiver host: playerIdMap.keySet()) {
+			StartGame startGameMessage = new StartGame(HOST_ID, playerIdMap.get(host), playerID, ruleset, playerTiles.get(host).toArray(new Tile[0]));
+			host.sendMessage(startGameMessage);
+		}
+	}
 
 	private void acceptClients() {
 		// look for clients. Socket may time out, returns out of method
