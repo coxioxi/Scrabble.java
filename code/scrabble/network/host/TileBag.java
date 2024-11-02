@@ -4,28 +4,41 @@ import scrabble.model.Tile;
 
 import java.util.HashMap;
 import java.util.Random;
-/*
- * Represents the TileBag in a game of Scrabble.
- * Must hold the correct number of tiles at the start, then shuffle
- * shuffling must be done whenever tiles are added
- * must be able to remove a specified number of tiles from self and
- * return them as an array of tiles
- *
+
+/**
+ * Maintains the bag of tiles. Allows tiles to be randomly removed and for tiles to be added.
  */
 public class TileBag {
-    private HashMap<Tile,Integer> tileBag;
+    private HashMap<Tile,Integer> tileBag;      // stores a number of a given tile
+    private int remainingTiles;         // the number of tiles in the bag
 
+    public static void main(String[] args) {
+        TileBag tb = new TileBag();
+        tb.getNext(4);
+        tb.addTiles(new Tile[]{new Tile('A')});
+        System.out.println(tb.getRemainingTiles());
+    }
+
+    /**
+	 * Constructs a TileBag with the standard 100 tiles.
+     * <br>
+	 * See also: <a href="https://en.wikipedia.org/wiki/Scrabble_letter_distributions">Letter distributions</a>
+	 */
     public TileBag() {
         fillTileBag();
     }
 
+    /**
+     * Adds a collection of tiles to the bag.
+     * @param tiles the tiles to add to the bag.
+     */
     public void addTiles(Tile[] tiles) {
         for(Tile tile: tiles){
             tileBag.replace(tile,tileBag.replace(tile,tileBag.get(tile)+1));
         }
-
     }
 
+    // ???
     public void removeTiles(Tile[] tiles) {
         for(Tile tile: tiles){
             tileBag.replace(tile,tileBag.replace(tile,tileBag.get(tile)-1));
@@ -33,20 +46,36 @@ public class TileBag {
 
     }
 
+    /**
+     * Randomly selects the next <code>numTiles</code> tiles from the bag.
+     * @param numTiles how many tiles should be returned. If this number
+     *                 exceeds the number of tiles remaining, the array returned will
+     *                 be of size <code>getRemainingTiles</code>.
+     * @return a randomly picked array of tiles with length <code>numTiles</code>.
+     */
     public Tile[] getNext(int numTiles) {
-        Tile[] keyArray = (Tile[]) tileBag.keySet().toArray();
+        Tile[] keyArray = tileBag.keySet().toArray(new Tile[0]);
         Tile[] newTiles = new Tile[numTiles];
         Random random = new Random();
         for(int i = 0; i < numTiles; i++){
             Tile tile = keyArray[random.nextInt(keyArray.length)];
             newTiles[i] = tile;
             tileBag.replace(tile,tileBag.get(tile)-1);
-
+            remainingTiles--;
         }
         return newTiles;
     }
 
+    /**
+     * Gets the number of remaining tiles available to be removed.
+     * @return number of remaining tiles.
+     */
+    public int getRemainingTiles() {
+        return remainingTiles;
+    }
+
     private void fillTileBag() {
+        remainingTiles = 100;
         tileBag = new HashMap<>();
         tileBag.put(new Tile('A'),9);
         tileBag.put(new Tile('B'),2);
@@ -74,5 +103,6 @@ public class TileBag {
         tileBag.put(new Tile('X'),1);
         tileBag.put(new Tile('Y'),2);
         tileBag.put(new Tile('Z'),1);
+        tileBag.put(new Tile(), 2);
     }
 }
