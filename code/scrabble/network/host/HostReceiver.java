@@ -1,5 +1,6 @@
 package scrabble.network.host;
 
+import scrabble.network.messages.ExitParty;
 import scrabble.network.messages.Message;
 
 import java.beans.PropertyChangeListener;
@@ -10,14 +11,6 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.net.SocketException;
-
-/*
-this class is the server side client listening
-Usage: 	javac scrabble/network/host/ClientHandler.java
-		java scrabble/network/host/ClientHandler
-		Use ../controllers/NetworkController as client
-David: cd "OneDrive - Otterbein University\IdeaProjects\Scrabble\code"
-*/
 
 /**
  * ClientHandler is responsible for listening for new messages coming in from the clients
@@ -32,19 +25,20 @@ David: cd "OneDrive - Otterbein University\IdeaProjects\Scrabble\code"
  *
  */
 public class HostReceiver implements Runnable {
-	/*
-	The majority of the work for this class will be handled inside the run() method, with
-	potentially helper methods being called. See ../networkPrototype/ClientHandler for
-	an example of implementation, and ../networkPrototype/PartyHost for example of usage
-	 */
 
-	private PropertyChangeSupport notifier;		// notifies listener of messages received
-	private Socket socket; 	// the socket of the client
-	private ObjectInputStream inputStream;	// the stream from which message objects are read
-	private ObjectOutputStream outputStream;
-	private int clientID;		// the ID of this player
+	private final PropertyChangeSupport notifier;		// notifies listener of messages received
+	private final Socket socket; 	// the socket to the client
+	private final ObjectInputStream inputStream;	// the stream from which message objects are read
+	private final ObjectOutputStream outputStream;
 	private boolean listening;	// whether we are listening for new messages from client
 
+	/**
+	 * Constructs a host-client messenger with an observer.
+	 * @param socket the socket to the client. Must be non-null.
+	 * @param listener the observer to which this sends updates.
+	 * @throws IOException if an error occurs in getting the <code>socket</code>'s
+	 * 	 			streams.
+	 */
 	public HostReceiver(Socket socket, PropertyChangeListener listener)
 			throws IOException {
 		this.socket = socket;
@@ -55,16 +49,19 @@ public class HostReceiver implements Runnable {
 		listening = false;
 	}
 
-
-	public int getClientID() {
-		return clientID;
+	/**
+	 * Gets the socket of this class.
+	 * @return the socket.
+	 */
+	public Socket getSocket() {
+		return socket;
 	}
 
-	public void setClientID(int clientID) {
-		this.clientID = clientID;
-	}
-
-	@Override
+	/**
+	 * Listens for messages from the client and sends them to the observer.
+	 * This method will cease execution after <code>halt</code> is called or
+	 * if the client closes the socket.
+	 */
 	public void run() {
 		// listen for objects from the stream
 		// use the ObjectInputStream to get the objects.
@@ -77,17 +74,15 @@ public class HostReceiver implements Runnable {
 			try {
 				newMessage = (Message) inputStream.readObject();
 			} catch (EOFException | SocketException e) {
-				// The client has closed their connection
-				// TODO: pass on a message to the host that this player has closed their socket
-				// 	i.e. disconnect them on other ppl's models
-				//newMessage = new ExitParty();
+				// Client has closed socket.
+				PartyHost ph = (PartyHost) notifier.getPropertyChangeListeners()[0];
+				newMessage = new ExitParty(ph.getPlayerID(this), ph.getPlayerID(this));
 				this.halt();
 			} catch (IOException | ClassNotFoundException e) {
 				throw new RuntimeException(e);
 			}
 			// got a message. tell the listener
 			notifier.firePropertyChange("message", null, newMessage);
-			newMessage = null;
 		}
 
 		// we have stopped listening. close streams
@@ -106,15 +101,29 @@ public class HostReceiver implements Runnable {
 		socket.close();
 	}
 
-	// send a message to the client
+	/**
+	 * Sends a message to the client associated with this object.
+	 * @param message the message to send. Must be non-null.
+	 * @throws IOException when an error occurs in writing to client stream.
+	 */
 	public void sendMessage(Message message) throws IOException {
 		outputStream.writeObject(message);
 		outputStream.flush();
 	}
 
-	// stop the run method's execution
+	/**
+	 * Stops the execution of the <code>run</code> method, closing the connection to the client.
+	 */
 	public void halt() {
 //		System.out.println("Halting");
 		listening = false;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (obj == null) return false;
+
+		return (obj.getClass() == this.getClass()) &&
+				socket.equals(((HostReceiver)obj).getSocket());
 	}
 }
