@@ -23,6 +23,6 @@ public class NewPlayer extends Message implements Serializable {
 
     @Override
     public void execute(Controller controller) {
-
+        //controller.addNewPlayer(playerID,playerName)
     }
 }

@@ -40,6 +40,8 @@ public class StartGame extends Message {
 
 	@Override
 	public void execute(Controller controller) {
-
+		controller.getModel().addTiles(startingTiles);
+		//set ruleset from game for players: controller.getModel().setRuleset(ruleset)
+		// or make it possible to instantiate new game object for players when executing message
 	}
 }

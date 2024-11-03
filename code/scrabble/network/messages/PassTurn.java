@@ -20,6 +20,7 @@ public class PassTurn extends Message{
 
 	@Override
 	public void execute(Controller controller) {
+		controller.getModel().passTurn(playerID);
 
 	}
 }
