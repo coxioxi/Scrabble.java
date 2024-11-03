@@ -3,7 +3,7 @@ package scrabble.model;
 import java.util.ArrayList;
 
 /**
- * This class holds a list of strings and a score
+ * This class holds a list of strings and a score.
  * it is a stand-alone convenience class for helper methods of Board.score()
  */
 public class ScoreData {
