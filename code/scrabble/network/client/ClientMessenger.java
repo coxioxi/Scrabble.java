@@ -1,6 +1,7 @@
 package scrabble.network.client;
 
 import scrabble.model.Tile;
+import scrabble.network.host.PartyHost;
 import scrabble.network.messages.*;
 
 import java.awt.*;
@@ -12,10 +13,15 @@ import java.net.SocketException;
 import java.util.Scanner;
 
 /**
- * This class is responsible for sending and receiving messages from the host
- * after a socket has already been established.
- * ClientMessenger uses PropertyChangeSupport to notify the controller class
- * when new messages are received.
+ * This class implements communication with a host, using the objects in
+ * the {@link scrabble.network.messages messages package}.
+ * <p>
+ *     A thread of this class continuously listens for message objects
+ *     from the host which are then sent to the PropertyChangeListener
+ *     passed in at construction. A client of this class can send messages to
+ *     the host by calling {@link #sendMessage}. When this thread is no longer needed,
+ *     calling the method {@link #halt} signals run to cease execution and close the socket.
+ * </p>
  */
 public class ClientMessenger implements Runnable {
 
@@ -28,6 +34,13 @@ public class ClientMessenger implements Runnable {
 														// that is, when messages are received
 	private boolean isListening;		// whether this object is listening for new messages
 
+	/**
+	 * Constructs a client-host messenger with an observer.
+	 * @param server the socket to the server. This value may not be null.
+	 * @param listener the observer which receives updates on new messages.
+	 * @throws IOException if an error occurs in getting the <code>server</code>'s
+	 * streams.
+	 */
 	public ClientMessenger(Socket server, PropertyChangeListener listener)
 			throws IOException {
 		// setting up streams
@@ -39,7 +52,11 @@ public class ClientMessenger implements Runnable {
 		isListening = false;
 	}
 
-	@Override
+	/**
+	 * Listens for messages from the host and sends them to the observer.
+	 * This method will cease execution after <code>halt</code> is called or
+	 * if the host closes the socket.
+	 */
 	public void run() {
 		// here we start listening for new messages to come in
 		isListening = true;
@@ -49,15 +66,10 @@ public class ClientMessenger implements Runnable {
 			try {
 				message = (Message) inputStream.readObject();
 				//printInstance(message);
-			} catch (EOFException e) {
-				System.out.println("Eof found");
-				this.halt();
 			}
-			catch (SocketException e) {
+			catch (SocketException | EOFException e) {
 				// Thrown when the host has closed their connection
-				// TODO: pass on a message to the controller that host has closed their socket
-				// 	i.e. end the game
-				//newMessage = new ExitParty();
+				message = new ExitParty(PartyHost.HOST_ID, PartyHost.HOST_ID);
 				this.halt();
 			}
 			catch (IOException | ClassNotFoundException e) {
@@ -68,7 +80,6 @@ public class ClientMessenger implements Runnable {
 			if (message != null) {
 				notifier.firePropertyChange("Message", null, message);
 			}
-			message = null;		// reset message
 		} while (isListening);
 
 		/*
@@ -86,14 +97,19 @@ public class ClientMessenger implements Runnable {
 		}
 	}
 
-	// send a message to the host
+	/**
+	 * Sends a message to the host.
+	 * @param message the message to be sent. Must be non-null.
+	 * @throws IOException if an error occurs in output stream.
+	 */
 	public void sendMessage(Message message) throws IOException {
 		outputStream.writeObject(message);
 		outputStream.flush();
 	}
 
-	// stop listening for new messages.
-	// allows run to handle closing streams
+	/**
+	 * Ceases execution of <code>run()</code>.
+	 */
 	public void halt() {
 		isListening = false;
 	}
