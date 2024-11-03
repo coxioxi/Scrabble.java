@@ -31,6 +31,8 @@ public class PlayTiles extends Message {
 
 	@Override
 	public void execute(Controller controller) {
+		controller.getModel().playTiles(playerID,tiles);
+		// how to update view to show score
 
 	}
 

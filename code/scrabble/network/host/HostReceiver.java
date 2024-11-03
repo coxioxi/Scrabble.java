@@ -47,6 +47,7 @@ public class HostReceiver implements Runnable {
 		notifier = new PropertyChangeSupport(this);
 		notifier.addPropertyChangeListener(listener);
 		listening = false;
+		
 	}
 
 	/**

@@ -20,6 +20,6 @@ public class ExitParty extends Message {
 
 	@Override
 	public void execute(Controller controller) {
-
+		//controller needs to remove them from player list
 	}
 }
