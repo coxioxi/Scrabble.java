@@ -6,16 +6,25 @@ import java.awt.*;
 import static scrabble.view.frame.GameFrame.audioOn;
 import static scrabble.view.frame.GameFrame.fxOn;
 
+/**
+ * MainMenuScreen represents the main menu panel in the Scrabble game,
+ * containing buttons to host or join a game, as well as options for audio settings.
+ */
 public class MainMenuScreen extends JPanel {
 
+    // Buttons for hosting, joining, and quitting the game
     private JButton hostButton;
     private JButton joinButton;
-    private JCheckBox audioCheck;
-    private JCheckBox fxCheck;
     private JButton quitButton;
 
-    public MainMenuScreen() {
+    // Checkboxes for toggling game audio and sound effects
+    private JCheckBox audioCheck;
+    private JCheckBox fxCheck;
 
+    /**
+     * Constructor for MainMenuScreen. Initializes the layout, buttons, and checkboxes.
+     */
+    public MainMenuScreen() {
 
         // Panel setup for the menu layout
         JPanel mainPanel = new JPanel(new FlowLayout());
@@ -39,6 +48,7 @@ public class MainMenuScreen extends JPanel {
         this.add(mainPanel, BorderLayout.CENTER);
     }
 
+    // Getter methods for each button and checkbox
     public JButton getHostButton() {
         return hostButton;
     }
@@ -47,15 +57,15 @@ public class MainMenuScreen extends JPanel {
         return quitButton;
     }
 
+    public JButton getJoinButton() {
+        return joinButton;
+    }
+
     public JCheckBox getFxCheck() {
         return fxCheck;
     }
 
     public JCheckBox getAudioCheck() {
         return audioCheck;
-    }
-
-    public JButton getJoinButton() {
-        return joinButton;
     }
 }
