@@ -7,6 +7,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.Scanner;
 
+@Deprecated
 public class FrameTest extends JFrame {
 
     private JPanel mainMenu = new MainMenuScreen();

@@ -7,6 +7,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
+@Deprecated
 public class GameFrame extends JFrame {
     // Static variables to control audio and FX settings
     public static boolean audioOn = true;
