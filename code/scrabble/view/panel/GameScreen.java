@@ -2,29 +2,31 @@ package scrabble.view.panel;
 
 import scrabble.model.Board;
 import scrabble.model.ModifierType;
+import scrabble.model.Tile;
+import scrabble.network.messages.PlayTiles;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.lang.invoke.StringConcatFactory;
-import java.sql.Time;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
-import java.util.Timer;
 
 public class GameScreen extends JPanel {
 
 	private JLabel gameTime;
 	private JButton[][] gameCells;
+	public Tile[][] letters = new Tile[Board.BOARD_ROWS][Board.BOARD_COLUMNS];
 	private JButton[] rack;
 	private JButton submitButton;
 	private Board board = new Board();
+	public List<Tile> playedTiles = new ArrayList<>();
 	private String value = " ";
 	private final Color doubleWord = new Color(255, 102, 102);
 	private final Color tripleWord = new Color(255, 0, 0);
 	private final Color doubleLetter = new Color(88, 117, 255);
-	private final Color getTripleLetter = new Color(0, 41, 255);
+	private final Color tripleLetter = new Color(0, 41, 255);
 	private final Color normalCell = new Color(255, 255, 255);
 
 	public GameScreen() {
@@ -60,7 +62,7 @@ public class GameScreen extends JPanel {
 						boardTile.setText("DL");
 						boardTile.setBorderPainted(false);
 					} else if (mt == ModifierType.TRIPLE_LETTER) {
-						boardTile.setBackground(getTripleLetter);
+						boardTile.setBackground(tripleLetter);
 						boardTile.setText("TL");
 						boardTile.setBorderPainted(false);
 					} else {
@@ -94,7 +96,7 @@ public class GameScreen extends JPanel {
 		JPanel rackPanel = new JPanel(new GridLayout(1,7,10,0));
 		rack = new JButton[7];
 		for (int i = 0; i < 7; i++) {
-			JButton rackTile = new JButton(""+i);
+			JButton rackTile = new JButton((char)('A'+i)+"");
 			rack[i] = rackTile;
 			//rackTile.setBorder(BorderFactory.createEtchedBorder());
 			rackPanel.add(rackTile);
@@ -115,6 +117,7 @@ public class GameScreen extends JPanel {
 
 		boardTilesActionListener();
 		rackTilesActionListener();
+		submitActionListener();
 	}
 
 	private static JComboBox<String> getStringJComboBox() {
@@ -140,40 +143,63 @@ public class GameScreen extends JPanel {
 	}
 
 	public void boardTilesActionListener(){
-		for (int i = 0; i < 15; i++) {
-			for (int j = 0; j < 15; j++) {
+		for (int i = 0; i < Board.BOARD_ROWS; i++) {
+			for (int j = 0; j < Board.BOARD_COLUMNS; j++) {
 				JButton boardTile = gameCells[i][j];
-				ModifierType mt = board.getBoardSpecialCell().get(new Point(i, j));
-				if(mt == null)
-					mt = ModifierType.NONE;
-				ModifierType finalMt = mt;
 
+				int row = i;
+				int col = j;
 				boardTile.addActionListener(new ActionListener() {
 					@Override
 					public void actionPerformed(ActionEvent e) {
-						if((boardTile.getText().equals(" ") || !boardTile.getText().equals(finalMt.name())) && !value.equals(" ")){
+						List<String> modType = new ArrayList<>(Arrays.asList("DW", "TW", "DL", "TL"));
+
+						//adding tiles from the rack to the board
+						if((boardTile.getText().equals(" ") || boardTile.getBackground() != normalCell) && !value.equals(" ")) {
 							for (int k = 0; k < 7; k++) {
-								if(rack[k].getText().equals(" ")){
-									rack[k].setText(boardTile.getText());
-									break;
+								if(!boardTile.getText().equals(" ") && !modType.contains(boardTile.getText())) {
+									if (rack[k].getText().equals(" ")) {
+										if (boardTile.getBackground() != normalCell) {
+											rack[k].setText(boardTile.getText());
+											char tile = boardTile.getText().charAt(0);
+											Point point = new Point(row, col);
+											playedTiles.remove(new Tile(tile, point));
+											break;
+										}
+									}
 								}
 							}
 							boardTile.setText(value);
+							char tile = value.charAt(0);
+							Point point = new Point(row, col);
+							playedTiles.add(new Tile(tile, point));
 							value = " ";
 						}
+						//adding tiles from the board back to the rack
 						else if(value.equals(" ")){
 							for (int k = 0; k < 7; k++) {
-								if(rack[k].getText().equals(" ")){
+								if(rack[k].getText().equals(" ") && !modType.contains(boardTile.getText())){
 									rack[k].setText(boardTile.getText());
+									char tile = boardTile.getText().charAt(0);
+									Point point = new Point(row, col);
+									playedTiles.remove(new Tile(tile, point));
+									if(value.equals(" ")){
+										Color color = boardTile.getBackground();
+										if (color.equals(doubleWord)) {
+											boardTile.setText("DW");
+										} else if (color.equals(doubleLetter)) {
+											boardTile.setText("DL");
+										} else if (color.equals(tripleWord)) {
+											boardTile.setText("TW");
+										} else if (color.equals(tripleLetter))
+											boardTile.setText("TL");
+										else
+											boardTile.setText(" ");
+									}
 									value = " ";
 									break;
 								}
 							}
-							if(!boardTile.getText().equals(finalMt.name())){
-								boardTile.setText(" ");
-							}
-							else
-								boardTile.setText(finalMt.name());
 						}
                     }
 				});
@@ -201,6 +227,15 @@ public class GameScreen extends JPanel {
 				}
 			});
 		}
+	}
+
+	public void submitActionListener(){
+		submitButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				PlayTiles playTiles = new PlayTiles(0,0,playedTiles.toArray(new Tile[0]));
+			}
+		});
 	}
 
 	public JLabel getGameTime() {
