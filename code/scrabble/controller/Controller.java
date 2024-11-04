@@ -8,8 +8,11 @@ import scrabble.network.client.ClientMessenger;
 import scrabble.network.messages.PlayTiles;
 import scrabble.network.networkPrototype.PartyHost;
 import scrabble.view.frame.GameFrame;
+import scrabble.view.frame.ScrabbleGUI;
+import scrabble.view.frame.ScrabbleView;
 import scrabble.view.panel.GameScreen;
 
+import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
@@ -21,14 +24,9 @@ import java.net.Socket;
  */
 
 public class Controller implements PropertyChangeListener  {
-	GameScreen gameScreen = new GameScreen();
-	// Runs View and Game.
+	GameScreen gameScreen = new GameScreen();	//test
 
-	// Main is super important
-
-	// Controller creates the view and adds listeners
-
-	private GameFrame view;
+	private ScrabbleGUI view;
 	private Game model;
 
 	private ClientMessenger messenger;
@@ -56,9 +54,12 @@ public class Controller implements PropertyChangeListener  {
 		new Controller();
 	}
 
-	public Controller() {}
+	public Controller() {
+		view = new ScrabbleGUI();
+		addListeners(view);
+	}
 
-	public GameFrame getView() {
+	public ScrabbleGUI getView() {
 		return view;
 	}
 
@@ -78,7 +79,33 @@ public class Controller implements PropertyChangeListener  {
 		return host;
 	}
 
-	private void addListeners() {}
+	private void addListeners(ScrabbleGUI view) {
+		addMenuListeners(view.getMainMenu());
+		addHostListeners(view.getHost());
+		addJoinListeners(view.getJoin());
+		addWaitingListeners(view.getWaiting());
+		addGameListeners(view.getGame());
+	}
+
+	private void addGameListeners(JPanel game) {
+		// add listeners to the buttons on the main game screen
+	}
+
+	private void addWaitingListeners(JPanel waiting) {
+		// add listeners to the buttons on the waiting players screen
+	}
+
+	private void addJoinListeners(JPanel join) {
+		// add listeners to the buttons on the join game screen
+	}
+
+	private void addHostListeners(JPanel host) {
+		// add listeners to the buttons on the host screen
+	}
+
+	private void addMenuListeners(JPanel mainMenu) {
+		// add listeners to the buttons on the main menu
+	}
 
 	private void hostGame() {}
 
