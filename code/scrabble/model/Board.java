@@ -21,7 +21,6 @@ public class Board {
     private Map<Point,ModifierType> boardSpecialCell;   // map of modifier cells
     private ArrayList<String> lastWordsPlayed = new ArrayList<>();   // the words which have most recently been played
 
-
     // Constants for the number of rows and columns on the Scrabble board
     public static final int BOARD_ROWS = 15;
     public static final int BOARD_COLUMNS = 15;
