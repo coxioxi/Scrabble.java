@@ -1,6 +1,7 @@
 package scrabble.network.messages;
 
 import scrabble.controller.Controller;
+import scrabble.network.host.PartyHost;
 
 import java.io.Serializable;
 
@@ -24,5 +25,10 @@ public class NewPlayer extends Message implements Serializable {
     @Override
     public void execute(Controller controller) {
         //controller.addNewPlayer(playerID,playerName)
+    }
+
+    @Override
+    public void execute(PartyHost partyHost) {
+
     }
 }

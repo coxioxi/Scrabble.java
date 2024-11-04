@@ -2,6 +2,7 @@ package scrabble.network.messages;
 
 import scrabble.controller.Controller;
 import scrabble.model.Tile;
+import scrabble.network.host.PartyHost;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -37,4 +38,9 @@ public class PlayTiles extends Message {
 	}
 
 	//Add method does the damn thing for all of the messages
+
+	@Override
+	public void execute(PartyHost partyHost) {
+
+	}
 }

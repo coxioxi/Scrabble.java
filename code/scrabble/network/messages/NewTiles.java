@@ -2,6 +2,7 @@ package scrabble.network.messages;
 
 import scrabble.controller.Controller;
 import scrabble.model.Tile;
+import scrabble.network.host.PartyHost;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -25,5 +26,10 @@ public class NewTiles extends Message {
 	@Override
 	public void execute(Controller controller) {
 		controller.getModel().addTiles(tiles);
+	}
+
+	@Override
+	public void execute(PartyHost partyHost) {
+
 	}
 }

@@ -1,6 +1,7 @@
 package scrabble.network.messages;
 
 import scrabble.controller.Controller;
+import scrabble.network.host.PartyHost;
 
 import java.io.Serial;
 
@@ -21,5 +22,10 @@ public class ExitParty extends Message {
 	@Override
 	public void execute(Controller controller) {
 		//controller needs to remove them from player list
+	}
+
+	@Override
+	public void execute(PartyHost partyHost) {
+
 	}
 }
