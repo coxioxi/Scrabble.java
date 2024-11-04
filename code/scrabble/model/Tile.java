@@ -148,4 +148,9 @@ public class Tile implements Serializable {
                 ", isNew=" + isNew +
                 '}'; // Return a string representation of the Tile object
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        return this.toString().equals(obj.toString());
+    }
 }

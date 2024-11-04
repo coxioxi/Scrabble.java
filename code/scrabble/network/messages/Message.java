@@ -1,7 +1,9 @@
 package scrabble.network.messages;
 
+import scrabble.controller.Controller;
 import scrabble.model.NotBlankException;
 import scrabble.model.Tile;
+import scrabble.network.host.PartyHost;
 
 import java.awt.*;
 import java.io.*;
@@ -13,7 +15,6 @@ import java.util.ArrayList;
  */
 public abstract class Message implements Serializable {
 
-	public static final int HOST_ID = -1;
 	@Serial
 	private static final long serialVersionUID = 1L;
 
@@ -35,48 +36,42 @@ public abstract class Message implements Serializable {
 		}
 	}
 
+	/**
+	 * Constructs a message with a senderID. Only to be used by subclasses
+	 * @param senderID the ID of the message's sender.
+	 */
 	protected Message(int senderID) {
 		this.senderID = senderID;
 	}
 
+	/**
+	 * Gets the sender ID.
+	 * @return returns the ID of the player who sent the message.
+	 */
 	public int getSenderID() {
 		return senderID;
 	}
 
-	protected static void writeTiles(ObjectOutputStream out, Tile[] tiles)
-			throws IOException {
-		for (Tile t: tiles) {
-			out.writeObject(t.getLetter());
-			out.writeObject(t.isBlank());
-			out.writeObject(t.getLocation());
-			out.writeObject(t.getIsNew());
-		}
-	}
+	/**
+	 * This method operates on the controller to make changes to the GUI
+	 * and the view based on what type of message this is. For example,
+	 * a play tiles message will update the board model to have the tiles placed on it
+	 * and change the view for the player.
+	 *
+	 * @param controller the controller on which to make changes. Note that this object
+	 *                   must use public getter methods for all the components
+	 *                   (for example, the GUI components, the model components etc.)
+	 */
+	public abstract void execute(Controller controller);
 
-	protected static Tile[] readTile(ObjectInputStream in)
-			throws IOException, ClassNotFoundException {
-		ArrayList<Tile> tiles = new ArrayList<>(7);
-		while (in.available() > 0) {
-			char    letter   = (Character) 	in.readObject();
-			boolean isBlank  = (Boolean) 	in.readObject();
-			Point location = (Point) 		in.readObject();
-			boolean isNew 	 = (Boolean) 	in.readObject();
-			Tile tile;
-			if (isBlank) {
-				tile = new Tile();
-				try {
-					tile.setLetter(letter);
-				} catch (NotBlankException e) {
-					System.out.println("LMAO wtf just happened.\nerror in serializing tile");
-				}
-			}
-			else {
-				tile = new Tile(letter);
-			}
-			tile.setLocation(location);
-			tile.setIsNew(isNew);
-			tiles.add(tile);
-		}
-		return tiles.toArray(new Tile[0]);
-	}
+	/**
+	 * This method operates on the <code>host</code> to make changes to the clients
+	 * when necessary. For example, an execution of a <code>PlayTiles</code> message
+	 * would require new tiles to be sent to the sending client and for the original message
+	 * to be relayed to other players.
+	 *
+	 * @param partyHost the <code>PartyHost</code> on which to make changes. Note that this object
+	 *                   must use public getter methods for all the components which should be changed.
+	 */
+	public abstract void execute(PartyHost partyHost);
 }

@@ -53,6 +53,23 @@ public class Game {
 		// TODO: From ruleset, set times
 	}
 
+	public LocalPlayer getSelf() {
+		return self;
+	}
+
+	public Player[] getPlayers() {
+		return players;
+	}
+
+	public Board getBoard() {
+		return board;
+	}
+
+	public Ruleset getRuleset() {
+		return ruleset;
+	}
+
+
 	/**
 	 * Plays tiles on the board for a player
 	 * @param playerID the ID of the player for whom to make a play
@@ -92,7 +109,7 @@ public class Game {
 	this helper method changes whose turn it is to the next
 	person in the turn list.
  	*/
-	private void nextTurn() {
+	public void nextTurn() {
 		this.currentPlayer = (this.currentPlayer + 1) % this.players.length;
 	}
 
@@ -277,7 +294,25 @@ public class Game {
 	}
 
 	public boolean isGameOver() {
+		isGameOver = false;
+		if ( self.getRack().isEmpty()) {
+			isGameOver = true;
+		}
+		else if(allPlayersInactive()){
+			isGameOver = true;
+		} else if (ruleset.getTotalTime() == 0) {
+			isGameOver = true;
+		}
 		return isGameOver;
+	}
+
+	private boolean allPlayersInactive(){
+		for(Player player: players){
+			if(player.isActive()){
+				return false;
+			}
+		}
+		return true;
 	}
 
 
