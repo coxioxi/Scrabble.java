@@ -75,7 +75,7 @@ public class GameFrame extends JFrame {
 
         JPanel mainPanel = new JPanel();
         mainPanel.setBorder(BorderFactory.createTitledBorder("Host A Game"));
-        mainPanel.setLayout(null);
+        //mainPanel.setLayout(null);
 
         JPanel southPanel = new JPanel(new FlowLayout());
         JPanel northPanel = new JPanel(new FlowLayout());
@@ -472,8 +472,8 @@ public class GameFrame extends JFrame {
         //joinScreen();
         //hostScreen();
         //waitingScreen();
-        winnerScreen();
-        //gameScreen();
+        //winnerScreen();
+        gameScreen();
     }
 
 

@@ -1,13 +1,6 @@
 package scrabble.network.host;
 
-/*
-this class is the server side
-Usage: 	javac scrabble/network/host/PartyHost.java
-		java scrabble/network/host/PartyHost
-		Use ../controllers/NetworkController as client
-David: cd "OneDrive - Otterbein University\IdeaProjects\Scrabble\code"
-*/
-
+import scrabble.model.Ruleset;
 import scrabble.model.Tile;
 import scrabble.network.messages.*;
 
@@ -16,33 +9,45 @@ import java.beans.PropertyChangeListener;
 import java.io.IOException;
 import java.net.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Random;
 
 /**
- * PartyHost receives messages from clients (via ClientHandler) and sends them to clients
- * This class processes messages as needed depending on the type
+ * This class implements host responsibilities for a Scrabble game. It accepts
+ * messages from clients, executes any changes on the host end, and relays messages
+ * to other clients. It uses threads of {@link HostReceiver} to listen for new messages
+ * and {@link TileBag} to randomly send tiles to replenish player racks.
+ * <p>
+ *     A running thread of this class continuously accepts new clients until
+ *     this is signalled to start the game. Only 4 clients can be accepted into a game.
+ * </p>
+ * @see scrabble.network.messages
  */
-public class PartyHost implements Runnable, PropertyChangeListener {
+public class PartyHost extends Thread implements PropertyChangeListener {
 	/*
 	Some message processing is likely to be needed depending on the messages received.
 	For example, when a PlayTiles message is received, the host must send a NewTiles message
 	to the client who sent the PlayTiles. Host then must send PlayTiles to the other
 	clients, with the new number of tiles which the original client has in their rack.
 
-	It seems reasonable to me (david) to have helper methods for each individual type of method and
-	call it using a switch or if-else-if structure based on the type of class
-
 	For example implementation, see the class of the same name in ../networkPrototype
 	 */
 
-	private ServerSocket server;
-	private boolean inGame;
-	private ArrayList<Thread> listeners;
-	private ArrayList<Socket> clientSockets;
-	private HashMap<HostReceiver, Integer> playerIdMap;
-	private TileBag tileBag;
-	private HashMap<HostReceiver, ArrayList<Tile>> playerTiles;
+	/**
+	 * The identifying number of the host. Used in <code>Message</code> objects to
+	 * signify the sender.
+	 */
 	public static final int HOST_ID = -1;
+
+	private final String IPAddress;
+	private ServerSocket server;
+	private TileBag tileBag;
+	private HashMap<HostReceiver, Integer> playerIdMap;
+	private HashMap<HostReceiver, ArrayList<Tile>> playerTiles;
+	private Ruleset ruleset;
+	private boolean inGame;
+	private final int TILE_RACK_SIZE = 7;
 
 	public static void main(String[] args) throws UnknownHostException {
 		int port = 5000;
@@ -55,27 +60,57 @@ public class PartyHost implements Runnable, PropertyChangeListener {
 		thread.start();
 	}
 
+	/**
+	 * Constructs a PartyHost object listening to a port.
+	 *
+	 * @param port the port on which to accept clients
+	 */
 	public PartyHost(int port) {
-		inGame = false;
+		super();
 		server = null;
-		listeners = new ArrayList<>(4);
-		clientSockets = new ArrayList<>(4);
-		//outputStreamMap = new HashMap<>(4);
+		tileBag = new TileBag();
+		playerIdMap = new HashMap<>(4);
+		playerTiles = new HashMap<>(4);
+		inGame = false;
 
 		// create a server socket that refreshes every second
 		// refreshes allow the run to stop execution once we are no longer looking for clients
 		try {
 			server = new ServerSocket(port);
 			server.setSoTimeout(1000);
+			IPAddress = server.getInetAddress().getHostAddress();
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
 	}
 
+	/**
+	 * Gets the local host's IP address.
+	 * @return the raw IP address in a String format.
+	 */
+	public String getIPAddress() {
+		return IPAddress;
+	}
 
-	// transfer state to start the game: no longer accepting clients
-	public void startGame() {
-		this.inGame = true;
+	/**
+	 * Gets the listening port.
+	 * @return the port number which accepts clients.
+	 */
+	public int getPort() { return server.getLocalPort();}
+
+	/**
+	 * Starts a game with a given <code>Ruleset</code>.
+	 * <p>
+	 *     This method assigns random IDs to the connected players and signals them to
+	 *     start their <code>Game</code> model instance. This method also prevents
+	 *     more clients from joining the game.
+	 * </p>
+	 * @param ruleset the ruleset which dictates gameplay rules.
+	 * @throws IOException if an error occurs in messaging clients.
+	 */
+	public void startGame(Ruleset ruleset) throws IOException {
+		this.inGame = true;		// stop looking for clients.
+		this.ruleset = ruleset;
 	}
 
 	@Override
@@ -84,10 +119,20 @@ public class PartyHost implements Runnable, PropertyChangeListener {
 		// once game starts, stop accepting clients.
 		System.out.println("Looking for clients...");
 		while (!inGame) {
-			acceptClients();
+			while (!inGame && playerIdMap.size()<4) {
+				acceptClients();
+			}
 		}
+
 		// game has started, stop looking
 		// all future changes handled through ClientHandler objects' calls to property change
+
+		try {
+			startGame();
+		} catch (IOException e) {
+			// error in writing to client
+			throw new RuntimeException(e);
+		}
 
 	}
 
@@ -98,7 +143,6 @@ public class PartyHost implements Runnable, PropertyChangeListener {
 
 		Message message = (Message) evt.getNewValue();
 		HostReceiver handler = (HostReceiver) evt.getSource();
-		//ObjectOutputStream outputStream = outputStreamMap.get(handler);
 		boolean success = false;
 		while (!success) {
 			try {
@@ -118,6 +162,10 @@ public class PartyHost implements Runnable, PropertyChangeListener {
 					System.out.println("PlayTiles");
 					handlePlayTiles(handler, (PlayTiles) message);
 				}
+				else if(message instanceof NewPlayer){
+					System.out.println("NewPlayer");
+					handleNewPlayer(handler, (NewPlayer) message);
+				}
 				success = true;
 			} catch (IOException e) {
 				System.out.println("uhhhhh");
@@ -125,9 +173,57 @@ public class PartyHost implements Runnable, PropertyChangeListener {
 		}
 	}
 
+	public int getPlayerID(HostReceiver hr) {
+		return playerIdMap.get(hr);
+	}
+
 	/*********************************************************
-	 * 				Private Methods							 *
+	 * 					Private Methods						 *
 	 *********************************************************/
+
+	private void startGame() throws IOException {
+
+		// Make a starting rack for each player.
+		for (HostReceiver host: playerIdMap.keySet()){
+			playerTiles.put(host, (ArrayList<Tile>) Arrays.stream(tileBag.getNext(TILE_RACK_SIZE)).toList());
+		}
+
+		int[] randomNumbers = new int[playerIdMap.size()];
+		for (int i = 0; i < randomNumbers.length; i++) {
+			randomNumbers[i] = i;
+		}
+
+		//shuffle randomNumbers array so the player order is randomised
+		Random random = new Random();
+		for (int i = 0; i < randomNumbers.length;) {
+			int index = random.nextInt(randomNumbers.length);
+			int temp;
+			if (index != i) {
+				temp = randomNumbers[index];
+				randomNumbers[index] = randomNumbers[i];
+				randomNumbers[i] = temp;
+				++i;
+			}
+		}
+
+		int i = 0;
+		for (HostReceiver host: playerIdMap.keySet()){
+			playerIdMap.replace(host, randomNumbers[i]);
+			++i;
+		}
+
+		int j = 0;
+		int[] playerID = new int[playerIdMap.size()];
+		for (HostReceiver host: playerIdMap.keySet()) {
+			playerID[j] = playerIdMap.get(host);
+			++j;
+		}
+
+		for (HostReceiver host: playerIdMap.keySet()) {
+			StartGame startGameMessage = new StartGame(HOST_ID, playerIdMap.get(host), playerID, ruleset, playerTiles.get(host).toArray(new Tile[0]));
+			host.sendMessage(startGameMessage);
+		}
+	}
 
 	private void acceptClients() {
 		// look for clients. Socket may time out, returns out of method
@@ -136,21 +232,17 @@ public class PartyHost implements Runnable, PropertyChangeListener {
 			Socket client = server.accept();
 			System.out.println("New client added");
 
-
-			//clientSockets.add(client);
 			HostReceiver clientHandler = new HostReceiver(client, this);
-			//clientHandler.sendMessage(new NewTiles(-1, new Tile[] {
-					//new Tile('A', new Point(7, 7))
-			//}));
-			//this.outputStreamMap.put(clientHandler, outputStream);
 
 			// start the thread
 			Thread clientThread = new Thread(clientHandler);
-			listeners.add(clientThread);
 			clientThread.start();
+
+			//populate playerIdMap
+			playerIdMap.put(clientHandler, playerIdMap.size());
 		}
 		catch (SocketTimeoutException e) {
-			//System.out.println("\ttrying again..");
+			// This is fine. don't do anything.
 		}
 		catch (IOException e) {
 			throw new RuntimeException(e);
@@ -158,19 +250,8 @@ public class PartyHost implements Runnable, PropertyChangeListener {
 	}
 
 	/*
-	IMPLEMENTATION NOTES FOR handle_____ METHODS
-	often need to relay unchanged message to other clients.
-	This can be done by calling outputStreamMap.keys(), iterating
-	over the keys and sending to outputStream when key != source
-
-	In other cases, we need to send a different message to the source client, which
-	will require tileBag gets.
+	received playTiles message; relay to other clients, then send new tiles to sender
 	 */
-
-	/*
-	stubs
-	 */
-
 	private void handlePlayTiles(HostReceiver source, PlayTiles newValue) throws IOException {
 		for (HostReceiver host: playerIdMap.keySet()) {
 			if(!playerIdMap.get(host).equals(playerIdMap.get(source))) {
@@ -184,6 +265,9 @@ public class PartyHost implements Runnable, PropertyChangeListener {
 		source.sendMessage(message);
 	}
 
+	/*
+	received PassTurn message; relay.
+	 */
 	private void handlePassTurn(HostReceiver source, PassTurn newValue) throws IOException {
 		for (HostReceiver host: playerIdMap.keySet()) {
 			if(!playerIdMap.get(host).equals(playerIdMap.get(source))) {
@@ -193,6 +277,9 @@ public class PartyHost implements Runnable, PropertyChangeListener {
 		}
 	}
 
+	/*
+	received ExitParty message; relay and replace player's tiles into tile bag
+	 */
 	private void handleExitParty(HostReceiver source, ExitParty newValue) throws IOException {
 		for (HostReceiver host: playerIdMap.keySet()) {
 			if(!playerIdMap.get(host).equals(playerIdMap.get(source))) {
@@ -205,6 +292,10 @@ public class PartyHost implements Runnable, PropertyChangeListener {
 		source.halt();
 	}
 
+	/*
+	Exchange tiles message received. update this representation of player's rack,
+	then send new tiles to player
+	 */
 	private void handleExchangeTiles(HostReceiver source, ExchangeTiles newValue) throws IOException {
 		Tile[] exchangedTiles = newValue.getToExchange();
 		for(Tile oldTile: exchangedTiles) {
@@ -219,6 +310,17 @@ public class PartyHost implements Runnable, PropertyChangeListener {
 		source.sendMessage(newTilesMessage);
 
 	}
+
+	private void handleNewPlayer(HostReceiver source, NewPlayer message) throws IOException {
+		for (HostReceiver host: playerIdMap.keySet()) {
+			NewPlayer newPlayerMessage = new NewPlayer(HOST_ID, playerIdMap.get(host), message.getPlayerName());
+
+			if(!playerIdMap.get(host).equals(playerIdMap.get(source))){
+				host.sendMessage(newPlayerMessage);
+			}
+		}
+	}
+
 	/*
 	Leave for later.
 	is extension feature.

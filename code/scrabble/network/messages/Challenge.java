@@ -1,5 +1,8 @@
 package scrabble.network.messages;
 
+import scrabble.controller.Controller;
+import scrabble.network.host.PartyHost;
+
 import java.io.Serial;
 
 public class Challenge extends Message {
@@ -20,5 +23,14 @@ public class Challenge extends Message {
 
 	public int getChallengedPlayerID() {
 		return challengedPlayerID;
+	}
+
+	@Override
+	public void execute(Controller controller) {
+
+	}
+	@Override
+	public void execute(PartyHost partyHost) {
+
 	}
 }

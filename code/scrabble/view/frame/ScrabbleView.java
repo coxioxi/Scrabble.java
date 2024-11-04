@@ -50,7 +50,7 @@ public class ScrabbleView extends JFrame {
 	}
 
 	public static void main(String[] args) {
-		try {
+		/*try {
 			//UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
 			UIManager.setLookAndFeel("javax.swing.plaf.metal.MetalLookAndFeel");
 		} catch (UnsupportedLookAndFeelException ex) {
@@ -62,8 +62,13 @@ public class ScrabbleView extends JFrame {
 		} catch (ClassNotFoundException ex) {
 			ex.printStackTrace();
 		}
+		*/
+		try {
+			// Set the look and feel to the system's default
+			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+		} catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException ignore) {}
 		/* Turn off metal's use of bold fonts */
-		UIManager.put("swing.boldMetal", Boolean.FALSE);
+		//UIManager.put("swing.boldMetal", Boolean.FALSE);
 
 		new ScrabbleView();
 	}

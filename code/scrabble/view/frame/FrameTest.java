@@ -20,9 +20,14 @@ public class FrameTest extends JFrame {
             new Player("Sam", 4)});
 
     public FrameTest() {
+        try {
+            // Set the look and feel to the system's default
+            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException ignore) {}
     }
 
     private void setupFrame() {
+        this.setTitle("Scrabble");
         this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 
         this.setMinimumSize(new Dimension(250,150));
@@ -37,7 +42,9 @@ public class FrameTest extends JFrame {
     }
 
     public void showHost() {
-        this.add(host);
+        JPanel hostPanel = new JPanel(new FlowLayout());
+        hostPanel.add(host);
+        this.add(hostPanel);
         this.setupFrame();
     }
 
@@ -47,7 +54,10 @@ public class FrameTest extends JFrame {
     }
 
     public void showMain() {
-        this.add(mainMenu);
+        JPanel mainPanel = new JPanel(new FlowLayout());
+        mainPanel.setBorder(BorderFactory.createTitledBorder("Main Menu"));
+        mainPanel.add(mainMenu);
+        this.add(mainPanel);
         this.setupFrame();
     }
 
@@ -65,6 +75,10 @@ public class FrameTest extends JFrame {
         Scanner in = new Scanner(System.in);
         System.out.print("Enter screen to view: (game, host, join, main, waiting, winner) ");
         String screen = in.next();
+        try {
+            // Set the look and feel to the system's default
+            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException ignore) {}
         if (screen.equalsIgnoreCase("game")) {
             new FrameTest().showGame();
         } else if (screen.equalsIgnoreCase("host")) {

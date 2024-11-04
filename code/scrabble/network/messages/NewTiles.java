@@ -1,6 +1,8 @@
 package scrabble.network.messages;
 
+import scrabble.controller.Controller;
 import scrabble.model.Tile;
+import scrabble.network.host.PartyHost;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -21,17 +23,13 @@ public class NewTiles extends Message {
 		return tiles;
 	}
 
-	@Serial
-	private void readObject(ObjectInputStream in)
-			throws IOException, ClassNotFoundException {
-		in.defaultReadObject();
-		tiles = readTile(in);
+	@Override
+	public void execute(Controller controller) {
+		controller.getModel().addTiles(tiles);
 	}
 
-	@Serial
-	private void writeObject(ObjectOutputStream out)
-			throws IOException {
-		out.defaultWriteObject();
-		writeTiles(out, tiles);
+	@Override
+	public void execute(PartyHost partyHost) {
+
 	}
 }
