@@ -1,4 +1,5 @@
 package scrabble.view.frame;
+import scrabble.model.Player;
 import scrabble.view.panel.*;
 
 import javax.swing.*;
@@ -37,7 +38,6 @@ public class ScrabbleGUI extends JFrame{
 		frame.showGame();
 		Thread.sleep(10000);
 		frame.showHost();
-
 	}
 
 	public ScrabbleGUI() {
@@ -61,6 +61,11 @@ public class ScrabbleGUI extends JFrame{
 
 		setupFrame();
 	}
+
+	/*
+	getters
+	 */
+
 
 	public CardLayout getLayoutManager() {
 		return layoutManager;
@@ -99,6 +104,10 @@ public class ScrabbleGUI extends JFrame{
 		return panels;
 	}
 
+	/*
+	setters: change shown panel
+	 */
+
 	public void show(String screen) {
 		layoutManager.show(contentPane, screen);
 	}
@@ -127,6 +136,18 @@ public class ScrabbleGUI extends JFrame{
 
 	public void showWinner() {
 		layoutManager.show(this.contentPane, PODIUM);
+	}
+
+	/*
+	use this to set up the winner screen with the correct information.
+	resets the original temp variable used.
+	need to call showWinner or show(PODIUM) to display.
+	 */
+	public void setupPodium(Player[] players) {
+		layoutManager.removeLayoutComponent(winner);
+		winner = new WinnerScreen(players);
+		layoutManager.addLayoutComponent(winner, PODIUM);
+		panels[panels.length-1] = winner;
 	}
 
 	// minimum size, title, close op, pack, center in screen, show.
