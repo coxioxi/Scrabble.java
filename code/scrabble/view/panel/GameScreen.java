@@ -197,7 +197,11 @@ public class GameScreen extends JPanel {
 									rack[k].setText(boardTile.getText());
 									char tile = boardTile.getText().charAt(0);
 									Point point = new Point(row, col);
-									playedTiles.remove(new Tile(tile, point));
+
+									if(!boardTile.getText().equals(" "))
+										playedTiles.remove(new Tile(tile, point));
+
+									//add the value of the special cell back to the board cell if the player puts tiles back on the rack
 									if(value.equals(" ")){
 										Color color = boardTile.getBackground();
 										if (color.equals(doubleWord)) {
@@ -248,6 +252,7 @@ public class GameScreen extends JPanel {
 		submitButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				System.out.println(Arrays.toString(playedTiles.toArray(new Tile[0])));
 				PlayTiles playTiles = new PlayTiles(0,0,playedTiles.toArray(new Tile[0]));
 				//playTiles.execute(this.controller);
 			}
