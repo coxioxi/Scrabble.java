@@ -1,5 +1,6 @@
 package scrabble.view.panel;
 
+import scrabble.controller.Controller;
 import scrabble.model.Board;
 import scrabble.model.ModifierType;
 import scrabble.model.Tile;
@@ -21,6 +22,11 @@ public class GameScreen extends JPanel {
 	private JButton[] rack;
 	private JButton submitButton;
 	private Board board = new Board();
+
+	public List<Tile> getPlayedTiles() {
+		return playedTiles;
+	}
+
 	public List<Tile> playedTiles = new ArrayList<>();
 	private String value = " ";
 	private final Color doubleWord = new Color(255, 102, 102);
@@ -234,6 +240,7 @@ public class GameScreen extends JPanel {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				PlayTiles playTiles = new PlayTiles(0,0,playedTiles.toArray(new Tile[0]));
+				//playTiles.execute(this.controller);
 			}
 		});
 	}
