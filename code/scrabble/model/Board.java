@@ -17,14 +17,18 @@ import java.util.*;
  * in the future. Note that scrabble.model.Board does not check the validity of words, only their values.
  */
 public class Board {
-    private Tile[][] board;  // where scrabble.model.Tile objects are placed
-    private Map<Point,ModifierType> boardSpecialCell;   // map of modifier cells
+	/**
+	 * A map of {@link ModifierType modifier cells} accessible by {@link Point}.
+	 * Calling this.get(Point) returns the type of modifier cell at that point.
+	 * Note that a null value should be treated as a non-modifier cell.
+	 */
+	public static final Map<Point,ModifierType> MODIFIER_HASH_MAP = initializeModifierCells();
+	// Constants for the number of rows and columns on the Scrabble board
+	public static final int BOARD_ROWS = 15;
+	public static final int BOARD_COLUMNS = 15;
+
+	private Tile[][] board;  // where Tile objects are placed
     private ArrayList<String> lastWordsPlayed = new ArrayList<>();   // the words which have most recently been played
-
-
-    // Constants for the number of rows and columns on the Scrabble board
-    public static final int BOARD_ROWS = 15;
-    public static final int BOARD_COLUMNS = 15;
 
     public static void main(String[] args) {
         /*
@@ -134,17 +138,15 @@ public class Board {
     }
 
     /**
-     * Constructs a new scrabble.model.Board object
+     * Constructs a new Board object.
      */
     public Board() {
-        initializeModifierCells();		// set up boardSpecialCell map with appropriate
-										// modifier values
         board = new Tile[BOARD_ROWS][BOARD_COLUMNS];
     }
 
     /**
      * getter for lastWordsPlayed, the list of words added to the
-	 * board on the previous call to playTiles()
+	 * board on the previous call to {@link #playTiles}
      * @return an array list of most recent words
      */
     public ArrayList<String> getLastWordsPlayed() {
@@ -161,10 +163,10 @@ public class Board {
     }
 
     /**
-     * Returns tiles inside of given x and y locations
+     * Returns the tile object played on a given x and y.
      * @param x row index
      * @param y column index
-     * @return the tile at the specified (x, y) position
+     * @return the tile at the specified (x, y) position. Null if none has been played here.
      */
     public Tile getTile(int x, int y){
         return board[x][y];
@@ -172,9 +174,9 @@ public class Board {
 
 	/**
 	 * Removes the specified tiles from the board.
-	 * All tiles in parameter tiles must have been placed on the board already
-	 * @param tiles the tiles to remove from the board
-	 * @throws NullPointerException when not all tiles have already been placed
+	 * All tiles in parameter tiles must have been placed on the board already.
+	 * @param tiles the tiles to remove from the board. Each tile must have a location specified
+	 * @throws NullPointerException when not all specified tiles have already been placed
 	 * 								on the board
 	 */
 	public void removeTiles(Tile[] tiles)
@@ -202,23 +204,44 @@ public class Board {
 		return hasAdjacentTile(t);
 	}
 
+	/**
+	 * Gets a reference to {@link #MODIFIER_HASH_MAP}
+	 * @return the map of Points and ModifierTypes.
+	 * @see ModifierType ModifierType
+	 */
+    public Map<Point, ModifierType> getBoardSpecialCell(){
+           return MODIFIER_HASH_MAP;
+    }
+
     /**
-     * This method places tiles at positions on the board and returns the score of
-     * the play made
+	 * Validates position of tiles, scores the word(s) made, and adds the tiles to the board.
+	 * <p>
+	 *     Parameter tiles must conform to the following requirements:
+	 *     <ul>
+	 *         <li>One tile in tiles must either: <ul>
+	 *             <li>be adjacent to an already placed tile, or</li>
+	 *             <li>be placed at the starting tile (7, 7).</li>
+	 *         </ul></li>
+	 *         <li>Each {@link Tile#getLocation tile point} must correspond to an empty
+	 *         position on the board. That is, no tile has been placed at this point.</li>
+	 *         <li>Each tile point must be within the board bounds (x,y in {0,1,...,14}).</li>
+	 *         <li>All tiles must have either the same x/row or y/column value.</li>
+	 *         <li>Each tile location must be unique. That is, no two tiles in parameter
+	 *         tiles may have the same x and y values.</li>
+	 *         <li>All tiles must be connected. That is, either a tile in tiles is
+	 *         adjacent to another tile in tiles, or it is adjacent to a board tile
+	 *         which is adjacent to a tile in tiles. In other words, there may be no
+	 *         empty spaces in a word played.</li>
+	 *     </ul>
+	 *     If any of these conditions is not met, a negative number will be returned.
+	 * </p>
      *
      * @param tiles the tiles which are being placed on the board
      *               Note the array may not be empty, but arrays of size 1 are allowed.
-     * @return the score of the word(s) played as an integer
-	 * 			-1 if position is fails to meet following conditions:
-	 * 					At least one tile must be adjacent to some other
-	 * 					previously placed tile, or
-     *                  one of the tiles must be at the starting tile (7,7).
-     *                  No tile may be placed on an already occupied cell
-	 *                  All tiles must be within the bounds of the board
-	 *                  All tiles must have the same row (x) or column (y)
-	 *                  All tiles must have differing points (no duplicates)
-	 *                  All tiles must be adjacent to each other, or must have board tiles
-	 *                  	in between them.
+     * @return the score of the word(s) played as an integer. A negative number is
+	 * returned if the play is invalid (see above). Note that a score of 0 is possible.
+	 * There is no known limit to a scrabble score, though the highest calculated is in
+	 * the lower 1000's.
      */
     public int playTiles(Tile[] tiles) {
         if (!validatePositions(tiles))
@@ -236,7 +259,7 @@ public class Board {
      * or, simply "__" is shown when neither condition is met.
      * each cell is padded with spaces in the String. A newline is
      * added to the end of board rows.
-     * {@code @returns} a String representation, with formatting as stated above
+     * @returns a String representation, with formatting as stated above
 	 */
     public String toString() {
         // String representation of the board
@@ -246,7 +269,7 @@ public class Board {
                 if (board[i][j] == null) {
 
                     // Get modifier for special cells like Double Word, Triple Word, etc.
-                    ModifierType mt = boardSpecialCell.get(new Point(i, j));
+                    ModifierType mt = MODIFIER_HASH_MAP.get(new Point(i, j));
                     if (mt == ModifierType.DOUBLE_WORD)
                         sb.append(" DW ");
                     else if (mt == ModifierType.TRIPLE_WORD)
@@ -282,6 +305,81 @@ public class Board {
 			board[(int) tile.getLocation().getX()][(int) tile.getLocation().getY()] = tile;
     }
 
+	/*
+	this method sets up the boardSpecialCell field with all the correct placements
+	for modifier cells using Point objects and scrabble.model.ModifierType enumerations.
+	*/
+	private static HashMap<Point, ModifierType> initializeModifierCells() {
+		HashMap<Point, ModifierType> cells = new HashMap<>();
+		cells.put(new Point(0,0), ModifierType.TRIPLE_WORD);
+		cells.put(new Point(3,0), ModifierType.DOUBLE_LETTER);
+		cells.put(new Point(7,0), ModifierType.TRIPLE_WORD);
+		cells.put(new Point(11,0), ModifierType.DOUBLE_LETTER);
+		cells.put(new Point(14,0), ModifierType.TRIPLE_WORD);
+		cells.put(new Point(1,1), ModifierType.DOUBLE_WORD);
+		cells.put(new Point(5,1), ModifierType.TRIPLE_LETTER);
+		cells.put(new Point(9,1), ModifierType.TRIPLE_LETTER);
+		cells.put(new Point(13,1), ModifierType.DOUBLE_WORD);
+		cells.put(new Point(2,2), ModifierType.DOUBLE_WORD);
+		cells.put(new Point(6,2), ModifierType.DOUBLE_LETTER);
+		cells.put(new Point(8,2), ModifierType.DOUBLE_LETTER);
+		cells.put(new Point(12,2), ModifierType.DOUBLE_WORD);
+		cells.put(new Point(0,3), ModifierType.DOUBLE_LETTER);
+		cells.put(new Point(3,3), ModifierType.DOUBLE_WORD);
+		cells.put(new Point(7,3), ModifierType.DOUBLE_LETTER);
+		cells.put(new Point(11,3), ModifierType.DOUBLE_WORD);
+		cells.put(new Point(14,3), ModifierType.DOUBLE_LETTER);
+		cells.put(new Point(4,4), ModifierType.DOUBLE_WORD);
+		cells.put(new Point(10,4), ModifierType.DOUBLE_WORD);
+		cells.put(new Point(1,5), ModifierType.TRIPLE_LETTER);
+		cells.put(new Point(5,5), ModifierType.TRIPLE_LETTER);
+		cells.put(new Point(9,5), ModifierType.TRIPLE_LETTER);
+		cells.put(new Point(13,5), ModifierType.TRIPLE_LETTER);
+		cells.put(new Point(2,6), ModifierType.DOUBLE_LETTER);
+		cells.put(new Point(6,6), ModifierType.DOUBLE_LETTER);
+		cells.put(new Point(8,6), ModifierType.DOUBLE_LETTER);
+		cells.put(new Point(12,6), ModifierType.DOUBLE_LETTER);
+		cells.put(new Point(0,7), ModifierType.TRIPLE_WORD);
+		cells.put(new Point(3,7), ModifierType.DOUBLE_LETTER);
+		cells.put(new Point(7,7), ModifierType.DOUBLE_WORD);
+		cells.put(new Point(11,7), ModifierType.DOUBLE_LETTER);
+		cells.put(new Point(14,7), ModifierType.TRIPLE_WORD);
+
+		cells.put(new Point(0,14), ModifierType.TRIPLE_WORD);
+		cells.put(new Point(3,14), ModifierType.DOUBLE_LETTER);
+		cells.put(new Point(7,14), ModifierType.TRIPLE_WORD);
+		cells.put(new Point(11,14), ModifierType.DOUBLE_LETTER);
+		cells.put(new Point(14,14), ModifierType.TRIPLE_WORD);
+		cells.put(new Point(1,13), ModifierType.DOUBLE_WORD);
+		cells.put(new Point(5,13), ModifierType.TRIPLE_LETTER);
+		cells.put(new Point(9,13), ModifierType.TRIPLE_LETTER);
+		cells.put(new Point(13,13), ModifierType.DOUBLE_WORD);
+		cells.put(new Point(2,12), ModifierType.DOUBLE_WORD);
+		cells.put(new Point(6,12), ModifierType.DOUBLE_LETTER);
+		cells.put(new Point(8,12), ModifierType.DOUBLE_LETTER);
+		cells.put(new Point(12,12), ModifierType.DOUBLE_WORD);
+		cells.put(new Point(0,11), ModifierType.DOUBLE_LETTER);
+		cells.put(new Point(3,11), ModifierType.DOUBLE_WORD);
+		cells.put(new Point(7,11), ModifierType.DOUBLE_LETTER);
+		cells.put(new Point(11,11), ModifierType.DOUBLE_WORD);
+		cells.put(new Point(14,11), ModifierType.DOUBLE_LETTER);
+		cells.put(new Point(4,10), ModifierType.DOUBLE_WORD);
+		cells.put(new Point(10,10), ModifierType.DOUBLE_WORD);
+		cells.put(new Point(1,9), ModifierType.TRIPLE_LETTER);
+		cells.put(new Point(5,9), ModifierType.TRIPLE_LETTER);
+		cells.put(new Point(9,9), ModifierType.TRIPLE_LETTER);
+		cells.put(new Point(13,9), ModifierType.TRIPLE_LETTER);
+		cells.put(new Point(2,8), ModifierType.DOUBLE_LETTER);
+		cells.put(new Point(6,8), ModifierType.DOUBLE_LETTER);
+		cells.put(new Point(8,8), ModifierType.DOUBLE_LETTER);
+		cells.put(new Point(12,8), ModifierType.DOUBLE_LETTER);
+		return cells;
+	}
+
+
+	/*
+	All remaining helper methods pertain to score.
+	 */
 
     /*
         helper method; calculates the score of tiles played with words and modifier cells.
@@ -372,10 +470,10 @@ public class Board {
 				topMostTile--;
 			}
 
-			System.out.println("Horizontal collateral. topmost for tile " +
-					tile.getLocation().x + ", " + tile.getLocation().y +
-					" is location " + topMostTile + " with value " +
-					(board[topMostTile][y] == null ? "none" : board[topMostTile][y].getLetter()));
+//			System.out.println("Horizontal collateral. topmost for tile " +
+//					tile.getLocation().x + ", " + tile.getLocation().y +
+//					" is location " + topMostTile + " with value " +
+//					(board[topMostTile][y] == null ? "none" : board[topMostTile][y].getLetter()));
 
 			// move down from topmost, accumulating score.
 			// only stop when no letters below current tile
@@ -387,7 +485,7 @@ public class Board {
 					currentWordScore += boardTile.getScore();
 					currentWord.append(boardTile.getLetter());
 				} else {                          // if topMost is tile to be placed
-					ModifierType cellMod = boardSpecialCell.get(placement);
+					ModifierType cellMod = MODIFIER_HASH_MAP.get(placement);
 					int letterMultiplier = 1;
 					if (cellMod == ModifierType.DOUBLE_LETTER) {
 						letterMultiplier *= 2;
@@ -489,7 +587,7 @@ public class Board {
 
             // Handle modifiers on current tile's cell, add tile value to counter
             // Add letter to string at end
-            ModifierType cellMod = boardSpecialCell.get(placement);
+            ModifierType cellMod = MODIFIER_HASH_MAP.get(placement);
             int letterMultiplier = 1;
             if (cellMod == ModifierType.DOUBLE_LETTER) {
                 letterMultiplier *= 2;
@@ -518,6 +616,9 @@ public class Board {
 
         // final scoring for the main word...
         mainWordScore *= wordMultiplier;
+		if (tiles.length == 7) {
+			mainWordScore += 50;
+		}
 
         // add this main word to string list
         ArrayList<String> words = new ArrayList<>();
@@ -571,10 +672,10 @@ public class Board {
 				leftMostTile--;
 			}
 
-			System.out.println("Vertical collateral. leftmost for tile " +
-					tile.getLocation().x + ", " + tile.getLocation().y +
-					" is location " + leftMostTile + " with value " +
-					(board[x][leftMostTile] == null ? "none" : board[x][leftMostTile].getLetter()));
+//			System.out.println("Vertical collateral. leftmost for tile " +
+//					tile.getLocation().x + ", " + tile.getLocation().y +
+//					" is location " + leftMostTile + " with value " +
+//					(board[x][leftMostTile] == null ? "none" : board[x][leftMostTile].getLetter()));
 			// move right from leftmost, accumulating score.
 			// only stop when no letters to right of current
 			int currentWordScore = 0;
@@ -585,7 +686,7 @@ public class Board {
 					currentWordScore += boardTile.getScore();
 					currentWord.append(boardTile.getLetter());
 				} else {                          // if leftMost is tile to be placed
-					ModifierType cellMod = boardSpecialCell.get(placement);
+					ModifierType cellMod = MODIFIER_HASH_MAP.get(placement);
 					int letterMultiplier = 1;
 					if (cellMod == ModifierType.DOUBLE_LETTER) {
 						letterMultiplier *= 2;
@@ -690,8 +791,8 @@ public class Board {
 
             // Handle modifiers on current tile's cell, add tile value to counter
             // Add letter to string at end
-            ModifierType cellMod = boardSpecialCell.get(placement);
-            System.out.println(cellMod);
+            ModifierType cellMod = MODIFIER_HASH_MAP.get(placement);
+            //System.out.println(cellMod);
             int letterMultiplier = 1;
             if (cellMod == ModifierType.DOUBLE_LETTER) {
                 letterMultiplier *= 2;
@@ -719,8 +820,11 @@ public class Board {
         }
 
         // final scoring for the main word...
-        System.out.println("Word multiplier: " + wordMultiplier);
+        //System.out.println("Word multiplier: " + wordMultiplier);
         mainWordScore *= wordMultiplier;
+		if (tiles.length == 7) {
+			mainWordScore += 50;
+		}
 
         // add this main word to string list
         ArrayList<String> words = new ArrayList<>();
@@ -982,75 +1086,4 @@ public class Board {
 		}
 		return hasSameX;
 	}
-
-    /*
-    this method sets up the boardSpecialCell field with all the correct placements
-    for modifier cells using Point objects and scrabble.model.ModifierType enumerations.
-    */
-    private void initializeModifierCells() {
-        boardSpecialCell = new HashMap<>();
-        boardSpecialCell.put(new Point(0,0), ModifierType.TRIPLE_WORD);
-        boardSpecialCell.put(new Point(3,0), ModifierType.DOUBLE_LETTER);
-        boardSpecialCell.put(new Point(7,0), ModifierType.TRIPLE_WORD);
-        boardSpecialCell.put(new Point(11,0), ModifierType.DOUBLE_LETTER);
-        boardSpecialCell.put(new Point(14,0), ModifierType.TRIPLE_WORD);
-        boardSpecialCell.put(new Point(1,1), ModifierType.DOUBLE_WORD);
-        boardSpecialCell.put(new Point(5,1), ModifierType.TRIPLE_LETTER);
-        boardSpecialCell.put(new Point(9,1), ModifierType.TRIPLE_LETTER);
-        boardSpecialCell.put(new Point(13,1), ModifierType.DOUBLE_WORD);
-        boardSpecialCell.put(new Point(2,2), ModifierType.DOUBLE_WORD);
-        boardSpecialCell.put(new Point(6,2), ModifierType.DOUBLE_LETTER);
-        boardSpecialCell.put(new Point(8,2), ModifierType.DOUBLE_LETTER);
-        boardSpecialCell.put(new Point(12,2), ModifierType.DOUBLE_WORD);
-        boardSpecialCell.put(new Point(0,3), ModifierType.DOUBLE_LETTER);
-        boardSpecialCell.put(new Point(3,3), ModifierType.DOUBLE_WORD);
-        boardSpecialCell.put(new Point(7,3), ModifierType.DOUBLE_LETTER);
-        boardSpecialCell.put(new Point(11,3), ModifierType.DOUBLE_WORD);
-        boardSpecialCell.put(new Point(14,3), ModifierType.DOUBLE_LETTER);
-        boardSpecialCell.put(new Point(4,4), ModifierType.DOUBLE_WORD);
-        boardSpecialCell.put(new Point(10,4), ModifierType.DOUBLE_WORD);
-        boardSpecialCell.put(new Point(1,5), ModifierType.TRIPLE_LETTER);
-        boardSpecialCell.put(new Point(5,5), ModifierType.TRIPLE_LETTER);
-        boardSpecialCell.put(new Point(9,5), ModifierType.TRIPLE_LETTER);
-        boardSpecialCell.put(new Point(13,5), ModifierType.TRIPLE_LETTER);
-        boardSpecialCell.put(new Point(2,6), ModifierType.DOUBLE_LETTER);
-        boardSpecialCell.put(new Point(6,6), ModifierType.DOUBLE_LETTER);
-        boardSpecialCell.put(new Point(8,6), ModifierType.DOUBLE_LETTER);
-        boardSpecialCell.put(new Point(12,6), ModifierType.DOUBLE_LETTER);
-        boardSpecialCell.put(new Point(0,7), ModifierType.TRIPLE_WORD);
-        boardSpecialCell.put(new Point(3,7), ModifierType.DOUBLE_LETTER);
-        boardSpecialCell.put(new Point(7,7), ModifierType.DOUBLE_WORD);
-        boardSpecialCell.put(new Point(11,7), ModifierType.DOUBLE_LETTER);
-        boardSpecialCell.put(new Point(14,7), ModifierType.TRIPLE_WORD);
-
-        boardSpecialCell.put(new Point(0,14), ModifierType.TRIPLE_WORD);
-        boardSpecialCell.put(new Point(3,14), ModifierType.DOUBLE_LETTER);
-        boardSpecialCell.put(new Point(7,14), ModifierType.TRIPLE_WORD);
-        boardSpecialCell.put(new Point(11,14), ModifierType.DOUBLE_LETTER);
-        boardSpecialCell.put(new Point(14,14), ModifierType.TRIPLE_WORD);
-        boardSpecialCell.put(new Point(1,13), ModifierType.DOUBLE_WORD);
-        boardSpecialCell.put(new Point(5,13), ModifierType.TRIPLE_LETTER);
-        boardSpecialCell.put(new Point(9,13), ModifierType.TRIPLE_LETTER);
-        boardSpecialCell.put(new Point(13,13), ModifierType.DOUBLE_WORD);
-        boardSpecialCell.put(new Point(2,12), ModifierType.DOUBLE_WORD);
-        boardSpecialCell.put(new Point(6,12), ModifierType.DOUBLE_LETTER);
-        boardSpecialCell.put(new Point(8,12), ModifierType.DOUBLE_LETTER);
-        boardSpecialCell.put(new Point(12,12), ModifierType.DOUBLE_WORD);
-        boardSpecialCell.put(new Point(0,11), ModifierType.DOUBLE_LETTER);
-        boardSpecialCell.put(new Point(3,11), ModifierType.DOUBLE_WORD);
-        boardSpecialCell.put(new Point(7,11), ModifierType.DOUBLE_LETTER);
-        boardSpecialCell.put(new Point(11,11), ModifierType.DOUBLE_WORD);
-        boardSpecialCell.put(new Point(14,11), ModifierType.DOUBLE_LETTER);
-        boardSpecialCell.put(new Point(4,10), ModifierType.DOUBLE_WORD);
-        boardSpecialCell.put(new Point(10,10), ModifierType.DOUBLE_WORD);
-        boardSpecialCell.put(new Point(1,9), ModifierType.TRIPLE_LETTER);
-        boardSpecialCell.put(new Point(5,9), ModifierType.TRIPLE_LETTER);
-        boardSpecialCell.put(new Point(9,9), ModifierType.TRIPLE_LETTER);
-        boardSpecialCell.put(new Point(13,8), ModifierType.TRIPLE_LETTER);
-        boardSpecialCell.put(new Point(2,8), ModifierType.DOUBLE_LETTER);
-        boardSpecialCell.put(new Point(6,8), ModifierType.DOUBLE_LETTER);
-        boardSpecialCell.put(new Point(8,8), ModifierType.DOUBLE_LETTER);
-        boardSpecialCell.put(new Point(12,8), ModifierType.DOUBLE_LETTER);
-    }
-
 }
