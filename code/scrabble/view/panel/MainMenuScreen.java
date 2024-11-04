@@ -25,10 +25,9 @@ public class MainMenuScreen extends JPanel {
      * Constructor for MainMenuScreen. Initializes the layout, buttons, and checkboxes.
      */
     public MainMenuScreen() {
+        this.setLayout(new FlowLayout());
+        this.setBorder(BorderFactory.createTitledBorder("Main Menu"));
 
-        // Panel setup for the menu layout
-//        JPanel mainPanel = new JPanel(new FlowLayout());
-//        mainPanel.setBorder(BorderFactory.createTitledBorder("Main Menu"));
         JPanel menuFrame = new JPanel(new GridLayout(5,1, 0,15));
 
         // Main Menu buttons and checkboxes

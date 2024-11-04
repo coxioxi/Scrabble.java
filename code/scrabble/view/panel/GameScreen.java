@@ -1,5 +1,6 @@
 package scrabble.view.panel;
 
+import scrabble.controller.Controller;
 import scrabble.model.Board;
 import scrabble.model.ModifierType;
 import scrabble.model.Tile;
@@ -23,6 +24,11 @@ public class GameScreen extends JPanel {
 	private JButton[] rack;
 	private JButton submitButton;
 	private Board board = new Board();
+
+	public List<Tile> getPlayedTiles() {
+		return playedTiles;
+	}
+
 	public List<Tile> playedTiles = new ArrayList<>();
 	private String value = " ";
 	private final Color doubleWord = new Color(255, 102, 102);
@@ -31,6 +37,16 @@ public class GameScreen extends JPanel {
 	private final Color tripleLetter = new Color(0, 41, 255);
 	private final Color normalCell = new Color(255, 255, 255);
 	private final static int GAP = 175;
+
+	public void setValue(String value) {
+		this.value = value;
+	}
+
+	public String getValue() {
+		return value;
+	}
+
+	public final static Color normalCell = new Color(255, 255, 255);
 
 	public GameScreen() {
 		this.setLayout(new BorderLayout());
@@ -184,7 +200,11 @@ public class GameScreen extends JPanel {
 									rack[k].setText(boardTile.getText());
 									char tile = boardTile.getText().charAt(0);
 									Point point = new Point(row, col);
-									playedTiles.remove(new Tile(tile, point));
+
+									if(!boardTile.getText().equals(" "))
+										playedTiles.remove(new Tile(tile, point));
+
+									//add the value of the special cell back to the board cell if the player puts tiles back on the rack
 									if(value.equals(" ")){
 										Color color = boardTile.getBackground();
 										if (color.equals(doubleWord)) {
@@ -235,7 +255,9 @@ public class GameScreen extends JPanel {
 		submitButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				System.out.println(Arrays.toString(playedTiles.toArray(new Tile[0])));
 				PlayTiles playTiles = new PlayTiles(0,0,playedTiles.toArray(new Tile[0]));
+				//playTiles.execute(this.controller);
 			}
 		});
 	}

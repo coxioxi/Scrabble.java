@@ -134,9 +134,7 @@ public class Tile implements Serializable {
     }
 
     @Override
-    public boolean equals(Object o){
-        return this.toString().equals(o.toString());
-    }
+    public boolean equals(Object obj) {return this.toString().equals(obj.toString());}
 
     @Override
     public String toString() {

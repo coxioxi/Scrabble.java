@@ -6,6 +6,7 @@ import java.awt.*;
 import scrabble.model.Player;
 import scrabble.view.panel.*;
 
+@Deprecated
 public class ScrabbleView extends JFrame {
 
 	private CardLayout layoutManager;
