@@ -130,9 +130,9 @@ public class GameScreen extends JPanel {
 		this.add(eastPanel, BorderLayout.EAST);
 		this.add(southPanel, BorderLayout.SOUTH);
 
-		boardTilesActionListener();
-		rackTilesActionListener();
-		submitActionListener();
+//		boardTilesActionListener();
+//		rackTilesActionListener();
+//		submitActionListener();
 	}
 
 	private static JComboBox<String> getStringJComboBox() {
