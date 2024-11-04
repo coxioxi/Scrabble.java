@@ -4,7 +4,9 @@ import scrabble.controller.Controller;
 import scrabble.model.Board;
 import scrabble.model.ModifierType;
 import scrabble.model.Tile;
+import scrabble.model.TileScore;
 import scrabble.network.messages.PlayTiles;
+import scrabble.view.frame.TileButton;
 
 import javax.swing.*;
 import java.awt.*;
@@ -29,10 +31,12 @@ public class GameScreen extends JPanel {
 
 	public List<Tile> playedTiles = new ArrayList<>();
 	private String value = " ";
-	public final static Color doubleWord = new Color(255, 102, 102);
-	public final static Color tripleWord = new Color(255, 0, 0);
-	public final static Color doubleLetter = new Color(88, 117, 255);
-	public final static Color tripleLetter = new Color(0, 41, 255);
+	private final Color doubleWord = new Color(255, 102, 102);
+	private final Color tripleWord = new Color(255, 0, 0);
+	private final Color doubleLetter = new Color(88, 117, 255);
+	private final Color tripleLetter = new Color(0, 41, 255);
+	private final Color normalCell = new Color(255, 255, 255);
+	private final static int GAP = 175;
 
 	public void setValue(String value) {
 		this.value = value;
@@ -91,8 +95,8 @@ public class GameScreen extends JPanel {
 		}
 		centerPanel.add(gamePanel);
 
-		JPanel eastPanel = new JPanel(new GridLayout(2,1,0,175));
-		JPanel westPanel = new JPanel(new GridLayout(2,1,0,175));
+		JPanel eastPanel = new JPanel(new GridLayout(2,1,0,GAP));
+		JPanel westPanel = new JPanel(new GridLayout(2,1,0,GAP));
 
 		JPanel player1Panel = setupPlayerPanel();
 		JPanel player2Panel = setupPlayerPanel();
@@ -111,10 +115,9 @@ public class GameScreen extends JPanel {
 		JPanel rackPanel = new JPanel(new GridLayout(1,7,10,0));
 		rack = new JButton[7];
 		for (int i = 0; i < 7; i++) {
-			JButton rackTile = new JButton((char)('A'+i)+"");
-			rack[i] = rackTile;
+			rack[i] = new TileButton(TileScore.values()[i]);
 			//rackTile.setBorder(BorderFactory.createEtchedBorder());
-			rackPanel.add(rackTile);
+			rackPanel.add(rack[i]);
 		}
 		submitAndRack.add(submitButton);
 		submitAndRack.add(rackPanel);
