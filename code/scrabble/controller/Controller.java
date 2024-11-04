@@ -11,6 +11,7 @@ import scrabble.network.networkPrototype.PartyHost;
 import scrabble.view.frame.GameFrame;
 import scrabble.view.frame.ScrabbleGUI;
 import scrabble.view.frame.ScrabbleView;
+import scrabble.view.frame.TileButton;
 import scrabble.view.panel.GameScreen;
 
 import javax.swing.*;
@@ -95,18 +96,24 @@ public class Controller implements PropertyChangeListener  {
 			JButton rackTile = gameScreen.getRack()[i];
 			int finalI = i;
 			rackTile.addActionListener(e -> {
+				System.out.println("In rack tile listener");
 				JButton[] rack = gameScreen.getRack();
-				String value = gameScreen.getValue();
-				if(!value.equals(" ")){
+				JButton value = gameScreen.getValue();
+				if(value instanceof TileButton){
+					System.out.println("Has been selected");
 					for (int j = 0; j < 7; j++){
-						if(rack[j].getText().equals(" ")){
-							rack[j].setText(value);
+						if(!(rack[j] instanceof TileButton)){
+							rack[j] = value;
 							break;
 						}
 					}
 				}
-				gameScreen.setValue(rackTile.getText());
-				rack[finalI].setText(" ");
+				gameScreen.setValue(rackTile);
+				System.out.println(gameScreen.getValue());
+				rack[finalI] = new JButton(" ");
+				System.out.println(rack[finalI] instanceof TileButton);
+//				rack[finalI].repaint();
+				System.out.println("Exit");
 			});
 		}
 	}
@@ -118,9 +125,57 @@ public class Controller implements PropertyChangeListener  {
 
 				int row = i;
 				int col = j;
+				// we have clicked a board tile...
 				boardTile.addActionListener(new ActionListener() {
 					@Override
 					public void actionPerformed(ActionEvent e) {
+						System.out.println("Board listener");
+						JButton boardTile = gameScreen.getGameCells()[row][col];
+						if (gameScreen.getValue() instanceof TileButton) {
+							// we have selected a Rack Tile.
+							removeTileButtonFromBoard(boardTile);
+							// put the new tile on the board
+							gameScreen.getGameCells()[row][col] = gameScreen.getValue();
+							gameScreen.getPlayedTiles().add(
+									new Tile(gameScreen.getValue().getText().charAt(0), new Point(row, col))
+							);
+							gameScreen.setValue(new JButton(" "));
+						}
+						else {
+							// no TileButton stored in value; remove from board if present
+							if (boardTile instanceof TileButton) {
+								removeTileButtonFromBoard(boardTile);
+								Color color = boardTile.getBackground();
+								if (color.equals(doubleWord)) {
+									boardTile.setText("DW");
+								} else if (color.equals(doubleLetter)) {
+									boardTile.setText("DL");
+								} else if (color.equals(tripleWord)) {
+									boardTile.setText("TW");
+								} else if (color.equals(tripleLetter))
+									boardTile.setText("TL");
+								else
+									boardTile.setText(" ");
+							}
+						}
+						System.out.println("Exit");
+					}
+
+					private void removeTileButtonFromBoard(JButton boardTile) {
+						if (boardTile instanceof TileButton) {
+							// taking tile off the board, put on rack.
+							for (int k = 0; k < 7; k++) {
+								if (!(gameScreen.getRack()[k] instanceof TileButton)) {
+									gameScreen.getRack()[k] = boardTile;
+									gameScreen.getPlayedTiles().remove(
+											new Tile(boardTile.getText().charAt(0), new Point(row, col))
+									);
+									break;
+								}
+							}
+						}
+					}
+					/*public void actionPerformed(ActionEvent e) {
 						List<String> modType = new ArrayList<>(Arrays.asList("DW", "TW", "DL", "TL"));
 
 						//adding tiles from the rack to the board
@@ -171,6 +226,7 @@ public class Controller implements PropertyChangeListener  {
 							}
 						}
 					}
+				*/
 				});
 			}
 		}

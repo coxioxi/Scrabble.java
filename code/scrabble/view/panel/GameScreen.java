@@ -30,23 +30,22 @@ public class GameScreen extends JPanel {
 	}
 
 	public List<Tile> playedTiles = new ArrayList<>();
-	private String value = " ";
-	private final Color doubleWord = new Color(255, 102, 102);
-	private final Color tripleWord = new Color(255, 0, 0);
-	private final Color doubleLetter = new Color(88, 117, 255);
-	private final Color tripleLetter = new Color(0, 41, 255);
-	private final Color normalCell = new Color(255, 255, 255);
-	private final static int GAP = 175;
+	private JButton value = new JButton(" ");
+	public static final Color doubleWord = new Color(255, 102, 102);
+	public static final Color tripleWord = new Color(255, 0, 0);
+	public static final Color doubleLetter = new Color(88, 117, 255);
+	public static final Color tripleLetter = new Color(0, 41, 255);
+	public static final Color normalCell = new Color(255, 255, 255);
+	public static final int GAP = 175;
 
-	public void setValue(String value) {
+	public void setValue(JButton value) {
 		this.value = value;
+		System.out.println(value.getText());
 	}
 
-	public String getValue() {
+	public JButton getValue() {
 		return value;
 	}
-
-	public final static Color normalCell = new Color(255, 255, 255);
 
 	public GameScreen() {
 		this.setLayout(new BorderLayout());
@@ -159,7 +158,7 @@ public class GameScreen extends JPanel {
 		});
 		return comboBox;
 	}
-
+	/*
 	public void boardTilesActionListener(){
 		for (int i = 0; i < Board.BOARD_ROWS; i++) {
 			for (int j = 0; j < Board.BOARD_COLUMNS; j++) {
@@ -261,6 +260,8 @@ public class GameScreen extends JPanel {
 			}
 		});
 	}
+
+	 */
 
 	public JLabel getGameTime() {
 		return gameTime;
