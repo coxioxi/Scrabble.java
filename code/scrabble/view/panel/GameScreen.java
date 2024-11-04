@@ -29,11 +29,20 @@ public class GameScreen extends JPanel {
 
 	public List<Tile> playedTiles = new ArrayList<>();
 	private String value = " ";
-	private final Color doubleWord = new Color(255, 102, 102);
-	private final Color tripleWord = new Color(255, 0, 0);
-	private final Color doubleLetter = new Color(88, 117, 255);
-	private final Color tripleLetter = new Color(0, 41, 255);
-	private final Color normalCell = new Color(255, 255, 255);
+	public final static Color doubleWord = new Color(255, 102, 102);
+	public final static Color tripleWord = new Color(255, 0, 0);
+	public final static Color doubleLetter = new Color(88, 117, 255);
+	public final static Color tripleLetter = new Color(0, 41, 255);
+
+	public void setValue(String value) {
+		this.value = value;
+	}
+
+	public String getValue() {
+		return value;
+	}
+
+	public final static Color normalCell = new Color(255, 255, 255);
 
 	public GameScreen() {
 		this.setLayout(new BorderLayout());
