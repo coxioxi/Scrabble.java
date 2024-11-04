@@ -94,22 +94,19 @@ public class Controller implements PropertyChangeListener  {
 		for (int i = 0; i < 7; i++) {
 			JButton rackTile = gameScreen.getRack()[i];
 			int finalI = i;
-			rackTile.addActionListener(new ActionListener() {
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					JButton[] rack = gameScreen.getRack();
-					String value = gameScreen.getValue();
-					if(!value.equals(" ")){
-						for (int j = 0; j < 7; j++){
-							if(rack[j].getText().equals(" ")){
-								rack[j].setText(value);
-								break;
-							}
+			rackTile.addActionListener(e -> {
+				JButton[] rack = gameScreen.getRack();
+				String value = gameScreen.getValue();
+				if(!value.equals(" ")){
+					for (int j = 0; j < 7; j++){
+						if(rack[j].getText().equals(" ")){
+							rack[j].setText(value);
+							break;
 						}
 					}
-					gameScreen.setValue(rackTile.getText());
-					rack[finalI].setText(" ");
 				}
+				gameScreen.setValue(rackTile.getText());
+				rack[finalI].setText(" ");
 			});
 		}
 	}
