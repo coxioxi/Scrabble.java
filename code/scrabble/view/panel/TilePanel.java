@@ -6,7 +6,7 @@ import javax.swing.*;
 import java.awt.*;
 
 public class TilePanel extends JPanel {
-    private TileButton tileButton;
+    private JButton tileButton;
 
     public TilePanel(TileButton tileButton) {
         this.tileButton = tileButton;
@@ -14,7 +14,15 @@ public class TilePanel extends JPanel {
         this.add(this.tileButton);
     }
 
-    public TileButton getTileButton() {
+    public JButton getButton() {
         return tileButton;
+    }
+
+    public void setButton(JButton tileButton) {
+        this.remove(this.tileButton);
+        this.tileButton = tileButton;
+        this.add(this.tileButton);
+        this.revalidate();
+        this.repaint();
     }
 }

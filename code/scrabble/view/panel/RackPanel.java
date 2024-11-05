@@ -8,7 +8,7 @@ public class RackPanel extends JPanel {
 
     public RackPanel(TilePanel[] tilePanels){
         this.tilePanels = tilePanels;
-        this.setLayout(new GridLayout(1, GameScreen.RACKSIZE, 10, 0));
+        this.setLayout(new GridLayout(1, GameScreen.RACK_SIZE, 10, 0));
         for (TilePanel tp : this.tilePanels) {
             this.add(tp);
         }
@@ -17,4 +17,11 @@ public class RackPanel extends JPanel {
     public TilePanel[] getTilePanels() {
         return tilePanels;
     }
+
+    public void setButton(JButton tileButton, int i) {
+        tilePanels[i].setButton(tileButton);
+        this.revalidate();
+        this.repaint();
+    }
+
 }
