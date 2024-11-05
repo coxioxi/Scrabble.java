@@ -77,17 +77,17 @@ public class Game {
 	 * @return true if the play is successful, false otherwise
 	 * See Board.playTiles()
 	 */
-	public boolean playTiles(int playerID, Tile[] tiles) {
+	public int playTiles(int playerID, Tile[] tiles) {
+		int score;
 		Player player = getPlayer(playerID);
+
 		if (player.isActive()) {
-			int score = board.playTiles(tiles);
-			if (score < 0) return false;
-			player.increaseScore(score);
-			return true;
+			score = board.playTiles(tiles);
+			if(score >= 1)
+				player.increaseScore(score);
+			return score;
 		}
-		else {
-			return false;
-		}
+		return -1;
 	}
 
 	/**
