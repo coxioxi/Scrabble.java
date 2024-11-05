@@ -308,7 +308,6 @@ public class PartyHost extends Thread implements PropertyChangeListener {
 			playerTiles.get(source).add(newTile);
 		}
 		source.sendMessage(newTilesMessage);
-
 	}
 
 	private void handleNewPlayer(HostReceiver source, NewPlayer message) throws IOException {
