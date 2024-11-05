@@ -133,6 +133,17 @@ public class Controller implements PropertyChangeListener  {
 				boardTile.addActionListener(new ActionListener() {
 					@Override
 					public void actionPerformed(ActionEvent e) {
+						/*
+						algorithm:
+						we have pressed a board tile; see if we have selected a tile from the rack
+							(if we have, value is instanceof TileButton)
+							if there is a TileButton on this board position, add it to an empty spot on the rack,
+							then move value to board and reset value;
+							otherwise, move value to board and reset value.
+							if we have not selected a tile from the rack,
+							remove TileButton from board, or do nothing
+						 */
+
 						System.out.println("Board listener");
 						JButton boardTile = gameScreen.getGameCells()[row][col];
 						if (gameScreen.getValue() instanceof TileButton) {
