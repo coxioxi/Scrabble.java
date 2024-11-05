@@ -21,7 +21,8 @@ public class GameScreen extends JPanel {
 	private JLabel gameTime;
 	private JButton[][] gameCells;
 	public Tile[][] letters = new Tile[Board.BOARD_ROWS][Board.BOARD_COLUMNS];
-	private JButton[] rack;
+	private RackPanel rackPanel;
+
 	private JButton submitButton;
 	private Board board = new Board();
 
@@ -37,6 +38,7 @@ public class GameScreen extends JPanel {
 	public static final Color tripleLetter = new Color(0, 41, 255);
 	public static final Color normalCell = new Color(255, 255, 255);
 	public static final int GAP = 175;
+	public static final int RACKSIZE = 7;
 
 	public void setValue(JButton value) {
 		this.value = value;
@@ -111,13 +113,13 @@ public class GameScreen extends JPanel {
 		JPanel southPanel = new JPanel(new FlowLayout());
 		JPanel submitAndRack = new JPanel(new GridLayout(2,1,0,10));
 		submitButton = new JButton("Submit");
-		JPanel rackPanel = new JPanel(new GridLayout(1,7,10,0));
-		rack = new JButton[7];
-		for (int i = 0; i < 7; i++) {
-			rack[i] = new TileButton(TileScore.values()[i]);
-			//rackTile.setBorder(BorderFactory.createEtchedBorder());
-			rackPanel.add(rack[i]);
+		TilePanel[] tilePanels = new TilePanel[RACKSIZE];
+		for (int i = 0; i < tilePanels.length; i++) {
+			tilePanels[i] = new TilePanel(new TileButton(TileScore.values()[i]));
 		}
+		this.rackPanel = new RackPanel(tilePanels);
+
+
 		submitAndRack.add(submitButton);
 		submitAndRack.add(rackPanel);
 		southPanel.add(submitAndRack);
@@ -271,8 +273,8 @@ public class GameScreen extends JPanel {
 		return gameCells;
 	}
 
-	public JButton[] getRack() {
-		return rack;
+	public RackPanel getRackPanel() {
+		return rackPanel;
 	}
 
 	public JButton getSubmitButton() {
