@@ -1,6 +1,5 @@
 package scrabble.view.panel;
 
-import scrabble.controller.Controller;
 import scrabble.model.Board;
 import scrabble.model.ModifierType;
 import scrabble.model.Tile;
@@ -31,11 +30,13 @@ public class GameScreen extends JPanel {
 
 	public List<Tile> playedTiles = new ArrayList<>();
 	private String value = " ";
-	private final Color doubleWord = new Color(255, 102, 102);
-	private final Color tripleWord = new Color(255, 0, 0);
-	private final Color doubleLetter = new Color(88, 117, 255);
-	private final Color tripleLetter = new Color(0, 41, 255);
-	private final Color normalCell = new Color(255, 255, 255);
+
+	public static final Color DOUBLE_WORD = new Color(255, 102, 102);
+	public static final Color TRIPLE_WORD = new Color(255, 0, 0);
+	public static final Color DOUBLE_LETTER = new Color(88, 117, 255);
+	public static final Color TRIPLE_LETTER = new Color(0, 41, 255);
+
+	public static final Color NORMAL_CELL = new Color(255, 255, 255);
 	private final static int GAP = 175;
 
 	public void setValue(String value) {
@@ -45,8 +46,6 @@ public class GameScreen extends JPanel {
 	public String getValue() {
 		return value;
 	}
-
-	public final static Color normalCell = new Color(255, 255, 255);
 
 	public GameScreen() {
 		this.setLayout(new BorderLayout());
@@ -69,23 +68,23 @@ public class GameScreen extends JPanel {
 				ModifierType mt = board.getBoardSpecialCell().get(new Point(i, j));
 				if(mt != null) {
 					if (mt == ModifierType.DOUBLE_WORD) {
-						boardTile.setBackground(doubleWord);
+						boardTile.setBackground(DOUBLE_WORD);
 						boardTile.setText("DW");
 						boardTile.setBorderPainted(false);
 					} else if (mt == ModifierType.TRIPLE_WORD) {
-						boardTile.setBackground(tripleWord);
+						boardTile.setBackground(TRIPLE_WORD);
 						boardTile.setText("TW");
 						boardTile.setBorderPainted(false);
 					} else if (mt == ModifierType.DOUBLE_LETTER) {
-						boardTile.setBackground(doubleLetter);
+						boardTile.setBackground(DOUBLE_LETTER);
 						boardTile.setText("DL");
 						boardTile.setBorderPainted(false);
 					} else if (mt == ModifierType.TRIPLE_LETTER) {
-						boardTile.setBackground(tripleLetter);
+						boardTile.setBackground(TRIPLE_LETTER);
 						boardTile.setText("TL");
 						boardTile.setBorderPainted(false);
 					} else {
-						boardTile.setBackground(normalCell);
+						boardTile.setBackground(NORMAL_CELL);
 					}
 				}
 
@@ -173,11 +172,11 @@ public class GameScreen extends JPanel {
 						List<String> modType = new ArrayList<>(Arrays.asList("DW", "TW", "DL", "TL"));
 
 						//adding tiles from the rack to the board
-						if((boardTile.getText().equals(" ") || boardTile.getBackground() != normalCell) && !value.equals(" ")) {
+						if((boardTile.getText().equals(" ") || boardTile.getBackground() != NORMAL_CELL) && !value.equals(" ")) {
 							for (int k = 0; k < 7; k++) {
 								if(!boardTile.getText().equals(" ") && !modType.contains(boardTile.getText())) {
 									if (rack[k].getText().equals(" ")) {
-										if (boardTile.getBackground() != normalCell) {
+										if (boardTile.getBackground() != NORMAL_CELL) {
 											rack[k].setText(boardTile.getText());
 											char tile = boardTile.getText().charAt(0);
 											Point point = new Point(row, col);
@@ -207,13 +206,13 @@ public class GameScreen extends JPanel {
 									//add the value of the special cell back to the board cell if the player puts tiles back on the rack
 									if(value.equals(" ")){
 										Color color = boardTile.getBackground();
-										if (color.equals(doubleWord)) {
+										if (color.equals(DOUBLE_WORD)) {
 											boardTile.setText("DW");
-										} else if (color.equals(doubleLetter)) {
+										} else if (color.equals(DOUBLE_LETTER)) {
 											boardTile.setText("DL");
-										} else if (color.equals(tripleWord)) {
+										} else if (color.equals(TRIPLE_WORD)) {
 											boardTile.setText("TW");
-										} else if (color.equals(tripleLetter))
+										} else if (color.equals(TRIPLE_LETTER))
 											boardTile.setText("TL");
 										else
 											boardTile.setText(" ");
@@ -236,6 +235,7 @@ public class GameScreen extends JPanel {
 			rackTile.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
+					//checks if the value was played on the board or not, if not, put the current value back on the rack
 					if(!value.equals(" ")){
 						for (int j = 0; j < 7; j++){
 							if(rack[j].getText().equals(" ")){
