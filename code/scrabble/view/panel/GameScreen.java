@@ -65,117 +65,7 @@ public class GameScreen extends JPanel {
 		this.add(westPanel, BorderLayout.WEST);
 		this.add(eastPanel, BorderLayout.EAST);
 		this.add(southPanel, BorderLayout.SOUTH);
-
-//		boardTilesActionListener();
-//		rackTilesActionListener();
-//		submitActionListener();
 	}
-
-	/*
-	public void boardTilesActionListener(){
-		for (int i = 0; i < Board.BOARD_ROWS; i++) {
-			for (int j = 0; j < Board.BOARD_COLUMNS; j++) {
-				JButton boardTile = gameCells[i][j];
-
-				int row = i;
-				int col = j;
-				boardTile.addActionListener(new ActionListener() {
-					@Override
-					public void actionPerformed(ActionEvent e) {
-						List<String> modType = new ArrayList<>(Arrays.asList("DW", "TW", "DL", "TL"));
-
-						//adding tiles from the rack to the board
-						if((boardTile.getText().equals(" ") || boardTile.getBackground() != normalCell) && !value.equals(" ")) {
-							for (int k = 0; k < 7; k++) {
-								if(!boardTile.getText().equals(" ") && !modType.contains(boardTile.getText())) {
-									if (rack[k].getText().equals(" ")) {
-										if (boardTile.getBackground() != normalCell) {
-											rack[k].setText(boardTile.getText());
-											char tile = boardTile.getText().charAt(0);
-											Point point = new Point(row, col);
-											playedTiles.remove(new Tile(tile, point));
-											break;
-										}
-									}
-								}
-							}
-							boardTile.setText(value);
-							char tile = value.charAt(0);
-							Point point = new Point(row, col);
-							playedTiles.add(new Tile(tile, point));
-							value = " ";
-						}
-						//adding tiles from the board back to the rack
-						else if(value.equals(" ")){
-							for (int k = 0; k < 7; k++) {
-								if(rack[k].getText().equals(" ") && !modType.contains(boardTile.getText())){
-									rack[k].setText(boardTile.getText());
-									char tile = boardTile.getText().charAt(0);
-									Point point = new Point(row, col);
-
-									if(!boardTile.getText().equals(" "))
-										playedTiles.remove(new Tile(tile, point));
-
-									//add the value of the special cell back to the board cell if the player puts tiles back on the rack
-									if(value.equals(" ")){
-										Color color = boardTile.getBackground();
-										if (color.equals(doubleWord)) {
-											boardTile.setText("DW");
-										} else if (color.equals(doubleLetter)) {
-											boardTile.setText("DL");
-										} else if (color.equals(tripleWord)) {
-											boardTile.setText("TW");
-										} else if (color.equals(tripleLetter))
-											boardTile.setText("TL");
-										else
-											boardTile.setText(" ");
-									}
-									value = " ";
-									break;
-								}
-							}
-						}
-                    }
-				});
-			}
-		}
-	}
-
-	public void rackTilesActionListener(){
-		for (int i = 0; i < 7; i++) {
-			JButton rackTile = rack[i];
-			int finalI = i;
-			rackTile.addActionListener(new ActionListener() {
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					if(!value.equals(" ")){
-						for (int j = 0; j < 7; j++){
-							if(rack[j].getText().equals(" ")){
-								rack[j].setText(value);
-								break;
-							}
-						}
-					}
-					value = rackTile.getText();
-					rack[finalI].setText(" ");
-				}
-			});
-		}
-	}
-
-	public void submitActionListener(){
-		submitButton.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				System.out.println(Arrays.toString(playedTiles.toArray(new Tile[0])));
-				PlayTiles playTiles = new PlayTiles(0,0,playedTiles.toArray(new Tile[0]));
-				//playTiles.execute(this.controller);
-			}
-		});
-	}
-
-	 */
-
 
 	public List<Tile> getPlayedTiles() {
 		return playedTiles;
@@ -183,7 +73,6 @@ public class GameScreen extends JPanel {
 
 	public void setValue(JButton value) {
 		this.value = value;
-		System.out.println(value.getText());
 	}
 
 	public JButton getValue() {
