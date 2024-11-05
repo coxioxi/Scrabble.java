@@ -40,7 +40,7 @@ public class GameScreen extends JPanel {
 
 	public void setValue(JButton value) {
 		this.value = value;
-		System.out.println(value.getText());
+		System.out.println("\""+value.getText()+"\"");
 	}
 
 	public JButton getValue() {

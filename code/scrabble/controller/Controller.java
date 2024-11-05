@@ -92,6 +92,7 @@ public class Controller implements PropertyChangeListener  {
 	}
 
 	public void addRackTileListeners(GameScreen gameScreen){
+		// add listener for each rack tile
 		for (int i = 0; i < 7; i++) {
 			JButton rackTile = gameScreen.getRack()[i];
 			int finalI = i;
@@ -112,6 +113,9 @@ public class Controller implements PropertyChangeListener  {
 				System.out.println(gameScreen.getValue());
 				rack[finalI] = new JButton(" ");
 				System.out.println(rack[finalI] instanceof TileButton);
+				for (JButton b : gameScreen.getRack()) {
+					System.out.println("\""+b.getText()+"\"");
+				}
 //				rack[finalI].repaint();
 				System.out.println("Exit");
 			});
@@ -158,6 +162,8 @@ public class Controller implements PropertyChangeListener  {
 									boardTile.setText(" ");
 							}
 						}
+						System.out.println(gameScreen.getGameCells()[row][col] instanceof TileButton);
+						System.out.println(Arrays.toString(gameScreen.getRack()));
 						System.out.println("Exit");
 					}
 
