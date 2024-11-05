@@ -8,9 +8,8 @@ import scrabble.model.Tile;
 import scrabble.network.client.ClientMessenger;
 import scrabble.network.messages.PlayTiles;
 import scrabble.network.networkPrototype.PartyHost;
-import scrabble.view.frame.GameFrame;
 import scrabble.view.frame.ScrabbleGUI;
-import scrabble.view.frame.ScrabbleView;
+import scrabble.view.frame.TileButton;
 import scrabble.view.panel.GameScreen;
 
 import javax.swing.*;
@@ -124,11 +123,11 @@ public class Controller implements PropertyChangeListener  {
 						List<String> modType = new ArrayList<>(Arrays.asList("DW", "TW", "DL", "TL"));
 
 						//adding tiles from the rack to the board
-						if((boardTile.getText().equals(" ") || boardTile.getBackground() != normalCell) && !gameScreen.getValue().equals(" ")) {
+						if((boardTile.getText().equals(" ") || boardTile.getBackground() != NORMAL_CELL) && !gameScreen.getValue().equals(" ")) {
 							for (int k = 0; k < 7; k++) {
 								if(!boardTile.getText().equals(" ") && !modType.contains(boardTile.getText())) {
 									if (gameScreen.getRack()[k].getText().equals(" ")) {
-										if (boardTile.getBackground() != normalCell) {
+										if (boardTile.getBackground() != NORMAL_CELL) {
 											gameScreen.getRack()[k].setText(boardTile.getText());
 											char tile = boardTile.getText().charAt(0);
 											Point point = new Point(row, col);
@@ -154,16 +153,18 @@ public class Controller implements PropertyChangeListener  {
 									gameScreen.playedTiles.remove(new Tile(tile, point));
 									if(gameScreen.getValue().equals(" ")){
 										Color color = boardTile.getBackground();
-										if (color.equals(doubleWord)) {
+										if (color.equals(DOUBLE_WORD)) {
 											boardTile.setText("DW");
-										} else if (color.equals(doubleLetter)) {
+										} else if (color.equals(DOUBLE_LETTER)) {
 											boardTile.setText("DL");
-										} else if (color.equals(tripleWord)) {
+										} else if (color.equals(TRIPLE_WORD)) {
 											boardTile.setText("TW");
-										} else if (color.equals(tripleLetter))
+										} else if (color.equals(TRIPLE_LETTER)) {
 											boardTile.setText("TL");
-										else
+										}
+										else if (color.equals(NORMAL_CELL)) {
 											boardTile.setText(" ");
+										}
 									}
 									gameScreen.setValue(" ");
 									break;
@@ -205,6 +206,27 @@ public class Controller implements PropertyChangeListener  {
 	}
 
 	private void hostGame() {}
+
+	public void resetRack(GameScreen gameScreen){
+		//loop through the rack
+		for (int i = 0; i < gameScreen.getRack().length; ++i){
+			Point point = new Point(gameScreen.playedTiles.get(i).getLocation());
+			//find empty rack location
+			if(!(gameScreen.getRack()[i] instanceof TileButton)){
+				//swap with board location
+				swap(gameScreen.getRack(), gameScreen.getGameCells(), point);
+			}
+		}
+	}
+
+	private void swap(JButton[] rack, JButton[][] board, Point point){
+		JButton temp;
+		for (int i = 0; i < rack.length; ++i) {
+			temp = rack[i];
+			rack[i] = board[point.x][point.y];
+			board[point.x][point.y] = temp;
+		}
+	}
 
 	@Override
 	public void propertyChange(PropertyChangeEvent evt) {}
