@@ -1,6 +1,7 @@
 package scrabble.view.panel;
 
 import scrabble.model.Board;
+import scrabble.model.Ruleset;
 import scrabble.model.Tile;
 import scrabble.model.TileScore;
 import scrabble.view.frame.TileButton;
@@ -18,6 +19,8 @@ public class GameScreen extends JPanel {
 	private JLabel gameTime;
 	private BoardPanel boardPanel;
 	public Tile[][] letters = new Tile[Board.BOARD_ROWS][Board.BOARD_COLUMNS];
+
+	private JPanel centerPanel;
 
 	private RackPanel rackPanel;
 	private JButton submitButton;
@@ -60,7 +63,10 @@ public class GameScreen extends JPanel {
 		this.add(southPanel, BorderLayout.SOUTH);
 	}
 
-	private JPanel centerPanel;
+	public GameScreen(Ruleset rules) {
+
+	}
+
 	public JPanel getCenterPanel() {
 		return centerPanel;
 	}

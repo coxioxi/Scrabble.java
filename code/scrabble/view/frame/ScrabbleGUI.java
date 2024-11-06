@@ -1,6 +1,6 @@
 package scrabble.view.frame;
-import scrabble.model.Game;
 import scrabble.model.Player;
+import scrabble.model.Ruleset;
 import scrabble.view.panel.*;
 
 import javax.swing.*;
@@ -33,10 +33,11 @@ public class ScrabbleGUI extends JFrame{
 	private JPanel winner 	= new JPanel();	// temp bc these are not yet decided
 
 	private JMenuBar menuBar;
-	private JMenu rulesMenu;
-	private JMenu audioMenu;
-	private JMenu fxMenu;
-	private JMenu quitMenu;
+	private JMenu gameMenu;
+	private JMenuItem rulesItem;
+	private JMenuItem audioItem;
+	private JMenuItem fxItem;
+	private JMenuItem quitItem;
 
 
 	private JPanel[] panels = new JPanel[]{
@@ -74,22 +75,24 @@ public class ScrabbleGUI extends JFrame{
 
 		this.setMaximumSize(maximumSize);
 		setupFrame();
-		Dimension cpDim = ((GameScreen)game).getCenterPanel().getSize();
-		System.out.println("Center panel dim: " + cpDim.width + "x"+cpDim.height);
+//		Dimension cpDim = ((GameScreen)game).getCenterPanel().getSize();
+//		System.out.println("Center panel dim: " + cpDim.width + "x"+cpDim.height);
 		menuSetup();
 	}
 
 	private void menuSetup() {
 		menuBar = new JMenuBar();
-		rulesMenu = new JMenu("Rules");
-		audioMenu = new JMenu("Audio On/Off");
-		fxMenu = new JMenu("Fx On/Off");
-		quitMenu = new JMenu("Quit");
+		gameMenu = new JMenu("Game");
+		rulesItem = new JMenuItem("Rules");
+		audioItem = new JMenuItem("Audio On/Off");
+		fxItem = new JMenuItem("Fx On/Off");
+		quitItem = new JMenuItem("Quit");
 
-		menuBar.add(rulesMenu);
-		menuBar.add(audioMenu);
-		menuBar.add(fxMenu);
-		menuBar.add(quitMenu);
+		gameMenu.add(rulesItem);
+		gameMenu.add(audioItem);
+		gameMenu.add(fxItem);
+		gameMenu.add(quitItem);
+		menuBar.add(gameMenu);
 		this.setJMenuBar(menuBar);
 		menuBar.setVisible(false);
 	}
@@ -98,6 +101,21 @@ public class ScrabbleGUI extends JFrame{
 	getters
 	 */
 
+	public JMenuItem getRulesItem() {
+		return rulesItem;
+	}
+
+	public JMenuItem getAudioItem() {
+		return audioItem;
+	}
+
+	public JMenuItem getFxItem() {
+		return fxItem;
+	}
+
+	public JMenuItem getQuitItem() {
+		return quitItem;
+	}
 
 	public CardLayout getLayoutManager() {
 		return layoutManager;
@@ -184,14 +202,28 @@ public class ScrabbleGUI extends JFrame{
 		panels[panels.length-1] = winner;
 	}
 
+	public void showQuitDialog() {
+		int selected = JOptionPane.showConfirmDialog(this, "Are you sure you want to quit?\nYou will not be able to rejoin.", "Quit?", JOptionPane.WARNING_MESSAGE);
+		if (selected == JOptionPane.YES_OPTION) this.dispose();
+
+	}
+
+	public void showRulesDialog() {
+		JOptionPane.showMessageDialog(this, "1.~~~~~~~~~\n2.~~~~~~~~~\n3.~~~~~~~~~~~~\n4.~~~~~~~~~~", "Rules", JOptionPane.INFORMATION_MESSAGE);
+	}
+
+	public void setupGameScreen(Ruleset rules) {
+		this.game = new GameScreen(rules);
+	}
+
 	// minimum size, title, close op, pack, center in screen, show.
 	private void setupFrame() {
 		this.setTitle("Scrabble");
 		this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 
-		GraphicsEnvironment.getLocalGraphicsEnvironment().
+		/*GraphicsEnvironment.getLocalGraphicsEnvironment().
 				getDefaultScreenDevice().setFullScreenWindow(this);
-
+		 */
 		setupDimensions();
 
 		this.setMaximumSize(maximumSize);

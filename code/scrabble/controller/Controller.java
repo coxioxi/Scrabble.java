@@ -2,6 +2,7 @@ package scrabble.controller;
 
 import scrabble.model.Game;
 import scrabble.network.client.ClientMessenger;
+import scrabble.network.messages.StartGame;
 import scrabble.network.networkPrototype.PartyHost;
 import scrabble.view.frame.ScrabbleGUI;
 import scrabble.view.panel.GameScreen;
@@ -22,6 +23,7 @@ public class Controller implements PropertyChangeListener  {
 
 	private ClientMessenger messenger;
 	private Socket hostSocket;
+	private GameScreenController gameScreenController;
 
 	/*
 	reference to the party host
@@ -65,7 +67,10 @@ public class Controller implements PropertyChangeListener  {
 		addHostListeners(view.getHost());
 		addJoinListeners(view.getJoin());
 		addWaitingListeners(view.getWaiting());
-		new GameScreenController(this, (GameScreen) view.getGame());
+
+		// stub, not for active game. see propertyChangeListener
+		this.gameScreenController = new GameScreenController(this, (GameScreen) view.getGame());
+		gameScreenController.setupMenuListeners(view);
 	}
 
 
@@ -88,6 +93,12 @@ public class Controller implements PropertyChangeListener  {
 	private void hostGame() {}
 
 	@Override
-	public void propertyChange(PropertyChangeEvent evt) {}
+	public void propertyChange(PropertyChangeEvent evt) {
+		if (evt.getNewValue() instanceof StartGame) {
+			this.view.setupGameScreen(((StartGame) evt.getNewValue()).getRuleset());
+			this.gameScreenController = new GameScreenController(this, (GameScreen) view.getGame());
+			this.gameScreenController.setupMenuListeners(view);
+		}
+	}
 
 }

@@ -3,10 +3,13 @@ package scrabble.controller;
 import scrabble.model.Board;
 import scrabble.model.Tile;
 import scrabble.network.messages.PlayTiles;
+import scrabble.view.frame.ScrabbleGUI;
 import scrabble.view.frame.TileButton;
 import scrabble.view.panel.*;
 
 import javax.swing.*;
+import javax.swing.event.MenuEvent;
+import javax.swing.event.MenuListener;
 import java.awt.event.ActionListener;
 
 public class GameScreenController {
@@ -19,13 +22,36 @@ public class GameScreenController {
 		addActionListeners();
 	}
 
+	public void setupMenuListeners(ScrabbleGUI view) {
+		view.getRulesItem().addActionListener(e -> rulesMenuClick(view));
+		view.getAudioItem().addActionListener(e -> audioMenuClick(view));
+		view.getFxItem().addActionListener(e -> fxMenuClick(view));
+		view.getQuitItem().addActionListener(e -> quitMenuClick(view));
+	}
+
+	private void quitMenuClick(ScrabbleGUI view) {
+		view.showQuitDialog();
+	}
+
+	private void fxMenuClick(ScrabbleGUI view) {
+		// haha great question
+	}
+
+	private void audioMenuClick(ScrabbleGUI view) {
+		// haha great question
+	}
+
+	private void rulesMenuClick(ScrabbleGUI view) {
+		view.showRulesDialog();
+	}
+
 	private void addActionListeners() {
 		addRackTileListeners();
 		addBoardCellListeners();
 		addSubmitActionListener();
 	}
 
-	public void addRackTileListeners(){
+	private void addRackTileListeners(){
 		RackPanel rackPanel = gameScreen.getRackPanel();
 		for (int i = 0; i < 7; i++) {
 			TilePanel tilePanel = rackPanel.getTilePanels()[i];
