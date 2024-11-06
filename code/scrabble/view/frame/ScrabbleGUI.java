@@ -223,7 +223,7 @@ public class ScrabbleGUI extends JFrame{
 
 		/*GraphicsEnvironment.getLocalGraphicsEnvironment().
 				getDefaultScreenDevice().setFullScreenWindow(this);
-		 */
+		*/
 		setupDimensions();
 
 		this.setMaximumSize(maximumSize);

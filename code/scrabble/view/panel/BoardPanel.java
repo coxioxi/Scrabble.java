@@ -8,10 +8,10 @@ import javax.swing.*;
 import java.awt.*;
 
 public class BoardPanel extends JPanel {
-	public static final Color DOUBLE_WORD_COLOR = new Color(198, 80, 80);
-	public static final Color TRIPLE_WORD_COLOR = new Color(202, 0, 0);
-	public static final Color DOUBLE_LETTER_COLOR = new Color(71, 92, 202);
-	public static final Color TRIPLE_LETTER_COLOR = new Color(0, 35, 202);
+	public static final Color DOUBLE_WORD_COLOR = new Color(154, 75, 75);
+	public static final Color TRIPLE_WORD_COLOR = new Color(177, 19, 19);
+	public static final Color DOUBLE_LETTER_COLOR = new Color(57, 70, 140);
+	public static final Color TRIPLE_LETTER_COLOR = new Color(25, 43, 147);
 	public static final Color NORMAL_CELL_COLOR = new Color(221, 221, 221);
 	public static final Color MODIFIER_CELL_TEXT_COLOR = new Color(255, 255, 255);
 
