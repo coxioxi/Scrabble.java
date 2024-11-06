@@ -76,17 +76,19 @@ public class BoardPanel extends JPanel {
 		for (int row = 0; row < Board.BOARD_ROWS; row++) {
 			for (int col = 0; col < Board.BOARD_COLUMNS; col++) {
 				JButton cell = new JButton();
-				cell.setMaximumSize(maxCellSize);
-				cell.setPreferredSize(preferredCellSize);
-				cell.setMinimumSize(minCellSize);
+				//setButtonSizes(cell);
 				setColorAndText(cell, row, col);
 				boardCells[row][col] = new BoardCellPanel(cell);
-				boardCells[row][col].setMaximumSize(maxCellSize);
-				boardCells[row][col].setPreferredSize(preferredCellSize);
-				boardCells[row][col].setMinimumSize(minCellSize);
+				//setButtonSizes(boardCells[row][col]);
 				this.add(boardCells[row][col]);
 			}
 		}
+	}
+
+	private void setButtonSizes(JComponent button) {
+		button.setMaximumSize(maxCellSize);
+		button.setPreferredSize(preferredCellSize);
+		button.setMinimumSize(minCellSize);
 	}
 
 	private void setColorAndText(JButton button, int row, int col) {
