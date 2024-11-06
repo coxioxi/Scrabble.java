@@ -105,6 +105,9 @@ public class GameScreen extends JPanel {
 
 	private JPanel setupCenterPanel() {
 		JPanel centerPanel = new JPanel(new FlowLayout());
+		centerPanel.setMaximumSize(
+				new Dimension(1410, 875)
+		);
 		centerPanel.setBorder(BorderFactory.createTitledBorder("Game Board"));
 
 		boardPanel = new BoardPanel();

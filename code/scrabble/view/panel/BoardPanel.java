@@ -20,9 +20,34 @@ public class BoardPanel extends JPanel {
 	public static final String TRIPLE_LETTER_TEXT = "TL";
 	public static final String NORMAL_CELL_TEXT = "";
 
+	public static final float MAXIMUM_PANEL_SIZE_PERCENT = .6f;
+	public static final float PREFERRED_PANEL_SIZE_PERCENT = .5f;
+	public static final float MINIMUM_CELL_PERCENT = .02f;
+	public static final float PREFERRED_CELL_PERCENT = .05f;
+
 	private BoardCellPanel[][] boardCells;
+	private int environmentHeight;
+	private int environmentWidth;
 
 	public BoardPanel() {
+		try {
+			// Set the look and feel to the system's default
+			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+		} catch (ClassNotFoundException | InstantiationException |
+				 IllegalAccessException | UnsupportedLookAndFeelException ignore) {}
+
+		GraphicsDevice gd = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
+		environmentWidth = gd.getDisplayMode().getWidth();
+		environmentHeight = gd.getDisplayMode().getHeight();
+
+		this.setPreferredSize(
+				new Dimension((int)(PREFERRED_PANEL_SIZE_PERCENT*environmentHeight), (int)(PREFERRED_PANEL_SIZE_PERCENT*environmentHeight))
+		);
+
+		this.setMaximumSize(
+				new Dimension((int)(MAXIMUM_PANEL_SIZE_PERCENT*environmentHeight), (int)(MAXIMUM_PANEL_SIZE_PERCENT*environmentHeight))
+		);
+
 		this.setLayout(new GridLayout(15,15,0,0));
 		setupBoardCellPanels();
 	}
@@ -33,7 +58,15 @@ public class BoardPanel extends JPanel {
 			for (int col = 0; col < Board.BOARD_COLUMNS; col++) {
 				JButton cell = new JButton();
 				setColorAndText(cell, row, col);
+				/*cell.setPreferredSize(
+						new Dimension((int)(PREFERRED_CELL_PERCENT*environmentHeight),
+								(int)(PREFERRED_CELL_PERCENT*environmentHeight))
+				);*/
 				boardCells[row][col] = new BoardCellPanel(cell);
+				/*boardCells[row][col].setPreferredSize(
+						new Dimension((int)(PREFERRED_CELL_PERCENT*environmentHeight),
+								(int)(PREFERRED_CELL_PERCENT*environmentHeight))
+				);*/
 				this.add(boardCells[row][col]);
 			}
 		}

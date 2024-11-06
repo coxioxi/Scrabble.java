@@ -6,6 +6,10 @@ import javax.swing.*;
 import java.awt.*;
 
 public class ScrabbleGUI extends JFrame{
+	public static final float PREFERRED_SIZE_PERCENT = .8f;
+	public static final float MINIMUM_SIZE_PERCENT = .6f;
+	public static final float MAXIMUM_SIZE_PERCENT = 1;
+
 	public static final String MAIN_MENU = "MAIN-MENU";
 	public static final String HOST 	 = "HOST";
 	public static final String JOIN 	 = "JOIN";
@@ -31,6 +35,8 @@ public class ScrabbleGUI extends JFrame{
 	private JPanel[] panels = new JPanel[]{
 			mainMenu, host, join, waiting, game, winner
 	};
+
+	private Dimension preferredSize, maximumSize, minimumSize;
 
 	public static void main(String[] args) throws InterruptedException {
 		ScrabbleGUI frame = new ScrabbleGUI();
@@ -155,10 +161,31 @@ public class ScrabbleGUI extends JFrame{
 		this.setTitle("Scrabble");
 		this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 
-		this.setMinimumSize(new Dimension(250,150));
+		setupDimensions();
+
+		this.setMaximumSize(maximumSize);
+		this.setPreferredSize(preferredSize);
+		this.setMinimumSize(minimumSize);
+
 		this.pack();
 		this.setLocationRelativeTo(null);
 		this.setVisible(true);
+	}
+
+	private void setupDimensions() {
+		GraphicsDevice gd = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
+		int width = gd.getDisplayMode().getWidth();
+		int height = gd.getDisplayMode().getHeight();
+
+		maximumSize = new Dimension(
+				(int)(MAXIMUM_SIZE_PERCENT*width), (int)(MAXIMUM_SIZE_PERCENT*height)
+		);
+		minimumSize = new Dimension(
+				(int)(MINIMUM_SIZE_PERCENT*width), (int)(MINIMUM_SIZE_PERCENT*height)
+		);
+		preferredSize = new Dimension(
+				(int)(PREFERRED_SIZE_PERCENT*width), (int)(PREFERRED_SIZE_PERCENT*height)
+		);
 	}
 
 }
