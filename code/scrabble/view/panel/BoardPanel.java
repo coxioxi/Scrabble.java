@@ -18,10 +18,10 @@ public class BoardPanel extends JPanel {
 	public static final String TRIPLE_WORD_TEXT = "TW";
 	public static final String DOUBLE_LETTER_TEXT = "DL";
 	public static final String TRIPLE_LETTER_TEXT = "TL";
-	public static final String NORMAL_CELL_TEXT = "";
+	public static final String NORMAL_CELL_TEXT = " ";
 
 	public static final float MAXIMUM_PANEL_SIZE_PERCENT = .55f;
-	public static final float PREFERRED_PANEL_SIZE_PERCENT = .4f;
+	public static final float PREFERRED_PANEL_SIZE_PERCENT = .45f;
 	public static final float MINIMUM_PANEL_SIZE_PERCENT = .2f;
 	public static final int SPACING = 3;
 	public static final float MAXIMUM_CELL_PERCENT = .04f;
@@ -76,10 +76,12 @@ public class BoardPanel extends JPanel {
 		for (int row = 0; row < Board.BOARD_ROWS; row++) {
 			for (int col = 0; col < Board.BOARD_COLUMNS; col++) {
 				JButton cell = new JButton();
-				//setButtonSizes(cell);
+//				setButtonSizes(cell);
+//				cell.setFont(getFont().deriveFont(4f));
 				setColorAndText(cell, row, col);
+
 				boardCells[row][col] = new BoardCellPanel(cell);
-				//setButtonSizes(boardCells[row][col]);
+				setButtonSizes(boardCells[row][col]);
 				this.add(boardCells[row][col]);
 			}
 		}
@@ -132,10 +134,7 @@ public class BoardPanel extends JPanel {
 
 	public void setBoardCell(JButton button, int row, int col) {
 		if (!(button instanceof TileButton)) {
-
-			button.setMaximumSize(maxCellSize);
-			button.setPreferredSize(preferredCellSize);
-			button.setMinimumSize(minCellSize);
+			//setButtonSizes(button);
 			setColorAndText(button, row, col);
 		}
 		this.boardCells[row][col].setBoardButton(button);

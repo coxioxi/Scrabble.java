@@ -9,7 +9,7 @@ import java.awt.*;
 public class ScrabbleGUI extends JFrame{
 	public static final float PREFERRED_SIZE_PERCENT = .8f;
 	public static final float MINIMUM_SIZE_PERCENT = .6f;
-	public static final float MAXIMUM_SIZE_PERCENT = .8f;
+	public static final float MAXIMUM_SIZE_PERCENT = .7f;
 
 	public static final String MAIN_MENU = "MAIN-MENU";
 	public static final String HOST 	 = "HOST";
@@ -66,6 +66,7 @@ public class ScrabbleGUI extends JFrame{
 		} catch (ClassNotFoundException | InstantiationException |
 				 IllegalAccessException | UnsupportedLookAndFeelException ignore) {}
 
+		this.setMaximumSize(maximumSize);
 		setupFrame();
 		Dimension cpDim = ((GameScreen)game).getCenterPanel().getSize();
 		System.out.println("Center panel dim: " + cpDim.width + "x"+cpDim.height);
@@ -175,6 +176,9 @@ public class ScrabbleGUI extends JFrame{
 	private void setupFrame() {
 		this.setTitle("Scrabble");
 		this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+
+		GraphicsEnvironment.getLocalGraphicsEnvironment().
+				getDefaultScreenDevice().setFullScreenWindow(this);
 
 		setupDimensions();
 
