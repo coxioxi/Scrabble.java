@@ -21,6 +21,7 @@ public class GameScreen extends JPanel {
 
 	private RackPanel rackPanel;
 	private JButton submitButton;
+	private JButton passButton;
 
 	public List<Tile> playedTiles = new ArrayList<>();
 	private JButton value = new JButton(" ");
@@ -48,9 +49,10 @@ public class GameScreen extends JPanel {
 		JPanel southPanel = setupSouthPanel();
 
 		//Drop down menu
-		JComboBox<String> comboBox = getStringJComboBox();
+		/*JComboBox<String> comboBox = getStringJComboBox();
 
 		this.add(comboBox);
+		 */
 		this.add(northPanel, BorderLayout.NORTH);
 		this.add(centerPanel, BorderLayout.CENTER);
 		this.add(westPanel, BorderLayout.WEST);
@@ -94,6 +96,8 @@ public class GameScreen extends JPanel {
 	private JPanel setupSouthPanel() {
 		JPanel southPanel = new JPanel(new FlowLayout());
 		JPanel submitAndRack = new JPanel(new GridLayout(2,1,0,10));
+		JPanel subAndPass = new JPanel(new GridLayout(1,2,10,0));
+		passButton = new JButton("Pass Turn");
 		submitButton = new JButton("Submit");
 		submitButton.setPreferredSize(new Dimension(50, 10));
 		TilePanel[] tilePanels = new TilePanel[RACK_SIZE];
@@ -102,8 +106,9 @@ public class GameScreen extends JPanel {
 		}
 		this.rackPanel = new RackPanel(tilePanels);
 
-
-		submitAndRack.add(submitButton);
+		subAndPass.add(submitButton);
+		subAndPass.add(passButton);
+		submitAndRack.add(subAndPass);
 		submitAndRack.add(rackPanel);
 		southPanel.add(submitAndRack);
 		return southPanel;
