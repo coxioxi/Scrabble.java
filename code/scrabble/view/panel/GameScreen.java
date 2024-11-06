@@ -1,7 +1,6 @@
 package scrabble.view.panel;
 
 import scrabble.model.Board;
-import scrabble.model.ModifierType;
 import scrabble.model.Tile;
 import scrabble.model.TileScore;
 import scrabble.view.frame.TileButton;
@@ -13,12 +12,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class GameScreen extends JPanel {
-
-	public static final Color DOUBLE_WORD = new Color(255, 102, 102);
-	public static final Color TRIPLE_WORD = new Color(255, 0, 0);
-	public static final Color DOUBLE_LETTER = new Color(88, 117, 255);
-	public static final Color TRIPLE_LETTER = new Color(0, 41, 255);
-	public static final Color NORMAL_CELL = new Color(255, 255, 255);
 	public static final int GAP = 175;
 	public static final int RACK_SIZE = 7;
 
@@ -28,8 +21,6 @@ public class GameScreen extends JPanel {
 
 	private RackPanel rackPanel;
 	private JButton submitButton;
-	private Board board = new Board();
-
 
 	public List<Tile> playedTiles = new ArrayList<>();
 	private JButton value = new JButton(" ");
@@ -116,44 +107,7 @@ public class GameScreen extends JPanel {
 		JPanel centerPanel = new JPanel(new FlowLayout());
 		centerPanel.setBorder(BorderFactory.createTitledBorder("Game Board"));
 
-//		JPanel gamePanel = new JPanel(new GridLayout(15,15,3,3));
-		BoardCellPanel[][] boardCellPanels = new BoardCellPanel[Board.BOARD_ROWS][Board.BOARD_COLUMNS];
-//		gameCells = new JButton[15][15];
-		for (int i = 0; i < boardCellPanels.length; i++) {
-			for(int j = 0; j < boardCellPanels[0].length; j++) {
-
-				// Get modifier for special cells like Double Word, Triple Word, etc.
-				JButton boardTile = new JButton(" ");
-
-				ModifierType mt = board.getBoardSpecialCell().get(new Point(i, j));
-				if(mt != null) {
-					if (mt == ModifierType.DOUBLE_WORD) {
-						boardTile.setBackground(DOUBLE_WORD);
-						boardTile.setText("DW");
-						boardTile.setBorderPainted(false);
-					} else if (mt == ModifierType.TRIPLE_WORD) {
-						boardTile.setBackground(TRIPLE_WORD);
-						boardTile.setText("TW");
-						boardTile.setBorderPainted(false);
-					} else if (mt == ModifierType.DOUBLE_LETTER) {
-						boardTile.setBackground(DOUBLE_LETTER);
-						boardTile.setText("DL");
-						boardTile.setBorderPainted(false);
-					} else if (mt == ModifierType.TRIPLE_LETTER) {
-						boardTile.setBackground(TRIPLE_LETTER);
-						boardTile.setText("TL");
-						boardTile.setBorderPainted(false);
-					} else {
-						boardTile.setBackground(NORMAL_CELL);
-					}
-				}
-				boardCellPanels[i][j] = new BoardCellPanel(boardTile);
-
-//				gameCells[i][j] = boardTile;
-//				gamePanel.add(boardTile);
-			}
-		}
-		boardPanel = new BoardPanel(boardCellPanels);
+		boardPanel = new BoardPanel();
 		centerPanel.add(boardPanel);
 		return centerPanel;
 	}
