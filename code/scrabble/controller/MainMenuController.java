@@ -13,11 +13,15 @@ public class MainMenuController {
 	}
 
 	private void addActionListeners() {
-		menuScreen.getHostButton().addActionListener(e -> parent.getView().showHost());
+		menuScreen.getHostButton().addActionListener(e -> hostButtonClick());
 		menuScreen.getJoinButton().addActionListener(e -> parent.getView().showJoin());
 		menuScreen.getAudioCheck().addActionListener(e -> audioCheckChanged());
 		menuScreen.getFxCheck().addActionListener(e -> fxCheckChanged());
 		menuScreen.getQuitButton().addActionListener(e -> parent.getView().dispose());
+	}
+
+	private void hostButtonClick() {
+		// setup the partyhost and change screen
 	}
 
 	private void fxCheckChanged() {

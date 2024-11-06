@@ -169,6 +169,8 @@ public class ScrabbleGUI extends JFrame{
 
 	public void showHost() {
 		layoutManager.show(this.contentPane, HOST);
+		this.setMinimumSize(new Dimension(600, 400));
+		this.pack();
 	}
 
 	public void showJoin() {

@@ -48,7 +48,7 @@ public class Controller implements PropertyChangeListener  {
 	public Controller() {
 		view = new ScrabbleGUI();
 		addListeners(view);
-		view.showJoin();
+		view.showHost();
 	}
 
 	public void setupSocket(String ip) throws IOException {

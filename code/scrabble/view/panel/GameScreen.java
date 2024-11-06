@@ -5,6 +5,10 @@ import scrabble.model.Ruleset;
 import scrabble.model.Tile;
 import scrabble.model.TileScore;
 import scrabble.view.frame.TileButton;
+import scrabble.view.panel.subpanel.BoardPanel;
+import scrabble.view.panel.subpanel.PlayerPanel;
+import scrabble.view.panel.subpanel.RackPanel;
+import scrabble.view.panel.subpanel.TilePanel;
 
 import javax.swing.*;
 import java.awt.*;

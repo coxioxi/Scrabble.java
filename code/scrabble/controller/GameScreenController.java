@@ -6,10 +6,12 @@ import scrabble.network.messages.PlayTiles;
 import scrabble.view.frame.ScrabbleGUI;
 import scrabble.view.frame.TileButton;
 import scrabble.view.panel.*;
+import scrabble.view.panel.subpanel.BoardCellPanel;
+import scrabble.view.panel.subpanel.BoardPanel;
+import scrabble.view.panel.subpanel.RackPanel;
+import scrabble.view.panel.subpanel.TilePanel;
 
 import javax.swing.*;
-import javax.swing.event.MenuEvent;
-import javax.swing.event.MenuListener;
 import java.awt.*;
 import java.awt.event.ActionListener;
 import java.util.Arrays;
