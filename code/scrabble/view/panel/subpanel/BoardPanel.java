@@ -1,4 +1,4 @@
-package scrabble.view.panel;
+package scrabble.view.panel.subpanel;
 
 import scrabble.model.Board;
 import scrabble.model.ModifierType;
@@ -22,7 +22,7 @@ public class BoardPanel extends JPanel {
 	public static final String NORMAL_CELL_TEXT = " ";
 
 	public static final float MAXIMUM_PANEL_SIZE_PERCENT = .55f;
-	public static final float PREFERRED_PANEL_SIZE_PERCENT = .42f;
+	public static final float PREFERRED_PANEL_SIZE_PERCENT = .40f;
 	public static final float MINIMUM_PANEL_SIZE_PERCENT = .2f;
 	public static final int SPACING = 3;
 	public static final float MAXIMUM_CELL_PERCENT = .04f;
