@@ -10,8 +10,8 @@ import javax.swing.*;
 import java.awt.event.ActionListener;
 
 public class GameScreenController {
-	private Controller parent;
-	private GameScreen gameScreen;
+	private final Controller parent;
+	private final GameScreen gameScreen;
 
 	public GameScreenController(Controller parent, GameScreen gameScreen) {
 		this.parent = parent;
@@ -34,9 +34,7 @@ public class GameScreenController {
 	}
 
 	private void addTilePanelListener(TilePanel tilePanel, int col) {
-		tilePanel.getButton().addActionListener(e -> {
-			tilePanelClick(col);
-		});
+		tilePanel.getButton().addActionListener(e -> tilePanelClick(col));
 	}
 
 	private void tilePanelClick(int col) {
@@ -97,7 +95,7 @@ public class GameScreenController {
 		// add value to panel
 		JButton toAdd = gameScreen.getValue();
 		removeActionListeners(toAdd);
-		boardCellPanel.setBoardButton(toAdd);
+		boardPanel.setBoardCell(toAdd, row, col);
 		addBoardCellPanelListener(boardCellPanel, row, col);
 		gameScreen.setValue(new JButton(" "));
 	}
