@@ -892,7 +892,14 @@ public class Board {
 				arePointsConnected(tiles));
     }
 
-	/*
+    //getters for testing purposes
+    public boolean getAreInBounds(Tile[] tiles){return arePointsInbounds(tiles);}
+    public boolean getHasNoDuplicates(Tile[] tiles){return hasNoDuplicates(tiles);}
+    public boolean getPointsNotOccupied(Tile[] tiles){return pointsNotOccupied(tiles);}
+    public boolean getArePointsStartingOrAdjacent(Tile[] tiles){return arePointsStartingOrAdjacent(tiles);}
+
+
+    /*
 	helper method which checks that all tiles are adjacent
 	to each other or have gaps filled with board tiles
 	 */
