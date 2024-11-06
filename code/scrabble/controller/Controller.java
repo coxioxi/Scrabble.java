@@ -6,10 +6,13 @@ import scrabble.network.messages.StartGame;
 import scrabble.network.networkPrototype.PartyHost;
 import scrabble.view.frame.ScrabbleGUI;
 import scrabble.view.panel.GameScreen;
+import scrabble.view.panel.JoinScreen;
+import scrabble.view.panel.MainMenuScreen;
 
 import javax.swing.*;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.io.IOException;
 import java.net.Socket;
 
 
@@ -18,12 +21,18 @@ import java.net.Socket;
  */
 
 public class Controller implements PropertyChangeListener  {
+	public static final int PORT = 5000;
+
 	private ScrabbleGUI view;
 	private Game model;
 
 	private ClientMessenger messenger;
 	private Socket hostSocket;
 	private GameScreenController gameScreenController;
+	private MainMenuController mainMenuController;
+	private HostScreenController hostScreenController;
+	private JoinScreenController joinScreenController;
+
 
 	/*
 	reference to the party host
@@ -39,7 +48,12 @@ public class Controller implements PropertyChangeListener  {
 	public Controller() {
 		view = new ScrabbleGUI();
 		addListeners(view);
-		view.showGame();
+		view.showJoin();
+	}
+
+	public void setupSocket(String ip) throws IOException {
+		hostSocket = new Socket(ip, PORT);
+		messenger = new ClientMessenger(hostSocket, this);
 	}
 
 	public ScrabbleGUI getView() {
@@ -71,6 +85,8 @@ public class Controller implements PropertyChangeListener  {
 		// stub, not for active game. see propertyChangeListener
 		this.gameScreenController = new GameScreenController(this, (GameScreen) view.getGame());
 		gameScreenController.setupMenuListeners(view);
+		this.mainMenuController = new MainMenuController(this, (MainMenuScreen) view.getMainMenu());
+
 	}
 
 
@@ -80,6 +96,7 @@ public class Controller implements PropertyChangeListener  {
 
 	private void addJoinListeners(JPanel join) {
 		// add listeners to the buttons on the join game screen
+		joinScreenController = new JoinScreenController(this, (JoinScreen) join);
 	}
 
 	private void addHostListeners(JPanel host) {
@@ -88,6 +105,8 @@ public class Controller implements PropertyChangeListener  {
 
 	private void addMenuListeners(JPanel mainMenu) {
 		// add listeners to the buttons on the main menu
+		mainMenuController = new MainMenuController(this, (MainMenuScreen) mainMenu);
+
 	}
 
 	private void hostGame() {}
