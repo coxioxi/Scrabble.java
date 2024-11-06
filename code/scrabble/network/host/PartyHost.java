@@ -45,6 +45,7 @@ public class PartyHost extends Thread implements PropertyChangeListener {
 	private TileBag tileBag;
 	private HashMap<HostReceiver, Integer> playerIdMap;
 	private HashMap<HostReceiver, ArrayList<Tile>> playerTiles;
+	private HashMap<Integer, HostReceiver> playerIdToMessenger;
 	private Ruleset ruleset;
 	private boolean inGame;
 	private final int TILE_RACK_SIZE = 7;
@@ -71,6 +72,7 @@ public class PartyHost extends Thread implements PropertyChangeListener {
 		tileBag = new TileBag();
 		playerIdMap = new HashMap<>(4);
 		playerTiles = new HashMap<>(4);
+		playerIdToMessenger = new HashMap<>(4);
 		inGame = false;
 
 		// create a server socket that refreshes every second
@@ -177,11 +179,33 @@ public class PartyHost extends Thread implements PropertyChangeListener {
 		return playerIdMap.get(hr);
 	}
 
-	/*********************************************************
-	 * 					Private Methods						 *
-	 *********************************************************/
+	/**
+	 * Sends a message to a player specified by ID.
+	 *
+	 * @param playerID the id of the player to send a message.
+	 * @param message the message to be sent.
+	 * @throws IOException
+	 */
+	public void sendMessage(int playerID, Message message) throws IOException {
+		playerIdToMessenger.get(playerID).sendMessage(message);
+	}
 
-	private void startGame() throws IOException {
+	/**
+	 * Sends a message to all clients except the one specified.
+	 * @param playerID the player to whom not to send a message
+	 * @param message the message to send.
+	 * @throws IOException when the message cannot be sent.
+	 */
+	public void sendToAllButID(int playerID, Message message) throws IOException {
+		for (HostReceiver host: playerIdMap.keySet()) {
+			if(!host.equals(playerIdToMessenger.get(playerID))) {
+				host.sendMessage(message);
+			}
+		}
+	}
+
+
+	public void startGame() throws IOException {
 
 		// Make a starting rack for each player.
 		for (HostReceiver host: playerIdMap.keySet()){
@@ -208,6 +232,7 @@ public class PartyHost extends Thread implements PropertyChangeListener {
 
 		int i = 0;
 		for (HostReceiver host: playerIdMap.keySet()){
+			playerIdToMessenger.put(randomNumbers[i], host);
 			playerIdMap.replace(host, randomNumbers[i]);
 			++i;
 		}
@@ -224,6 +249,10 @@ public class PartyHost extends Thread implements PropertyChangeListener {
 			host.sendMessage(startGameMessage);
 		}
 	}
+
+	/*********************************************************
+	 * 					Private Methods						 *
+	 *********************************************************/
 
 	private void acceptClients() {
 		// look for clients. Socket may time out, returns out of method
