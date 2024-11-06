@@ -75,13 +75,13 @@ public class TestBoard {
             , new Tile('C', new Point(14,0)), new Tile('E', new Point(16,0))};
 
     Tile[] tiles18 = {new Tile('N',new Point(0,0)), new Tile('I', new Point(1,0))
-            , new Tile('C', new Point(2,0)), new Tile('E', new Point(3,0))};
+            , new Tile('C', new Point(2,0)), new Tile('E', new Point(4,0))};
 
     Tile[] tiles19 = {new Tile('N',new Point(5,0)), new Tile('I', new Point(6,0))
-            , new Tile('C', new Point(7,0)), new Tile('E', new Point(8,0))};
+            , new Tile('C', new Point(7,0)), new Tile('E', new Point(9,0))};
 
     Tile[] tiles20 = {new Tile('N',new Point(7,0)), new Tile('I', new Point(6,1))
-            , new Tile('C', new Point(7,2)), new Tile('E', new Point(8,3))};
+            , new Tile('C', new Point(7,2)), new Tile('E', new Point(9,3))};
 
     Board board = new Board();
     int score = 0;
@@ -147,6 +147,49 @@ public class TestBoard {
         Assertions.assertFalse(board.getArePointsStartingOrAdjacent(tiles18));
         Assertions.assertFalse(board.getArePointsStartingOrAdjacent(tiles19));
         Assertions.assertFalse(board.getArePointsStartingOrAdjacent(tiles20));
+    }
+
+    @Test
+    public void testArePointsConnected(){
+        board.playTiles(tiles0);
+        board.playTiles(tiles1);
+        board.playTiles(tiles2);
+        board.playTiles(tiles18);
+        board.playTiles(tiles19);
+        board.playTiles(tiles20);
+
+        Assertions.assertTrue(board.getArePointsConnected(tiles0));
+        Assertions.assertTrue(board.getArePointsConnected(tiles1));
+        Assertions.assertTrue(board.getArePointsConnected(tiles2));
+        Assertions.assertFalse(board.getArePointsConnected(tiles18));
+        Assertions.assertFalse(board.getArePointsConnected(tiles19));
+        Assertions.assertFalse(board.getArePointsConnected(tiles20));
+    }
+
+    @Test
+    public void testAllSameRow(){
+        board.playTiles(tiles0);
+        board.playTiles(tiles1);
+        board.playTiles(tiles2);
+        board.playTiles(tiles7);
+
+        Assertions.assertTrue(board.getAllSameRow(tiles0));
+        Assertions.assertTrue(board.getAllSameRow(tiles2));
+        Assertions.assertFalse(board.getAllSameRow(tiles1));
+        Assertions.assertFalse(board.getAllSameRow(tiles7));
+    }
+
+    @Test
+    public void testAllSameCol() {
+        board.playTiles(tiles0);
+        board.playTiles(tiles1);
+        board.playTiles(tiles2);
+        board.playTiles(tiles7);
+
+        Assertions.assertTrue(board.getAllSameCol(tiles1));
+        Assertions.assertTrue(board.getAllSameCol(tiles7));
+        Assertions.assertFalse(board.getAllSameCol(tiles0));
+        Assertions.assertFalse(board.getAllSameCol(tiles2));
     }
 
     @Test

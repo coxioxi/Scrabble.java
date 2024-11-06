@@ -897,7 +897,9 @@ public class Board {
     public boolean getHasNoDuplicates(Tile[] tiles){return hasNoDuplicates(tiles);}
     public boolean getPointsNotOccupied(Tile[] tiles){return pointsNotOccupied(tiles);}
     public boolean getArePointsStartingOrAdjacent(Tile[] tiles){return arePointsStartingOrAdjacent(tiles);}
-
+    public boolean getArePointsConnected(Tile[] tiles){return arePointsConnected(tiles);}
+    public boolean getAllSameRow(Tile[] tiles){return allSameRow(tiles);}
+    public boolean getAllSameCol(Tile[] tiles){return allSameCol(tiles);}
 
     /*
 	helper method which checks that all tiles are adjacent
