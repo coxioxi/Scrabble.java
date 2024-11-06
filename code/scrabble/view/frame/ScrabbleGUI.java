@@ -1,4 +1,5 @@
 package scrabble.view.frame;
+import scrabble.model.Game;
 import scrabble.model.Player;
 import scrabble.view.panel.*;
 
@@ -8,7 +9,7 @@ import java.awt.*;
 public class ScrabbleGUI extends JFrame{
 	public static final float PREFERRED_SIZE_PERCENT = .8f;
 	public static final float MINIMUM_SIZE_PERCENT = .6f;
-	public static final float MAXIMUM_SIZE_PERCENT = 1;
+	public static final float MAXIMUM_SIZE_PERCENT = .8f;
 
 	public static final String MAIN_MENU = "MAIN-MENU";
 	public static final String HOST 	 = "HOST";
@@ -66,6 +67,20 @@ public class ScrabbleGUI extends JFrame{
 				 IllegalAccessException | UnsupportedLookAndFeelException ignore) {}
 
 		setupFrame();
+		Dimension cpDim = ((GameScreen)game).getCenterPanel().getSize();
+		System.out.println("Center panel dim: " + cpDim.width + "x"+cpDim.height);
+//		menuSetup();
+	}
+
+	private void menuSetup() {
+		JMenuBar menuBar = new JMenuBar();
+		JMenu gameMenu = new JMenu("Game");
+		JMenu helpMenu = new JMenu("Help");
+
+		JMenuItem rules = new JMenuItem("Rules");
+		gameMenu.add(rules);
+		menuBar.add(gameMenu);
+		this.setJMenuBar(menuBar);
 	}
 
 	/*

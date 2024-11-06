@@ -29,7 +29,7 @@ public class GameScreen extends JPanel {
 		this.setLayout(new BorderLayout());
 
 		JPanel northPanel = setupNorthPanel();
-		JPanel centerPanel = setupCenterPanel();
+		centerPanel = setupCenterPanel();
 
 		JPanel eastPanel = new JPanel(new GridLayout(2,1,0,GAP));
 		JPanel westPanel = new JPanel(new GridLayout(2,1,0,GAP));
@@ -56,6 +56,11 @@ public class GameScreen extends JPanel {
 		this.add(westPanel, BorderLayout.WEST);
 		this.add(eastPanel, BorderLayout.EAST);
 		this.add(southPanel, BorderLayout.SOUTH);
+	}
+
+	private JPanel centerPanel;
+	public JPanel getCenterPanel() {
+		return centerPanel;
 	}
 
 	public List<Tile> getPlayedTiles() {
@@ -90,6 +95,7 @@ public class GameScreen extends JPanel {
 		JPanel southPanel = new JPanel(new FlowLayout());
 		JPanel submitAndRack = new JPanel(new GridLayout(2,1,0,10));
 		submitButton = new JButton("Submit");
+		submitButton.setPreferredSize(new Dimension(50, 10));
 		TilePanel[] tilePanels = new TilePanel[RACK_SIZE];
 		for (int i = 0; i < tilePanels.length; i++) {
 			tilePanels[i] = new TilePanel(new TileButton(TileScore.values()[i]));
