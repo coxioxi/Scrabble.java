@@ -21,6 +21,6 @@ public class HostScreenController {
 		this.name = hostScreen.getNameTextField().getText();
 		this.challengesEnabled = hostScreen.getChallengeBox();
 		this.dictionaryFile = hostScreen.getDictionaryPath();
-		this.playerTime = hostScreen.
+//		this.playerTime = hostScreen.
 	}
 }
