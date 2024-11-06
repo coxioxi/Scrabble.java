@@ -32,6 +32,12 @@ public class ScrabbleGUI extends JFrame{
 	private JPanel game 	= new GameScreen();
 	private JPanel winner 	= new JPanel();	// temp bc these are not yet decided
 
+	private JMenuBar menuBar;
+	private JMenu rulesMenu;
+	private JMenu audioMenu;
+	private JMenu fxMenu;
+	private JMenu quitMenu;
+
 
 	private JPanel[] panels = new JPanel[]{
 			mainMenu, host, join, waiting, game, winner
@@ -43,8 +49,8 @@ public class ScrabbleGUI extends JFrame{
 		ScrabbleGUI frame = new ScrabbleGUI();
 		Thread.sleep(3000);
 		frame.showGame();
-		Thread.sleep(10000);
-		frame.showHost();
+		Thread.sleep(4000);
+		frame.showWinner();
 	}
 
 	public ScrabbleGUI() {
@@ -70,18 +76,22 @@ public class ScrabbleGUI extends JFrame{
 		setupFrame();
 		Dimension cpDim = ((GameScreen)game).getCenterPanel().getSize();
 		System.out.println("Center panel dim: " + cpDim.width + "x"+cpDim.height);
-//		menuSetup();
+		menuSetup();
 	}
 
 	private void menuSetup() {
-		JMenuBar menuBar = new JMenuBar();
-		JMenu gameMenu = new JMenu("Game");
-		JMenu helpMenu = new JMenu("Help");
+		menuBar = new JMenuBar();
+		rulesMenu = new JMenu("Rules");
+		audioMenu = new JMenu("Audio On/Off");
+		fxMenu = new JMenu("Fx On/Off");
+		quitMenu = new JMenu("Quit");
 
-		JMenuItem rules = new JMenuItem("Rules");
-		gameMenu.add(rules);
-		menuBar.add(gameMenu);
+		menuBar.add(rulesMenu);
+		menuBar.add(audioMenu);
+		menuBar.add(fxMenu);
+		menuBar.add(quitMenu);
 		this.setJMenuBar(menuBar);
+		menuBar.setVisible(false);
 	}
 
 	/*
@@ -136,6 +146,7 @@ public class ScrabbleGUI extends JFrame{
 
 	public void showGame() {
 		layoutManager.show(this.contentPane, GAME);
+		menuBar.setVisible(true);
 	}
 
 	public void showHost() {
@@ -158,6 +169,7 @@ public class ScrabbleGUI extends JFrame{
 
 	public void showWinner() {
 		layoutManager.show(this.contentPane, PODIUM);
+		menuBar.setVisible(false);
 	}
 
 	/*
