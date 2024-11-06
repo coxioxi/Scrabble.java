@@ -8,11 +8,12 @@ import javax.swing.*;
 import java.awt.*;
 
 public class BoardPanel extends JPanel {
-	public static final Color DOUBLE_WORD_COLOR = new Color(255, 102, 102);
-	public static final Color TRIPLE_WORD_COLOR = new Color(255, 0, 0);
-	public static final Color DOUBLE_LETTER_COLOR = new Color(88, 117, 255);
-	public static final Color TRIPLE_LETTER_COLOR = new Color(0, 41, 255);
-	public static final Color NORMAL_CELL_COLOR = new Color(255, 255, 255);
+	public static final Color DOUBLE_WORD_COLOR = new Color(198, 80, 80);
+	public static final Color TRIPLE_WORD_COLOR = new Color(202, 0, 0);
+	public static final Color DOUBLE_LETTER_COLOR = new Color(71, 92, 202);
+	public static final Color TRIPLE_LETTER_COLOR = new Color(0, 35, 202);
+	public static final Color NORMAL_CELL_COLOR = new Color(221, 221, 221);
+	public static final Color MODIFIER_CELL_TEXT_COLOR = new Color(255, 255, 255);
 
 	public static final String DOUBLE_WORD_TEXT = "DW";
 	public static final String TRIPLE_WORD_TEXT = "TW";
@@ -52,6 +53,8 @@ public class BoardPanel extends JPanel {
 		this.setPreferredSize(preferredPanelSize);
 		this.setMaximumSize(maxPanelSize);
 
+		this.setBackground(new Color(112, 109, 109));
+
 		this.setLayout(new GridLayout(Board.BOARD_ROWS,Board.BOARD_COLUMNS,SPACING,SPACING));
 		setupBoardCellPanels();
 	}
@@ -81,7 +84,7 @@ public class BoardPanel extends JPanel {
 				setColorAndText(cell, row, col);
 
 				boardCells[row][col] = new BoardCellPanel(cell);
-				setButtonSizes(boardCells[row][col]);
+				//setButtonSizes(boardCells[row][col]);
 				this.add(boardCells[row][col]);
 			}
 		}
@@ -97,6 +100,7 @@ public class BoardPanel extends JPanel {
 		ModifierType mt = Board.MODIFIER_HASH_MAP.get(new Point(row, col));
 		button.setBackground(getColor(mt));
 		button.setText(getText(mt));
+		button.setForeground(MODIFIER_CELL_TEXT_COLOR);
 		button.setBorderPainted(false);
 	}
 
