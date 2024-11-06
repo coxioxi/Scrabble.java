@@ -3,6 +3,7 @@ package scrabble.network.messages;
 import scrabble.controller.Controller;
 import scrabble.model.Tile;
 import scrabble.network.host.PartyHost;
+import scrabble.view.panel.GameScreen;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -15,6 +16,7 @@ public class PlayTiles extends Message {
 	private static final long serialVersionUID = 7L;
 	private int playerID;
 	private Tile[] tiles;
+	GameScreen gameScreen = new GameScreen();
 
 	public PlayTiles(int senderID, int playerID, Tile[] tiles) {
 		super(senderID);
@@ -38,7 +40,7 @@ public class PlayTiles extends Message {
 		//if valid we update the score in the GUI and then send the message to the host
 		int score = controller.getModel().playTiles(playerID,tiles);
 
-		if(score != -1){
+		if(score >= 0){
 			//valid play
 			try {
 				controller.getMessenger().sendMessage(this);
@@ -51,13 +53,19 @@ public class PlayTiles extends Message {
 		}
 		else{
 			//not valid play
-			//ask david about gameScreen getter
-			//controller.resetRack();
+			controller.resetRack((GameScreen) controller.getView().getGame());
 		}
 	}
 
 	@Override
 	public void execute(PartyHost partyHost) {
-
+		//get new tiles and send it back to the client (this message playerID)
+		NewTiles newTiles = new NewTiles(PartyHost.HOST_ID, partyHost.getTiles(tiles.length));
+		try{
+			partyHost.sendMessage(this.playerID, newTiles);
+			partyHost.sendToAllButID(this.playerID, this);
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
 	}
 }
