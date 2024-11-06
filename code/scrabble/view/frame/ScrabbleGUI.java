@@ -7,9 +7,9 @@ import javax.swing.*;
 import java.awt.*;
 
 public class ScrabbleGUI extends JFrame{
-	public static final float PREFERRED_SIZE_PERCENT = .8f;
-	public static final float MINIMUM_SIZE_PERCENT = .6f;
-	public static final float MAXIMUM_SIZE_PERCENT = .7f;
+	public static final float PREFERRED_SIZE_PERCENT = .6f;
+	public static final float MINIMUM_SIZE_PERCENT = .5f;
+	public static final float MAXIMUM_SIZE_PERCENT = .8f;
 
 	public static final String MAIN_MENU = "MAIN-MENU";
 	public static final String HOST 	 = "HOST";

@@ -18,7 +18,7 @@ public class BoardCellPanel extends JPanel {
 	public void setBoardButton(JButton boardButton) {
 		if (this.boardButton != null) this.remove(this.boardButton);
 		this.boardButton = boardButton;
-		this.boardButton.setFont(getFont().deriveFont(Font.BOLD, 16f));
+		this.boardButton.setFont(getFont().deriveFont(Font.BOLD, 15f));
 		//this.boardButton.setPreferredSize(new Dimension(22, 22));
 		this.add(this.boardButton);
 		this.revalidate();

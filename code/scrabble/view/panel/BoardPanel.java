@@ -22,11 +22,11 @@ public class BoardPanel extends JPanel {
 	public static final String NORMAL_CELL_TEXT = " ";
 
 	public static final float MAXIMUM_PANEL_SIZE_PERCENT = .55f;
-	public static final float PREFERRED_PANEL_SIZE_PERCENT = .45f;
+	public static final float PREFERRED_PANEL_SIZE_PERCENT = .42f;
 	public static final float MINIMUM_PANEL_SIZE_PERCENT = .2f;
 	public static final int SPACING = 3;
 	public static final float MAXIMUM_CELL_PERCENT = .04f;
-	public static final float PREFERRED_CELL_PERCENT = .03f;
+	public static final float PREFERRED_CELL_PERCENT = .025f;
 	public static final float MINIMUM_CELL_PERCENT = .02f;
 
 
