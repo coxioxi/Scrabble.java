@@ -10,7 +10,9 @@ import scrabble.view.panel.*;
 import javax.swing.*;
 import javax.swing.event.MenuEvent;
 import javax.swing.event.MenuListener;
+import java.awt.*;
 import java.awt.event.ActionListener;
+import java.util.Arrays;
 
 public class GameScreenController {
 	private final Controller parent;
@@ -112,6 +114,9 @@ public class GameScreenController {
 				if (!(tp.getButton() instanceof TileButton)) {
 					JButton toAdd = boardCellPanel.getBoardButton();
 					removeActionListeners(toAdd);
+					gameScreen.playedTiles.remove(
+							new Tile(toAdd.getText().charAt(0), new Point(row, col))
+					);
 					tp.setButton(toAdd);
 					addTilePanelListener(tp, i);
 					foundBlank = true;
@@ -121,9 +126,15 @@ public class GameScreenController {
 		// add value to panel
 		JButton toAdd = gameScreen.getValue();
 		removeActionListeners(toAdd);
+		if (toAdd instanceof TileButton) {
+			gameScreen.playedTiles.add(
+					new Tile(toAdd.getText().charAt(0), new Point(row, col))
+			);
+		}
 		boardPanel.setBoardCell(toAdd, row, col);
 		addBoardCellPanelListener(boardCellPanel, row, col);
 		gameScreen.setValue(new JButton(" "));
+		System.out.println(Arrays.toString(gameScreen.playedTiles.toArray(new Tile[0])));
 	}
 
 	private void removeActionListeners(JButton button) {
