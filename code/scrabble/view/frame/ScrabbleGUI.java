@@ -212,6 +212,18 @@ public class ScrabbleGUI extends JFrame{
 		JOptionPane.showMessageDialog(this, "1.~~~~~~~~~\n2.~~~~~~~~~\n3.~~~~~~~~~~~~\n4.~~~~~~~~~~", "Rules", JOptionPane.INFORMATION_MESSAGE);
 	}
 
+	public void showNoNameDialog() {
+		JOptionPane.showMessageDialog(this, "You must put in a name!", "No Name", JOptionPane.WARNING_MESSAGE);
+	}
+
+	public void showNoIPDialog() {
+		JOptionPane.showMessageDialog(this, "You must input the host's IP Address!", "No IP", JOptionPane.WARNING_MESSAGE);
+	}
+
+	public void showIPErrorDialog() {
+		JOptionPane.showMessageDialog(this, "The Host refused to connect.\nCheck your IP Address!", "No Connection", JOptionPane.WARNING_MESSAGE);
+	}
+
 	public void setupGameScreen(Ruleset rules) {
 		this.game = new GameScreen(rules);
 	}
