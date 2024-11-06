@@ -250,6 +250,10 @@ public class PartyHost extends Thread implements PropertyChangeListener {
 		}
 	}
 
+	public Tile[] getTiles (int size){
+		return tileBag.getNext(size);
+	}
+
 	/*********************************************************
 	 * 					Private Methods						 *
 	 *********************************************************/
