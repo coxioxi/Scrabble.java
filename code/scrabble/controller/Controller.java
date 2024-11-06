@@ -1,31 +1,16 @@
 package scrabble.controller;
 
-
-
-import scrabble.model.Board;
 import scrabble.model.Game;
-import scrabble.model.Tile;
 import scrabble.network.client.ClientMessenger;
-import scrabble.network.messages.PlayTiles;
 import scrabble.network.networkPrototype.PartyHost;
-import scrabble.view.frame.GameFrame;
 import scrabble.view.frame.ScrabbleGUI;
-import scrabble.view.frame.ScrabbleView;
-import scrabble.view.frame.TileButton;
 import scrabble.view.panel.GameScreen;
 
 import javax.swing.*;
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.net.Socket;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
-import static scrabble.view.panel.GameScreen.*;
 
 /**
  * Run the other classes
