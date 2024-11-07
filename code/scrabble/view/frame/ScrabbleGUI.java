@@ -164,6 +164,7 @@ public class ScrabbleGUI extends JFrame{
 
 	public void showGame() {
 		layoutManager.show(this.contentPane, GAME);
+		// change window listener
 		menuBar.setVisible(true);
 	}
 
