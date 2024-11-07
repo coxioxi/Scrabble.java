@@ -21,6 +21,9 @@ public class HostScreenController {
 		this.name = hostScreen.getNameTextField().getText();
 		this.challengesEnabled = hostScreen.getChallengeBox();
 		this.dictionaryFile = hostScreen.getDictionaryPath();
-//		this.playerTime = hostScreen.
+		this.playerTime = Integer.parseInt(hostScreen.getPlayerTimeBox().split(" ")[0]);
+		this.gameTime = Integer.parseInt(hostScreen.getGameTimeBox().split(" ")[0]);
+
+		parent.sendRules(challengesEnabled, dictionaryFile, playerTime, gameTime);
 	}
 }
