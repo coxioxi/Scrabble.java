@@ -110,9 +110,15 @@ public class PartyHost extends Thread implements PropertyChangeListener {
 	 * @param ruleset the ruleset which dictates gameplay rules.
 	 * @throws IOException if an error occurs in messaging clients.
 	 */
-	public void startGame(Ruleset ruleset) throws IOException {
-		this.inGame = true;		// stop looking for clients.
-		this.ruleset = ruleset;
+	public void startGame(Ruleset ruleset) {
+		try {
+			this.inGame = true;		// stop looking for clients.
+			this.ruleset = ruleset;
+			startGame();
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
+
 	}
 
 	@Override
