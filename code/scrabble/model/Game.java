@@ -27,6 +27,11 @@ public class Game {
 	// which turns are taken
 	private Player[] players;
 	private Board board; 	    // The game board
+
+	public void setRuleset(Ruleset ruleset) {
+		this.ruleset = ruleset;
+	}
+
 	private Ruleset ruleset;	// The game ruleset
 	private LocalPlayer self;	// The local player
 
