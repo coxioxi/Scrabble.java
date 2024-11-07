@@ -26,8 +26,10 @@ public class MainMenuController {
 		// setup the partyhost and change screen
 		String name = JOptionPane.showInputDialog(parent.getView(), "Enter your name: ");
 		System.out.println(name);
-		parent.setUpHost(name);
-		parent.getView().showHost();
+		if (name != null && !name.isBlank()) {
+			parent.setUpHost(name);
+			parent.getView().showHost();
+		}
 	}
 
 	private void fxCheckChanged() {
