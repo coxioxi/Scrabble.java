@@ -4,6 +4,7 @@ import scrabble.model.*;
 import scrabble.network.client.ClientMessenger;
 import scrabble.network.messages.Message;
 import scrabble.network.host.PartyHost;
+import scrabble.network.messages.NewPlayer;
 import scrabble.view.frame.ScrabbleGUI;
 import scrabble.view.frame.TileButton;
 import scrabble.view.screen.*;
@@ -66,6 +67,10 @@ public class Controller implements PropertyChangeListener  {
 	public void setupSocket(String ip, int port) throws IOException {
 		hostSocket = new Socket(ip, port);
 		messenger = new ClientMessenger(hostSocket, this);
+	}
+
+	public void sendNewPlayer(String name) throws IOException {
+		messenger.sendMessage(new NewPlayer(0, 0, name));
 	}
 
 	public void setUpHost(String name) {

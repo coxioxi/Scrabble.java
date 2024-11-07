@@ -33,6 +33,7 @@ public class JoinScreenController {
             try {
                 portNumber = Integer.parseInt(hostsPort);
                 parent.setupSocket(hostsIP, portNumber);
+                parent.sendNewPlayer(userName);
                 parent.showWaiting();
             } catch (NumberFormatException e) {
                 parent.showNoPortDialog();
