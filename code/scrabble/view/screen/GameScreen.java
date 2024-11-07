@@ -1,9 +1,6 @@
 package scrabble.view.screen;
 
-import scrabble.model.Board;
-import scrabble.model.Ruleset;
-import scrabble.model.Tile;
-import scrabble.model.TileScore;
+import scrabble.model.*;
 import scrabble.view.frame.TileButton;
 import scrabble.view.screen.component.BoardPanel;
 import scrabble.view.screen.component.PlayerPanel;
@@ -73,7 +70,8 @@ public class GameScreen extends JPanel {
 		}
 	}
 
-	public GameScreen(Ruleset rules) {
+	//TODO: implement this method
+	public GameScreen(Ruleset rules, Player[] player, int playerNum) {
 
 	}
 
