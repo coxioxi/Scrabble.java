@@ -16,7 +16,7 @@ public class MainMenuController {
 
 	private void addActionListeners() {
 		menuScreen.getHostButton().addActionListener(e -> hostButtonClick());
-		menuScreen.getJoinButton().addActionListener(e -> parent.getView().showJoin());
+		menuScreen.getJoinButton().addActionListener(e -> parent.showJoin());
 		menuScreen.getAudioCheck().addActionListener(e -> audioCheckChanged());
 		menuScreen.getFxCheck().addActionListener(e -> fxCheckChanged());
 		menuScreen.getQuitButton().addActionListener(e -> parent.getView().dispose());
@@ -25,10 +25,9 @@ public class MainMenuController {
 	private void hostButtonClick() {
 		// setup the partyhost and change screen
 		String name = JOptionPane.showInputDialog(parent.getView(), "Enter your name: ");
-		System.out.println(name);
 		if (name != null && !name.isBlank()) {
 			parent.setUpHost(name);
-			parent.getView().showHost();
+			parent.showHost();
 		}
 	}
 

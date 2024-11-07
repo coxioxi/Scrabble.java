@@ -31,26 +31,26 @@ public class GameScreenController {
 	}
 
 	public void setupMenuListeners(ScrabbleGUI view) {
-		view.getRulesItem().addActionListener(e -> rulesMenuClick(view));
-		view.getAudioItem().addActionListener(e -> audioMenuClick(view));
-		view.getFxItem().addActionListener(e -> fxMenuClick(view));
-		view.getQuitItem().addActionListener(e -> quitMenuClick(view));
+		view.getRulesItem().addActionListener(e -> rulesMenuClick());
+		view.getAudioItem().addActionListener(e -> audioMenuClick());
+		view.getFxItem().addActionListener(e -> fxMenuClick());
+		view.getQuitItem().addActionListener(e -> quitMenuClick());
 	}
 
-	private void quitMenuClick(ScrabbleGUI view) {
-		view.showQuitDialog();
+	private void quitMenuClick() {
+		parent.showQuitDialog();
 	}
 
-	private void fxMenuClick(ScrabbleGUI view) {
-		// haha great question
+	private void fxMenuClick() {
+		// haha, great question
 	}
 
-	private void audioMenuClick(ScrabbleGUI view) {
-		// haha great question
+	private void audioMenuClick() {
+		// haha, great question
 	}
 
-	private void rulesMenuClick(ScrabbleGUI view) {
-		view.showRulesDialog();
+	private void rulesMenuClick() {
+		parent.showRulesDialog();
 	}
 
 	private void addActionListeners() {

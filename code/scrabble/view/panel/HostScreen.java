@@ -10,6 +10,7 @@ import java.awt.*;
 public class HostScreen extends JPanel {
 
     public static final String DICTIONARY_PATH = "../../../dictionary.txt";
+    public static final String DEFAULT_WAITING_TEXT = "  Waiting...  ";
 
     // Options for game time, player time, challenges, and dictionary selection
     public static final String[] gameTimeChoices =
@@ -74,6 +75,13 @@ public class HostScreen extends JPanel {
         numPlayers++;
     }
 
+    public void resetPlayerNames() {
+        for (JLabel label : players) {
+            label.setText(DEFAULT_WAITING_TEXT);
+        }
+        numPlayers = 0;
+    }
+
     /**
      * Helper method to create a panel with a titled border and FlowLayout.
      *
@@ -116,7 +124,7 @@ public class HostScreen extends JPanel {
         players = new JLabel[4];
 
         for (int i = 0; i < players.length; i++) {
-            players[i] = new JLabel("  Waiting...  ", SwingConstants.CENTER);
+            players[i] = new JLabel(DEFAULT_WAITING_TEXT, SwingConstants.CENTER);
             players[i].setBorder(BorderFactory.createEtchedBorder());
             playersWaiting.add(players[i]);
         }

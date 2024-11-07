@@ -23,21 +23,21 @@ public class JoinScreenController {
         hostsIP = joinScreen.getIPTextField().getText().trim();
         hostsPort = joinScreen.getPort().getText().trim();
         if (userName.isBlank()) {
-            parent.getView().showNoNameDialog();
+            parent.showNoNameDialog();
         } else if (hostsIP.isBlank()) {
-            parent.getView().showNoIPDialog();
+            parent.showNoIPDialog();
         } else if (hostsPort.isBlank()) {
-            parent.getView().showNoPortDialog();
+            parent.showNoPortDialog();
         } else {
             int portNumber;
             try {
                 portNumber = Integer.parseInt(hostsPort);
                 parent.setupSocket(hostsIP, portNumber);
-                parent.getView().showWaiting();
+                parent.showWaiting();
             } catch (NumberFormatException e) {
-                parent.getView().showNoPortDialog();
+                parent.showNoPortDialog();
             } catch (IOException e) {
-                parent.getView().showIPErrorDialog();
+                parent.showIPErrorDialog();
             }
         }
     }
