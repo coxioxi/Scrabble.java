@@ -3,6 +3,7 @@ package scrabble.controller;
 import scrabble.model.*;
 import scrabble.network.client.ClientMessenger;
 import scrabble.network.messages.ExchangeTiles;
+import scrabble.network.messages.Message;
 import scrabble.network.messages.PlayTiles;
 import scrabble.network.messages.StartGame;
 import scrabble.network.host.PartyHost;
@@ -173,11 +174,7 @@ public class Controller implements PropertyChangeListener  {
 
 	@Override
 	public void propertyChange(PropertyChangeEvent evt) {
-		if (evt.getNewValue() instanceof StartGame) {
-			this.view.setupGameScreen(((StartGame) evt.getNewValue()).getRuleset());
-			this.gameScreenController = new GameScreenController(this, (GameScreen) view.getGame());
-			this.gameScreenController.setupMenuListeners(view);
-		}
+		((Message) evt.getNewValue()).execute(this);
 	}
 
 }
