@@ -47,6 +47,7 @@ public class PartyHost extends Thread implements PropertyChangeListener {
 	private HashMap<HostReceiver, ArrayList<Tile>> playerTiles;
 	private HashMap<Integer, HostReceiver> playerIdToMessenger;
 	private HashMap<Integer, String> playerNames;
+	private PropertyChangeEvent evt;
 	private Ruleset ruleset;
 	private boolean inGame;
 	private final int TILE_RACK_SIZE = 7;
@@ -75,6 +76,7 @@ public class PartyHost extends Thread implements PropertyChangeListener {
 		playerIdMap = new HashMap<>(4);
 		playerTiles = new HashMap<>(4);
 		playerIdToMessenger = new HashMap<>(4);
+		playerNames = new HashMap<>(4);
 		inGame = false;
 
 		// create a server socket that refreshes every second
@@ -110,7 +112,6 @@ public class PartyHost extends Thread implements PropertyChangeListener {
 	 *     more clients from joining the game.
 	 * </p>
 	 * @param ruleset the ruleset which dictates gameplay rules.
-	 * @throws IOException if an error occurs in messaging clients.
 	 */
 	public void startGame(Ruleset ruleset) {
 		try {
@@ -148,51 +149,22 @@ public class PartyHost extends Thread implements PropertyChangeListener {
 
 	@Override
 	public void propertyChange(PropertyChangeEvent evt) {
-		// called from ClientHandler when a new message is received.
-		// determine the message subclass then call appropriate helper method for processing
-
+		// let the message cook!!!
+		this.evt = evt;
 		Message message = (Message) evt.getNewValue();
-		HostReceiver handler = (HostReceiver) evt.getSource();
-		boolean success = false;
-		while (!success) {
-			try {
-				if (message instanceof Challenge) {
-					System.out.println("Challenge");
-					handleChallenge(handler, (Challenge) message);
-				} else if (message instanceof ExchangeTiles) {
-					System.out.println("Exchange");
-					handleExchangeTiles(handler, (ExchangeTiles) message);
-				} else if (message instanceof ExitParty) {
-					System.out.println("Exit");
-					handleExitParty(handler, (ExitParty) message);
-				} else if (message instanceof PassTurn) {
-					System.out.println("Pass");
-					handlePassTurn(handler, (PassTurn) message);
-				} else if (message instanceof PlayTiles) {
-					System.out.println("PlayTiles");
-					handlePlayTiles(handler, (PlayTiles) message);
-				}
-				else if(message instanceof NewPlayer){
-					System.out.println("NewPlayer");
-					handleNewPlayer(handler, (NewPlayer) message);
-				}
-				success = true;
-			} catch (IOException e) {
-				System.out.println("uhhhhh");
-			}
-		}
+		message.execute(this);
+	}
+
+	public int getMessagePlayerID() {
+		return playerIdMap.get((HostReceiver) evt.getSource());
 	}
 
 	public void addPlayerName(String name){
-		/*for (HostReceiver host: playerIdMap.keySet()) {
-			NewPlayer newPlayerMessage = new NewPlayer(HOST_ID, playerIdMap.get(host), message.getPlayerName());
+		this.playerNames.put(playerIdMap.size(), (String)evt.getNewValue());
+	}
 
-			if(!playerIdMap.get(host).equals(playerIdMap.get(source))){
-				host.sendMessage(newPlayerMessage);
-			}
-		}
-
-		 */
+	public String[] getPlayerNames() {
+		return playerNames.values().toArray(new String[0]);
 	}
 
 	public int getPlayerID(HostReceiver hr) {
@@ -204,7 +176,7 @@ public class PartyHost extends Thread implements PropertyChangeListener {
 	 *
 	 * @param playerID the id of the player to send a message.
 	 * @param message the message to be sent.
-	 * @throws IOException
+	 * @throws IOException when an error occurs writing to client
 	 */
 	public void sendMessage(int playerID, Message message) throws IOException {
 		playerIdToMessenger.get(playerID).sendMessage(message);
@@ -292,7 +264,9 @@ public class PartyHost extends Thread implements PropertyChangeListener {
 			clientThread.start();
 
 			//populate playerIdMap
-			playerIdMap.put(clientHandler, playerIdMap.size());
+			int index = playerIdMap.size();
+			playerIdMap.put(clientHandler, index);
+			playerIdToMessenger.put(index, clientHandler);
 		}
 		catch (SocketTimeoutException e) {
 			// This is fine. don't do anything.
