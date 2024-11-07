@@ -26,6 +26,10 @@ public class GameScreenController {
 		addActionListeners();
 	}
 
+	public void removeTile(Tile tile){
+		boardCellClick(tile.getLocation().x, tile.getLocation().y);
+	}
+
 	public void setupMenuListeners(ScrabbleGUI view) {
 		view.getRulesItem().addActionListener(e -> rulesMenuClick(view));
 		view.getAudioItem().addActionListener(e -> audioMenuClick(view));
