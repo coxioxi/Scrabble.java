@@ -47,7 +47,7 @@ public class WaitingScreen extends JPanel {
         // Initialize labels for player slots and add them to the panel
         players = new JLabel[4];
         for (int i = 0; i < players.length; i++) {
-            players[i] = new JLabel("**Player "+(i+1)+ " Name**", SwingConstants.CENTER);
+            players[i] = new JLabel("|  Waiting...  |", SwingConstants.CENTER);
             players[i].setBorder(BorderFactory.createEtchedBorder()); // Adds a border to each label
             playersWaiting.add(players[i]);
         }
