@@ -48,9 +48,13 @@ public class StartGame extends Message {
 
 		//set ruleset from game for players: controller.getModel().setRuleset(ruleset)
 		// or make it possible to instantiate new game object for players when executing message
-
-		controller.getModel().setRuleset(ruleset);
-		controller.getView().setupGameScreen(controller.getModel().getRuleset(), controller.getModel().getPlayers(), controller.getModel().getPlayers().length);
+		try {
+			controller.getMessenger().sendMessage(this);
+			controller.getModel().setRuleset(ruleset);
+			controller.getView().setupGameScreen(controller.getModel().getRuleset(), controller.getModel().getPlayers(), controller.getModel().getPlayers().length);
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
 
 	}
 
