@@ -3,6 +3,7 @@ package scrabble.network.messages;
 import scrabble.controller.Controller;
 import scrabble.network.host.PartyHost;
 
+import java.io.IOException;
 import java.io.Serializable;
 
 public class NewPlayer extends Message implements Serializable {
@@ -27,12 +28,30 @@ public class NewPlayer extends Message implements Serializable {
         //Create player connection to the host
         //Add getPlayerName to controller
         //in order to add players to waiting screen and game screen
-
-        //controller.addNewPlayer(playerID,playerName)
+        if (controller.getHost()==null) {
+            controller.getView().getWaiting().addPlayerName(this.playerName);
+        }
+        else {
+            controller.getView().getHost().addPlayerName(this.playerName);
+        }
     }
 
     @Override
     public void execute(PartyHost partyHost) {
-        //no need to send it to the host just send the player to the other players from the host
-    }
+        for (String name : partyHost.getPlayerNames()) {
+            int selfID = partyHost.getMessagePlayerID();
+            NewPlayer newPlayer = new NewPlayer(PartyHost.HOST_ID, selfID, name);
+			try {
+				partyHost.sendMessage(selfID, newPlayer);
+			} catch (IOException e) {
+				throw new RuntimeException(e);
+			}
+		}
+        partyHost.addPlayerName(this.playerName);
+		try {
+			partyHost.sendToAllButID(this.playerID, this);
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
+	}
 }
