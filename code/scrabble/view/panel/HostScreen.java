@@ -29,6 +29,7 @@ public class HostScreen extends JPanel {
     private JComboBox<String> playerTimeBox;
     private JComboBox<String> gameTimeBox;
     private JButton hostButton;
+    private JLabel hostsIP;
 
     /**
      * Constructor for HostScreen. Sets up the layout with sections for player info,
@@ -88,7 +89,7 @@ public class HostScreen extends JPanel {
         JPanel nameAndIP = new JPanel(new GridLayout(2,2,7,10));
 
         JLabel yourIP = new JLabel("Your IP Address:", SwingConstants.RIGHT);
-        JLabel hostsIP = new JLabel("**Host's IP**");
+        hostsIP = new JLabel("**Host's IP**");
         JLabel nameLabel = new JLabel("Name:", SwingConstants.RIGHT);
 
         nameAndIP.add(yourIP);
@@ -164,15 +165,15 @@ public class HostScreen extends JPanel {
         return DICTIONARY_PATH;
     }
 
-    public JComboBox<String> getPlayerTimeBox() {
-        return playerTimeBox;
-    }
+    public String getPlayerTimeBox() { return playerTimeChoices[playerTimeBox.getSelectedIndex()]; }
 
-    public JComboBox<String> getGameTimeBox() {
-        return gameTimeBox;
-    }
+    public String getGameTimeBox() { return gameTimeChoices[gameTimeBox.getSelectedIndex()]; }
 
     public JButton getHostButton() {
         return hostButton;
+    }
+
+    public JLabel getHostsIP() {
+        return hostsIP;
     }
 }
