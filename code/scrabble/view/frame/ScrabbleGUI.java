@@ -126,28 +126,28 @@ public class ScrabbleGUI extends JFrame{
 		return contentPane;
 	}
 
-	public JPanel getMainMenu() {
-		return mainMenu;
+	public MainMenuScreen getMainMenu() {
+		return (MainMenuScreen) mainMenu;
 	}
 
-	public JPanel getHost() {
-		return host;
+	public HostScreen getHost() {
+		return (HostScreen) host;
 	}
 
-	public JPanel getJoin() {
-		return join;
+	public JoinScreen getJoin() {
+		return (JoinScreen) join;
 	}
 
-	public JPanel getWaiting() {
-		return waiting;
+	public WaitingScreen getWaiting() {
+		return (WaitingScreen) waiting;
 	}
 
-	public JPanel getGame() {
-		return game;
+	public GameScreen getGame() {
+		return (GameScreen) game;
 	}
 
-	public JPanel getWinner() {
-		return winner;
+	public WinnerScreen getWinner() {
+		return (WinnerScreen) winner;
 	}
 
 	public JPanel[] getPanels() {
