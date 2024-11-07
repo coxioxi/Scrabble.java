@@ -67,6 +67,12 @@ public class GameScreen extends JPanel {
 		this.add(southPanel, BorderLayout.SOUTH);
 	}
 
+	public void disableLastPlayedTiles() {
+		for (Tile t : playedTiles) {
+			boardPanel.disableBoardCell(t.getLocation().x, t.getLocation().y);
+		}
+	}
+
 	public GameScreen(Ruleset rules) {
 
 	}
