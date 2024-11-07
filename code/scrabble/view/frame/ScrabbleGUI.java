@@ -222,6 +222,10 @@ public class ScrabbleGUI extends JFrame{
 		JOptionPane.showMessageDialog(this, "You must input the host's IP Address!", "No IP", JOptionPane.WARNING_MESSAGE);
 	}
 
+	public void showNoPortDialog() {
+		JOptionPane.showMessageDialog(this, "You must enter the host's port number!", "Incorrect Port Input", JOptionPane.WARNING_MESSAGE);
+	}
+
 	public void showIPErrorDialog() {
 		JOptionPane.showMessageDialog(this, "The Host refused to connect.\nCheck your IP Address!", "No Connection", JOptionPane.WARNING_MESSAGE);
 	}
