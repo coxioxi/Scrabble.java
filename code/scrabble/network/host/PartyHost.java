@@ -51,12 +51,13 @@ public class PartyHost extends Thread implements PropertyChangeListener {
 	private final int TILE_RACK_SIZE = 7;
 
 	public static void main(String[] args) throws UnknownHostException {
-		int port = 5000;
+		int port = 0;
 
 		System.out.println("Your IP: " + Inet4Address.getLocalHost().getHostAddress());
-		System.out.println("Listening at port " + port);
+		PartyHost partyHost = new PartyHost(port);
+		System.out.println("Listening at port " + partyHost.getPort());
 
-		PartyHost partyHost = new PartyHost(5000);
+
 		Thread thread = new Thread(partyHost);
 		thread.start();
 	}
@@ -80,7 +81,7 @@ public class PartyHost extends Thread implements PropertyChangeListener {
 		try {
 			server = new ServerSocket(port);
 			server.setSoTimeout(1000);
-			IPAddress = server.getInetAddress().getHostAddress();
+			IPAddress = Inet4Address.getLocalHost().getHostAddress();
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}

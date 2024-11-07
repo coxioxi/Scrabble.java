@@ -26,7 +26,7 @@ import java.net.Socket;
  */
 
 public class Controller implements PropertyChangeListener  {
-	public static final int PORT = 5000;
+	public static final int PORT = 0;
 
 	private ScrabbleGUI view;
 	private Game model;
@@ -62,10 +62,14 @@ public class Controller implements PropertyChangeListener  {
 		messenger = new ClientMessenger(hostSocket, this);
 	}
 
-	public void setUpHost() {
+	public void setUpHost(String name) {
 		host = new PartyHost(PORT);
 		host.start();
-		view.getHost().getHostsIP().setText(host.getIPAddress());
+		System.out.println(host.getIPAddress() + " " + host.getPort());
+		HostScreen hostScreen = view.getHost();
+		hostScreen.getHostsIP().setText(host.getIPAddress());
+		hostScreen.getHostPort().setText(""+host.getPort());
+		hostScreen.getPlayers()[0].setText(name);
 	}
 
 	public void sendRules(boolean challengesAllowed, String dictionary, int playerTime, int gameTime) {
@@ -102,7 +106,7 @@ public class Controller implements PropertyChangeListener  {
 		// stub, not for active game. see propertyChangeListener
 		this.gameScreenController = new GameScreenController(this, (GameScreen) view.getGame());
 		gameScreenController.setupMenuListeners(view);
-		this.mainMenuController = new MainMenuController(this, (MainMenuScreen) view.getMainMenu());
+		//this.mainMenuController = new MainMenuController(this, (MainMenuScreen) view.getMainMenu());
 
 	}
 
