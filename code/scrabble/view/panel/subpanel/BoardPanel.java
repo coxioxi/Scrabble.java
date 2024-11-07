@@ -1,5 +1,6 @@
 package scrabble.view.panel.subpanel;
 
+import scrabble.controller.GameScreenController;
 import scrabble.model.Board;
 import scrabble.model.ModifierType;
 import scrabble.view.frame.TileButton;
@@ -144,6 +145,12 @@ public class BoardPanel extends JPanel {
 		this.boardCells[row][col].setBoardButton(button);
 		this.boardCells[row][col].revalidate();
 		this.boardCells[row][col].repaint();
+	}
+
+	public void disableBoardCell(int row, int col) {
+		JButton button = boardCells[row][col].getBoardButton();
+		 button.setEnabled(false);
+		GameScreenController.removeActionListeners(button);
 	}
 
 	public BoardCellPanel getBoardCell(int row, int col) {
