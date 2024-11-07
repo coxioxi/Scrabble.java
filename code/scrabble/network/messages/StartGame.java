@@ -51,7 +51,7 @@ public class StartGame extends Message {
 		try {
 			controller.getMessenger().sendMessage(this);
 			controller.getModel().setRuleset(ruleset);
-			controller.getView().setupGameScreen(controller.getModel().getRuleset(), controller.getModel().getPlayers(), controller.getModel().getPlayers().length);
+			controller.getView().setupGameScreen(ruleset, controller.getModel().getPlayers(), controller.getModel().getPlayers().length);
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
