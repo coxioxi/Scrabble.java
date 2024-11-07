@@ -3,6 +3,7 @@ package scrabble.network.messages;
 import scrabble.controller.Controller;
 import scrabble.model.Tile;
 import scrabble.network.host.PartyHost;
+import scrabble.view.panel.GameScreen;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -15,6 +16,7 @@ public class PlayTiles extends Message {
 	private static final long serialVersionUID = 7L;
 	private int playerID;
 	private Tile[] tiles;
+	GameScreen gameScreen = new GameScreen();
 
 	public PlayTiles(int senderID, int playerID, Tile[] tiles) {
 		super(senderID);
@@ -32,15 +34,38 @@ public class PlayTiles extends Message {
 
 	@Override
 	public void execute(Controller controller) {
-		controller.getModel().playTiles(playerID,tiles);
-		// how to update view to show score
+		//how to update view to show score
+		//if play was valid we'll have a positive number for the score, otherwise we get -1 for the score
+		//if we get a -1 reset the most recently placed tiles using playedTiles in gameScreen
+		//if valid we update the score in the GUI and then send the message to the host
+		int score = controller.getModel().playTiles(playerID,tiles);
 
+		if(score >= 0){
+			//valid play
+			try {
+				controller.getMessenger().sendMessage(this);
+			} catch (IOException e) {
+				controller.getMessenger().halt();
+
+				//make this sout be a pop-up message for the client
+				System.out.println("Host Disconnected");
+			}
+		}
+		else{
+			//not valid play
+			controller.resetRack((GameScreen) controller.getView().getGame());
+		}
 	}
-
-	//Add method does the damn thing for all of the messages
 
 	@Override
 	public void execute(PartyHost partyHost) {
-
+		//get new tiles and send it back to the client (this message playerID)
+		NewTiles newTiles = new NewTiles(PartyHost.HOST_ID, partyHost.getTiles(tiles.length));
+		try{
+			partyHost.sendMessage(this.playerID, newTiles);
+			partyHost.sendToAllButID(this.playerID, this);
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
 	}
 }

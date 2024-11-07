@@ -4,13 +4,15 @@ package scrabble.controller;
 
 import scrabble.model.Board;
 import scrabble.model.Game;
+import scrabble.model.NotBlankException;
 import scrabble.model.Tile;
 import scrabble.network.client.ClientMessenger;
+import scrabble.network.messages.ExchangeTiles;
 import scrabble.network.messages.PlayTiles;
 import scrabble.network.networkPrototype.PartyHost;
 import scrabble.view.frame.ScrabbleGUI;
 import scrabble.view.frame.TileButton;
-import scrabble.view.panel.*;
+import scrabble.view.panel.GameScreen;
 
 import javax.swing.*;
 import java.awt.*;
@@ -70,6 +72,17 @@ public class Controller implements PropertyChangeListener  {
 		return host;
 	}
 
+	public Tile[] getRack(GameScreen gameScreen) throws NotBlankException {
+		Tile[] tiles = new Tile[gameScreen.getRack().length];
+		if(gameScreen.getRack().length > 0) {
+			for (int i = 0; i < gameScreen.getRack().length; i++)
+				tiles[i] = new Tile(gameScreen.getRack()[i].getText().charAt(0));
+
+			return tiles;
+		}
+		return tiles;
+	}
+
 	private void addListeners(ScrabbleGUI view) {
 		addMenuListeners(view.getMainMenu());
 		addHostListeners(view.getHost());
@@ -100,6 +113,40 @@ public class Controller implements PropertyChangeListener  {
 	}
 
 	private void hostGame() {}
+
+	public void resetRack(GameScreen gameScreen){
+		//loop through the rack
+		for (int i = 0; i < gameScreen.getRack().length; ++i){
+			Point point = new Point(gameScreen.playedTiles.get(i).getLocation());
+			//find empty rack location
+			if(!(gameScreen.getRack()[i] instanceof TileButton)){
+				//swap with board location
+				swap(gameScreen.getRack(), gameScreen.getGameCells(), point);
+			}
+		}
+	}
+
+	public void exchangeRack(GameScreen gameScreen, Tile[] toAdd){
+		JButton toAddTile = new JButton();
+
+		//loop through the rack
+		for (int i = 0; i < gameScreen.getRack().length; ++i){
+			//find empty rack location
+			if(!(gameScreen.getRack()[i] instanceof TileButton)){
+				//swap letters with exchange tile array location
+				gameScreen.getRack()[i].setText(""+toAdd[i].getLetter());
+			}
+		}
+	}
+
+	private void swap(JButton[] rack, JButton[][] board, Point point){
+		JButton temp;
+		for (int i = 0; i < rack.length; ++i) {
+			temp = rack[i];
+			rack[i] = board[point.x][point.y];
+			board[point.x][point.y] = temp;
+		}
+	}
 
 	@Override
 	public void propertyChange(PropertyChangeEvent evt) {}

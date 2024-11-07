@@ -4,6 +4,7 @@ import scrabble.controller.Controller;
 import scrabble.model.NotBlankException;
 import scrabble.model.Tile;
 import scrabble.network.host.PartyHost;
+import scrabble.view.panel.GameScreen;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -33,6 +34,7 @@ public class ExchangeTiles extends Message{
 	private static final long serialVersionUID = 3L;
 	private final int playerID;
 	private Tile[] toExchange;
+	private Tile[] newTiles;
 
 	public ExchangeTiles(int senderID, int playerID, Tile[] toExchange) {
 		super(senderID);
@@ -63,12 +65,17 @@ public class ExchangeTiles extends Message{
 
 	@Override
 	public void execute(PartyHost partyHost) {
-
+		newTiles = partyHost.getTiles(toExchange.length);
+		ExchangeTiles tiles = new ExchangeTiles(PartyHost.HOST_ID, this.playerID, toExchange);
+		try{
+			partyHost.sendMessage(this.playerID, tiles);
+			partyHost.sendToAllButID(this.playerID, this);
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
 	}
 
-	private void themExecute(Controller controller) {
-
-	}
+	private void themExecute(Controller controller) {}
 
 	private void selfExecute(Controller controller) {
 		try {
@@ -76,12 +83,17 @@ public class ExchangeTiles extends Message{
 		} catch (IOException e) {
 			// if an error occurs in writing to the host, the host has disconnected.
 			// halt the messenger thread and notify the client that the game is over.
+			controller.getMessenger().halt();
+
+			//make this sout be a pop-up message for the client
+			System.out.println("Host Disconnected");
 		}
 		ArrayList<Tile> tiles = controller.getModel().getSelf().getRack();
 		for (Tile t : toExchange) {
 			tiles.remove(t);
 		}
-		// TODO: update the GUI
+		// TODO: check implementation for GUI update!
+		controller.exchangeRack((GameScreen) controller.getView().getGame(), newTiles);
 	}
 
 

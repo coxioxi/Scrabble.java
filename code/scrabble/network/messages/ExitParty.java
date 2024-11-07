@@ -1,8 +1,11 @@
 package scrabble.network.messages;
 
 import scrabble.controller.Controller;
+import scrabble.model.NotBlankException;
 import scrabble.network.host.PartyHost;
+import scrabble.view.panel.GameScreen;
 
+import java.io.IOException;
 import java.io.Serial;
 
 public class ExitParty extends Message {
@@ -21,11 +24,20 @@ public class ExitParty extends Message {
 
 	@Override
 	public void execute(Controller controller) {
-		//controller needs to remove them from player list
+		try {
+			controller.getMessenger().sendMessage(this);
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
 	}
 
 	@Override
 	public void execute(PartyHost partyHost) {
-
+		//get new tiles and send it back to the client (this message playerID)
+		try{
+			partyHost.sendToAllButID(this.playerID, this);
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
 	}
 }
