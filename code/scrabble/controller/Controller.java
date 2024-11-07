@@ -2,10 +2,7 @@ package scrabble.controller;
 
 import scrabble.model.*;
 import scrabble.network.client.ClientMessenger;
-import scrabble.network.messages.ExchangeTiles;
 import scrabble.network.messages.Message;
-import scrabble.network.messages.PlayTiles;
-import scrabble.network.messages.StartGame;
 import scrabble.network.host.PartyHost;
 import scrabble.view.frame.ScrabbleGUI;
 import scrabble.view.frame.TileButton;
@@ -16,6 +13,9 @@ import scrabble.view.panel.subpanel.TilePanel;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.IOException;
@@ -54,8 +54,14 @@ public class Controller implements PropertyChangeListener  {
 
 	public Controller() {
 		view = new ScrabbleGUI();
+		view.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
 		addListeners(view);
-		view.showMain();
+		this.showMain();
+	}
+
+	@Override
+	public void propertyChange(PropertyChangeEvent evt) {
+		((Message) evt.getNewValue()).execute(this);
 	}
 
 	public void setupSocket(String ip, int port) throws IOException {
@@ -66,11 +72,11 @@ public class Controller implements PropertyChangeListener  {
 	public void setUpHost(String name) {
 		host = new PartyHost(PORT);
 		host.start();
-		System.out.println(host.getIPAddress() + " " + host.getPort());
+//		System.out.println(host.getIPAddress() + " " + host.getPort());
 		HostScreen hostScreen = view.getHost();
 		hostScreen.getHostsIP().setText(host.getIPAddress());
 		hostScreen.getHostPort().setText(""+host.getPort());
-		hostScreen.getPlayers()[0].setText(name);
+		hostScreen.addPlayerName(name);
 	}
 
 	public void sendRules(boolean challengesAllowed, String dictionary, int playerTime, int gameTime) {
@@ -96,40 +102,6 @@ public class Controller implements PropertyChangeListener  {
 
 	public PartyHost getHost() {
 		return host;
-	}
-
-	private void addListeners(ScrabbleGUI view) {
-		addMenuListeners(view.getMainMenu());
-		addHostListeners(view.getHost());
-		addJoinListeners(view.getJoin());
-		addWaitingListeners(view.getWaiting());
-
-		// stub, not for active game. see propertyChangeListener
-		this.gameScreenController = new GameScreenController(this, (GameScreen) view.getGame());
-		gameScreenController.setupMenuListeners(view);
-		//this.mainMenuController = new MainMenuController(this, (MainMenuScreen) view.getMainMenu());
-
-	}
-
-
-	private void addWaitingListeners(JPanel waiting) {
-		// add listeners to the buttons on the waiting players screen
-	}
-
-	private void addJoinListeners(JoinScreen join) {
-		// add listeners to the buttons on the join game screen
-		joinScreenController = new JoinScreenController(this, join);
-	}
-
-	private void addHostListeners(HostScreen host) {
-		// add listeners to the buttons on the host screen
-		hostScreenController = new HostScreenController(this, host);
-	}
-
-	private void addMenuListeners(MainMenuScreen mainMenu) {
-		// add listeners to the buttons on the main menu
-		mainMenuController = new MainMenuController(this, mainMenu);
-
 	}
 
 	public void resetRack(GameScreen gameScreen){
@@ -163,18 +135,173 @@ public class Controller implements PropertyChangeListener  {
 		}
 	}
 
-	private void swap(JButton[] rack, JButton[][] board, Point point){
-		JButton temp;
-		for (int i = 0; i < rack.length; ++i) {
-			temp = rack[i];
-			rack[i] = board[point.x][point.y];
-			board[point.x][point.y] = temp;
+	public void showGame() {
+		view.showGame();
+		removeListeners();
+		view.addWindowListener(new WindowAdapter() {
+			@Override
+			public void windowClosing(WindowEvent e) {
+				gameClose();
+			}
+		});
+	}
+
+	public void showHost() {
+		view.showHost();
+		removeListeners();
+		view.addWindowListener(new WindowAdapter() {
+			@Override
+			public void windowClosing(WindowEvent e) {
+				hostClose();
+			}
+		});
+	}
+
+	public void showJoin() {
+		view.showJoin();
+		removeListeners();
+		view.addWindowListener(new WindowAdapter() {
+			@Override
+			public void windowClosing(WindowEvent e) {
+				joinClose();
+			}
+		});
+	}
+
+	public void showMain() {
+		view.showMain();
+		removeListeners();
+		view.addWindowListener(new WindowAdapter() {
+			@Override
+			public void windowClosing(WindowEvent e) {
+				mainClose();
+			}
+		});
+	}
+
+	public void showWaiting() {
+		view.showWaiting();
+		removeListeners();
+		view.addWindowListener(new WindowAdapter() {
+			@Override
+			public void windowClosing(WindowEvent e) {
+				waitingClose();
+			}
+		});
+	}
+
+	public void showWinner() {
+		view.showWinner();
+		removeListeners();
+		view.addWindowListener(new WindowAdapter() {
+			@Override
+			public void windowClosing(WindowEvent e) {
+				winnerClose();
+			}
+		});
+	}
+
+	public void removeListeners() {
+		for (WindowListener wl : view.getWindowListeners()) {
+			view.removeWindowListener(wl);
 		}
 	}
 
-	@Override
-	public void propertyChange(PropertyChangeEvent evt) {
-		((Message) evt.getNewValue()).execute(this);
+	public int showQuitDialog() {
+		return JOptionPane.showConfirmDialog(view, "Are you sure you want to leave?\nYou will not be able to rejoin.", "Quit?", JOptionPane.WARNING_MESSAGE);
 	}
 
+	public void showRulesDialog() {
+		JOptionPane.showMessageDialog(view, "1.~~~~~~~~~\n2.~~~~~~~~~\n3.~~~~~~~~~~~~\n4.~~~~~~~~~~", "Rules", JOptionPane.INFORMATION_MESSAGE);
+	}
+
+	public void showNoNameDialog() {
+		JOptionPane.showMessageDialog(view, "You must put in a name!", "No Name", JOptionPane.WARNING_MESSAGE);
+	}
+
+	public void showNoIPDialog() {
+		JOptionPane.showMessageDialog(view, "You must input the host's IP Address!", "No IP", JOptionPane.WARNING_MESSAGE);
+	}
+
+	public void showNoPortDialog() {
+		JOptionPane.showMessageDialog(view, "You must enter the host's port number!", "Incorrect Port Input", JOptionPane.WARNING_MESSAGE);
+	}
+
+	public void showIPErrorDialog() {
+		JOptionPane.showMessageDialog(view, "The Host refused to connect.\nCheck your IP Address!", "No Connection", JOptionPane.WARNING_MESSAGE);
+	}
+
+	private void addListeners(ScrabbleGUI view) {
+		addMenuListeners(view.getMainMenu());
+		addHostListeners(view.getHost());
+		addJoinListeners(view.getJoin());
+		addWaitingListeners(view.getWaiting());
+
+		// stub, not for active game. see propertyChangeListener
+		this.gameScreenController = new GameScreenController(this, (GameScreen) view.getGame());
+		gameScreenController.setupMenuListeners(view);
+		//this.mainMenuController = new MainMenuController(this, (MainMenuScreen) view.getMainMenu());
+
+	}
+
+	private void addWaitingListeners(JPanel waiting) {
+		// add listeners to the buttons on the waiting players screen
+	}
+
+	private void addJoinListeners(JoinScreen join) {
+		// add listeners to the buttons on the join game screen
+		joinScreenController = new JoinScreenController(this, join);
+	}
+
+	private void addHostListeners(HostScreen host) {
+		// add listeners to the buttons on the host screen
+		hostScreenController = new HostScreenController(this, host);
+	}
+
+	private void addMenuListeners(MainMenuScreen mainMenu) {
+		// add listeners to the buttons on the main menu
+		mainMenuController = new MainMenuController(this, mainMenu);
+
+	}
+
+	private void mainClose() {
+		view.dispose();
+	}
+
+	private void hostClose() {
+		int selected = showQuitDialog();
+		if (selected == JOptionPane.YES_OPTION) {
+			host.halt();
+			view.getHost().resetPlayerNames();
+			this.showMain();
+		}
+	}
+
+	private void joinClose() {
+		if (host != null) host.halt();
+		this.showMain();
+	}
+
+	private void winnerClose() {
+		this.showMain();
+	}
+
+	private void waitingClose() {
+		int selected = showQuitDialog();
+		if (selected == JOptionPane.YES_OPTION) {
+			messenger.halt();
+			this.showMain();
+		}
+	}
+
+	private void gameClose() {
+		int selected = showQuitDialog();
+		if (selected == JOptionPane.YES_OPTION) {
+			if (messenger!= null) messenger.halt();
+			if (this.host != null) {
+				host.halt();
+			}
+			this.showMain();
+		}
+	}
 }
