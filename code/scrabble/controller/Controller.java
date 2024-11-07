@@ -80,6 +80,11 @@ public class Controller implements PropertyChangeListener  {
 		HostScreen hostScreen = view.getHost();
 		hostScreen.getHostsIP().setText(host.getIPAddress());
 		hostScreen.getHostPort().setText(""+host.getPort());
+		try {
+			host.sendMessage(0, new NewPlayer(0, 0, name));
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
 		hostScreen.addPlayerName(name);
 	}
 
