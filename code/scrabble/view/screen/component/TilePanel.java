@@ -1,4 +1,4 @@
-package scrabble.view.panel.subpanel;
+package scrabble.view.screen.component;
 
 import scrabble.view.frame.TileButton;
 

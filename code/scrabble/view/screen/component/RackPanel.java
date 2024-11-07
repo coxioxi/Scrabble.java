@@ -1,6 +1,6 @@
-package scrabble.view.panel.subpanel;
+package scrabble.view.screen.component;
 
-import scrabble.view.panel.GameScreen;
+import scrabble.view.screen.GameScreen;
 
 import javax.swing.*;
 import java.awt.*;

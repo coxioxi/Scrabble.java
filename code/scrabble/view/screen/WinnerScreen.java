@@ -1,4 +1,4 @@
-package scrabble.view.panel;
+package scrabble.view.screen;
 
 import scrabble.model.Player;
 

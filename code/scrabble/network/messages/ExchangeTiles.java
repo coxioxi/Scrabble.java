@@ -1,14 +1,10 @@
 package scrabble.network.messages;
 
 import scrabble.controller.Controller;
-import scrabble.model.NotBlankException;
 import scrabble.model.Tile;
 import scrabble.network.host.PartyHost;
-import scrabble.view.panel.GameScreen;
 
 import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.io.Serial;
 import java.util.ArrayList;
 

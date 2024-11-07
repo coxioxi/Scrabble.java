@@ -1,6 +1,6 @@
 package scrabble.controller;
 
-import scrabble.view.panel.HostScreen;
+import scrabble.view.screen.HostScreen;
 
 public class HostScreenController {
 	private Controller parent;

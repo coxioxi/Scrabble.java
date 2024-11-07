@@ -1,6 +1,6 @@
 package scrabble.controller;
 
-import scrabble.view.panel.JoinScreen;
+import scrabble.view.screen.JoinScreen;
 
 import java.io.IOException;
 

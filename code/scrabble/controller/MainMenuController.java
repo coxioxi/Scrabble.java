@@ -1,6 +1,6 @@
 package scrabble.controller;
 
-import scrabble.view.panel.MainMenuScreen;
+import scrabble.view.screen.MainMenuScreen;
 
 import javax.swing.*;
 

@@ -1,9 +1,7 @@
 package scrabble.network.messages;
 
 import scrabble.controller.Controller;
-import scrabble.model.NotBlankException;
 import scrabble.network.host.PartyHost;
-import scrabble.view.panel.GameScreen;
 
 import java.io.IOException;
 import java.io.Serial;

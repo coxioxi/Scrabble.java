@@ -3,11 +3,9 @@ package scrabble.network.messages;
 import scrabble.controller.Controller;
 import scrabble.model.Tile;
 import scrabble.network.host.PartyHost;
-import scrabble.view.panel.GameScreen;
+import scrabble.view.screen.GameScreen;
 
 import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.io.Serial;
 
 public class PlayTiles extends Message {

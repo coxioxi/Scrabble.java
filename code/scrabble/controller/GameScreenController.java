@@ -5,11 +5,11 @@ import scrabble.model.Tile;
 import scrabble.network.messages.PlayTiles;
 import scrabble.view.frame.ScrabbleGUI;
 import scrabble.view.frame.TileButton;
-import scrabble.view.panel.*;
-import scrabble.view.panel.subpanel.BoardCellPanel;
-import scrabble.view.panel.subpanel.BoardPanel;
-import scrabble.view.panel.subpanel.RackPanel;
-import scrabble.view.panel.subpanel.TilePanel;
+import scrabble.view.screen.*;
+import scrabble.view.screen.component.BoardCellPanel;
+import scrabble.view.screen.component.BoardPanel;
+import scrabble.view.screen.component.RackPanel;
+import scrabble.view.screen.component.TilePanel;
 
 import javax.swing.*;
 import java.awt.*;

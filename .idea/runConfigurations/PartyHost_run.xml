@@ -1,5 +1,5 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="PartyHost run" type="Application" factoryName="Application" activateToolWindowBeforeRun="false">
+  <configuration default="false" name="PartyHost run" type="Application" factoryName="Application">
     <option name="MAIN_CLASS_NAME" value="scrabble.network.host.PartyHost" />
     <module name="comp3100-fall2024-2" />
     <method v="2">

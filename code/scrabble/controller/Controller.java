@@ -6,13 +6,12 @@ import scrabble.network.messages.Message;
 import scrabble.network.host.PartyHost;
 import scrabble.view.frame.ScrabbleGUI;
 import scrabble.view.frame.TileButton;
-import scrabble.view.panel.*;
-import scrabble.view.panel.GameScreen;
-import scrabble.view.panel.subpanel.RackPanel;
-import scrabble.view.panel.subpanel.TilePanel;
+import scrabble.view.screen.*;
+import scrabble.view.screen.GameScreen;
+import scrabble.view.screen.component.RackPanel;
+import scrabble.view.screen.component.TilePanel;
 
 import javax.swing.*;
-import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;

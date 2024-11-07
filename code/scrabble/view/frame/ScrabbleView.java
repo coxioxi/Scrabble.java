@@ -4,7 +4,7 @@ import javax.swing.*;
 import java.awt.*;
 
 import scrabble.model.Player;
-import scrabble.view.panel.*;
+import scrabble.view.screen.*;
 
 @Deprecated
 public class ScrabbleView extends JFrame {
