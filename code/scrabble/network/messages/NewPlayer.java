@@ -24,11 +24,15 @@ public class NewPlayer extends Message implements Serializable {
 
     @Override
     public void execute(Controller controller) {
+        //Create player connection to the host
+        //Add getPlayerName to controller
+        //in order to add players to waiting screen and game screen
+
         //controller.addNewPlayer(playerID,playerName)
     }
 
     @Override
     public void execute(PartyHost partyHost) {
-
+        //no need to send it to the host just send the player to the other players from the host
     }
 }
