@@ -196,6 +196,10 @@ public class PartyHost extends Thread implements PropertyChangeListener {
 		}
 	}
 
+	public void halt() {
+		this.inGame = true;
+		playerIdMap.keySet().forEach(HostReceiver::halt);
+	}
 
 	public void startGame() throws IOException {
 
