@@ -29,6 +29,7 @@ public class JoinScreenController {
                 parent.setupSocket(hostsIP);
                 parent.getView().showWaiting();
             } catch (IOException e) {
+                System.out.println(e);
                 parent.getView().showIPErrorDialog();
             }
 

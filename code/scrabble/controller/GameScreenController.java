@@ -143,7 +143,7 @@ public class GameScreenController {
 		System.out.println(Arrays.toString(gameScreen.playedTiles.toArray(new Tile[0])));
 	}
 
-	private void removeActionListeners(JButton button) {
+	public static void removeActionListeners(JButton button) {
 		for (ActionListener al : button.getActionListeners()) {
 			button.removeActionListener(al);
 		}

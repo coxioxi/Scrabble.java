@@ -16,7 +16,6 @@ public class PlayTiles extends Message {
 	private static final long serialVersionUID = 7L;
 	private int playerID;
 	private Tile[] tiles;
-	GameScreen gameScreen = new GameScreen();
 
 	public PlayTiles(int senderID, int playerID, Tile[] tiles) {
 		super(senderID);
@@ -44,6 +43,7 @@ public class PlayTiles extends Message {
 			//valid play
 			try {
 				controller.getMessenger().sendMessage(this);
+				((GameScreen)controller.getView().getGame()).disableLastPlayedTiles();
 			} catch (IOException e) {
 				controller.getMessenger().halt();
 
