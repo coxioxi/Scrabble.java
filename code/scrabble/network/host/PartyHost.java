@@ -160,7 +160,7 @@ public class PartyHost extends Thread implements PropertyChangeListener {
 	}
 
 	public void addPlayerName(String name){
-		this.playerNames.put(playerIdMap.size(), (String)evt.getNewValue());
+		this.playerNames.put(playerIdMap.size(), ((NewPlayer)evt.getNewValue()).getPlayerName());
 	}
 
 	public String[] getPlayerNames() {
@@ -189,8 +189,11 @@ public class PartyHost extends Thread implements PropertyChangeListener {
 	 * @throws IOException when the message cannot be sent.
 	 */
 	public void sendToAllButID(int playerID, Message message) throws IOException {
+
 		for (HostReceiver host: playerIdMap.keySet()) {
-			if(!host.equals(playerIdToMessenger.get(playerID))) {
+			System.out.println(playerIdMap.get(host));
+
+			if(!host.equals(playerIdToMessenger.get(playerID)) && host != null) {
 				host.sendMessage(message);
 			}
 		}
