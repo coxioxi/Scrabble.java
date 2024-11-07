@@ -1,42 +1,42 @@
 package scrabble.controller;
 
-
-
-import scrabble.model.Board;
 import scrabble.model.Game;
-import scrabble.model.NotBlankException;
-import scrabble.model.Tile;
 import scrabble.network.client.ClientMessenger;
 import scrabble.network.messages.ExchangeTiles;
 import scrabble.network.messages.PlayTiles;
+import scrabble.network.messages.StartGame;
 import scrabble.network.networkPrototype.PartyHost;
 import scrabble.view.frame.ScrabbleGUI;
 import scrabble.view.frame.TileButton;
 import scrabble.view.panel.GameScreen;
+import scrabble.view.panel.GameScreen;
+import scrabble.view.panel.JoinScreen;
+import scrabble.view.panel.MainMenuScreen;
 
 import javax.swing.*;
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.io.IOException;
 import java.net.Socket;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
-import static scrabble.view.panel.GameScreen.*;
 
 /**
  * Run the other classes
  */
 
 public class Controller implements PropertyChangeListener  {
+	public static final int PORT = 5000;
+
 	private ScrabbleGUI view;
 	private Game model;
 
 	private ClientMessenger messenger;
 	private Socket hostSocket;
+	private GameScreenController gameScreenController;
+	private MainMenuController mainMenuController;
+	private HostScreenController hostScreenController;
+	private JoinScreenController joinScreenController;
+
 
 	/*
 	reference to the party host
@@ -52,7 +52,12 @@ public class Controller implements PropertyChangeListener  {
 	public Controller() {
 		view = new ScrabbleGUI();
 		addListeners(view);
-		view.showGame();
+		view.showHost();
+	}
+
+	public void setupSocket(String ip) throws IOException {
+		hostSocket = new Socket(ip, PORT);
+		messenger = new ClientMessenger(hostSocket, this);
 	}
 
 	public ScrabbleGUI getView() {
@@ -91,116 +96,14 @@ public class Controller implements PropertyChangeListener  {
 		addHostListeners(view.getHost());
 		addJoinListeners(view.getJoin());
 		addWaitingListeners(view.getWaiting());
-		addGameListeners(view.getGame());
+
+		// stub, not for active game. see propertyChangeListener
+		this.gameScreenController = new GameScreenController(this, (GameScreen) view.getGame());
+		gameScreenController.setupMenuListeners(view);
+		this.mainMenuController = new MainMenuController(this, (MainMenuScreen) view.getMainMenu());
+
 	}
 
-	private void addGameListeners(JPanel game) {
-		// add listeners to the buttons on the main game screen
-		GameScreen gameScreen = (GameScreen) game;
-		addBoardCellListeners(gameScreen);
-		addRackTileListeners(gameScreen);
-		submitActionListener(gameScreen);
-	}
-
-	public void addRackTileListeners(GameScreen gameScreen){
-		for (int i = 0; i < 7; i++) {
-			JButton rackTile = gameScreen.getRack()[i];
-			int finalI = i;
-			rackTile.addActionListener(e -> {
-				JButton[] rack = gameScreen.getRack();
-				String value = gameScreen.getValue();
-				if(!value.equals(" ")){
-					for (int j = 0; j < 7; j++){
-						if(rack[j].getText().equals(" ")){
-							rack[j].setText(value);
-							break;
-						}
-					}
-				}
-				gameScreen.setValue(rackTile.getText());
-				rack[finalI].setText(" ");
-			});
-		}
-	}
-
-	private void addBoardCellListeners(GameScreen gameScreen) {
-		for (int i = 0; i < Board.BOARD_ROWS; i++) {
-			for (int j = 0; j < Board.BOARD_COLUMNS; j++) {
-				JButton boardTile = gameScreen.getGameCells()[i][j];
-
-				int row = i;
-				int col = j;
-				boardTile.addActionListener(new ActionListener() {
-					@Override
-					public void actionPerformed(ActionEvent e) {
-						List<String> modType = new ArrayList<>(Arrays.asList("DW", "TW", "DL", "TL"));
-
-						//adding tiles from the rack to the board
-						if((boardTile.getText().equals(" ") || boardTile.getBackground() != NORMAL_CELL) && !gameScreen.getValue().equals(" ")) {
-							for (int k = 0; k < 7; k++) {
-								if(!boardTile.getText().equals(" ") && !modType.contains(boardTile.getText())) {
-									if (gameScreen.getRack()[k].getText().equals(" ")) {
-										if (boardTile.getBackground() != NORMAL_CELL) {
-											gameScreen.getRack()[k].setText(boardTile.getText());
-											char tile = boardTile.getText().charAt(0);
-											Point point = new Point(row, col);
-											gameScreen.getPlayedTiles().remove(new Tile(tile, point));
-											break;
-										}
-									}
-								}
-							}
-							boardTile.setText(gameScreen.getValue());
-							char tile = gameScreen.getValue().charAt(0);
-							Point point = new Point(row, col);
-							gameScreen.playedTiles.add(new Tile(tile, point));
-							gameScreen.setValue(" ");
-						}
-						//adding tiles from the board back to the rack
-						else if(gameScreen.getValue().equals(" ")){
-							for (int k = 0; k < 7; k++) {
-								if(gameScreen.getRack()[k].getText().equals(" ") && !modType.contains(boardTile.getText())){
-									gameScreen.getRack()[k].setText(boardTile.getText());
-									char tile = boardTile.getText().charAt(0);
-									Point point = new Point(row, col);
-									gameScreen.playedTiles.remove(new Tile(tile, point));
-									if(gameScreen.getValue().equals(" ")){
-										Color color = boardTile.getBackground();
-										if (color.equals(DOUBLE_WORD)) {
-											boardTile.setText("DW");
-										} else if (color.equals(DOUBLE_LETTER)) {
-											boardTile.setText("DL");
-										} else if (color.equals(TRIPLE_WORD)) {
-											boardTile.setText("TW");
-										} else if (color.equals(TRIPLE_LETTER)) {
-											boardTile.setText("TL");
-										}
-										else if (color.equals(NORMAL_CELL)) {
-											boardTile.setText(" ");
-										}
-									}
-									gameScreen.setValue(" ");
-									break;
-								}
-							}
-						}
-					}
-				});
-			}
-		}
-	}
-
-	private void submitActionListener(GameScreen gameScreen){
-		gameScreen.getSubmitButton().addActionListener(new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				int playerID = Controller.this.model.getSelf().getID();
-				PlayTiles playTiles = new PlayTiles(playerID, playerID, gameScreen.getPlayedTiles().toArray(new Tile[0]));
-				playTiles.execute(Controller.this);
-			}
-		});
-	}
 
 	private void addWaitingListeners(JPanel waiting) {
 		// add listeners to the buttons on the waiting players screen
@@ -208,6 +111,7 @@ public class Controller implements PropertyChangeListener  {
 
 	private void addJoinListeners(JPanel join) {
 		// add listeners to the buttons on the join game screen
+		joinScreenController = new JoinScreenController(this, (JoinScreen) join);
 	}
 
 	private void addHostListeners(JPanel host) {
@@ -216,6 +120,8 @@ public class Controller implements PropertyChangeListener  {
 
 	private void addMenuListeners(JPanel mainMenu) {
 		// add listeners to the buttons on the main menu
+		mainMenuController = new MainMenuController(this, (MainMenuScreen) mainMenu);
+
 	}
 
 	private void hostGame() {}
@@ -255,6 +161,12 @@ public class Controller implements PropertyChangeListener  {
 	}
 
 	@Override
-	public void propertyChange(PropertyChangeEvent evt) {}
+	public void propertyChange(PropertyChangeEvent evt) {
+		if (evt.getNewValue() instanceof StartGame) {
+			this.view.setupGameScreen(((StartGame) evt.getNewValue()).getRuleset());
+			this.gameScreenController = new GameScreenController(this, (GameScreen) view.getGame());
+			this.gameScreenController.setupMenuListeners(view);
+		}
+	}
 
 }

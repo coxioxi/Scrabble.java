@@ -12,8 +12,8 @@ public class TileButton extends JButton {
     public TileButton(TileScore letterScore) {
         super(letterScore.name());
         this.letterScore = letterScore;
-        scoreFont = getFont().deriveFont(12f);
-        setFont(getFont().deriveFont(Font.BOLD, 18f));
+        scoreFont = getFont().deriveFont(8f);
+        setFont(getFont().deriveFont(Font.BOLD, 12f));
     }
 
 
@@ -24,7 +24,7 @@ public class TileButton extends JButton {
 
         g2.setPaint(Color.BLACK);
         g2.setFont(scoreFont);
-        g2.drawString(letterScore.getScore() + "", getWidth() / 2 + 13,getHeight() / 2 + 12);
+        g2.drawString(letterScore.getScore() + "", getWidth() / 2 + 8,getHeight() / 2 + 8);
         g2.dispose();
     }
 }
