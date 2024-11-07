@@ -23,5 +23,6 @@ public class HostScreenController {
 		this.gameTime = Integer.parseInt(hostScreen.getGameTimeBox().split(" ")[0]);
 
 		parent.sendRules(challengesEnabled, dictionaryFile, playerTime, gameTime);
+		parent.showGame();
 	}
 }
