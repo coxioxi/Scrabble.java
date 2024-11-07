@@ -57,8 +57,8 @@ public class Controller implements PropertyChangeListener  {
 		view.showMain();
 	}
 
-	public void setupSocket(String ip) throws IOException {
-		hostSocket = new Socket(ip, PORT);
+	public void setupSocket(String ip, int port) throws IOException {
+		hostSocket = new Socket(ip, port);
 		messenger = new ClientMessenger(hostSocket, this);
 	}
 
