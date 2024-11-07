@@ -22,7 +22,6 @@ public class HostScreen extends JPanel {
             {"Dictionary 1"};
 
     // Components for user input and display
-    private JTextField name;
     private JLabel[] players;
     private JComboBox<String> challengeBox;
     private JComboBox<String> dictionaryBox;
@@ -30,6 +29,8 @@ public class HostScreen extends JPanel {
     private JComboBox<String> gameTimeBox;
     private JButton hostButton;
     private JLabel hostsIP;
+    private JLabel hostPort;
+
 
     /**
      * Constructor for HostScreen. Sets up the layout with sections for player info,
@@ -44,7 +45,6 @@ public class HostScreen extends JPanel {
         mainPanel.setLayout(null);
 
         // Input field for player's name and button to host the game
-        name = new JTextField();
         hostButton = new JButton("Host");
 
         // Panel at the bottom for the host button
@@ -90,12 +90,13 @@ public class HostScreen extends JPanel {
 
         JLabel yourIP = new JLabel("Your IP Address:", SwingConstants.RIGHT);
         hostsIP = new JLabel("**Host's IP**");
-        JLabel nameLabel = new JLabel("Name:", SwingConstants.RIGHT);
+        JLabel port = new JLabel("Port:", SwingConstants.RIGHT);
+        hostPort = new JLabel("**Port**");
 
         nameAndIP.add(yourIP);
         nameAndIP.add(hostsIP);
-        nameAndIP.add(nameLabel);
-        nameAndIP.add(name);
+        nameAndIP.add(port);
+        nameAndIP.add(hostPort);
         return nameAndIP;
     }
 
@@ -149,10 +150,6 @@ public class HostScreen extends JPanel {
     }
 
     // Getters for the components
-    public JTextField getNameTextField() {
-        return name;
-    }
-
     public JLabel[] getPlayers() {
         return players;
     }
@@ -175,5 +172,9 @@ public class HostScreen extends JPanel {
 
     public JLabel getHostsIP() {
         return hostsIP;
+    }
+
+    public JLabel getHostPort() {
+        return hostPort;
     }
 }

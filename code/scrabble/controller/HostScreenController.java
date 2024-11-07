@@ -5,7 +5,6 @@ import scrabble.view.panel.HostScreen;
 public class HostScreenController {
 	private Controller parent;
 	private HostScreen hostScreen;
-	private String name;
 	private boolean challengesEnabled;
 	private String dictionaryFile;
 	private int playerTime;
@@ -18,7 +17,6 @@ public class HostScreenController {
 	}
 
 	private void hostButtonClick() {
-		this.name = hostScreen.getNameTextField().getText();
 		this.challengesEnabled = hostScreen.getChallengeBox();
 		this.dictionaryFile = hostScreen.getDictionaryPath();
 		this.playerTime = Integer.parseInt(hostScreen.getPlayerTimeBox().split(" ")[0]);
