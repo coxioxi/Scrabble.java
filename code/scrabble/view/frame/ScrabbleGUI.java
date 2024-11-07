@@ -205,8 +205,8 @@ public class ScrabbleGUI extends JFrame{
 		panels[panels.length-1] = winner;
 	}
 
-	public void setupGameScreen(Ruleset rules) {
-		this.game = new GameScreen(rules);
+	public void setupGameScreen(Ruleset rules, Player[] player, int playerNum) {
+		this.game = new GameScreen(rules, player, playerNum);
 	}
 
 	// minimum size, title, close op, pack, center in screen, show.
