@@ -1,6 +1,9 @@
 package scrabble.controller;
 
 import scrabble.model.Game;
+import scrabble.model.NotBlankException;
+import scrabble.model.Tile;
+import scrabble.model.TileScore;
 import scrabble.network.client.ClientMessenger;
 import scrabble.network.messages.ExchangeTiles;
 import scrabble.network.messages.PlayTiles;
@@ -12,8 +15,11 @@ import scrabble.view.panel.GameScreen;
 import scrabble.view.panel.GameScreen;
 import scrabble.view.panel.JoinScreen;
 import scrabble.view.panel.MainMenuScreen;
+import scrabble.view.panel.subpanel.RackPanel;
+import scrabble.view.panel.subpanel.TilePanel;
 
 import javax.swing.*;
+import java.awt.*;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.IOException;
@@ -80,17 +86,6 @@ public class Controller implements PropertyChangeListener  {
 		return host;
 	}
 
-	public Tile[] getRack(GameScreen gameScreen) throws NotBlankException {
-		Tile[] tiles = new Tile[gameScreen.getRack().length];
-		if(gameScreen.getRack().length > 0) {
-			for (int i = 0; i < gameScreen.getRack().length; i++)
-				tiles[i] = new Tile(gameScreen.getRack()[i].getText().charAt(0));
-
-			return tiles;
-		}
-		return tiles;
-	}
-
 	private void addListeners(ScrabbleGUI view) {
 		addMenuListeners(view.getMainMenu());
 		addHostListeners(view.getHost());
@@ -128,25 +123,31 @@ public class Controller implements PropertyChangeListener  {
 
 	public void resetRack(GameScreen gameScreen){
 		//loop through the rack
-		for (int i = 0; i < gameScreen.getRack().length; ++i){
-			Point point = new Point(gameScreen.playedTiles.get(i).getLocation());
-			//find empty rack location
-			if(!(gameScreen.getRack()[i] instanceof TileButton)){
-				//swap with board location
-				swap(gameScreen.getRack(), gameScreen.getGameCells(), point);
+		for (int i = 0; i < gameScreen.playedTiles.size(); ++i){
+			gameScreenController.removeTile(gameScreen.playedTiles.get(i));
+		}
+	}
+
+	public void removeRackTile(Tile tile) {
+		RackPanel rackPanel = ((GameScreen) view.getGame()).getRackPanel();
+		for(TilePanel tp: rackPanel.getTilePanels()){
+			if(tp.getButton().getText().equals(""+tile.getLetter())){
+				tp.setButton(new JButton(" "));
+				break;
 			}
 		}
 	}
 
-	public void exchangeRack(GameScreen gameScreen, Tile[] toAdd){
+	public void addRack(Tile[] toAdd){
 		JButton toAddTile = new JButton();
-
+		RackPanel rackPanel = ((GameScreen) view.getGame()).getRackPanel();
 		//loop through the rack
-		for (int i = 0; i < gameScreen.getRack().length; ++i){
+		for (int i = 0; i < toAdd.length; ++i){
+			TilePanel tp = rackPanel.getTilePanels()[i];
 			//find empty rack location
-			if(!(gameScreen.getRack()[i] instanceof TileButton)){
+			if(tp.getButton().getText().equals(" ")){
 				//swap letters with exchange tile array location
-				gameScreen.getRack()[i].setText(""+toAdd[i].getLetter());
+				tp.setButton(new TileButton(TileScore.values()[(toAdd[i].getLetter()-'A')]));
 			}
 		}
 	}
