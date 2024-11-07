@@ -1,20 +1,15 @@
 package scrabble.controller;
 
-import scrabble.model.Game;
-import scrabble.model.NotBlankException;
-import scrabble.model.Tile;
-import scrabble.model.TileScore;
+import scrabble.model.*;
 import scrabble.network.client.ClientMessenger;
 import scrabble.network.messages.ExchangeTiles;
 import scrabble.network.messages.PlayTiles;
 import scrabble.network.messages.StartGame;
-import scrabble.network.networkPrototype.PartyHost;
+import scrabble.network.host.PartyHost;
 import scrabble.view.frame.ScrabbleGUI;
 import scrabble.view.frame.TileButton;
+import scrabble.view.panel.*;
 import scrabble.view.panel.GameScreen;
-import scrabble.view.panel.GameScreen;
-import scrabble.view.panel.JoinScreen;
-import scrabble.view.panel.MainMenuScreen;
 import scrabble.view.panel.subpanel.RackPanel;
 import scrabble.view.panel.subpanel.TilePanel;
 
@@ -43,6 +38,7 @@ public class Controller implements PropertyChangeListener  {
 	private HostScreenController hostScreenController;
 	private JoinScreenController joinScreenController;
 
+	private Ruleset ruleset;
 
 	/*
 	reference to the party host
@@ -58,12 +54,23 @@ public class Controller implements PropertyChangeListener  {
 	public Controller() {
 		view = new ScrabbleGUI();
 		addListeners(view);
-		view.showHost();
+		view.showMain();
 	}
 
 	public void setupSocket(String ip) throws IOException {
 		hostSocket = new Socket(ip, PORT);
 		messenger = new ClientMessenger(hostSocket, this);
+	}
+
+	public void setUpHost() {
+		host = new PartyHost(PORT);
+		host.start();
+		view.getHost().getHostsIP().setText(host.getIPAddress());
+	}
+
+	public void sendRules(boolean challengesAllowed, String dictionary, int playerTime, int gameTime) {
+		ruleset = new Ruleset(gameTime, playerTime, challengesAllowed, dictionary);
+		host.startGame(ruleset);
 	}
 
 	public ScrabbleGUI getView() {
@@ -104,22 +111,21 @@ public class Controller implements PropertyChangeListener  {
 		// add listeners to the buttons on the waiting players screen
 	}
 
-	private void addJoinListeners(JPanel join) {
+	private void addJoinListeners(JoinScreen join) {
 		// add listeners to the buttons on the join game screen
-		joinScreenController = new JoinScreenController(this, (JoinScreen) join);
+		joinScreenController = new JoinScreenController(this, join);
 	}
 
-	private void addHostListeners(JPanel host) {
+	private void addHostListeners(HostScreen host) {
 		// add listeners to the buttons on the host screen
+		hostScreenController = new HostScreenController(this, host);
 	}
 
-	private void addMenuListeners(JPanel mainMenu) {
+	private void addMenuListeners(MainMenuScreen mainMenu) {
 		// add listeners to the buttons on the main menu
-		mainMenuController = new MainMenuController(this, (MainMenuScreen) mainMenu);
+		mainMenuController = new MainMenuController(this, mainMenu);
 
 	}
-
-	private void hostGame() {}
 
 	public void resetRack(GameScreen gameScreen){
 		//loop through the rack
