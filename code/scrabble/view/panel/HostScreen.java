@@ -23,6 +23,7 @@ public class HostScreen extends JPanel {
 
     // Components for user input and display
     private JLabel[] players;
+    private int numPlayers;
     private JComboBox<String> challengeBox;
     private JComboBox<String> dictionaryBox;
     private JComboBox<String> playerTimeBox;
@@ -66,6 +67,11 @@ public class HostScreen extends JPanel {
         JPanel westPanel = setupBorderedPanel("Players Waiting");
         westPanel.add(setupPlayersWaiting());
         this.add(westPanel, BorderLayout.WEST);
+    }
+
+    public void addPlayerName(String name) {
+        players[numPlayers].setText(name);
+        numPlayers++;
     }
 
     /**
