@@ -26,10 +26,9 @@ public class NewTiles extends Message {
 	@Override
 	public void execute(Controller controller) {
 		controller.getModel().addTiles(tiles);
+		controller.addRack(this.tiles);
 	}
 
 	@Override
-	public void execute(PartyHost partyHost) {
-
-	}
+	public void execute(PartyHost partyHost) {}
 }
