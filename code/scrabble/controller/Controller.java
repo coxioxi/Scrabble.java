@@ -1,37 +1,38 @@
 package scrabble.controller;
 
-
-
-import scrabble.model.Board;
 import scrabble.model.Game;
-import scrabble.model.Tile;
 import scrabble.network.client.ClientMessenger;
-import scrabble.network.messages.PlayTiles;
+import scrabble.network.messages.StartGame;
 import scrabble.network.networkPrototype.PartyHost;
 import scrabble.view.frame.ScrabbleGUI;
-import scrabble.view.frame.TileButton;
-import scrabble.view.panel.*;
+import scrabble.view.panel.GameScreen;
+import scrabble.view.panel.JoinScreen;
+import scrabble.view.panel.MainMenuScreen;
 
 import javax.swing.*;
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.io.IOException;
 import java.net.Socket;
 
-import static scrabble.view.panel.GameScreen.*;
 
 /**
  * Run the other classes
  */
 
 public class Controller implements PropertyChangeListener  {
+	public static final int PORT = 5000;
+
 	private ScrabbleGUI view;
 	private Game model;
 
 	private ClientMessenger messenger;
 	private Socket hostSocket;
+	private GameScreenController gameScreenController;
+	private MainMenuController mainMenuController;
+	private HostScreenController hostScreenController;
+	private JoinScreenController joinScreenController;
+
 
 	/*
 	reference to the party host
@@ -47,7 +48,12 @@ public class Controller implements PropertyChangeListener  {
 	public Controller() {
 		view = new ScrabbleGUI();
 		addListeners(view);
-		view.showGame();
+		view.showHost();
+	}
+
+	public void setupSocket(String ip) throws IOException {
+		hostSocket = new Socket(ip, PORT);
+		messenger = new ClientMessenger(hostSocket, this);
 	}
 
 	public ScrabbleGUI getView() {
@@ -75,13 +81,14 @@ public class Controller implements PropertyChangeListener  {
 		addHostListeners(view.getHost());
 		addJoinListeners(view.getJoin());
 		addWaitingListeners(view.getWaiting());
-		addGameListeners();
+
+		// stub, not for active game. see propertyChangeListener
+		this.gameScreenController = new GameScreenController(this, (GameScreen) view.getGame());
+		gameScreenController.setupMenuListeners(view);
+		this.mainMenuController = new MainMenuController(this, (MainMenuScreen) view.getMainMenu());
+
 	}
 
-	private void addGameListeners() {
-		// add listeners to the buttons on the main game screen
-		new GameScreenController(this, (GameScreen) view.getGame());
-	}
 
 	private void addWaitingListeners(JPanel waiting) {
 		// add listeners to the buttons on the waiting players screen
@@ -89,6 +96,7 @@ public class Controller implements PropertyChangeListener  {
 
 	private void addJoinListeners(JPanel join) {
 		// add listeners to the buttons on the join game screen
+		joinScreenController = new JoinScreenController(this, (JoinScreen) join);
 	}
 
 	private void addHostListeners(JPanel host) {
@@ -97,11 +105,19 @@ public class Controller implements PropertyChangeListener  {
 
 	private void addMenuListeners(JPanel mainMenu) {
 		// add listeners to the buttons on the main menu
+		mainMenuController = new MainMenuController(this, (MainMenuScreen) mainMenu);
+
 	}
 
 	private void hostGame() {}
 
 	@Override
-	public void propertyChange(PropertyChangeEvent evt) {}
+	public void propertyChange(PropertyChangeEvent evt) {
+		if (evt.getNewValue() instanceof StartGame) {
+			this.view.setupGameScreen(((StartGame) evt.getNewValue()).getRuleset());
+			this.gameScreenController = new GameScreenController(this, (GameScreen) view.getGame());
+			this.gameScreenController.setupMenuListeners(view);
+		}
+	}
 
 }
