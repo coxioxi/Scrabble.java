@@ -46,6 +46,7 @@ public class PartyHost extends Thread implements PropertyChangeListener {
 	private HashMap<HostReceiver, Integer> playerIdMap;
 	private HashMap<HostReceiver, ArrayList<Tile>> playerTiles;
 	private HashMap<Integer, HostReceiver> playerIdToMessenger;
+	private HashMap<Integer, String> playerNames;
 	private Ruleset ruleset;
 	private boolean inGame;
 	private final int TILE_RACK_SIZE = 7;
@@ -180,6 +181,18 @@ public class PartyHost extends Thread implements PropertyChangeListener {
 				System.out.println("uhhhhh");
 			}
 		}
+	}
+
+	public void addPlayerName(String name){
+		/*for (HostReceiver host: playerIdMap.keySet()) {
+			NewPlayer newPlayerMessage = new NewPlayer(HOST_ID, playerIdMap.get(host), message.getPlayerName());
+
+			if(!playerIdMap.get(host).equals(playerIdMap.get(source))){
+				host.sendMessage(newPlayerMessage);
+			}
+		}
+
+		 */
 	}
 
 	public int getPlayerID(HostReceiver hr) {
@@ -351,13 +364,7 @@ public class PartyHost extends Thread implements PropertyChangeListener {
 	}
 
 	private void handleNewPlayer(HostReceiver source, NewPlayer message) throws IOException {
-		for (HostReceiver host: playerIdMap.keySet()) {
-			NewPlayer newPlayerMessage = new NewPlayer(HOST_ID, playerIdMap.get(host), message.getPlayerName());
 
-			if(!playerIdMap.get(host).equals(playerIdMap.get(source))){
-				host.sendMessage(newPlayerMessage);
-			}
-		}
 	}
 
 	/*
