@@ -11,6 +11,7 @@ public class WaitingScreen extends JPanel {
 
     // Array to store labels for each player
     private JLabel[] players;
+    private int numPlayers = 0;
 
     /**
      * Constructor for WaitingScreen. Sets up the layout and adds components.
@@ -51,6 +52,11 @@ public class WaitingScreen extends JPanel {
             playersWaiting.add(players[i]);
         }
         return playersWaiting;
+    }
+
+    public void addPlayerName(String name) {
+        players[numPlayers].setText(name);
+        numPlayers++;
     }
 
     /**
