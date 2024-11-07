@@ -1,9 +1,14 @@
 package scrabble.view.panel;
 
 import scrabble.model.Board;
+import scrabble.model.Ruleset;
 import scrabble.model.Tile;
 import scrabble.model.TileScore;
 import scrabble.view.frame.TileButton;
+import scrabble.view.panel.subpanel.BoardPanel;
+import scrabble.view.panel.subpanel.PlayerPanel;
+import scrabble.view.panel.subpanel.RackPanel;
+import scrabble.view.panel.subpanel.TilePanel;
 
 import javax.swing.*;
 import java.awt.*;
@@ -12,15 +17,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class GameScreen extends JPanel {
-	public static final int GAP = 175;
+	public static final int GAP = 150;
 	public static final int RACK_SIZE = 7;
 
 	private JLabel gameTime;
 	private BoardPanel boardPanel;
 	public Tile[][] letters = new Tile[Board.BOARD_ROWS][Board.BOARD_COLUMNS];
 
+	private JPanel centerPanel;
+
 	private RackPanel rackPanel;
 	private JButton submitButton;
+	private JButton passButton;
 
 	public List<Tile> playedTiles = new ArrayList<>();
 	private JButton value = new JButton(" ");
@@ -29,7 +37,7 @@ public class GameScreen extends JPanel {
 		this.setLayout(new BorderLayout());
 
 		JPanel northPanel = setupNorthPanel();
-		JPanel centerPanel = setupCenterPanel();
+		centerPanel = setupCenterPanel();
 
 		JPanel eastPanel = new JPanel(new GridLayout(2,1,0,GAP));
 		JPanel westPanel = new JPanel(new GridLayout(2,1,0,GAP));
@@ -48,14 +56,23 @@ public class GameScreen extends JPanel {
 		JPanel southPanel = setupSouthPanel();
 
 		//Drop down menu
-		JComboBox<String> comboBox = getStringJComboBox();
+		/*JComboBox<String> comboBox = getStringJComboBox();
 
 		this.add(comboBox);
+		 */
 		this.add(northPanel, BorderLayout.NORTH);
 		this.add(centerPanel, BorderLayout.CENTER);
 		this.add(westPanel, BorderLayout.WEST);
 		this.add(eastPanel, BorderLayout.EAST);
 		this.add(southPanel, BorderLayout.SOUTH);
+	}
+
+	public GameScreen(Ruleset rules) {
+
+	}
+
+	public JPanel getCenterPanel() {
+		return centerPanel;
 	}
 
 	public List<Tile> getPlayedTiles() {
@@ -89,15 +106,19 @@ public class GameScreen extends JPanel {
 	private JPanel setupSouthPanel() {
 		JPanel southPanel = new JPanel(new FlowLayout());
 		JPanel submitAndRack = new JPanel(new GridLayout(2,1,0,10));
+		JPanel subAndPass = new JPanel(new GridLayout(1,2,10,0));
+		passButton = new JButton("Pass Turn");
 		submitButton = new JButton("Submit");
+		submitButton.setPreferredSize(new Dimension(50, 10));
 		TilePanel[] tilePanels = new TilePanel[RACK_SIZE];
 		for (int i = 0; i < tilePanels.length; i++) {
 			tilePanels[i] = new TilePanel(new TileButton(TileScore.values()[i]));
 		}
 		this.rackPanel = new RackPanel(tilePanels);
 
-
-		submitAndRack.add(submitButton);
+		subAndPass.add(submitButton);
+		subAndPass.add(passButton);
+		submitAndRack.add(subAndPass);
 		submitAndRack.add(rackPanel);
 		southPanel.add(submitAndRack);
 		return southPanel;
@@ -105,6 +126,7 @@ public class GameScreen extends JPanel {
 
 	private JPanel setupCenterPanel() {
 		JPanel centerPanel = new JPanel(new FlowLayout());
+
 		centerPanel.setBorder(BorderFactory.createTitledBorder("Game Board"));
 
 		boardPanel = new BoardPanel();

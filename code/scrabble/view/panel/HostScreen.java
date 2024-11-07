@@ -9,6 +9,8 @@ import java.awt.*;
  */
 public class HostScreen extends JPanel {
 
+    public static final String DICTIONARY_PATH = "../../../dictionary.txt";
+
     // Options for game time, player time, challenges, and dictionary selection
     public static final String[] gameTimeChoices =
             {"30 Minutes", "45 Minutes", "60 Minutes", "75 Minutes"};
@@ -17,7 +19,7 @@ public class HostScreen extends JPanel {
     public static final String[] challengeChoices =
             {"Challenges on", "Challenges off"};
     public static final String[] dictionaryChoices =
-            {"Dictionary 1", "Dictionary 2"};
+            {"Dictionary 1"};
 
     // Components for user input and display
     private JTextField name;
@@ -127,6 +129,7 @@ public class HostScreen extends JPanel {
         challengeBox = new JComboBox<>(challengeChoices);
         JLabel dictionaryLabel = new JLabel("Dictionary Used:", SwingConstants.RIGHT);
         dictionaryBox = new JComboBox<>(dictionaryChoices);
+        dictionaryBox.setEditable(false);
         JLabel playerTimeLabel = new JLabel("Player Time:", SwingConstants.RIGHT);
         playerTimeBox = new JComboBox<>(playerTimeChoices);
         JLabel gameTimeLabel = new JLabel("Game Time:", SwingConstants.RIGHT);
@@ -153,12 +156,12 @@ public class HostScreen extends JPanel {
         return players;
     }
 
-    public JComboBox<String> getChallengeBox() {
-        return challengeBox;
+    public boolean getChallengeBox() {
+        return challengeBox.getSelectedIndex() == 0;
     }
 
-    public JComboBox<String> getDictionaryBox() {
-        return dictionaryBox;
+    public String getDictionaryPath() {
+        return DICTIONARY_PATH;
     }
 
     public JComboBox<String> getPlayerTimeBox() {

@@ -1,4 +1,4 @@
-package scrabble.view.panel;
+package scrabble.view.panel.subpanel;
 
 import scrabble.view.frame.TileButton;
 
@@ -9,9 +9,8 @@ public class TilePanel extends JPanel {
     private JButton tileButton;
 
     public TilePanel(TileButton tileButton) {
-        this.tileButton = tileButton;
         this.setLayout(new FlowLayout());
-        this.add(this.tileButton);
+        this.setButton(tileButton);
     }
 
     public JButton getButton() {
@@ -19,8 +18,9 @@ public class TilePanel extends JPanel {
     }
 
     public void setButton(JButton tileButton) {
-        this.remove(this.tileButton);
+        if (this.tileButton != null) this.remove(this.tileButton);
         this.tileButton = tileButton;
+        this.tileButton.setFont(getFont().deriveFont(Font.BOLD, 12f));
         this.add(this.tileButton);
         this.revalidate();
         this.repaint();
