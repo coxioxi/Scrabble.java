@@ -11,6 +11,7 @@ public class JoinScreen extends JPanel {
     // Input fields for player's name and host IP, and a button to initiate joining the game
     private JTextField name;
     private JTextField IP;
+    private JTextField port;
     private JButton join;
 
     /**
@@ -27,7 +28,7 @@ public class JoinScreen extends JPanel {
 
         // Create a panel for the IP input section, with a titled border
         JPanel centerPanel = new JPanel(new FlowLayout());
-        centerPanel.setBorder(BorderFactory.createTitledBorder("IP"));
+        centerPanel.setBorder(BorderFactory.createTitledBorder("Enter Host's Information"));
 
         // Create a panel for the join button
         JPanel southPanel = new JPanel(new FlowLayout());
@@ -42,6 +43,10 @@ public class JoinScreen extends JPanel {
         IP = new JTextField();
         IP.setColumns(10); // Set the text field width to 10 columns
 
+        JLabel portLabel = new JLabel("Enter Host Port:", SwingConstants.RIGHT);
+        port = new JTextField();
+        name.setColumns(10);
+
         // Button to join the game
         join = new JButton("Join");
 
@@ -53,10 +58,12 @@ public class JoinScreen extends JPanel {
         this.add(northPanel, BorderLayout.NORTH); // Place the north panel at the top of the layout
 
         // Create sub-panel for arranging the IP label and text field in a grid
-        JPanel ipPanel = new JPanel(new GridLayout(1,2,7,0));
-        ipPanel.add(hostIPLabel);
-        ipPanel.add(IP);
-        centerPanel.add(ipPanel); // Add the IP panel to the center panel
+        JPanel hostInfoPanel = new JPanel(new GridLayout(2,2,7,10));
+        hostInfoPanel.add(hostIPLabel);
+        hostInfoPanel.add(IP);
+        hostInfoPanel.add(portLabel);
+        hostInfoPanel.add(port);
+        centerPanel.add(hostInfoPanel); // Add the IP panel to the center panel
         this.add(centerPanel, BorderLayout.CENTER); // Place the center panel in the middle of the layout
 
         // Add the join button to the south panel and place it at the bottom of the layout
@@ -88,4 +95,7 @@ public class JoinScreen extends JPanel {
         return join;
     }
 
+    public JTextField getPort() {
+        return port;
+    }
 }
