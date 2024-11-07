@@ -3,6 +3,7 @@ package scrabble.network.messages;
 import scrabble.controller.Controller;
 import scrabble.network.host.PartyHost;
 
+import java.io.IOException;
 import java.io.Serial;
 
 public class PassTurn extends Message{
@@ -21,11 +22,22 @@ public class PassTurn extends Message{
 
 	@Override
 	public void execute(Controller controller) {
-		controller.getModel().passTurn(playerID);
+		try {
+			controller.getMessenger().sendMessage(this);
+			controller.getModel().passTurn(playerID);
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
 	}
 
 	@Override
 	public void execute(PartyHost partyHost) {
-
+		PassTurn passTurn = new PassTurn(PartyHost.HOST_ID, this.playerID);
+		try {
+			partyHost.sendMessage(this.playerID, passTurn);
+			partyHost.sendToAllButID(this.playerID, this);
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
 	}
 }
