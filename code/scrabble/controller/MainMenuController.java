@@ -29,6 +29,9 @@ public class MainMenuController {
 			parent.setUpHost(name);
 			parent.showHost();
 		}
+		else {
+			parent.showNoNameDialog();
+		}
 	}
 
 	private void fxCheckChanged() {
