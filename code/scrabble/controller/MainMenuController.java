@@ -22,6 +22,8 @@ public class MainMenuController {
 
 	private void hostButtonClick() {
 		// setup the partyhost and change screen
+		parent.setUpHost();
+		parent.getView().showHost();
 	}
 
 	private void fxCheckChanged() {
