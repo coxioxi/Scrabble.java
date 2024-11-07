@@ -91,9 +91,8 @@ public class ExchangeTiles extends Message{
 		ArrayList<Tile> tiles = controller.getModel().getSelf().getRack();
 		for (Tile t : toExchange) {
 			tiles.remove(t);
+			controller.removeRackTile(t);
 		}
-		// TODO: check implementation for GUI update!
-		controller.exchangeRack((GameScreen) controller.getView().getGame(), newTiles);
 	}
 
 
