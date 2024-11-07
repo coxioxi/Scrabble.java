@@ -2,6 +2,8 @@ package scrabble.controller;
 
 import scrabble.view.panel.MainMenuScreen;
 
+import javax.swing.*;
+
 public class MainMenuController {
 	private final Controller parent;
 	private final MainMenuScreen menuScreen;
@@ -22,7 +24,9 @@ public class MainMenuController {
 
 	private void hostButtonClick() {
 		// setup the partyhost and change screen
-		parent.setUpHost();
+		String name = JOptionPane.showInputDialog(parent.getView(), "Enter your name: ");
+		System.out.println(name);
+		parent.setUpHost(name);
 		parent.getView().showHost();
 	}
 
