@@ -38,12 +38,20 @@ public class StartGame extends Message {
 	@Override
 	public void execute(Controller controller) {
 		controller.getModel().addTiles(startingTiles);
+		/*
+		IMPLEMENTATION:
+		update the GameScreen (set it up) for the controller's view, then
+		switch the view over to the game screen.
+		make sure we are passing in the number of players, their names, the ruleset,
+		etc. then we set up the game screen
+		 */
+
 		//set ruleset from game for players: controller.getModel().setRuleset(ruleset)
 		// or make it possible to instantiate new game object for players when executing message
 	}
 
 	@Override
 	public void execute(PartyHost partyHost) {
-
+		// do nothing. host will not receive this message. ever.
 	}
 }
