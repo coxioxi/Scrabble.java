@@ -95,11 +95,13 @@ public class Controller implements PropertyChangeListener  {
 		host.startGame(ruleset);
 	}
 
-	public void startGame(Ruleset ruleset, String[] playerNames,
-						  int[] turnID, int[] playerID, ArrayList<Tile> startingTiles) {
+	public void startGame(Ruleset ruleset, String[] playerNames, int[] playerID, Tile[] startingTiles) {
 		// add tiles to game and gameScreen
 		// pass ruleset and the other stuff to setUpGameScreen
 		// use the info provided to make players for the game
+
+		this.getView().getGame().setupGameItems(playerNames, ruleset.getTotalTime(), ruleset.getTurnTime(), startingTiles);
+
 	}
 
 	public void resetLastPlay(GameScreen gameScreen){
