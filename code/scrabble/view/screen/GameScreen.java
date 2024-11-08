@@ -13,31 +13,42 @@ import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * The GameScreen class represents the main game screen in the Scrabble application.
+ * It contains various UI components such as the game board, player panels, and controls for gameplay actions.
+ */
 public class GameScreen extends JPanel {
-	public static final int GAP = 150;
-	public static final int RACK_SIZE = 7;
+	public static final int GAP = 150; // Spacing used between panels
+	public static final int RACK_SIZE = 7; // Number of tiles in a player's rack
 
-	private JLabel gameTime;
-	private BoardPanel boardPanel;
+	private JLabel gameTime; // Label displaying the game timer
+	private BoardPanel boardPanel; // Panel representing the game board
+
+	// 2D array representing the board's state
 	public Tile[][] letters = new Tile[Board.BOARD_ROWS][Board.BOARD_COLUMNS];
 
-	private JPanel centerPanel;
-	private JPanel eastPanel;
-	private JPanel westPanel;
-	private JPanel southPanel;
-	private JPanel northPanel;
+	private JPanel centerPanel; // Panel for the game board
+	private JPanel eastPanel; // Panel for player panels on the right side
+	private JPanel westPanel; // Panel for player panels on the left side
+	private JPanel southPanel; // Panel for the player's rack and action buttons
+	private JPanel northPanel; // Panel for the game timer
 
-	private TilePanel[] tilePanels;
-	private RackPanel rackPanel;
-	private JButton submitButton;
-	private JButton passButton;
+	private TilePanel[] tilePanels; // Array representing the tile panels
+	private RackPanel rackPanel; // Panel representing the player's rack
+	private JButton submitButton; // Button for submitting a move
+	private JButton passButton; // Button for passing a turn
 
+	// List of tiles that have been played in the current turn
 	public List<Tile> playedTiles = new ArrayList<>();
 	private JButton value = new JButton(" ");
 
+	/**
+	 * Default constructor that sets up the GameScreen layout and initializes the UI components.
+	 */
 	public GameScreen() {
-		this.setLayout(new BorderLayout());
+		this.setLayout(new BorderLayout()); // Set layout for the main panel
 
+		// Initialize and add the panels for different sections of the game screen
 		northPanel = setupNorthPanel();
 		centerPanel = setupCenterPanel();
 		eastPanel = new JPanel(new GridLayout(2,1,0,GAP));
@@ -56,6 +67,9 @@ public class GameScreen extends JPanel {
 		this.add(southPanel, BorderLayout.SOUTH);
 	}
 
+	/**
+	 * Disables the last played tiles on the board by updating the state of the cells.
+	 */
 	public void disableLastPlayedTiles() {
 		for (Tile t : playedTiles) {
 			boardPanel.disableBoardCell(t.getLocation().x, t.getLocation().y);
@@ -67,38 +81,67 @@ public class GameScreen extends JPanel {
 
 	}
 
+	/**
+	 * @return The center panel containing the game board.
+	 */
 	public JPanel getCenterPanel() {
 		return centerPanel;
 	}
 
+	/**
+	 * @return List of tiles that have been played in the current turn.
+	 */
 	public List<Tile> getPlayedTiles() {
 		return playedTiles;
 	}
 
+	/**
+	 * Sets a button value for internal use.
+	 * @param value The JButton to set.
+	 */
 	public void setValue(JButton value) {
 		this.value = value;
 	}
 
+	/**
+	 * @return The value button.
+	 */
 	public JButton getValue() {
 		return value;
 	}
 
+	/**
+	 * @return The panel representing the game board.
+	 */
 	public BoardPanel getBoardPanel() {
 		return boardPanel;
 	}
 
+	/**
+	 * @return The label representing the game timer.
+	 */
 	public JLabel getGameTime() {
 		return gameTime;
 	}
 
+	/**
+	 * @return The panel representing the player's rack.
+	 */
 	public RackPanel getRackPanel() {
 		return rackPanel;
 	}
 
+	/**
+	 * @return The button for submitting a move.
+	 */
 	public JButton getSubmitButton() {
 		return submitButton;
 	}
 
+	/**
+	 * Sets up the panel at the bottom of the screen, including the rack and action buttons.
+	 * @return The south panel.
+	 */
 	private JPanel setupSouthPanel() {
 		JPanel tempPanel = new JPanel(new FlowLayout());
 		JPanel submitAndRack = new JPanel(new GridLayout(2,1,0,10));
@@ -106,6 +149,8 @@ public class GameScreen extends JPanel {
 		passButton = new JButton("Pass Turn");
 		submitButton = new JButton("Submit");
 		submitButton.setPreferredSize(new Dimension(50, 10));
+
+		// Initialize tile panels for the rack
 		tilePanels = new TilePanel[RACK_SIZE];
 		for (int i = 0; i < tilePanels.length; i++) {
 			tilePanels[i] = new TilePanel(new TileButton(TileScore.values()[i]));
@@ -120,6 +165,10 @@ public class GameScreen extends JPanel {
 		return tempPanel;
 	}
 
+	/**
+	 * Sets up the center panel containing the game board.
+	 * @return The center panel.
+	 */
 	private JPanel setupCenterPanel() {
 		JPanel centerPanel = new JPanel(new FlowLayout());
 
@@ -130,6 +179,10 @@ public class GameScreen extends JPanel {
 		return centerPanel;
 	}
 
+	/**
+	 * Sets up the panel at the top of the screen, displaying the game timer.
+	 * @return The north panel.
+	 */
 	private JPanel setupNorthPanel() {
 		JPanel northPanel = new JPanel(new FlowLayout());
 		gameTime = new JLabel("00:00");
@@ -138,11 +191,16 @@ public class GameScreen extends JPanel {
 		return northPanel;
 	}
 
+	/**
+	 * Creates a JComboBox with game options.
+	 * @return The JComboBox with game options.
+	 */
 	private static JComboBox<String> getStringJComboBox() {
 		String[] options = {"Rules", "Game Audio", "Game FX", "Quit"};
 		JComboBox<String> comboBox = new JComboBox<>(options);
 		comboBox.setBounds(0, 0, 100, 25);
 
+		// Add action listener for the combo box
 		comboBox.setAction(new AbstractAction() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -160,7 +218,15 @@ public class GameScreen extends JPanel {
 		return comboBox;
 	}
 
+	/**
+	 * Sets up game elements including player panels, timer, and rack tiles.
+	 * @param playerNames Array of player names.
+	 * @param gameTime Initial game time in minutes.
+	 * @param playerTime Initial time per player in minutes.
+	 * @param rackTiles List of tiles in the player's rack.
+	 */
 	public void setupGameItems (String[] playerNames, int gameTime, int playerTime, ArrayList<Tile> rackTiles) {
+		// Setup player panels
 		for (int i = 0; i < playerNames.length; i++) {
 			JPanel newPlayer = setupPlayerPanel(playerNames[i], playerTime);
 			if (i > 0 && i < 3){
@@ -175,6 +241,10 @@ public class GameScreen extends JPanel {
 		this.gameTime.setText(gameTime + ":00");
 	}
 
+	/**
+	 * Removes a tile from the rack.
+	 * @param tile The tile to be removed.
+	 */
 	public void removeRackTile(Tile tile) {
 		RackPanel rackPanel = this.rackPanel;
 		for(TilePanel tp: rackPanel.getTilePanels()){
@@ -185,14 +255,20 @@ public class GameScreen extends JPanel {
 		}
 	}
 
+	/**
+	 * Resets the rack by clearing all tiles.
+	 */
 	private void resetRack() {
 		for (TilePanel tp : tilePanels) {
 			tp.setButton(new JButton(" "));
 		}
 	}
 
-	public void addTilesToRack (Tile[] tiles) {
-		int index = 0;
+	/**
+	 * Adds tiles to the player's rack.
+	 * @param tiles Array of tiles to be added.
+	 */
+	public void addTilesToRack (Tile[] tiles) {		int index = 0;
 		for (int i = 0; i < tilePanels.length; i++) {
 			if (!(tilePanels[i].getButton() instanceof TileButton)) {
 				TileButton button = new TileButton(TileScore.values()[tiles[index].getLetter() - 'A']);
@@ -202,6 +278,13 @@ public class GameScreen extends JPanel {
 		}
 	}
 
+	/**
+	 * Sets up a PlayerPanel with the specified player's name and time.
+	 *
+	 * @param name The name of the player.
+	 * @param playerTime The time allotted for the player.
+	 * @return A new PlayerPanel instance for the player.
+	 */
 	private JPanel setupPlayerPanel(String name, int playerTime) {
 		return new PlayerPanel(name, 0, playerTime);
 	}

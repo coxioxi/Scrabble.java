@@ -55,6 +55,8 @@ public class PlayTiles extends Message {
 		}
 	}
 
+	//Add method does the damn thing for all of the messages
+
 	@Override
 	public void execute(PartyHost partyHost) {
 		//get new tiles and send it back to the client (this message playerID)
