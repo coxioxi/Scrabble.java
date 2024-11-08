@@ -50,14 +50,21 @@ public class StartGame extends Message {
 
 	@Override
 	public void execute(Controller controller) {
-		controller.getModel().addTiles(startingTiles);
+
+		// from the hashmap, create the players for the model.
+		// then, assign LocalPlayer based on the id that we already received
+		// then, send the rules to the gameScreen via sendRules() in controller
+		// then, set up the rack for the player in gamescreen.
+
+
+		/*controller.getModel().addTiles(startingTiles);
 		/*
 		IMPLEMENTATION:
 		update the GameScreen (set it up) for the controller's view, then
 		switch the view over to the game screen.
 		make sure we are passing in the number of players, their names, the ruleset,
 		etc. then we set up the game screen
-		 */
+		 /
 
 		//set ruleset from game for players: controller.getModel().setRuleset(ruleset)
 		// or make it possible to instantiate new game object for players when executing message
@@ -68,6 +75,7 @@ public class StartGame extends Message {
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
+		 */
 
 	}
 

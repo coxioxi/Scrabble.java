@@ -21,7 +21,7 @@ public class LocalPlayer extends Player{
 	 * @param ID the player's id, which corresponds to their order
 	 * @param rack the tiles the player has
 	 */
-	public LocalPlayer(String name, int ID,ArrayList<Tile> rack) {
+	public LocalPlayer(String name, int ID, ArrayList<Tile> rack) {
 		super(name, ID); 	// Call the constructor of the superclass Player
 		this.rack = rack; 	// Initialize the player's rack with the given tiles
 	}

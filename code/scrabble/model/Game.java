@@ -16,23 +16,11 @@ import java.util.ArrayList;
  */
 public class Game {
 
-	/*
-	TODO:
-		Jy'el: please consider end conditions as you implement this class's methods
-		I have just added the isGameOver field, as I failed to consider it previously
-
-	 */
-
-	// the players of the game. The order is significant and represents the order in
+		// the players of the game. The order is significant and represents the order in
 	// which turns are taken
 	private Player[] players;
 	private Board board; 	    // The game board
-
-	public void setRuleset(Ruleset ruleset) {
-		this.ruleset = ruleset;
-	}
-
-	private Ruleset ruleset;	// The game ruleset
+	private final Ruleset ruleset;	// The game ruleset
 	private LocalPlayer self;	// The local player
 
 	private int currentPlayerTime;	// How much time (in seconds) the current player has
@@ -50,11 +38,11 @@ public class Game {
 	 * @param ruleset The ruleset for the game
 	 * @param me The local player
 	 */
-	public Game(Player[] players, Board board, Ruleset ruleset, Player me){
+	public Game(Player[] players, Board board, Ruleset ruleset, LocalPlayer me){
 		this.players = players;
 		this.board = board;
 		this.ruleset = ruleset;
-		this.self = (LocalPlayer) me;
+		this.self = me;
 		// TODO: From ruleset, set times
 	}
 
@@ -277,7 +265,6 @@ public class Game {
 	 */
 	public void addTiles(Tile[] tiles) {
 		self.addTiles(tiles);
-
 	}
 
 	/**
@@ -287,7 +274,6 @@ public class Game {
 	 */
 	public void removeTiles(Tile[] tiles) {
 		self.removeTiles(tiles);
-
 	}
 
 	/**

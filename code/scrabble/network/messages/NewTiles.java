@@ -4,9 +4,6 @@ import scrabble.controller.Controller;
 import scrabble.model.Tile;
 import scrabble.network.host.PartyHost;
 
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.io.Serial;
 
 public class NewTiles extends Message {
@@ -26,7 +23,7 @@ public class NewTiles extends Message {
 	@Override
 	public void execute(Controller controller) {
 		controller.getModel().addTiles(tiles);
-		controller.addRack(this.tiles);
+		controller.replenishRack(this.tiles);
 	}
 
 	@Override

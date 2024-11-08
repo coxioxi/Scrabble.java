@@ -160,8 +160,8 @@ public class GameScreen extends JPanel {
 		return comboBox;
 	}
 
-	public void setupGameItems (int numPlayers, String[] playerNames, int gameTime, int playerTime, ArrayList<Tile> rackTiles) {
-		for (int i = 0; i < numPlayers; i++) {
+	public void setupGameItems (String[] playerNames, int gameTime, int playerTime, ArrayList<Tile> rackTiles) {
+		for (int i = 0; i < playerNames.length; i++) {
 			JPanel newPlayer = setupPlayerPanel(playerNames[i], playerTime);
 			if (i > 0 && i < 3){
 				eastPanel.add(newPlayer);
@@ -169,9 +169,26 @@ public class GameScreen extends JPanel {
 				westPanel.add(newPlayer);
 			}
 		}
+		resetRack();
 		addTilesToRack(rackTiles.toArray(new Tile[0]));
 
 		this.gameTime.setText(gameTime + ":00");
+	}
+
+	public void removeRackTile(Tile tile) {
+		RackPanel rackPanel = this.rackPanel;
+		for(TilePanel tp: rackPanel.getTilePanels()){
+			if(tp.getButton().getText().equals(""+tile.getLetter())){
+				tp.setButton(new JButton(" "));
+				break;
+			}
+		}
+	}
+
+	private void resetRack() {
+		for (TilePanel tp : tilePanels) {
+			tp.setButton(new JButton(" "));
+		}
 	}
 
 	public void addTilesToRack (Tile[] tiles) {

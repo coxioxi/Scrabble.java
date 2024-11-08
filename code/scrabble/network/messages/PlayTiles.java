@@ -51,7 +51,7 @@ public class PlayTiles extends Message {
 		}
 		else{
 			//not valid play
-			controller.resetRack((GameScreen) controller.getView().getGame());
+			controller.resetLastPlay((GameScreen) controller.getView().getGame());
 		}
 	}
 

@@ -6,7 +6,6 @@ import scrabble.network.messages.Message;
 import scrabble.network.host.PartyHost;
 import scrabble.network.messages.NewPlayer;
 import scrabble.view.frame.ScrabbleGUI;
-import scrabble.view.frame.TileButton;
 import scrabble.view.screen.*;
 import scrabble.view.screen.GameScreen;
 import scrabble.view.screen.component.RackPanel;
@@ -20,6 +19,7 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.IOException;
 import java.net.Socket;
+import java.util.ArrayList;
 
 
 /**
@@ -47,6 +47,8 @@ public class Controller implements PropertyChangeListener  {
 	note that this field is null when this computer is not the host
 	 */
 	private PartyHost host;
+
+	private int selfID;
 
 	public static void main(String[] args) {
 		new Controller();
@@ -88,9 +90,37 @@ public class Controller implements PropertyChangeListener  {
 		hostScreen.addPlayerName(name);
 	}
 
-	public void sendRules(boolean challengesAllowed, String dictionary, int playerTime, int gameTime) {
+	public void sendRulesToHost(boolean challengesAllowed, String dictionary, int playerTime, int gameTime) {
 		ruleset = new Ruleset(gameTime, playerTime, challengesAllowed, dictionary);
 		host.startGame(ruleset);
+	}
+
+	public void startGame(Ruleset ruleset, String[] playerNames,
+						  int[] turnID, int[] playerID, ArrayList<Tile> startingTiles) {
+		// add tiles to game and gameScreen
+		// pass ruleset and the other stuff to setUpGameScreen
+		// use the info provided to make players for the game
+	}
+
+	public void resetLastPlay(GameScreen gameScreen){
+		//loop through the rack
+		for (int i = 0; i < gameScreen.playedTiles.size(); ++i){
+			gameScreenController.removeTile(gameScreen.playedTiles.get(i));
+		}
+	}
+
+	public void removeRackTile(Tile tile) {
+		RackPanel rackPanel = ((GameScreen) view.getGame()).getRackPanel();
+		for(TilePanel tp: rackPanel.getTilePanels()){
+			if(tp.getButton().getText().equals(""+tile.getLetter())){
+				tp.setButton(new JButton(" "));
+				break;
+			}
+		}
+	}
+
+	public void replenishRack(Tile[] toAdd){
+		view.getGame().addTilesToRack(toAdd);
 	}
 
 	public ScrabbleGUI getView() {
@@ -111,37 +141,6 @@ public class Controller implements PropertyChangeListener  {
 
 	public PartyHost getHost() {
 		return host;
-	}
-
-	public void resetRack(GameScreen gameScreen){
-		//loop through the rack
-		for (int i = 0; i < gameScreen.playedTiles.size(); ++i){
-			gameScreenController.removeTile(gameScreen.playedTiles.get(i));
-		}
-	}
-
-	public void removeRackTile(Tile tile) {
-		RackPanel rackPanel = ((GameScreen) view.getGame()).getRackPanel();
-		for(TilePanel tp: rackPanel.getTilePanels()){
-			if(tp.getButton().getText().equals(""+tile.getLetter())){
-				tp.setButton(new JButton(" "));
-				break;
-			}
-		}
-	}
-
-	public void addRack(Tile[] toAdd){
-		JButton toAddTile = new JButton();
-		RackPanel rackPanel = ((GameScreen) view.getGame()).getRackPanel();
-		//loop through the rack
-		for (int i = 0; i < toAdd.length; ++i){
-			TilePanel tp = rackPanel.getTilePanels()[i];
-			//find empty rack location
-			if(tp.getButton().getText().equals(" ")){
-				//swap letters with exchange tile array location
-				tp.setButton(new TileButton(TileScore.values()[(toAdd[i].getLetter()-'A')]));
-			}
-		}
 	}
 
 	public void showGame() {
