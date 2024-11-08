@@ -1,5 +1,6 @@
 package scrabble.network.host;
 
+import scrabble.model.Player;
 import scrabble.model.Ruleset;
 import scrabble.model.Tile;
 import scrabble.network.messages.*;
@@ -8,10 +9,7 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.IOException;
 import java.net.*;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Random;
+import java.util.*;
 
 /**
  * This class implements host responsibilities for a Scrabble game. It accepts
@@ -211,6 +209,36 @@ public class PartyHost extends Thread implements PropertyChangeListener {
 			playerTiles.put(host, new ArrayList<>(Arrays.asList(tileBag.getNext(TILE_RACK_SIZE))));
 		}
 
+		int[] randomNumbers = new int[playerIdMap.size()];
+		for (int i = 0; i < randomNumbers.length; i++) {
+			randomNumbers[i] = i;
+		}
+
+		//shuffle randomNumbers array so the player order is randomised
+		Random random = new Random();
+		for (int i = 0; i < randomNumbers.length;) {
+			int index = random.nextInt(randomNumbers.length);
+			int temp;
+			if (index != i) {
+				temp = randomNumbers[index];
+				randomNumbers[index] = randomNumbers[i];
+				randomNumbers[i] = temp;
+				++i;
+			}
+		}
+
+		//This hash map stores the turn as the key with the player ID and player name as a value
+		HashMap<Integer, HashMap<Integer, String>> playerInfo = new HashMap<>();
+		Iterator<Integer> iterator= playerNames.keySet().iterator();
+
+		//populates playerInfo map
+		for (int i = 0; i < randomNumbers.length; i++) {
+			HashMap<Integer, String> temp = new HashMap<>();
+			int ID = iterator.next();
+			temp.put(ID, playerNames.get(ID));
+			playerInfo.put(randomNumbers[i], temp);
+		}
+
 		int j = 0;
 		int[] playerID = new int[playerIdMap.size()];
 		for (HostReceiver host: playerIdMap.keySet()) {
@@ -219,7 +247,7 @@ public class PartyHost extends Thread implements PropertyChangeListener {
 		}
 
 		for (HostReceiver host: playerIdMap.keySet()) {
-			StartGame startGameMessage = new StartGame(HOST_ID, playerIdMap.get(host), playerID, ruleset, playerTiles.get(host).toArray(new Tile[0]));
+			StartGame startGameMessage = new StartGame(HOST_ID, playerIdMap.get(host), playerInfo, ruleset, playerTiles.get(host).toArray(new Tile[0]));
 			host.sendMessage(startGameMessage);
 		}
 	}
