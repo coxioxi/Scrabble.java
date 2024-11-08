@@ -107,6 +107,10 @@ public class ClientMessenger implements Runnable {
 		outputStream.flush();
 	}
 
+	public Message getMessage(){
+		return (new PassTurn(1,1)); // thew in to run NetworkTest.java
+	}
+
 	/**
 	 * Ceases execution of <code>run()</code>.
 	 */
