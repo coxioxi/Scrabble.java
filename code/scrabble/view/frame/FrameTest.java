@@ -15,10 +15,10 @@ public class FrameTest extends JFrame {
     private JPanel join = new JoinScreen();
     private JPanel waiting = new WaitingScreen();
     private JPanel game = new GameScreen();
-    private JPanel winner = new WinnerScreen(new Player[]{new Player("Ian", 1),
-            new Player("David", 2),
-            new Player("Max", 3),
-            new Player("Sam", 4)});
+    private JPanel winner = new WinnerScreen(new Player[]{new Player("Ian", 1, 0),
+            new Player("David", 2, 0),
+            new Player("Max", 3, 0),
+            new Player("Sam", 4, 0)});
 
     public FrameTest() {
         try {

@@ -277,6 +277,7 @@ public class PartyHost extends Thread implements PropertyChangeListener {
 			int index = playerIdMap.size();
 			playerIdMap.put(clientHandler, index);
 			playerIdToMessenger.put(index, clientHandler);
+			clientHandler.sendMessage(new AssignID(HOST_ID, index));
 		}
 		catch (SocketTimeoutException e) {
 			// This is fine. don't do anything.

@@ -21,10 +21,10 @@ import scrabble.model.*;
  */
 
 public class TestBoard {
-    Player player1 = new Player("Samuel",1);
-    Player player2 = new Player("Ian",2);
-    Player player3 = new Player("David",3);
-    Player player4 = new Player("Max",4);
+    Player player1 = new Player("Samuel",1, 0);
+    Player player2 = new Player("Ian",2, 1);
+    Player player3 = new Player("David",3, 2);
+    Player player4 = new Player("Max",4, 3);
 
     //valid tiles
     Tile[] tiles0 = {new Tile('N',new Point(7,7)), new Tile('I', new Point(7,8))

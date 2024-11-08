@@ -3,6 +3,7 @@ package scrabble.controller;
 import scrabble.view.screen.MainMenuScreen;
 
 import javax.swing.*;
+import java.io.IOException;
 
 public class MainMenuController {
 	private final Controller parent;
@@ -26,8 +27,12 @@ public class MainMenuController {
 		// setup the partyhost and change screen
 		String name = JOptionPane.showInputDialog(parent.getView(), "Enter your name: ");
 		if (name != null && !name.isBlank()) {
-			parent.setUpHost(name);
-			parent.showHost();
+			try {
+				parent.setUpHost(name);
+				parent.showHost();
+			} catch (IOException e) {
+				throw new RuntimeException(e);
+			}
 		}
 		else {
 			parent.showNoNameDialog();

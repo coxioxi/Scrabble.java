@@ -76,15 +76,16 @@ public class Controller implements PropertyChangeListener  {
 		messenger.sendMessage(new NewPlayer(0, 0, name));
 	}
 
-	public void setUpHost(String name) {
+	public void setUpHost(String name) throws IOException {
 		host = new PartyHost(PORT);
 		host.start();
 //		System.out.println(host.getIPAddress() + " " + host.getPort());
 		HostScreen hostScreen = view.getHost();
 		hostScreen.getHostsIP().setText(host.getIPAddress());
 		hostScreen.getHostPort().setText(""+host.getPort());
+		setupSocket(host.getIPAddress(), host.getPort());
 		try {
-			host.sendMessage(0, new NewPlayer(0, 0, name));
+			messenger.sendMessage(new NewPlayer(selfID, selfID, name));
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
@@ -101,6 +102,7 @@ public class Controller implements PropertyChangeListener  {
 		// pass ruleset and the other stuff to setUpGameScreen
 		// use the info provided to make players for the game
 
+		System.out.println("Controller.startGame");
 		this.getView().getGame().setupGameItems(playerNames, ruleset.getTotalTime(), ruleset.getTurnTime(), startingTiles);
 		Player[] players = new Player[playerNames.length];
 		LocalPlayer self = null;
@@ -111,6 +113,8 @@ public class Controller implements PropertyChangeListener  {
 			players[i] = new Player(playerNames[i], playerID[i], i);
 		}
 		model = new Game(players, new Board(), ruleset, self);
+		System.out.println(model.getBoard());
+		System.out.println(model.getSelf().getName());
 	}
 
 	public void resetLastPlay(GameScreen gameScreen){
