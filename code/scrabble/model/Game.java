@@ -286,10 +286,10 @@ public class Game {
 
 	public boolean isGameOver() {
 		isGameOver = false;
-		if ( self.getRack().isEmpty()) {
-			isGameOver = true;
-		}
-		else if(allPlayersInactive()){
+//		if ( self.getRack().isEmpty()) {
+//			isGameOver = true;
+//		}
+		if(allPlayersInactive()){
 			isGameOver = true;
 		} else if (ruleset.getTotalTime() == 0) {
 			isGameOver = true;

@@ -38,12 +38,17 @@ public class TileBag {
         }
     }
 
-    // ???
-    public void removeTiles(Tile[] tiles) {
-        for(Tile tile: tiles){
-            tileBag.replace(tile,tileBag.replace(tile,tileBag.get(tile)-1));
+    // method for testing tile bag
+    public void viewTileBag(){
+        Tile[] tiles = tileBag.keySet().toArray(new Tile[0]);
+        Object[] values = tileBag.values().toArray();
+        for(int i = 0; i<tiles.length;++i){
+            System.out.println(tiles[i].getLetter() + " " + values[i]);
         }
+    }
 
+    public HashMap<Tile, Integer> getTileBag() {
+        return tileBag;
     }
 
     /**
@@ -105,4 +110,6 @@ public class TileBag {
         tileBag.put(new Tile('Z'),1);
         tileBag.put(new Tile(), 2);
     }
+
+
 }
