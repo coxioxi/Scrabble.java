@@ -22,7 +22,12 @@ public class GameScreen extends JPanel {
 	public Tile[][] letters = new Tile[Board.BOARD_ROWS][Board.BOARD_COLUMNS];
 
 	private JPanel centerPanel;
+	private JPanel eastPanel;
+	private JPanel westPanel;
+	private JPanel southPanel;
+	private JPanel northPanel;
 
+	private TilePanel[] tilePanels;
 	private RackPanel rackPanel;
 	private JButton submitButton;
 	private JButton passButton;
@@ -33,24 +38,11 @@ public class GameScreen extends JPanel {
 	public GameScreen() {
 		this.setLayout(new BorderLayout());
 
-		JPanel northPanel = setupNorthPanel();
+		northPanel = setupNorthPanel();
 		centerPanel = setupCenterPanel();
-
-		JPanel eastPanel = new JPanel(new GridLayout(2,1,0,GAP));
-		JPanel westPanel = new JPanel(new GridLayout(2,1,0,GAP));
-
-		JPanel player1Panel = setupPlayerPanel();
-		JPanel player2Panel = setupPlayerPanel();
-		JPanel player3Panel = setupPlayerPanel();
-		JPanel player4Panel = setupPlayerPanel();
-
-		westPanel.add(player1Panel);
-		westPanel.add(player4Panel);
-
-		eastPanel.add(player2Panel);
-		eastPanel.add(player3Panel);
-
-		JPanel southPanel = setupSouthPanel();
+		eastPanel = new JPanel(new GridLayout(2,1,0,GAP));
+		westPanel = new JPanel(new GridLayout(2,1,0,GAP));
+		southPanel = setupSouthPanel();
 
 		//Drop down menu
 		/*JComboBox<String> comboBox = getStringJComboBox();
@@ -108,13 +100,13 @@ public class GameScreen extends JPanel {
 	}
 
 	private JPanel setupSouthPanel() {
-		JPanel southPanel = new JPanel(new FlowLayout());
+		JPanel tempPanel = new JPanel(new FlowLayout());
 		JPanel submitAndRack = new JPanel(new GridLayout(2,1,0,10));
 		JPanel subAndPass = new JPanel(new GridLayout(1,2,10,0));
 		passButton = new JButton("Pass Turn");
 		submitButton = new JButton("Submit");
 		submitButton.setPreferredSize(new Dimension(50, 10));
-		TilePanel[] tilePanels = new TilePanel[RACK_SIZE];
+		tilePanels = new TilePanel[RACK_SIZE];
 		for (int i = 0; i < tilePanels.length; i++) {
 			tilePanels[i] = new TilePanel(new TileButton(TileScore.values()[i]));
 		}
@@ -124,8 +116,8 @@ public class GameScreen extends JPanel {
 		subAndPass.add(passButton);
 		submitAndRack.add(subAndPass);
 		submitAndRack.add(rackPanel);
-		southPanel.add(submitAndRack);
-		return southPanel;
+		tempPanel.add(submitAndRack);
+		return tempPanel;
 	}
 
 	private JPanel setupCenterPanel() {
@@ -168,7 +160,32 @@ public class GameScreen extends JPanel {
 		return comboBox;
 	}
 
-	private JPanel setupPlayerPanel() {
-		return new PlayerPanel("Player", 0, 0);
+	public void setupGameItems (int numPlayers, String[] playerNames, int gameTime, int playerTime, ArrayList<Tile> rackTiles) {
+		for (int i = 0; i < numPlayers; i++) {
+			JPanel newPlayer = setupPlayerPanel(playerNames[i], playerTime);
+			if (i > 0 && i < 3){
+				eastPanel.add(newPlayer);
+			} else {
+				westPanel.add(newPlayer);
+			}
+		}
+		addTilesToRack(rackTiles.toArray(new Tile[0]));
+
+		this.gameTime.setText(gameTime + ":00");
+	}
+
+	public void addTilesToRack (Tile[] tiles) {
+		int index = 0;
+		for (int i = 0; i < tilePanels.length; i++) {
+			if (!(tilePanels[i].getButton() instanceof TileButton)) {
+				TileButton button = new TileButton(TileScore.values()[tiles[index].getLetter() - 'A']);
+				tilePanels[i] = new TilePanel(button);
+				index++;
+			}
+		}
+	}
+
+	private JPanel setupPlayerPanel(String name, int playerTime) {
+		return new PlayerPanel(name, 0, playerTime);
 	}
 }
