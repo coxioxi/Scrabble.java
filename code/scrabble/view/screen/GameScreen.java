@@ -160,7 +160,7 @@ public class GameScreen extends JPanel {
 		return comboBox;
 	}
 
-	public void setupGameItems (String[] playerNames, int gameTime, int playerTime, ArrayList<Tile> rackTiles) {
+	public void setupGameItems (String[] playerNames, int gameTime, int playerTime, Tile[] rackTiles) {
 		for (int i = 0; i < playerNames.length; i++) {
 			JPanel newPlayer = setupPlayerPanel(playerNames[i], playerTime);
 			if (i > 0 && i < 3){
@@ -170,7 +170,7 @@ public class GameScreen extends JPanel {
 			}
 		}
 		resetRack();
-		addTilesToRack(rackTiles.toArray(new Tile[0]));
+		addTilesToRack(rackTiles);
 
 		this.gameTime.setText(gameTime + ":00");
 	}
