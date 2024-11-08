@@ -9,7 +9,7 @@ import java.awt.*;
  */
 public class HostScreen extends JPanel {
 
-    public static final String DICTIONARY_PATH = "../../../dictionary.txt";
+    public static final String DICTIONARY_PATH = "code/dictionary.txt";
     public static final String DEFAULT_WAITING_TEXT = "  Waiting...  ";
 
     // Options for game time, player time, challenges, and dictionary selection

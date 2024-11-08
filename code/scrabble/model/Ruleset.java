@@ -9,6 +9,8 @@ package scrabble.model;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.Serial;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -20,7 +22,9 @@ import java.util.HashSet;
  * allowed for the whole game, whether challenges are allowed, and what dictionary is
  * being used.
  */
-public class Ruleset {
+public class Ruleset implements Serializable {
+	@Serial
+	private static final long serialVersionUID = 9L;
 	private final int totalTime;				// Total time allotted for the whole game (in seconds)
 	private final int turnTime;					// Time allotted per turn for each player (in seconds)
 	private final boolean challengesAllowed;	// Indicates if challenges are allowed during gameplay
@@ -92,7 +96,7 @@ public class Ruleset {
 		//TODO: read in the word list from dictionary. put into arraylist, then convert and return
 		HashSet<String> list = new HashSet<>();
 		try{
-			File dictionary = new File("./code/scrabble/" + dictionaryFileName);
+			File dictionary = new File(dictionaryFileName).getAbsoluteFile();
 			Scanner scanner = new Scanner(dictionary);
 			while(scanner.hasNext()){
 				list.add(scanner.nextLine());
