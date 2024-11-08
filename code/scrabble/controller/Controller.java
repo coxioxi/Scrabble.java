@@ -145,6 +145,10 @@ public class Controller implements PropertyChangeListener  {
 		return host;
 	}
 
+	public void setSelfID(int selfID) {
+		this.selfID = selfID;
+	}
+
 	public void showGame() {
 		view.showGame();
 		removeListeners();
