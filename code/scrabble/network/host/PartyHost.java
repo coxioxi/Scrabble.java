@@ -211,31 +211,6 @@ public class PartyHost extends Thread implements PropertyChangeListener {
 			playerTiles.put(host, (ArrayList<Tile>) Arrays.stream(tileBag.getNext(TILE_RACK_SIZE)).toList());
 		}
 
-		int[] randomNumbers = new int[playerIdMap.size()];
-		for (int i = 0; i < randomNumbers.length; i++) {
-			randomNumbers[i] = i;
-		}
-
-		//shuffle randomNumbers array so the player order is randomised
-		Random random = new Random();
-		for (int i = 0; i < randomNumbers.length;) {
-			int index = random.nextInt(randomNumbers.length);
-			int temp;
-			if (index != i) {
-				temp = randomNumbers[index];
-				randomNumbers[index] = randomNumbers[i];
-				randomNumbers[i] = temp;
-				++i;
-			}
-		}
-
-		int i = 0;
-		for (HostReceiver host: playerIdMap.keySet()){
-			playerIdToMessenger.put(randomNumbers[i], host);
-			playerIdMap.replace(host, randomNumbers[i]);
-			++i;
-		}
-
 		int j = 0;
 		int[] playerID = new int[playerIdMap.size()];
 		for (HostReceiver host: playerIdMap.keySet()) {
