@@ -225,7 +225,7 @@ public class GameScreen extends JPanel {
 	 * @param playerTime Initial time per player in minutes.
 	 * @param rackTiles List of tiles in the player's rack.
 	 */
-	public void setupGameItems (String[] playerNames, int gameTime, int playerTime, ArrayList<Tile> rackTiles) {
+        public void setupGameItems (String[] playerNames, int gameTime, int playerTime, Tile[] rackTiles) {
 		// Setup player panels
 		for (int i = 0; i < playerNames.length; i++) {
 			JPanel newPlayer = setupPlayerPanel(playerNames[i], playerTime);
@@ -236,7 +236,7 @@ public class GameScreen extends JPanel {
 			}
 		}
 		resetRack();
-		addTilesToRack(rackTiles.toArray(new Tile[0]));
+		addTilesToRack(rackTiles);
 
 		this.gameTime.setText(gameTime + ":00");
 	}

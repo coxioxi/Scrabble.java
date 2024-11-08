@@ -13,11 +13,11 @@ public class AssignID extends Message{
 
 	@Override
 	public void execute(Controller controller) {
-
+		controller.setSelfID(playerID);
 	}
 
 	@Override
 	public void execute(PartyHost partyHost) {
-
+		// nothing
 	}
 }

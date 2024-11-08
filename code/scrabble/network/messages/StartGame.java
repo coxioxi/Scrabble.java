@@ -8,6 +8,7 @@ import scrabble.network.host.HostReceiver;
 import scrabble.network.host.PartyHost;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
 
@@ -54,28 +55,15 @@ public class StartGame extends Message {
 		// from the hashmap, create the players for the model.
 		// then, assign LocalPlayer based on the id that we already received
 		// then, send the rules to the gameScreen via sendRules() in controller
-		// then, set up the rack for the player in gamescreen.
+		// then, set up the rack for the player in gameScreen
 
-
-		/*controller.getModel().addTiles(startingTiles);
-		/*
-		IMPLEMENTATION:
-		update the GameScreen (set it up) for the controller's view, then
-		switch the view over to the game screen.
-		make sure we are passing in the number of players, their names, the ruleset,
-		etc. then we set up the game screen
-		 /
-
-		//set ruleset from game for players: controller.getModel().setRuleset(ruleset)
-		// or make it possible to instantiate new game object for players when executing message
-		try {
-			controller.getMessenger().sendMessage(this);
-			controller.getModel().setRuleset(ruleset);
-			controller.getView().setupGameScreen(ruleset, controller.getModel().getPlayers(), controller.getModel().getPlayers().length);
-		} catch (Exception e) {
-			throw new RuntimeException(e);
+		String[] playerNames = new String[playerInfo.size()];
+		for(Integer turn: getPlayerInfo().keySet()){
+			Iterator<Integer> iterator= playerInfo.get(turn).keySet().iterator();
+			playerIDs[turn] = iterator.next();
+			playerNames[turn] = getPlayerInfo().get(turn).get(playerIDs[turn]);
 		}
-		 */
+		controller.startGame(ruleset, playerNames, playerIDs, startingTiles);
 
 	}
 
