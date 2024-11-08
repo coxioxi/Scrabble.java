@@ -208,7 +208,7 @@ public class PartyHost extends Thread implements PropertyChangeListener {
 
 		// Make a starting rack for each player.
 		for (HostReceiver host: playerIdMap.keySet()){
-			playerTiles.put(host, (ArrayList<Tile>) Arrays.stream(tileBag.getNext(TILE_RACK_SIZE)).toList());
+			playerTiles.put(host, new ArrayList<>(Arrays.asList(tileBag.getNext(TILE_RACK_SIZE))));
 		}
 
 		int[] randomNumbers = new int[playerIdMap.size()];

@@ -18,18 +18,6 @@ import java.io.IOException;
 import java.net.Socket;
 
 public class NetworkTest {
-    /*
-     *
-     * tests:
-     * attempt to join after host calls start game
-     * attempt more than 4 connections
-     * test messages sent from clients to host
-     * valid player and sender id (host)
-     * correct number of tiles
-     * tiles recieved are random
-     * test with different number of players
-     *
-     * */
     PartyHost partyHost;
     ClientMessenger clientMessenger0;
     ClientMessenger clientMessenger1;
@@ -42,8 +30,6 @@ public class NetworkTest {
     int port = 5000;
     TileBag tileBag;
     NetworkTestListener listener;
-
-
 
     @BeforeEach
     public void hostSetup() throws IOException {
@@ -106,7 +92,7 @@ public class NetworkTest {
         }
         @Test
         public void StartGameTest() throws IOException{
-            partyHost.startGame();// needs a fixing
+            partyHost.startGame();
         }
 
 
