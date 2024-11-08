@@ -20,6 +20,7 @@ import java.beans.PropertyChangeListener;
 import java.io.IOException;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.List;
 
 
 /**
@@ -101,7 +102,15 @@ public class Controller implements PropertyChangeListener  {
 		// use the info provided to make players for the game
 
 		this.getView().getGame().setupGameItems(playerNames, ruleset.getTotalTime(), ruleset.getTurnTime(), startingTiles);
-
+		Player[] players = new Player[playerNames.length];
+		LocalPlayer self = null;
+		for (int i = 0; i < players.length; i++) {
+			if (playerID[i] == this.selfID) {
+				self = new LocalPlayer(playerNames[i], playerID[i], i, new ArrayList<>(List.of(startingTiles)));
+			}
+			players[i] = new Player(playerNames[i], playerID[i], i);
+		}
+		model = new Game(players, new Board(), ruleset, self);
 	}
 
 	public void resetLastPlay(GameScreen gameScreen){
