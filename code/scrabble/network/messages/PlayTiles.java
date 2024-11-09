@@ -35,24 +35,7 @@ public class PlayTiles extends Message {
 		//if play was valid we'll have a positive number for the score, otherwise we get -1 for the score
 		//if we get a -1 reset the most recently placed tiles using playedTiles in gameScreen
 		//if valid we update the score in the GUI and then send the message to the host
-		int score = controller.getModel().playTiles(playerID,tiles);
-
-		if(score >= 0){
-			//valid play
-			try {
-				controller.getMessenger().sendMessage(this);
-				((GameScreen)controller.getView().getGame()).disableLastPlayedTiles();
-			} catch (IOException e) {
-				controller.getMessenger().halt();
-
-				//make this sout be a pop-up message for the client
-				System.out.println("Host Disconnected");
-			}
-		}
-		else{
-			//not valid play
-			controller.resetLastPlay((GameScreen) controller.getView().getGame());
-		}
+		controller.playTiles(playerID,tiles);
 	}
 
 	//Add method does the damn thing for all of the messages

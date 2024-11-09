@@ -5,6 +5,7 @@ import scrabble.network.client.ClientMessenger;
 import scrabble.network.messages.Message;
 import scrabble.network.host.PartyHost;
 import scrabble.network.messages.NewPlayer;
+import scrabble.network.messages.PlayTiles;
 import scrabble.view.frame.ScrabbleGUI;
 import scrabble.view.screen.*;
 import scrabble.view.screen.GameScreen;
@@ -72,6 +73,25 @@ public class Controller implements PropertyChangeListener  {
 		((Message) evt.getNewValue()).execute(this);
 	}
 
+	public int playTiles(int playerID, Tile[] tiles) {
+		int score = model.playTiles(playerID, tiles);
+		if (score >= 0) {
+			try {
+				getMessenger().sendMessage(new PlayTiles(selfID, selfID, tiles));
+				getView().getGame().disableLastPlayedTiles();
+			} catch (IOException e) {
+				getMessenger().halt();
+
+				//make this sout be a pop-up message for the client
+				System.out.println("Host Disconnected");
+			}
+		}
+		else {
+			resetLastPlay(getView().getGame());
+		}
+		return score;
+	}
+
 	public void setupSocket(String ip, int port) throws IOException {
 		hostSocket = new Socket(ip, port);
 		messenger = new ClientMessenger(hostSocket, this);
@@ -120,6 +140,7 @@ public class Controller implements PropertyChangeListener  {
 			}
 			players[i] = new Player(playerNames[i], playerID[i], i);
 		}
+		ruleset.setupDictionary();
 		model = new Game(players, new Board(), ruleset, self);
 	}
 
