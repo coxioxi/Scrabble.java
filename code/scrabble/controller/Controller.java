@@ -76,10 +76,11 @@ public class Controller implements PropertyChangeListener  {
 	public void playTiles(int playerID, Tile[] tiles) {
 		if (playerID == selfID) selfPlayTiles(tiles);
 		else otherPlayTiles(playerID, tiles);
+		gameScreenController.setRackButtonsEnabled(model.getCurrentPlayer() == selfID);
 	}
 
 	private void otherPlayTiles(int playerID, Tile[] tiles) {
-		int score = model.playTiles(playerID, tiles);
+		model.playTiles(playerID, tiles);
 		view.getGame().addToBoard(tiles);
 		Player player = null;
 		for (Player player1 : model.getPlayers()) {
@@ -163,6 +164,7 @@ public class Controller implements PropertyChangeListener  {
 		ruleset.setupDictionary();
 		model = new Game(players, new Board(), ruleset, self);
 		showGame();
+		if (model.getCurrentPlayer() != selfID) gameScreenController.setRackButtonsEnabled(false);
 	}
 
 	public void resetLastPlay(GameScreen gameScreen){

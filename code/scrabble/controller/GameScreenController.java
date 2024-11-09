@@ -67,6 +67,13 @@ public class GameScreenController {
 		parent.showRulesDialog();
 	}
 
+	public void setRackButtonsEnabled(boolean enabled) {
+		RackPanel rackPanel = gameScreen.getRackPanel();
+		for (TilePanel tp : rackPanel.getTilePanels()) {
+			tp.getButton().setEnabled(enabled);
+		}
+	}
+
 	private void addActionListeners() {
 		addRackTileListeners();
 		addBoardCellListeners();
