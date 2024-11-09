@@ -82,6 +82,7 @@ public class Game {
 				if(areValid) {
 					player.increaseScore(score);
 					if (playerID == self.getID()) self.increaseScore(score);
+					this.nextTurn();
 				}
 				else{
 					board.removeTiles(tiles);

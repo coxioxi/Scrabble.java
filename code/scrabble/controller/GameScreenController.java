@@ -161,7 +161,6 @@ public class GameScreenController {
 		boardPanel.setBoardCell(toAdd, row, col);
 		addBoardCellPanelListener(boardCellPanel, row, col);
 		gameScreen.setValue(new JButton(" "));
-		System.out.println(Arrays.toString(gameScreen.playedTiles.toArray(new Tile[0])));
 	}
 
 	public static void removeActionListeners(JButton button) {

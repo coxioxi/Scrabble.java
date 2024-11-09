@@ -76,6 +76,7 @@ public class Controller implements PropertyChangeListener  {
 	public void playTiles(int playerID, Tile[] tiles) {
 		if (playerID == selfID) selfPlayTiles(tiles);
 		else otherPlayTiles(playerID, tiles);
+		System.out.println("current playerID " + model.getCurrentPlayer() );
 		gameScreenController.setRackButtonsEnabled(model.getCurrentPlayer() == selfID);
 	}
 
@@ -164,6 +165,7 @@ public class Controller implements PropertyChangeListener  {
 		ruleset.setupDictionary();
 		model = new Game(players, new Board(), ruleset, self);
 		showGame();
+		System.out.println("current playerID " + model.getCurrentPlayer() );
 		if (model.getCurrentPlayer() != selfID) gameScreenController.setRackButtonsEnabled(false);
 	}
 
