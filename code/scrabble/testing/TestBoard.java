@@ -7,6 +7,7 @@ package scrabble.testing;
  * Original date: 10/08/2024
  */
 
+import org.junit.Assert;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -382,6 +383,11 @@ public class TestBoard {
         board.getLastWordsPlayed().clear();
 
         System.out.println();
+
+        Assertions.assertEquals(35, player1.getScore());
+        Assertions.assertEquals(24, player2.getScore());
+        Assertions.assertEquals(34, player3.getScore());
+        Assertions.assertEquals(29, player4.getScore());
 
         System.out.println("Board State:");
         for (int row = 0; row < 15; row++) {
