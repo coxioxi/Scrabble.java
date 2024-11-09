@@ -42,6 +42,20 @@ public class GameTest {
 
     }
     @Test
+    public void passTurnTest(){
+        game.passTurn(game.getCurrentPlayer());
+        Assertions.assertEquals(game.getCurrentPlayer()+1,game.getCurrentPlayer());
+
+        game.passTurn(game.getCurrentPlayer()-1);
+        Assertions.assertEquals(game.getCurrentPlayer()+2,game.getCurrentPlayer());
+
+        game.passTurn(game.getCurrentPlayer()-1);
+        game.isActive(game.getCurrentPlayer()-1);
+
+
+    }
+
+    @Test
     public void RulesetTest(){
         //Valid words
         Assertions.assertTrue(isWordInDictionary(new String[]{"WORD","LONGEST"}));
