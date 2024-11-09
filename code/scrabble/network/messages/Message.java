@@ -33,6 +33,10 @@ public abstract class Message implements Serializable {
 			System.out.println("Pass");
 		} else if (message instanceof PlayTiles) {
 			System.out.println("PlayTiles");
+		} else if (message instanceof AssignID) {
+			System.out.println("AssignID");
+		} else if (message instanceof StartGame) {
+			System.out.println("startGame");
 		}
 	}
 

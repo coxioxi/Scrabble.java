@@ -49,6 +49,10 @@ public class Controller implements PropertyChangeListener  {
 	 */
 	private PartyHost host;
 
+	public int getSelfID() {
+		return selfID;
+	}
+
 	private int selfID;
 
 	public static void main(String[] args) {
@@ -64,12 +68,15 @@ public class Controller implements PropertyChangeListener  {
 
 	@Override
 	public void propertyChange(PropertyChangeEvent evt) {
+		Message.printInstance((Message)evt.getNewValue());
 		((Message) evt.getNewValue()).execute(this);
 	}
 
 	public void setupSocket(String ip, int port) throws IOException {
 		hostSocket = new Socket(ip, port);
 		messenger = new ClientMessenger(hostSocket, this);
+		Thread clientMessenger = new Thread(messenger);
+		clientMessenger.start();
 	}
 
 	public void sendNewPlayer(String name) throws IOException {
@@ -102,19 +109,18 @@ public class Controller implements PropertyChangeListener  {
 		// pass ruleset and the other stuff to setUpGameScreen
 		// use the info provided to make players for the game
 
-		System.out.println("Controller.startGame");
 		this.getView().getGame().setupGameItems(playerNames, ruleset.getTotalTime(), ruleset.getTurnTime(), startingTiles);
+		gameScreenController.addRackTileListeners();
 		Player[] players = new Player[playerNames.length];
 		LocalPlayer self = null;
 		for (int i = 0; i < players.length; i++) {
+			System.out.println(playerID[i]);
 			if (playerID[i] == this.selfID) {
 				self = new LocalPlayer(playerNames[i], playerID[i], i, new ArrayList<>(List.of(startingTiles)));
 			}
 			players[i] = new Player(playerNames[i], playerID[i], i);
 		}
 		model = new Game(players, new Board(), ruleset, self);
-		System.out.println(model.getBoard());
-		System.out.println(model.getSelf().getName());
 	}
 
 	public void resetLastPlay(GameScreen gameScreen){

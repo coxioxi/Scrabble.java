@@ -11,7 +11,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.Serial;
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.Scanner;
 
 import java.util.HashSet;
@@ -47,7 +46,7 @@ public class Ruleset implements Serializable {
 		this.turnTime = turnTime;						// Initialize turn time
 		this.challengesAllowed = challengesAllowed;		// Set challenge allowed
 		this.dictionaryFileName = dictionaryFileName;	// Set dictionary file name
-		dictionary = readInDictionary();				// Load words from the dictionary file
+		//dictionary = readInDictionary();				// Load words from the dictionary file
 	}
 
 	/**
@@ -92,8 +91,7 @@ public class Ruleset implements Serializable {
 	 /*
 		Reads in the words in the dictionary using the pathname given
 	 */
-	private HashSet<String> readInDictionary() {
-		//TODO: read in the word list from dictionary. put into arraylist, then convert and return
+	public void setupDictionary() {
 		HashSet<String> list = new HashSet<>();
 		try{
 			File dictionary = new File(dictionaryFileName).getAbsoluteFile();
@@ -105,8 +103,7 @@ public class Ruleset implements Serializable {
 		}catch(IOException e){
 			System.out.println(e.getMessage());
 		}
-		return list;
-
+		this.dictionary = list;
 	}
 
 

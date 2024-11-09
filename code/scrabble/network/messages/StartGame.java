@@ -7,10 +7,7 @@ import scrabble.model.Tile;
 import scrabble.network.host.HostReceiver;
 import scrabble.network.host.PartyHost;
 
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 public class StartGame extends Message {
 	private int[] playerIDs;
@@ -20,13 +17,18 @@ public class StartGame extends Message {
 	HashMap<Player, Integer> turnID = new HashMap<>();
 
 	private HashMap<Integer, HashMap<Integer, String>> playerInfo;
-
+															// turn id,..... playerID
 	public StartGame(int senderID, int receivingID, HashMap<Integer, HashMap<Integer, String>> playerInfo, Ruleset ruleset, Tile[] startingTiles) {
 		super(senderID);
 		this.receivingID = receivingID;
 		this.ruleset = ruleset;
 		this.startingTiles = startingTiles;
 		this.playerInfo = playerInfo;
+		this.playerIDs = new int[playerInfo.size()];
+		System.out.println("StartGame constructor: ");
+		for (Integer ID : playerInfo.keySet()) {
+			System.out.println("\tID: "+ ID + "\tplayerID: " + playerInfo.get(ID));
+		}
 	}
 
 	public int[] getPlayerIDs() {
@@ -63,8 +65,8 @@ public class StartGame extends Message {
 			playerIDs[turn] = iterator.next();
 			playerNames[turn] = getPlayerInfo().get(turn).get(playerIDs[turn]);
 		}
+		System.out.println(Arrays.toString(playerIDs));
 		controller.startGame(ruleset, playerNames, playerIDs, startingTiles);
-
 	}
 
 	@Override

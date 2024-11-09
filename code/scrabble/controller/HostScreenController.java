@@ -21,8 +21,10 @@ public class HostScreenController {
 		this.dictionaryFile = hostScreen.getDictionaryPath();
 		this.playerTime = Integer.parseInt(hostScreen.getPlayerTimeBox().split(" ")[0]);
 		this.gameTime = Integer.parseInt(hostScreen.getGameTimeBox().split(" ")[0]);
+		System.out.println("Rules are sending...");
 
 		parent.sendRulesToHost(challengesEnabled, dictionaryFile, playerTime, gameTime);
+		System.out.println("Rules have been sent");
 		parent.showGame();
 	}
 }

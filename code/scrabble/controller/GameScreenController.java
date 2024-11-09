@@ -59,7 +59,7 @@ public class GameScreenController {
 		addSubmitActionListener();
 	}
 
-	private void addRackTileListeners(){
+	public void addRackTileListeners(){
 		RackPanel rackPanel = gameScreen.getRackPanel();
 		for (int i = 0; i < 7; i++) {
 			TilePanel tilePanel = rackPanel.getTilePanels()[i];
@@ -154,7 +154,7 @@ public class GameScreenController {
 	}
 
 	private void submitClick() {
-		int playerID = parent.getModel().getSelf().getID();
+		int playerID = parent.getSelfID();
 		PlayTiles playTiles = new PlayTiles(playerID, playerID, gameScreen.getPlayedTiles().toArray(new Tile[0]));
 		playTiles.execute(parent);
 	}

@@ -65,7 +65,8 @@ public class ClientMessenger implements Runnable {
 		do {
 			try {
 				message = (Message) inputStream.readObject();
-				//printInstance(message);
+				System.out.print("clientMessenger received:  ");
+				Message.printInstance(message);
 			}
 			catch (SocketException | EOFException e) {
 				// Thrown when the host has closed their connection

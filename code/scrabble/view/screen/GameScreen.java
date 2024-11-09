@@ -51,8 +51,8 @@ public class GameScreen extends JPanel {
 		// Initialize and add the panels for different sections of the game screen
 		northPanel = setupNorthPanel();
 		centerPanel = setupCenterPanel();
-		eastPanel = new JPanel(new GridLayout(2,1,0,GAP));
-		westPanel = new JPanel(new GridLayout(2,1,0,GAP));
+		eastPanel = new JPanel(new GridLayout(2, 1, 0, GAP));
+		westPanel = new JPanel(new GridLayout(2, 1, 0, GAP));
 		southPanel = setupSouthPanel();
 
 		//Drop down menu
@@ -74,6 +74,7 @@ public class GameScreen extends JPanel {
 		for (Tile t : playedTiles) {
 			boardPanel.disableBoardCell(t.getLocation().x, t.getLocation().y);
 		}
+		playedTiles = new ArrayList<>();
 	}
 
 	//TODO: implement this method
@@ -97,6 +98,7 @@ public class GameScreen extends JPanel {
 
 	/**
 	 * Sets a button value for internal use.
+	 *
 	 * @param value The JButton to set.
 	 */
 	public void setValue(JButton value) {
@@ -138,14 +140,79 @@ public class GameScreen extends JPanel {
 		return submitButton;
 	}
 
+
+
+	public void setupGameItems(String[] playerNames, int gameTime, int playerTime, Tile[] rackTiles) {
+		// Setup player panels
+		for (int i = 0; i < playerNames.length; i++) {
+			JPanel newPlayer = setupPlayerPanel(playerNames[i], playerTime);
+			if (i > 0 && i < 3) {
+				eastPanel.add(newPlayer);
+			} else {
+				westPanel.add(newPlayer);
+			}
+		}
+		resetRack();
+		addTilesToRack(rackTiles);
+
+		this.gameTime.setText(gameTime + ":00");
+	}
+
+	/**
+	 * Removes a tile from the rack.
+	 *
+	 * @param tile The tile to be removed.
+	 */
+	public void removeRackTile(Tile tile) {
+		RackPanel rackPanel = this.rackPanel;
+		for (TilePanel tp : rackPanel.getTilePanels()) {
+			if (tp.getButton().getText().equals("" + tile.getLetter())) {
+				tp.setButton(new JButton(" "));
+				break;
+			}
+		}
+	}
+
+	/**
+	 * Adds tiles to the player's rack.
+	 *
+	 * @param tiles Array of tiles to be added.
+	 */
+	public void addTilesToRack(Tile[] tiles) {
+		int index = 0;
+		for (int i = 0; i < tilePanels.length; i++) {
+			if (!(tilePanels[i].getButton() instanceof TileButton)) {
+				TileButton button =
+						(tiles[index].isBlank() ?
+								new TileButton() :
+								new TileButton(TileScore.values()[tiles[index].getLetter() - 'A'])
+						);
+				tilePanels[i].setButton(button);
+				index++;
+			}
+		}
+	}
+
+	/**
+	 * Sets up a PlayerPanel with the specified player's name and time.
+	 *
+	 * @param name       The name of the player.
+	 * @param playerTime The time allotted for the player.
+	 * @return A new PlayerPanel instance for the player.
+	 */
+	private JPanel setupPlayerPanel(String name, int playerTime) {
+		return new PlayerPanel(name, 0, playerTime);
+	}
+
 	/**
 	 * Sets up the panel at the bottom of the screen, including the rack and action buttons.
+	 *
 	 * @return The south panel.
 	 */
 	private JPanel setupSouthPanel() {
 		JPanel tempPanel = new JPanel(new FlowLayout());
-		JPanel submitAndRack = new JPanel(new GridLayout(2,1,0,10));
-		JPanel subAndPass = new JPanel(new GridLayout(1,2,10,0));
+		JPanel submitAndRack = new JPanel(new GridLayout(2, 1, 0, 10));
+		JPanel subAndPass = new JPanel(new GridLayout(1, 2, 10, 0));
 		passButton = new JButton("Pass Turn");
 		submitButton = new JButton("Submit");
 		submitButton.setPreferredSize(new Dimension(50, 10));
@@ -167,6 +234,7 @@ public class GameScreen extends JPanel {
 
 	/**
 	 * Sets up the center panel containing the game board.
+	 *
 	 * @return The center panel.
 	 */
 	private JPanel setupCenterPanel() {
@@ -181,6 +249,7 @@ public class GameScreen extends JPanel {
 
 	/**
 	 * Sets up the panel at the top of the screen, displaying the game timer.
+	 *
 	 * @return The north panel.
 	 */
 	private JPanel setupNorthPanel() {
@@ -193,6 +262,7 @@ public class GameScreen extends JPanel {
 
 	/**
 	 * Creates a JComboBox with game options.
+	 *
 	 * @return The JComboBox with game options.
 	 */
 	private static JComboBox<String> getStringJComboBox() {
@@ -204,7 +274,7 @@ public class GameScreen extends JPanel {
 		comboBox.setAction(new AbstractAction() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				if(e.getSource() == comboBox) {
+				if (e.getSource() == comboBox) {
 					String menu = options[comboBox.getSelectedIndex()];
 					switch (menu) {
 						case "Rules" -> System.out.println("There are no rules man, We laust!");
@@ -218,42 +288,6 @@ public class GameScreen extends JPanel {
 		return comboBox;
 	}
 
-	/**
-	 * Sets up game elements including player panels, timer, and rack tiles.
-	 * @param playerNames Array of player names.
-	 * @param gameTime Initial game time in minutes.
-	 * @param playerTime Initial time per player in minutes.
-	 * @param rackTiles List of tiles in the player's rack.
-	 */
-        public void setupGameItems (String[] playerNames, int gameTime, int playerTime, Tile[] rackTiles) {
-		// Setup player panels
-		for (int i = 0; i < playerNames.length; i++) {
-			JPanel newPlayer = setupPlayerPanel(playerNames[i], playerTime);
-			if (i > 0 && i < 3){
-				eastPanel.add(newPlayer);
-			} else {
-				westPanel.add(newPlayer);
-			}
-		}
-		resetRack();
-		addTilesToRack(rackTiles);
-
-		this.gameTime.setText(gameTime + ":00");
-	}
-
-	/**
-	 * Removes a tile from the rack.
-	 * @param tile The tile to be removed.
-	 */
-	public void removeRackTile(Tile tile) {
-		RackPanel rackPanel = this.rackPanel;
-		for(TilePanel tp: rackPanel.getTilePanels()){
-			if(tp.getButton().getText().equals(""+tile.getLetter())){
-				tp.setButton(new JButton(" "));
-				break;
-			}
-		}
-	}
 
 	/**
 	 * Resets the rack by clearing all tiles.
@@ -262,30 +296,5 @@ public class GameScreen extends JPanel {
 		for (TilePanel tp : tilePanels) {
 			tp.setButton(new JButton(" "));
 		}
-	}
-
-	/**
-	 * Adds tiles to the player's rack.
-	 * @param tiles Array of tiles to be added.
-	 */
-	public void addTilesToRack (Tile[] tiles) {		int index = 0;
-		for (int i = 0; i < tilePanels.length; i++) {
-			if (!(tilePanels[i].getButton() instanceof TileButton)) {
-				TileButton button = new TileButton(TileScore.values()[tiles[index].getLetter() - 'A']);
-				tilePanels[i] = new TilePanel(button);
-				index++;
-			}
-		}
-	}
-
-	/**
-	 * Sets up a PlayerPanel with the specified player's name and time.
-	 *
-	 * @param name The name of the player.
-	 * @param playerTime The time allotted for the player.
-	 * @return A new PlayerPanel instance for the player.
-	 */
-	private JPanel setupPlayerPanel(String name, int playerTime) {
-		return new PlayerPanel(name, 0, playerTime);
 	}
 }

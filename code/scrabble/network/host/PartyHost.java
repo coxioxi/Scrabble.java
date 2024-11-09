@@ -136,13 +136,6 @@ public class PartyHost extends Thread implements PropertyChangeListener {
 		// game has started, stop looking
 		// all future changes handled through ClientHandler objects' calls to property change
 
-		try {
-			startGame();
-		} catch (IOException e) {
-			// error in writing to client
-			throw new RuntimeException(e);
-		}
-
 	}
 
 	@Override
@@ -158,7 +151,9 @@ public class PartyHost extends Thread implements PropertyChangeListener {
 	}
 
 	public void addPlayerName(String name){
-		this.playerNames.put(playerIdMap.size(), ((NewPlayer)evt.getNewValue()).getPlayerName());
+		int index = playerNames.size();
+		this.playerNames.put(playerNames.size(), name);
+		System.out.println("\t Add playernames. size: " + index + "\twith name: " + playerNames.get(index));
 	}
 
 	public String[] getPlayerNames() {
@@ -203,7 +198,7 @@ public class PartyHost extends Thread implements PropertyChangeListener {
 	}
 
 	public void startGame() throws IOException {
-
+		System.out.println("Starting game");
 		// Make a starting rack for each player.
 		for (HostReceiver host: playerIdMap.keySet()){
 			playerTiles.put(host, new ArrayList<>(Arrays.asList(tileBag.getNext(TILE_RACK_SIZE))));
@@ -215,16 +210,14 @@ public class PartyHost extends Thread implements PropertyChangeListener {
 		}
 
 		//shuffle randomNumbers array so the player order is randomised
-		Random random = new Random();
-		for (int i = 0; i < randomNumbers.length;) {
-			int index = random.nextInt(randomNumbers.length);
-			int temp;
-			if (index != i) {
-				temp = randomNumbers[index];
-				randomNumbers[index] = randomNumbers[i];
-				randomNumbers[i] = temp;
-				++i;
-			}
+		Random rnd = new Random();
+		for (int i = randomNumbers.length - 1; i > 0; i--)
+		{
+			int index = rnd.nextInt(i + 1);
+			// Simple swap
+			int a = randomNumbers[index];
+			randomNumbers[index] = randomNumbers[i];
+			randomNumbers[i] = a;
 		}
 
 		//This hash map stores the turn as the key with the player ID and player name as a value
@@ -246,10 +239,14 @@ public class PartyHost extends Thread implements PropertyChangeListener {
 			++j;
 		}
 
+
+		System.out.println("Sending messages to clients...");
+
 		for (HostReceiver host: playerIdMap.keySet()) {
 			StartGame startGameMessage = new StartGame(HOST_ID, playerIdMap.get(host), playerInfo, ruleset, playerTiles.get(host).toArray(new Tile[0]));
 			host.sendMessage(startGameMessage);
 		}
+		System.out.println("Messages sent");
 	}
 
 	public Tile[] getTiles (int size){
@@ -274,6 +271,7 @@ public class PartyHost extends Thread implements PropertyChangeListener {
 			clientThread.start();
 
 			//populate playerIdMap
+			System.out.println("Num clients: " + playerIdMap.size());
 			int index = playerIdMap.size();
 			playerIdMap.put(clientHandler, index);
 			playerIdToMessenger.put(index, clientHandler);
