@@ -43,16 +43,34 @@ public class GameTest {
     }
     @Test
     public void RulesetTest(){
-        HashSet<String> dictionary = readInDictionary();
-        boolean word = dictionary.contains("WORD");
-        System.out.println(dictionary.isEmpty());
-        Assertions.assertTrue(isWordInDictionary(new String[]{"WORD","LONGEST"}),"should return true for the words in the scrabble dictionary");
+        //Valid words
+        Assertions.assertTrue(isWordInDictionary(new String[]{"WORD","LONGEST"}));
+        Assertions.assertTrue(isWordInDictionary(new String[]{"NICE"}));
+        Assertions.assertTrue(isWordInDictionary(new String[]{"NONE"}));
+        Assertions.assertTrue(isWordInDictionary(new String[]{"EVEN"}));
+        Assertions.assertTrue(isWordInDictionary(new String[]{"EVENING"}));
+        Assertions.assertTrue(isWordInDictionary(new String[]{"ICE"}));
+        Assertions.assertTrue(isWordInDictionary(new String[]{"GONE"}));
+        Assertions.assertTrue(isWordInDictionary(new String[]{"RE", "EON", "OR"}));
+        Assertions.assertTrue(isWordInDictionary(new String[]{"NO", "OVAL"}));
+        Assertions.assertTrue(isWordInDictionary(new String[]{"CARE", "NOR"}));
+        Assertions.assertTrue(isWordInDictionary(new String[]{"ET", "AT"}));
+        Assertions.assertTrue(isWordInDictionary(new String[]{"MINI"}));
+        Assertions.assertTrue(isWordInDictionary(new String[]{"MA", "MAN", "IN"}));
+
+        //Invalid words
+        Assertions.assertFalse(isWordInDictionary(new String[]{"MA", "EON", "THYOLR"}));
+        Assertions.assertFalse(isWordInDictionary(new String[]{"EVEN", "ET", "THEMPOIPIH"}));
+        Assertions.assertFalse(isWordInDictionary(new String[]{"RE", "EON", "HELLOINU"}));
+        Assertions.assertFalse(isWordInDictionary(new String[]{"GONE", "EON", "XORL"}));
+        Assertions.assertFalse(isWordInDictionary(new String[]{"TONELA"}));
+        Assertions.assertFalse(isWordInDictionary(new String[]{"PIROCA"}));
     }
 
     public HashSet<String> readInDictionary(){
         HashSet<String> list = new HashSet<>();
         try{
-            File dictionary = new File("C:\\Users\\jyelm\\IdeaProjects\\comp3100-fall2024-2\\code\\dictionary.txt");
+            File dictionary = new File("code\\dictionary.txt").getAbsoluteFile();
             Scanner scanner = new Scanner(dictionary);
             while (scanner.hasNext()){
                 list.add(scanner.nextLine());
