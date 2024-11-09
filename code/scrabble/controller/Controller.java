@@ -76,11 +76,17 @@ public class Controller implements PropertyChangeListener  {
 	public void playTiles(int playerID, Tile[] tiles) {
 		if (playerID == selfID) selfPlayTiles(tiles);
 		else otherPlayTiles(playerID, tiles);
+		view.getGame().updateScore(model.getSelf().getName(), model.getSelf().getScore());
 	}
 
 	private void otherPlayTiles(int playerID, Tile[] tiles) {
 		int score = model.playTiles(playerID, tiles);
 		view.getGame().addToBoard(tiles);
+		Player player = null;
+		for (Player player1 : model.getPlayers()) {
+			if (player1.getID() == playerID) player = player1;
+		}
+		view.getGame().updateScore(player.getName(), player.getScore());
 	}
 
 

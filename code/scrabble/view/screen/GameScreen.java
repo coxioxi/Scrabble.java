@@ -38,6 +38,8 @@ public class GameScreen extends JPanel {
 	private JButton submitButton; // Button for submitting a move
 	private JButton passButton; // Button for passing a turn
 
+	private PlayerPanel[] playerPanels;
+
 	// List of tiles that have been played in the current turn
 	public List<Tile> playedTiles = new ArrayList<>();
 	private JButton value = new JButton(" ");
@@ -141,15 +143,22 @@ public class GameScreen extends JPanel {
 	}
 
 
+	public void updateScore(String playerName, int score) {
+		for (PlayerPanel player : playerPanels) {
+			if (player.getName().getText() == playerName) {
+				player.getScore().setText("" + score);
+			}
+		}
+	}
 
 	public void setupGameItems(String[] playerNames, int gameTime, int playerTime, Tile[] rackTiles) {
 		// Setup player panels
 		for (int i = 0; i < playerNames.length; i++) {
-			JPanel newPlayer = setupPlayerPanel(playerNames[i], playerTime);
+			playerPanels[i] = (PlayerPanel) setupPlayerPanel(playerNames[i], playerTime);
 			if (i > 0 && i < 3) {
-				eastPanel.add(newPlayer);
+				eastPanel.add(playerPanels[i]);
 			} else {
-				westPanel.add(newPlayer);
+				westPanel.add(playerPanels[i]);
 			}
 		}
 		resetRack();

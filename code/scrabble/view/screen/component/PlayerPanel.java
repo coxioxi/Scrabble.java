@@ -53,4 +53,16 @@ public class PlayerPanel extends JPanel {
 
 	}
 
+	@Override
+	public JLabel getName() {
+		return name;
+	}
+
+	public JLabel getTime() {
+		return time;
+	}
+
+	public JLabel getScore() {
+		return score;
+	}
 }
