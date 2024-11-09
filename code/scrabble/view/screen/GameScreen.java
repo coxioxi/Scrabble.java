@@ -158,6 +158,20 @@ public class GameScreen extends JPanel {
 		this.gameTime.setText(gameTime + ":00");
 	}
 
+	public void addToBoard(Tile[] tiles) {
+		for (int i = 0; i < tiles.length; i++) {
+			TileButton tb = (tiles[i].isBlank() ?
+					new TileButton() :
+					new TileButton(TileScore.values()[tiles[i].getLetter() - 'A'])
+			);
+			int x = tiles[i].getLocation().x;
+			int y = tiles[i].getLocation().y;
+			boardPanel.setBoardCell(tb, x, y);
+			boardPanel.disableBoardCell(x, y);
+		}
+
+	}
+
 	/**
 	 * Removes a tile from the rack.
 	 *

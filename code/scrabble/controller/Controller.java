@@ -73,8 +73,19 @@ public class Controller implements PropertyChangeListener  {
 		((Message) evt.getNewValue()).execute(this);
 	}
 
-	public int playTiles(int playerID, Tile[] tiles) {
+	public void playTiles(int playerID, Tile[] tiles) {
+		if (playerID == selfID) selfPlayTiles(tiles);
+		else otherPlayTiles(playerID, tiles);
+	}
+
+	private void otherPlayTiles(int playerID, Tile[] tiles) {
 		int score = model.playTiles(playerID, tiles);
+		view.getGame().addToBoard(tiles);
+	}
+
+
+	private void selfPlayTiles(Tile[] tiles) {
+		int score = model.playTiles(selfID, tiles);
 		if (score >= 0) {
 			try {
 				getMessenger().sendMessage(new PlayTiles(selfID, selfID, tiles));
@@ -89,7 +100,6 @@ public class Controller implements PropertyChangeListener  {
 		else {
 			resetLastPlay(getView().getGame());
 		}
-		return score;
 	}
 
 	public void setupSocket(String ip, int port) throws IOException {
@@ -142,6 +152,7 @@ public class Controller implements PropertyChangeListener  {
 		}
 		ruleset.setupDictionary();
 		model = new Game(players, new Board(), ruleset, self);
+		showGame();
 	}
 
 	public void resetLastPlay(GameScreen gameScreen){
