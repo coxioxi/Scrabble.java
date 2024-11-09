@@ -76,8 +76,16 @@ public class Game {
 
 		if (player.isActive()) {
 			score = board.playTiles(tiles);
-			if(score >= 1)
-				player.increaseScore(score);
+			if(score >= 1) {
+				boolean	areValid;
+				areValid = ruleset.isWordInDictionary(board.getLastWordsPlayed().toArray(new String[0]));
+				if(areValid)
+					player.increaseScore(score);
+				else{
+					board.removeTiles(tiles);
+					return -1;
+				}
+			}
 			return score;
 		}
 		return -1;
