@@ -71,7 +71,10 @@ public class HostScreen extends JPanel {
     }
 
     public void addPlayerName(String name) {
+        System.out.println("Adding player name to host screen...");
         players[numPlayers].setText(name);
+        players[numPlayers].revalidate();
+        players[numPlayers].repaint();
         numPlayers++;
     }
 

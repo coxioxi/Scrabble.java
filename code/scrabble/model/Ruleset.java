@@ -100,8 +100,7 @@ public class Ruleset implements Serializable {
 				list.add(scanner.nextLine());
 			}
 
-		}catch(IOException e){
-			System.out.println(e.getMessage());
+		}catch(IOException ignore){
 		}
 		this.dictionary = list;
 	}

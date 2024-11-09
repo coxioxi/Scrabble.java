@@ -25,9 +25,7 @@ public class StartGame extends Message {
 		this.startingTiles = startingTiles;
 		this.playerInfo = playerInfo;
 		this.playerIDs = new int[playerInfo.size()];
-		System.out.println("StartGame constructor: ");
 		for (Integer ID : playerInfo.keySet()) {
-			System.out.println("\tID: "+ ID + "\tplayerID: " + playerInfo.get(ID));
 		}
 	}
 
@@ -65,7 +63,6 @@ public class StartGame extends Message {
 			playerIDs[turn] = iterator.next();
 			playerNames[turn] = getPlayerInfo().get(turn).get(playerIDs[turn]);
 		}
-		System.out.println(Arrays.toString(playerIDs));
 		controller.startGame(ruleset, playerNames, playerIDs, startingTiles);
 	}
 

@@ -126,7 +126,6 @@ public class PartyHost extends Thread implements PropertyChangeListener {
 	public void run() {
 		// accept clients if not in a game.
 		// once game starts, stop accepting clients.
-		System.out.println("Looking for clients...");
 		while (!inGame) {
 			while (!inGame && playerIdMap.size()<4) {
 				acceptClients();
@@ -153,7 +152,6 @@ public class PartyHost extends Thread implements PropertyChangeListener {
 	public void addPlayerName(String name){
 		int index = playerNames.size();
 		this.playerNames.put(playerNames.size(), name);
-		System.out.println("\t Add playernames. size: " + index + "\twith name: " + playerNames.get(index));
 	}
 
 	public String[] getPlayerNames() {
@@ -184,8 +182,6 @@ public class PartyHost extends Thread implements PropertyChangeListener {
 	public void sendToAllButID(int playerID, Message message) throws IOException {
 
 		for (HostReceiver host: playerIdMap.keySet()) {
-			System.out.println(playerIdMap.get(host));
-
 			if(!host.equals(playerIdToMessenger.get(playerID)) && host != null) {
 				host.sendMessage(message);
 			}
@@ -198,7 +194,6 @@ public class PartyHost extends Thread implements PropertyChangeListener {
 	}
 
 	public void startGame() throws IOException {
-		System.out.println("Starting game");
 		// Make a starting rack for each player.
 		for (HostReceiver host: playerIdMap.keySet()){
 			playerTiles.put(host, new ArrayList<>(Arrays.asList(tileBag.getNext(TILE_RACK_SIZE))));
@@ -239,14 +234,10 @@ public class PartyHost extends Thread implements PropertyChangeListener {
 			++j;
 		}
 
-
-		System.out.println("Sending messages to clients...");
-
 		for (HostReceiver host: playerIdMap.keySet()) {
 			StartGame startGameMessage = new StartGame(HOST_ID, playerIdMap.get(host), playerInfo, ruleset, playerTiles.get(host).toArray(new Tile[0]));
 			host.sendMessage(startGameMessage);
 		}
-		System.out.println("Messages sent");
 	}
 
 	public Tile[] getTiles (int size){
@@ -262,7 +253,6 @@ public class PartyHost extends Thread implements PropertyChangeListener {
 		try {
 			// establish connection with the client
 			Socket client = server.accept();
-			System.out.println("New client added");
 
 			HostReceiver clientHandler = new HostReceiver(client, this);
 
@@ -271,7 +261,6 @@ public class PartyHost extends Thread implements PropertyChangeListener {
 			clientThread.start();
 
 			//populate playerIdMap
-			System.out.println("Num clients: " + playerIdMap.size());
 			int index = playerIdMap.size();
 			playerIdMap.put(clientHandler, index);
 			playerIdToMessenger.put(index, clientHandler);

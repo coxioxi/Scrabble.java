@@ -8,7 +8,7 @@ import java.util.Random;
 
 /**
  * Maintains the bag of tiles. Allows tiles to be randomly removed and for tiles to be added.
- * TODO: change the propability of tile's given
+ * TODO: change the probability of tile's given
  */
 public class TileBag {
     private ArrayList<Tile> tilebag;// stores a number of a given tile
@@ -21,7 +21,7 @@ public class TileBag {
     }
 
     /**
-	 * Constructs a TileBag with the standard 100 tiles.
+	 * Constructs a TileBag with the standard 100 tiles - 2 (no blanks).
      * <br>
 	 * See also: <a href="https://en.wikipedia.org/wiki/Scrabble_letter_distributions">Letter distributions</a>
 	 */
@@ -74,9 +74,9 @@ public class TileBag {
     }
 
     private void fillTileBag() {
-        char[] letters = new char[]{'A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z',' '};
+        char[] letters = new char[]{'A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z'};
 
-        int[] letterNum = new int[]{9,2,2,4,12,2,3,2,9,1,1,4,2,6,8,2,1,6,4,6,4,2,2,1,2,1,2};
+        int[] letterNum = new int[]{9,2,2,4,12,2,3,2,9,1,1,4,2,6,8,2,1,6,4,6,4,2,2,1,2,1};
         ArrayList<Tile> letterList = new ArrayList<>();
         for(int i = 0; i < letters.length; ++i){
             for(int j = 0; j <letterNum[i]; ++j){
@@ -88,9 +88,6 @@ public class TileBag {
             }
         }
         tilebag = letterList;
-
-
-
     }
 
 

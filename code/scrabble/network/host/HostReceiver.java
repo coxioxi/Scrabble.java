@@ -92,7 +92,6 @@ public class HostReceiver implements Runnable {
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
-		System.out.println("host receiver closed...");
 	}
 
 	// closes socket and associated streams

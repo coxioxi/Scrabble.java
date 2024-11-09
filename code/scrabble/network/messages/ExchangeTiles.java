@@ -82,7 +82,6 @@ public class ExchangeTiles extends Message{
 			controller.getMessenger().halt();
 
 			//make this sout be a pop-up message for the client
-			System.out.println("Host Disconnected");
 		}
 		ArrayList<Tile> tiles = controller.getModel().getSelf().getRack();
 		for (Tile t : toExchange) {

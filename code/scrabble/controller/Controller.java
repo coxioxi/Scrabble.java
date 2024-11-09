@@ -69,14 +69,12 @@ public class Controller implements PropertyChangeListener  {
 
 	@Override
 	public void propertyChange(PropertyChangeEvent evt) {
-		Message.printInstance((Message)evt.getNewValue());
 		((Message) evt.getNewValue()).execute(this);
 	}
 
 	public void playTiles(int playerID, Tile[] tiles) {
 		if (playerID == selfID) selfPlayTiles(tiles);
 		else otherPlayTiles(playerID, tiles);
-		System.out.println("current playerID " + model.getCurrentPlayer() );
 		gameScreenController.setRackButtonsEnabled(model.getCurrentPlayer() == selfID);
 	}
 
@@ -96,15 +94,11 @@ public class Controller implements PropertyChangeListener  {
 		int score = model.playTiles(selfID, tiles);
 		if (score >= 0) {
 			view.getGame().updateScore(model.getSelf().getName(), model.getSelf().getScore());
-			System.out.println("name: " + model.getSelf().getName() + "\t score: "+ model.getSelf().getScore());
 			try {
 				getMessenger().sendMessage(new PlayTiles(selfID, selfID, tiles));
 				getView().getGame().disableLastPlayedTiles();
 			} catch (IOException e) {
 				getMessenger().halt();
-
-				//make this sout be a pop-up message for the client
-				System.out.println("Host Disconnected");
 			}
 		}
 		else {
@@ -154,10 +148,8 @@ public class Controller implements PropertyChangeListener  {
 		Player[] players = new Player[playerNames.length];
 		LocalPlayer self = null;
 		for (int i = 0; i < players.length; i++) {
-			System.out.println(playerID[i]);
 			if (playerID[i] == this.selfID) {
 				self = new LocalPlayer(playerNames[i], playerID[i], i, new ArrayList<>(List.of(startingTiles)));
-				System.out.println("Self is: " + playerNames[i] + "\tid:" + playerID[i]);
 
 			}
 			players[i] = new Player(playerNames[i], playerID[i], i);
@@ -165,14 +157,14 @@ public class Controller implements PropertyChangeListener  {
 		ruleset.setupDictionary();
 		model = new Game(players, new Board(), ruleset, self);
 		showGame();
-		System.out.println("current playerID " + model.getCurrentPlayer() );
 		if (model.getCurrentPlayer() != selfID) gameScreenController.setRackButtonsEnabled(false);
 	}
 
 	public void resetLastPlay(GameScreen gameScreen){
 		//loop through the rack
-		for (int i = 0; i < gameScreen.playedTiles.size(); ++i){
-			gameScreenController.removeTile(gameScreen.playedTiles.get(i));
+		int size = gameScreen.playedTiles.size();
+		for (int i = 0; i < size; ++i){
+			gameScreenController.removeTile(gameScreen.playedTiles.get(0));
 		}
 	}
 
@@ -190,9 +182,25 @@ public class Controller implements PropertyChangeListener  {
 		view.getGame().addTilesToRack(toAdd);
 	}
 
+	public void addPlayer(int playerID, String name) {
+		if (playerID == selfID) {
+			try {
+				messenger.sendMessage(new NewPlayer(selfID, selfID, name));
+			} catch (IOException ignore) {
+			}
+		}
+		if (this.host != null) {
+			view.getHost().addPlayerName(name);
+		}
+		else {
+			view.getWaiting().addPlayerName(name);
+		}
+	}
+
 	public void addTiles(Tile[] tiles) {
 		model.addTiles(tiles);
 		gameScreenController.addTiles(tiles);
+		gameScreenController.setRackButtonsEnabled(false);
 	}
 
 	public ScrabbleGUI getView() {

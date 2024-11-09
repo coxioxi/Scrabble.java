@@ -65,7 +65,6 @@ public class ClientMessenger implements Runnable {
 		do {
 			try {
 				message = (Message) inputStream.readObject();
-				System.out.println("exit listen...");
 			}
 			catch (SocketException | EOFException e) {
 				// Thrown when the host has closed their connection
@@ -115,7 +114,6 @@ public class ClientMessenger implements Runnable {
 	 */
 	public void halt() {
 		isListening = false;
-		System.out.println("halting...");
 		try {
 			inputStream.close();
 		} catch (IOException ignore) {

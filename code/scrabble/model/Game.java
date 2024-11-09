@@ -73,7 +73,6 @@ public class Game {
 	public int playTiles(int playerID, Tile[] tiles) {
 		int score;
 		Player player = getPlayer(playerID);
-		System.out.println("is local player: " + (player instanceof LocalPlayer));
 		if (player.isActive()) {
 			score = board.playTiles(tiles);
 			if(score >= 0) {
