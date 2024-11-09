@@ -11,9 +11,7 @@ import java.util.Random;
  * TODO: change the propability of tile's given
  */
 public class TileBag {
-
     private ArrayList<Tile> tilebag;// stores a number of a given tile
-    private int remainingTiles;         // the number of tiles in the bag
 
     public static void main(String[] args) {
         TileBag tb = new TileBag();

@@ -24,8 +24,7 @@ public class ExitParty extends Message {
 	public void execute(Controller controller) {
 		try {
 			controller.getMessenger().sendMessage(this);
-		} catch (IOException e) {
-			throw new RuntimeException(e);
+		} catch (IOException ignore) {
 		}
 	}
 

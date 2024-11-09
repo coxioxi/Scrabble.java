@@ -371,13 +371,12 @@ public class Controller implements PropertyChangeListener  {
 	private void gameClose() {
 		int selected = showQuitDialog();
 		if (selected == JOptionPane.YES_OPTION) {
-			view.resetGameScreen();
-			view.resetWaitingScreen();
 			if (messenger!= null) messenger.halt();
 			if (this.host != null) {
 				host.halt();
 			}
-			this.showMain();
+			view.dispose();
+
 		}
 	}
 }
