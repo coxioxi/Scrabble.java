@@ -22,8 +22,7 @@ public class NewTiles extends Message {
 
 	@Override
 	public void execute(Controller controller) {
-		controller.getModel().addTiles(tiles);
-		controller.replenishRack(this.tiles);
+		controller.addTiles(tiles);
 	}
 
 	@Override

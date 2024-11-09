@@ -97,6 +97,22 @@ public class ScrabbleGUI extends JFrame{
 		menuBar.setVisible(false);
 	}
 
+	public void resetGameScreen() {
+		layoutManager.removeLayoutComponent(game);
+		game = new GameScreen();
+		layoutManager.addLayoutComponent(game, GAME);
+	}
+
+	public void resetWaitingScreen() {
+		((WaitingScreen) waiting).resetPlayerNames();
+		waiting.revalidate();
+		waiting.repaint();
+	}
+
+	public void setMenuVisible(boolean enabled) {
+		menuBar.setVisible(enabled);
+	}
+
 	/*
 	getters
 	 */

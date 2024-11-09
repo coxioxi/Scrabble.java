@@ -26,6 +26,20 @@ public class GameScreenController {
 		addActionListeners();
 	}
 
+	public void addTiles(Tile[] tiles) {
+		gameScreen.addTilesToRack(tiles);
+		removeRackTileListeners();
+		addRackTileListeners();
+	}
+
+	private void removeRackTileListeners() {
+		RackPanel rackPanel = gameScreen.getRackPanel();
+		for (int i = 0; i < 7; i++) {
+			TilePanel tilePanel = rackPanel.getTilePanels()[i];
+			removeActionListeners(tilePanel.getButton());
+		}
+	}
+
 	public void removeTile(Tile tile){
 		boardCellClick(tile.getLocation().x, tile.getLocation().y);
 	}

@@ -144,6 +144,11 @@ public class Controller implements PropertyChangeListener  {
 		view.getGame().addTilesToRack(toAdd);
 	}
 
+	public void addTiles(Tile[] tiles) {
+		model.addTiles(tiles);
+		gameScreenController.addTiles(tiles);
+	}
+
 	public ScrabbleGUI getView() {
 		return view;
 	}
@@ -210,6 +215,7 @@ public class Controller implements PropertyChangeListener  {
 				mainClose();
 			}
 		});
+		view.setMenuVisible(false);
 	}
 
 	public void showWaiting() {
@@ -299,6 +305,9 @@ public class Controller implements PropertyChangeListener  {
 
 	private void mainClose() {
 		view.dispose();
+		if (messenger!=null) messenger.halt();
+		if (host != null)
+			host.halt();
 	}
 
 	private void hostClose() {
@@ -330,6 +339,8 @@ public class Controller implements PropertyChangeListener  {
 	private void gameClose() {
 		int selected = showQuitDialog();
 		if (selected == JOptionPane.YES_OPTION) {
+			view.resetGameScreen();
+			view.resetWaitingScreen();
 			if (messenger!= null) messenger.halt();
 			if (this.host != null) {
 				host.halt();

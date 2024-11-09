@@ -8,7 +8,7 @@ import java.awt.*;
  * It shows a list of player slots that can be updated with player names.
  */
 public class WaitingScreen extends JPanel {
-
+    public static final String WAITING = "Waiting...";
     // Array to store labels for each player
     private JLabel[] players;
     private int numPlayers = 0;
@@ -47,7 +47,7 @@ public class WaitingScreen extends JPanel {
         // Initialize labels for player slots and add them to the panel
         players = new JLabel[4];
         for (int i = 0; i < players.length; i++) {
-            players[i] = new JLabel("Waiting...", SwingConstants.CENTER);
+            players[i] = new JLabel(WAITING, SwingConstants.CENTER);
             players[i].setBorder(BorderFactory.createEtchedBorder()); // Adds a border to each label
             playersWaiting.add(players[i]);
         }
@@ -57,6 +57,13 @@ public class WaitingScreen extends JPanel {
     public void addPlayerName(String name) {
         players[numPlayers].setText(name);
         numPlayers++;
+    }
+
+    public void resetPlayerNames() {
+        for (JLabel player : players) {
+            player.setText(WAITING);
+        }
+        numPlayers = 0;
     }
 
     /**
