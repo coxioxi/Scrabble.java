@@ -4,7 +4,7 @@ import javax.swing.*;
 import java.awt.*;
 
 import scrabble.model.Player;
-import scrabble.view.panel.*;
+import scrabble.view.screen.*;
 
 @Deprecated
 public class ScrabbleView extends JFrame {
@@ -22,10 +22,10 @@ public class ScrabbleView extends JFrame {
 		JPanel join = new JoinScreen();
 		JPanel waiting = new WaitingScreen();
 		JPanel game = new GameScreen();
-		JPanel winner = new WinnerScreen(new Player[]{new Player("Ian", 1),
-				new Player("David", 2),
-				new Player("Max", 3),
-				new Player("Sam", 4)});
+		JPanel winner = new WinnerScreen(new Player[]{new Player("Ian", 1, 0),
+				new Player("David", 2, 1),
+				new Player("Max", 3, 2),
+				new Player("Sam", 4, 3)});
 		contentPane.add(mainMenu, "MAIN-MENU");
 		contentPane.add(host, "HOST");
 		contentPane.add(join, "JOIN");

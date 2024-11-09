@@ -1,4 +1,4 @@
-package scrabble.view.panel;
+package scrabble.view.screen;
 
 import javax.swing.*;
 import java.awt.*;
@@ -9,6 +9,9 @@ import java.awt.*;
  */
 public class HostScreen extends JPanel {
 
+    public static final String DICTIONARY_PATH = "code/dictionary.txt";
+    public static final String DEFAULT_WAITING_TEXT = "  Waiting...  ";
+
     // Options for game time, player time, challenges, and dictionary selection
     public static final String[] gameTimeChoices =
             {"30 Minutes", "45 Minutes", "60 Minutes", "75 Minutes"};
@@ -17,16 +20,19 @@ public class HostScreen extends JPanel {
     public static final String[] challengeChoices =
             {"Challenges on", "Challenges off"};
     public static final String[] dictionaryChoices =
-            {"Dictionary 1", "Dictionary 2"};
+            {"Dictionary 1"};
 
     // Components for user input and display
-    private JTextField name;
     private JLabel[] players;
+    private int numPlayers;
     private JComboBox<String> challengeBox;
     private JComboBox<String> dictionaryBox;
     private JComboBox<String> playerTimeBox;
     private JComboBox<String> gameTimeBox;
     private JButton hostButton;
+    private JLabel hostsIP;
+    private JLabel hostPort;
+
 
     /**
      * Constructor for HostScreen. Sets up the layout with sections for player info,
@@ -41,7 +47,6 @@ public class HostScreen extends JPanel {
         mainPanel.setLayout(null);
 
         // Input field for player's name and button to host the game
-        name = new JTextField();
         hostButton = new JButton("Host");
 
         // Panel at the bottom for the host button
@@ -65,6 +70,21 @@ public class HostScreen extends JPanel {
         this.add(westPanel, BorderLayout.WEST);
     }
 
+    public void addPlayerName(String name) {
+        System.out.println("Adding player name to host screen...");
+        players[numPlayers].setText(name);
+        players[numPlayers].revalidate();
+        players[numPlayers].repaint();
+        numPlayers++;
+    }
+
+    public void resetPlayerNames() {
+        for (JLabel label : players) {
+            label.setText(DEFAULT_WAITING_TEXT);
+        }
+        numPlayers = 0;
+    }
+
     /**
      * Helper method to create a panel with a titled border and FlowLayout.
      *
@@ -86,13 +106,14 @@ public class HostScreen extends JPanel {
         JPanel nameAndIP = new JPanel(new GridLayout(2,2,7,10));
 
         JLabel yourIP = new JLabel("Your IP Address:", SwingConstants.RIGHT);
-        JLabel hostsIP = new JLabel("**Host's IP**");
-        JLabel nameLabel = new JLabel("Name:", SwingConstants.RIGHT);
+        hostsIP = new JLabel("**Host's IP**");
+        JLabel port = new JLabel("Port:", SwingConstants.RIGHT);
+        hostPort = new JLabel("**Port**");
 
         nameAndIP.add(yourIP);
         nameAndIP.add(hostsIP);
-        nameAndIP.add(nameLabel);
-        nameAndIP.add(name);
+        nameAndIP.add(port);
+        nameAndIP.add(hostPort);
         return nameAndIP;
     }
 
@@ -106,7 +127,7 @@ public class HostScreen extends JPanel {
         players = new JLabel[4];
 
         for (int i = 0; i < players.length; i++) {
-            players[i] = new JLabel("**Player "+(i+1)+ " Name**", SwingConstants.CENTER);
+            players[i] = new JLabel(DEFAULT_WAITING_TEXT, SwingConstants.CENTER);
             players[i].setBorder(BorderFactory.createEtchedBorder());
             playersWaiting.add(players[i]);
         }
@@ -127,6 +148,7 @@ public class HostScreen extends JPanel {
         challengeBox = new JComboBox<>(challengeChoices);
         JLabel dictionaryLabel = new JLabel("Dictionary Used:", SwingConstants.RIGHT);
         dictionaryBox = new JComboBox<>(dictionaryChoices);
+        dictionaryBox.setEditable(false);
         JLabel playerTimeLabel = new JLabel("Player Time:", SwingConstants.RIGHT);
         playerTimeBox = new JComboBox<>(playerTimeChoices);
         JLabel gameTimeLabel = new JLabel("Game Time:", SwingConstants.RIGHT);
@@ -145,31 +167,31 @@ public class HostScreen extends JPanel {
     }
 
     // Getters for the components
-    public JTextField getNameTextField() {
-        return name;
-    }
-
     public JLabel[] getPlayers() {
         return players;
     }
 
-    public JComboBox<String> getChallengeBox() {
-        return challengeBox;
+    public boolean getChallengeBox() {
+        return challengeBox.getSelectedIndex() == 0;
     }
 
-    public JComboBox<String> getDictionaryBox() {
-        return dictionaryBox;
+    public String getDictionaryPath() {
+        return DICTIONARY_PATH;
     }
 
-    public JComboBox<String> getPlayerTimeBox() {
-        return playerTimeBox;
-    }
+    public String getPlayerTimeBox() { return playerTimeChoices[playerTimeBox.getSelectedIndex()]; }
 
-    public JComboBox<String> getGameTimeBox() {
-        return gameTimeBox;
-    }
+    public String getGameTimeBox() { return gameTimeChoices[gameTimeBox.getSelectedIndex()]; }
 
     public JButton getHostButton() {
         return hostButton;
+    }
+
+    public JLabel getHostsIP() {
+        return hostsIP;
+    }
+
+    public JLabel getHostPort() {
+        return hostPort;
     }
 }

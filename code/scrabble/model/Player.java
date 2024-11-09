@@ -12,8 +12,8 @@ public class Player {
 
 	private final String name;	// Player's name
 	private int score;			// Player's score
-	private final int ID;		// Player's ID, their turn in play
-
+	private final int ID;
+	private int turnID;			// Player's ID, their turn in play
 	/*
 		hasPassedLastTurn and isActive are for the requirements on turn passing.
 		If a player passes two consecutive turns, they will become
@@ -27,10 +27,11 @@ public class Player {
 	 * @param name the name of the player. Must be at least three characters
 	 * @param ID the id of the player, their order in play
 	 */
-	public Player(String name, int ID) {
+	public Player(String name, int ID, int turnID) {
 		this.score = DEFAULT_SCORE; // Initializes score to default
 		this.name = name;			// Set the player's name
 		this.ID = ID;				// Assign the player's ID
+		this.turnID = turnID;
 		passedLastTurn = false;	// Initialize passed last turn status
 		isActive = true;			// Set player as active by default
 	}
@@ -69,6 +70,21 @@ public class Player {
 	 */
 	public int getID() {
 		return ID;
+	}
+
+	/**
+	 * Setter for the player's unique turnID.
+	 */
+	public void setTurnID(int turnID) {
+		this.turnID = turnID;
+	}
+
+	/**
+	 * Getter for the player's unique turnID.
+	 * @return the player's turnID as an integer.
+	 */
+	public int getTurnID() {
+		return turnID;
 	}
 
 	/**

@@ -65,7 +65,6 @@ public class ClientMessenger implements Runnable {
 		do {
 			try {
 				message = (Message) inputStream.readObject();
-				//printInstance(message);
 			}
 			catch (SocketException | EOFException e) {
 				// Thrown when the host has closed their connection
@@ -92,8 +91,7 @@ public class ClientMessenger implements Runnable {
 		 */
 		try {
 			closeStreams();
-		} catch (IOException e) {
-			throw new RuntimeException(e);
+		} catch (IOException ignore) {
 		}
 	}
 
@@ -107,11 +105,19 @@ public class ClientMessenger implements Runnable {
 		outputStream.flush();
 	}
 
+	public Message getMessage(){
+		return (new PassTurn(1,1)); // thew in to run NetworkTest.java
+	}
+
 	/**
 	 * Ceases execution of <code>run()</code>.
 	 */
 	public void halt() {
 		isListening = false;
+		try {
+			inputStream.close();
+		} catch (IOException ignore) {
+		}
 	}
 
 	// close socket and associated streams

@@ -12,8 +12,8 @@ public class NetworkPlayer extends Player {
 	 * @param name the name of the player. Must be at least 3 characters
 	 * @param ID the player ID, or their order of play
 	 */
-	public NetworkPlayer(String name, int ID) {
-		super(name, ID);
+	public NetworkPlayer(String name, int ID, int turnID) {
+		super(name, ID, turnID);
 		numTiles = 7;
 		isConnected = true;
 	}

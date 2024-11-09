@@ -1,4 +1,4 @@
-package scrabble.view.panel;
+package scrabble.view.screen.component;
 
 import javax.swing.*;
 import java.awt.*;
@@ -53,4 +53,15 @@ public class PlayerPanel extends JPanel {
 
 	}
 
+	public JLabel getNameLabel() {
+		return name;
+	}
+
+	public JLabel getTime() {
+		return time;
+	}
+
+	public JLabel getScore() {
+		return score;
+	}
 }

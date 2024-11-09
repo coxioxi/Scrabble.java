@@ -1,5 +1,6 @@
 package scrabble.network.host;
 
+import scrabble.model.Player;
 import scrabble.model.Ruleset;
 import scrabble.model.Tile;
 import scrabble.network.messages.*;
@@ -8,10 +9,7 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.IOException;
 import java.net.*;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Random;
+import java.util.*;
 
 /**
  * This class implements host responsibilities for a Scrabble game. It accepts
@@ -45,17 +43,21 @@ public class PartyHost extends Thread implements PropertyChangeListener {
 	private TileBag tileBag;
 	private HashMap<HostReceiver, Integer> playerIdMap;
 	private HashMap<HostReceiver, ArrayList<Tile>> playerTiles;
+	private HashMap<Integer, HostReceiver> playerIdToMessenger;
+	private HashMap<Integer, String> playerNames;
+	private PropertyChangeEvent evt;
 	private Ruleset ruleset;
 	private boolean inGame;
 	private final int TILE_RACK_SIZE = 7;
 
 	public static void main(String[] args) throws UnknownHostException {
-		int port = 5000;
+		int port = 0;
 
 		System.out.println("Your IP: " + Inet4Address.getLocalHost().getHostAddress());
-		System.out.println("Listening at port " + port);
+		PartyHost partyHost = new PartyHost(port);
+		System.out.println("Listening at port " + partyHost.getPort());
 
-		PartyHost partyHost = new PartyHost(5000);
+
 		Thread thread = new Thread(partyHost);
 		thread.start();
 	}
@@ -71,6 +73,8 @@ public class PartyHost extends Thread implements PropertyChangeListener {
 		tileBag = new TileBag();
 		playerIdMap = new HashMap<>(4);
 		playerTiles = new HashMap<>(4);
+		playerIdToMessenger = new HashMap<>(4);
+		playerNames = new HashMap<>(4);
 		inGame = false;
 
 		// create a server socket that refreshes every second
@@ -78,7 +82,7 @@ public class PartyHost extends Thread implements PropertyChangeListener {
 		try {
 			server = new ServerSocket(port);
 			server.setSoTimeout(1000);
-			IPAddress = server.getInetAddress().getHostAddress();
+			IPAddress = Inet4Address.getLocalHost().getHostAddress();
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
@@ -106,18 +110,22 @@ public class PartyHost extends Thread implements PropertyChangeListener {
 	 *     more clients from joining the game.
 	 * </p>
 	 * @param ruleset the ruleset which dictates gameplay rules.
-	 * @throws IOException if an error occurs in messaging clients.
 	 */
-	public void startGame(Ruleset ruleset) throws IOException {
-		this.inGame = true;		// stop looking for clients.
-		this.ruleset = ruleset;
+	public void startGame(Ruleset ruleset) {
+		try {
+			this.inGame = true;		// stop looking for clients.
+			this.ruleset = ruleset;
+			startGame();
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
+
 	}
 
 	@Override
 	public void run() {
 		// accept clients if not in a game.
 		// once game starts, stop accepting clients.
-		System.out.println("Looking for clients...");
 		while (!inGame) {
 			while (!inGame && playerIdMap.size()<4) {
 				acceptClients();
@@ -127,65 +135,68 @@ public class PartyHost extends Thread implements PropertyChangeListener {
 		// game has started, stop looking
 		// all future changes handled through ClientHandler objects' calls to property change
 
-		try {
-			startGame();
-		} catch (IOException e) {
-			// error in writing to client
-			throw new RuntimeException(e);
-		}
-
 	}
 
 	@Override
 	public void propertyChange(PropertyChangeEvent evt) {
-		// called from ClientHandler when a new message is received.
-		// determine the message subclass then call appropriate helper method for processing
-
+		// let the message cook!!!
+		this.evt = evt;
 		Message message = (Message) evt.getNewValue();
-		HostReceiver handler = (HostReceiver) evt.getSource();
-		boolean success = false;
-		while (!success) {
-			try {
-				if (message instanceof Challenge) {
-					System.out.println("Challenge");
-					handleChallenge(handler, (Challenge) message);
-				} else if (message instanceof ExchangeTiles) {
-					System.out.println("Exchange");
-					handleExchangeTiles(handler, (ExchangeTiles) message);
-				} else if (message instanceof ExitParty) {
-					System.out.println("Exit");
-					handleExitParty(handler, (ExitParty) message);
-				} else if (message instanceof PassTurn) {
-					System.out.println("Pass");
-					handlePassTurn(handler, (PassTurn) message);
-				} else if (message instanceof PlayTiles) {
-					System.out.println("PlayTiles");
-					handlePlayTiles(handler, (PlayTiles) message);
-				}
-				else if(message instanceof NewPlayer){
-					System.out.println("NewPlayer");
-					handleNewPlayer(handler, (NewPlayer) message);
-				}
-				success = true;
-			} catch (IOException e) {
-				System.out.println("uhhhhh");
-			}
-		}
+		message.execute(this);
+	}
+
+	public int getMessagePlayerID() {
+		return playerIdMap.get((HostReceiver) evt.getSource());
+	}
+
+	public void addPlayerName(String name){
+		int index = playerNames.size();
+		this.playerNames.put(playerNames.size(), name);
+	}
+
+	public String[] getPlayerNames() {
+		return playerNames.values().toArray(new String[0]);
 	}
 
 	public int getPlayerID(HostReceiver hr) {
 		return playerIdMap.get(hr);
 	}
 
-	/*********************************************************
-	 * 					Private Methods						 *
-	 *********************************************************/
+	/**
+	 * Sends a message to a player specified by ID.
+	 *
+	 * @param playerID the id of the player to send a message.
+	 * @param message the message to be sent.
+	 * @throws IOException when an error occurs writing to client
+	 */
+	public void sendMessage(int playerID, Message message) throws IOException {
+		playerIdToMessenger.get(playerID).sendMessage(message);
+	}
 
-	private void startGame() throws IOException {
+	/**
+	 * Sends a message to all clients except the one specified.
+	 * @param playerID the player to whom not to send a message
+	 * @param message the message to send.
+	 * @throws IOException when the message cannot be sent.
+	 */
+	public void sendToAllButID(int playerID, Message message) throws IOException {
 
+		for (HostReceiver host: playerIdMap.keySet()) {
+			if(!host.equals(playerIdToMessenger.get(playerID)) && host != null) {
+				host.sendMessage(message);
+			}
+		}
+	}
+
+	public void halt() {
+		this.inGame = true;
+		playerIdMap.keySet().forEach(HostReceiver::halt);
+	}
+
+	public void startGame() throws IOException {
 		// Make a starting rack for each player.
 		for (HostReceiver host: playerIdMap.keySet()){
-			playerTiles.put(host, (ArrayList<Tile>) Arrays.stream(tileBag.getNext(TILE_RACK_SIZE)).toList());
+			playerTiles.put(host, new ArrayList<>(Arrays.asList(tileBag.getNext(TILE_RACK_SIZE))));
 		}
 
 		int[] randomNumbers = new int[playerIdMap.size()];
@@ -194,22 +205,26 @@ public class PartyHost extends Thread implements PropertyChangeListener {
 		}
 
 		//shuffle randomNumbers array so the player order is randomised
-		Random random = new Random();
-		for (int i = 0; i < randomNumbers.length;) {
-			int index = random.nextInt(randomNumbers.length);
-			int temp;
-			if (index != i) {
-				temp = randomNumbers[index];
-				randomNumbers[index] = randomNumbers[i];
-				randomNumbers[i] = temp;
-				++i;
-			}
+		Random rnd = new Random();
+		for (int i = randomNumbers.length - 1; i > 0; i--)
+		{
+			int index = rnd.nextInt(i + 1);
+			// Simple swap
+			int a = randomNumbers[index];
+			randomNumbers[index] = randomNumbers[i];
+			randomNumbers[i] = a;
 		}
 
-		int i = 0;
-		for (HostReceiver host: playerIdMap.keySet()){
-			playerIdMap.replace(host, randomNumbers[i]);
-			++i;
+		//This hash map stores the turn as the key with the player ID and player name as a value
+		HashMap<Integer, HashMap<Integer, String>> playerInfo = new HashMap<>();
+		Iterator<Integer> iterator= playerNames.keySet().iterator();
+
+		//populates playerInfo map
+		for (int i = 0; i < randomNumbers.length; i++) {
+			HashMap<Integer, String> temp = new HashMap<>();
+			int ID = iterator.next();
+			temp.put(ID, playerNames.get(ID));
+			playerInfo.put(randomNumbers[i], temp);
 		}
 
 		int j = 0;
@@ -220,17 +235,24 @@ public class PartyHost extends Thread implements PropertyChangeListener {
 		}
 
 		for (HostReceiver host: playerIdMap.keySet()) {
-			StartGame startGameMessage = new StartGame(HOST_ID, playerIdMap.get(host), playerID, ruleset, playerTiles.get(host).toArray(new Tile[0]));
+			StartGame startGameMessage = new StartGame(HOST_ID, playerIdMap.get(host), playerInfo, ruleset, playerTiles.get(host).toArray(new Tile[0]));
 			host.sendMessage(startGameMessage);
 		}
 	}
+
+	public Tile[] getTiles (int size){
+		return tileBag.getNext(size);
+	}
+
+	/*********************************************************
+	 * 					Private Methods						 *
+	 *********************************************************/
 
 	private void acceptClients() {
 		// look for clients. Socket may time out, returns out of method
 		try {
 			// establish connection with the client
 			Socket client = server.accept();
-			System.out.println("New client added");
 
 			HostReceiver clientHandler = new HostReceiver(client, this);
 
@@ -239,7 +261,10 @@ public class PartyHost extends Thread implements PropertyChangeListener {
 			clientThread.start();
 
 			//populate playerIdMap
-			playerIdMap.put(clientHandler, playerIdMap.size());
+			int index = playerIdMap.size();
+			playerIdMap.put(clientHandler, index);
+			playerIdToMessenger.put(index, clientHandler);
+			clientHandler.sendMessage(new AssignID(HOST_ID, index));
 		}
 		catch (SocketTimeoutException e) {
 			// This is fine. don't do anything.
@@ -308,17 +333,10 @@ public class PartyHost extends Thread implements PropertyChangeListener {
 			playerTiles.get(source).add(newTile);
 		}
 		source.sendMessage(newTilesMessage);
-
 	}
 
 	private void handleNewPlayer(HostReceiver source, NewPlayer message) throws IOException {
-		for (HostReceiver host: playerIdMap.keySet()) {
-			NewPlayer newPlayerMessage = new NewPlayer(HOST_ID, playerIdMap.get(host), message.getPlayerName());
 
-			if(!playerIdMap.get(host).equals(playerIdMap.get(source))){
-				host.sendMessage(newPlayerMessage);
-			}
-		}
 	}
 
 	/*

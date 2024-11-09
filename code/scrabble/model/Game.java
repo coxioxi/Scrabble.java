@@ -16,18 +16,11 @@ import java.util.ArrayList;
  */
 public class Game {
 
-	/*
-	TODO:
-		Jy'el: please consider end conditions as you implement this class's methods
-		I have just added the isGameOver field, as I failed to consider it previously
-
-	 */
-
-	// the players of the game. The order is significant and represents the order in
+		// the players of the game. The order is significant and represents the order in
 	// which turns are taken
 	private Player[] players;
 	private Board board; 	    // The game board
-	private Ruleset ruleset;	// The game ruleset
+	private final Ruleset ruleset;	// The game ruleset
 	private LocalPlayer self;	// The local player
 
 	private int currentPlayerTime;	// How much time (in seconds) the current player has
@@ -45,11 +38,11 @@ public class Game {
 	 * @param ruleset The ruleset for the game
 	 * @param me The local player
 	 */
-	public Game(Player[] players, Board board, Ruleset ruleset, Player me){
+	public Game(Player[] players, Board board, Ruleset ruleset, LocalPlayer me){
 		this.players = players;
 		this.board = board;
 		this.ruleset = ruleset;
-		this.self = (LocalPlayer) me;
+		this.self = me;
 		// TODO: From ruleset, set times
 	}
 
@@ -77,17 +70,27 @@ public class Game {
 	 * @return true if the play is successful, false otherwise
 	 * See Board.playTiles()
 	 */
-	public boolean playTiles(int playerID, Tile[] tiles) {
+	public int playTiles(int playerID, Tile[] tiles) {
+		int score;
 		Player player = getPlayer(playerID);
 		if (player.isActive()) {
-			int score = board.playTiles(tiles);
-			if (score < 0) return false;
-			player.increaseScore(score);
-			return true;
+			score = board.playTiles(tiles);
+			if(score >= 0) {
+				boolean	areValid;
+				areValid = ruleset.isWordInDictionary(board.getLastWordsPlayed().toArray(new String[0]));
+				if(areValid) {
+					player.increaseScore(score);
+					if (playerID == self.getID()) self.increaseScore(score);
+					this.nextTurn();
+				}
+				else{
+					board.removeTiles(tiles);
+					return -1;
+				}
+			}
+			return score;
 		}
-		else {
-			return false;
-		}
+		return -1;
 	}
 
 	/**
@@ -272,7 +275,6 @@ public class Game {
 	 */
 	public void addTiles(Tile[] tiles) {
 		self.addTiles(tiles);
-
 	}
 
 	/**
@@ -282,7 +284,6 @@ public class Game {
 	 */
 	public void removeTiles(Tile[] tiles) {
 		self.removeTiles(tiles);
-
 	}
 
 	/**
@@ -295,10 +296,10 @@ public class Game {
 
 	public boolean isGameOver() {
 		isGameOver = false;
-		if ( self.getRack().isEmpty()) {
-			isGameOver = true;
-		}
-		else if(allPlayersInactive()){
+//		if ( self.getRack().isEmpty()) {
+//			isGameOver = true;
+//		}
+		if(allPlayersInactive()){
 			isGameOver = true;
 		} else if (ruleset.getTotalTime() == 0) {
 			isGameOver = true;

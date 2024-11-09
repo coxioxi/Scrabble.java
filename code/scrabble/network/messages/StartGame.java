@@ -1,22 +1,32 @@
 package scrabble.network.messages;
 
 import scrabble.controller.Controller;
+import scrabble.model.Player;
 import scrabble.model.Ruleset;
 import scrabble.model.Tile;
+import scrabble.network.host.HostReceiver;
 import scrabble.network.host.PartyHost;
+
+import java.util.*;
 
 public class StartGame extends Message {
 	private int[] playerIDs;
 	private int receivingID;
 	private Ruleset ruleset;
 	private Tile[] startingTiles;
+	HashMap<Player, Integer> turnID = new HashMap<>();
 
-	public StartGame(int senderID, int receivingID, int[] playerIDs, Ruleset ruleset, Tile[] startingTiles) {
+	private HashMap<Integer, HashMap<Integer, String>> playerInfo;
+															// turn id,..... playerID
+	public StartGame(int senderID, int receivingID, HashMap<Integer, HashMap<Integer, String>> playerInfo, Ruleset ruleset, Tile[] startingTiles) {
 		super(senderID);
 		this.receivingID = receivingID;
-		this.playerIDs = playerIDs;
 		this.ruleset = ruleset;
 		this.startingTiles = startingTiles;
+		this.playerInfo = playerInfo;
+		this.playerIDs = new int[playerInfo.size()];
+		for (Integer ID : playerInfo.keySet()) {
+		}
 	}
 
 	public int[] getPlayerIDs() {
@@ -35,15 +45,29 @@ public class StartGame extends Message {
 		return receivingID;
 	}
 
+	public HashMap<Integer, HashMap<Integer, String>> getPlayerInfo() {
+		return playerInfo;
+	}
+
 	@Override
 	public void execute(Controller controller) {
-		controller.getModel().addTiles(startingTiles);
-		//set ruleset from game for players: controller.getModel().setRuleset(ruleset)
-		// or make it possible to instantiate new game object for players when executing message
+
+		// from the hashmap, create the players for the model.
+		// then, assign LocalPlayer based on the id that we already received
+		// then, send the rules to the gameScreen via sendRules() in controller
+		// then, set up the rack for the player in gameScreen
+
+		String[] playerNames = new String[playerInfo.size()];
+		for(Integer turn: getPlayerInfo().keySet()){
+			Iterator<Integer> iterator= playerInfo.get(turn).keySet().iterator();
+			playerIDs[turn] = iterator.next();
+			playerNames[turn] = getPlayerInfo().get(turn).get(playerIDs[turn]);
+		}
+		controller.startGame(ruleset, playerNames, playerIDs, startingTiles);
 	}
 
 	@Override
 	public void execute(PartyHost partyHost) {
-
+		// do nothing. host will not receive this message. ever.
 	}
 }
