@@ -2,14 +2,17 @@ package scrabble.network.host;
 
 import scrabble.model.Tile;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Random;
 
 /**
  * Maintains the bag of tiles. Allows tiles to be randomly removed and for tiles to be added.
+ * TODO: change the propability of tile's given
  */
 public class TileBag {
-    private HashMap<Tile,Integer> tileBag;      // stores a number of a given tile
+
+    private ArrayList<Tile> tilebag;// stores a number of a given tile
     private int remainingTiles;         // the number of tiles in the bag
 
     public static void main(String[] args) {
@@ -34,21 +37,13 @@ public class TileBag {
      */
     public void addTiles(Tile[] tiles) {
         for(Tile tile: tiles){
-            tileBag.replace(tile,tileBag.replace(tile,tileBag.get(tile)+1));
+            tilebag.add(tile);
         }
     }
 
-    // method for testing tile bag
-    public void viewTileBag(){
-        Tile[] tiles = tileBag.keySet().toArray(new Tile[0]);
-        Object[] values = tileBag.values().toArray();
-        for(int i = 0; i<tiles.length;++i){
-            System.out.println(tiles[i].getLetter() + " " + values[i]);
-        }
-    }
 
-    public HashMap<Tile, Integer> getTileBag() {
-        return tileBag;
+    public ArrayList<Tile> getTileBag() {
+        return tilebag;
     }
 
     /**
@@ -59,14 +54,15 @@ public class TileBag {
      * @return a randomly picked array of tiles with length <code>numTiles</code>.
      */
     public Tile[] getNext(int numTiles) {
-        Tile[] keyArray = tileBag.keySet().toArray(new Tile[0]);
+
         Tile[] newTiles = new Tile[numTiles];
         Random random = new Random();
         for(int i = 0; i < numTiles; i++){
-            Tile tile = keyArray[random.nextInt(keyArray.length)];
-            newTiles[i] = tile;
-            tileBag.replace(tile,tileBag.get(tile)-1);
-            remainingTiles--;
+            if(!tilebag.isEmpty()) {
+                Tile tile = tilebag.get(random.nextInt(tilebag.size()));
+                newTiles[i] = tile;
+                tilebag.remove(tile);
+            }
         }
         return newTiles;
     }
@@ -76,39 +72,27 @@ public class TileBag {
      * @return number of remaining tiles.
      */
     public int getRemainingTiles() {
-        return remainingTiles;
+        return tilebag.size();
     }
 
     private void fillTileBag() {
-        remainingTiles = 100;
-        tileBag = new HashMap<>();
-        tileBag.put(new Tile('A'),9);
-        tileBag.put(new Tile('B'),2);
-        tileBag.put(new Tile('C'),2);
-        tileBag.put(new Tile('D'),4);
-        tileBag.put(new Tile('E'),12);
-        tileBag.put(new Tile('F'),2);
-        tileBag.put(new Tile('G'),3);
-        tileBag.put(new Tile('H'),2);
-        tileBag.put(new Tile('I'),9);
-        tileBag.put(new Tile('J'),1);
-        tileBag.put(new Tile('K'),1);
-        tileBag.put(new Tile('L'),4);
-        tileBag.put(new Tile('M'),2);
-        tileBag.put(new Tile('N'),6);
-        tileBag.put(new Tile('O'),8);
-        tileBag.put(new Tile('P'),2);
-        tileBag.put(new Tile('Q'),1);
-        tileBag.put(new Tile('R'),6);
-        tileBag.put(new Tile('S'),4);
-        tileBag.put(new Tile('T'),6);
-        tileBag.put(new Tile('U'),4);
-        tileBag.put(new Tile('V'),2);
-        tileBag.put(new Tile('W'),2);
-        tileBag.put(new Tile('X'),1);
-        tileBag.put(new Tile('Y'),2);
-        tileBag.put(new Tile('Z'),1);
-        tileBag.put(new Tile(), 2);
+        char[] letters = new char[]{'A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z',' '};
+
+        int[] letterNum = new int[]{9,2,2,4,12,2,3,2,9,1,1,4,2,6,8,2,1,6,4,6,4,2,2,1,2,1,2};
+        ArrayList<Tile> letterList = new ArrayList<>();
+        for(int i = 0; i < letters.length; ++i){
+            for(int j = 0; j <letterNum[i]; ++j){
+                if(letters[i] != ' ') {
+                    letterList.add(new Tile(letters[i]) );
+                }else{
+                    letterList.add(new Tile());
+                }
+            }
+        }
+        tilebag = letterList;
+
+
+
     }
 
 
