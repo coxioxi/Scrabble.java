@@ -63,24 +63,22 @@ public class TestBoard {
             , new Tile('N', new Point(3,11)), new Tile('O', new Point(3,12))};
 
     //invalid tiles
-
-    //out of bounds
     Tile[] tiles15 = {new Tile('N',new Point(0,-1)), new Tile('I', new Point(1,-1))
             , new Tile('C', new Point(1,-1)), new Tile('E', new Point(3,-1))};
 
-    Tile[] tiles16 = {new Tile('N',new Point(-1,0)), new Tile('I', new Point(0,0))
-            , new Tile('C', new Point(-1,0)), new Tile('E', new Point(2,0))};
+    Tile[] tiles16 = {new Tile('N',new Point(-1,0)), new Tile('O', new Point(0,0))
+            , new Tile('G', new Point(-1,0)), new Tile('E', new Point(2,0))};
 
-    Tile[] tiles17 = {new Tile('N',new Point(13,0)), new Tile('I', new Point(14,0))
-            , new Tile('C', new Point(14,0)), new Tile('E', new Point(16,0))};
+    Tile[] tiles17 = {new Tile('N',new Point(13,0)), new Tile('O', new Point(14,0))
+            , new Tile('V', new Point(14,0)), new Tile('E', new Point(16,0))};
 
     Tile[] tiles18 = {new Tile('N',new Point(0,0)), new Tile('I', new Point(1,0))
-            , new Tile('C', new Point(2,0)), new Tile('E', new Point(4,0))};
+            , new Tile('V', new Point(2,0)), new Tile('E', new Point(4,0))};
 
     Tile[] tiles19 = {new Tile('N',new Point(5,0)), new Tile('I', new Point(6,0))
-            , new Tile('C', new Point(7,0)), new Tile('E', new Point(9,0))};
+            , new Tile('C', new Point(7,0)), new Tile('L', new Point(9,0))};
 
-    Tile[] tiles20 = {new Tile('N',new Point(7,0)), new Tile('I', new Point(6,1))
+    Tile[] tiles20 = {new Tile('X',new Point(7,0)), new Tile('I', new Point(6,1))
             , new Tile('C', new Point(7,2)), new Tile('E', new Point(9,3))};
 
     Board board = new Board();
@@ -253,6 +251,22 @@ public class TestBoard {
 
         score = board.playTiles(tiles14);
         Assertions.assertEquals(12,score);
+
+        //Invalid words
+        score = board.playTiles(tiles16);
+        Assertions.assertEquals(-1,score);
+
+        score = board.playTiles(tiles17);
+        Assertions.assertEquals(-1,score);
+
+        score = board.playTiles(tiles18);
+        Assertions.assertEquals(-1,score);
+
+        score = board.playTiles(tiles19);
+        Assertions.assertEquals(-1,score);
+
+        score = board.playTiles(tiles20);
+        Assertions.assertEquals(-1,score);
     }
 
     @Test
