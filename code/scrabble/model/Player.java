@@ -61,6 +61,7 @@ public class Player {
 	 *               limits of int.
 	 */
 	public void increaseScore(int amount) {
+		System.out.println("Increase score for player " + ID + " by " + amount);
 		this.score += amount;
 	}
 

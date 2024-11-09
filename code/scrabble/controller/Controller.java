@@ -90,9 +90,11 @@ public class Controller implements PropertyChangeListener  {
 
 
 	private void selfPlayTiles(Tile[] tiles) {
+
 		int score = model.playTiles(selfID, tiles);
 		if (score >= 0) {
 			view.getGame().updateScore(model.getSelf().getName(), model.getSelf().getScore());
+			System.out.println("name: " + model.getSelf().getName() + "\t score: "+ model.getSelf().getScore());
 			try {
 				getMessenger().sendMessage(new PlayTiles(selfID, selfID, tiles));
 				getView().getGame().disableLastPlayedTiles();
@@ -153,6 +155,8 @@ public class Controller implements PropertyChangeListener  {
 			System.out.println(playerID[i]);
 			if (playerID[i] == this.selfID) {
 				self = new LocalPlayer(playerNames[i], playerID[i], i, new ArrayList<>(List.of(startingTiles)));
+				System.out.println("Self is: " + playerNames[i] + "\tid:" + playerID[i]);
+
 			}
 			players[i] = new Player(playerNames[i], playerID[i], i);
 		}

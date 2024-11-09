@@ -73,14 +73,16 @@ public class Game {
 	public int playTiles(int playerID, Tile[] tiles) {
 		int score;
 		Player player = getPlayer(playerID);
-
+		System.out.println("is local player: " + (player instanceof LocalPlayer));
 		if (player.isActive()) {
 			score = board.playTiles(tiles);
-			if(score >= 1) {
+			if(score >= 0) {
 				boolean	areValid;
 				areValid = ruleset.isWordInDictionary(board.getLastWordsPlayed().toArray(new String[0]));
-				if(areValid)
+				if(areValid) {
 					player.increaseScore(score);
+					if (playerID == self.getID()) self.increaseScore(score);
+				}
 				else{
 					board.removeTiles(tiles);
 					return -1;
