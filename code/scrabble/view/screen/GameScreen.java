@@ -12,6 +12,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * The GameScreen class represents the main game screen in the Scrabble application.
@@ -49,6 +50,7 @@ public class GameScreen extends JPanel {
 	 */
 	public GameScreen() {
 		this.setLayout(new BorderLayout()); // Set layout for the main panel
+		playerPanels = new PlayerPanel[4];
 
 		// Initialize and add the panels for different sections of the game screen
 		northPanel = setupNorthPanel();
@@ -145,7 +147,7 @@ public class GameScreen extends JPanel {
 
 	public void updateScore(String playerName, int score) {
 		for (PlayerPanel player : playerPanels) {
-			if (player.getName().getText() == playerName) {
+			if (player != null && Objects.equals(player.getNameLabel().getText(), playerName)) {
 				player.getScore().setText("" + score);
 			}
 		}

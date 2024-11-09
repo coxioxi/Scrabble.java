@@ -76,7 +76,6 @@ public class Controller implements PropertyChangeListener  {
 	public void playTiles(int playerID, Tile[] tiles) {
 		if (playerID == selfID) selfPlayTiles(tiles);
 		else otherPlayTiles(playerID, tiles);
-		view.getGame().updateScore(model.getSelf().getName(), model.getSelf().getScore());
 	}
 
 	private void otherPlayTiles(int playerID, Tile[] tiles) {
@@ -93,6 +92,7 @@ public class Controller implements PropertyChangeListener  {
 	private void selfPlayTiles(Tile[] tiles) {
 		int score = model.playTiles(selfID, tiles);
 		if (score >= 0) {
+			view.getGame().updateScore(model.getSelf().getName(), model.getSelf().getScore());
 			try {
 				getMessenger().sendMessage(new PlayTiles(selfID, selfID, tiles));
 				getView().getGame().disableLastPlayedTiles();
