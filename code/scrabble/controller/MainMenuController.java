@@ -20,7 +20,7 @@ public class MainMenuController {
 		menuScreen.getJoinButton().addActionListener(e -> parent.showJoin());
 		menuScreen.getAudioCheck().addActionListener(e -> audioCheckChanged());
 		menuScreen.getFxCheck().addActionListener(e -> fxCheckChanged());
-		menuScreen.getQuitButton().addActionListener(e -> parent.getView().dispose());
+		menuScreen.getQuitButton().addActionListener(e -> parent.exit());
 	}
 
 	private void hostButtonClick() {
