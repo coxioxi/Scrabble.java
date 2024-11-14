@@ -41,6 +41,7 @@ public class Board {
         Board board = new Board();
 
         // Initial play of "TILE", horizontal, starting at 7,7
+		/*
         Tile[] firstPlay = new Tile[4];
         firstPlay[0] = new Tile('T', new Point(7,7 ));
         firstPlay[1] = new Tile('I', new Point(7,8 ));
@@ -51,6 +52,10 @@ public class Board {
 		System.out.println("Score:" + score);
 
         System.out.println(board);
+
+		 */
+
+		int score;
 
         // Allow user to make plays on board
         Scanner in = new Scanner (System.in);
@@ -399,31 +404,35 @@ public class Board {
             board tiles will be added into score correctly)
          */
         int turnScore;
-        ArrayList<String> words = new ArrayList<>();    // stores words made from tiles placed on board
         ScoreData collateralWords, mainWord;
-        boolean isVertical = allSameCol(tiles);           // check verticality
-        if (isVertical) {       // Vertical tiles
-            sortAscendingByRow(tiles);       // sort by row
 
-            mainWord = getVerticalMainWordScore(tiles);       // score word made by tiles
-            collateralWords = getVerticalCollateralWordsScore(tiles);
-        }
-        else {              // Horizontal tiles
-            sortAscendingByCol(tiles);       // sort by column
+		if (tiles.length == 1) {
+			collateralWords = getHorizontalCollateralWordsScore(tiles);
+			mainWord = getVerticalCollateralWordsScore(tiles);
+		}
+		else {
+			boolean isVertical = allSameCol(tiles);           // check verticality
 
-            mainWord = getHorizontalMainWordScore(tiles);     // score word made by tiles
-            collateralWords = getHorizontalCollateralWordsScore(tiles);       // score perpendicular words
-        }
-        // Add main word to word list
-		words.addAll(mainWord.getWords());
+			if (isVertical) {       // Vertical tiles
+				sortAscendingByRow(tiles);       // sort by row
 
-        // Add collateral words to word list
-		words.addAll(collateralWords.getWords());
+				mainWord = getVerticalMainWordScore(tiles);       // score word made by tiles
+				collateralWords = getVerticalCollateralWordsScore(tiles);
+			} else {              // Horizontal tiles
+				sortAscendingByCol(tiles);       // sort by column
 
-        turnScore = collateralWords.getScore() + mainWord.getScore();       // update turn score
+				mainWord = getHorizontalMainWordScore(tiles);     // score word made by tiles
+				collateralWords = getHorizontalCollateralWordsScore(tiles);       // score perpendicular words
+			}
+		}
 
-        lastWordsPlayed = words;
-        return turnScore;
+        lastWordsPlayed = new ArrayList<>();
+
+		lastWordsPlayed.addAll(mainWord.getWords());
+		lastWordsPlayed.addAll(collateralWords.getWords());
+
+		turnScore = collateralWords.getScore() + mainWord.getScore();       // update turn score
+		return turnScore;
     }
 
     /*
@@ -507,6 +516,11 @@ public class Board {
 				wordMultiplier = 1;
 				collateralWordsScore += currentWordScore;
 				words.add(currentWord.toString());
+			}
+			else if (!words.isEmpty()){
+				System.out.println("Removing Letter...");
+				words.remove(0);
+				collateralWordsScore = 0;
 			}
 		}
 
@@ -706,10 +720,16 @@ public class Board {
 
 			// final updates to collateral word variables
 			if (currentWord.length() > 1) {
+
 				currentWordScore *= wordMultiplier;
 				wordMultiplier = 1;
 				collateralWordsScore += currentWordScore;
 				words.add(currentWord.toString());
+			}
+			else if (!words.isEmpty()){
+				System.out.println("Removing Letter...");
+				words.remove(0);
+				collateralWordsScore = 0;
 			}
 		}
 
