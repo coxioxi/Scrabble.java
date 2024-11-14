@@ -1,7 +1,7 @@
 package scrabble.controller;
 
 import scrabble.model.*;
-import scrabble.network.client.ClientMessenger;
+import scrabble.network.messages.ExitParty;
 import scrabble.network.messages.Message;
 import scrabble.network.host.PartyHost;
 import scrabble.network.messages.NewPlayer;
@@ -18,28 +18,45 @@ import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
+import java.io.EOFException;
 import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.net.Socket;
+import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.List;
 
+
+/*
+ * TODO:
+ *  fix removeTile to not be ugly
+ */
 
 /**
  * Run the other classes
  */
 
 public class Controller implements PropertyChangeListener  {
+	/**
+	 * The port number to use for socket communication. 0 means the port is automatically allocated.
+	 * The port number can be accessed via <code>this.getHost().getPort()</code> when this controller is
+	 * hosting, or <code>this.getSocket().getPort()</code> when not hosting.
+	 * <br>
+	 * See also: {@link PartyHost#getPort() PartyHost.getPort()}
+	 */
 	public static final int PORT = 0;
 
-	private ScrabbleGUI view;
-	private Game model;
+	private ScrabbleGUI view;	// maintains the GUI
+	private Game model;			// maintains Scrabble game data
 
-	private ClientMessenger messenger;
-	private Socket hostSocket;
-	private GameScreenController gameScreenController;
-	private MainMenuController mainMenuController;
-	private HostScreenController hostScreenController;
-	private JoinScreenController joinScreenController;
+	private ClientMessenger messenger;		// inner class for communication with host
+	private Socket hostSocket;				// socket to the partyHost
+	private GameScreenController gameScreenController;		// makes changes to view.screen.gameScreen
+	private MainMenuController mainMenuController;			// makes changes to view.screen.MainMenu
+	private HostScreenController hostScreenController;		// makes changes to view.screen.HostScreen
+	private JoinScreenController joinScreenController;		// makes changes to view.screen.JoinScreen
 
 	/*
 	reference to the party host
@@ -47,11 +64,7 @@ public class Controller implements PropertyChangeListener  {
 	note that this field is null when this computer is not the host
 	 */
 	private PartyHost host;
-	private int selfID;
-
-	public int getSelfID() {
-		return selfID;
-	}
+	private int selfID;		// Player ID associated with this instance. Assigned by Party's Host.
 
 	public static void main(String[] args) {
 		new Controller();
@@ -67,37 +80,6 @@ public class Controller implements PropertyChangeListener  {
 	@Override
 	public void propertyChange(PropertyChangeEvent evt) {
 		((Message) evt.getNewValue()).execute(this);
-	}
-
-	public void playTiles(int playerID, Tile[] tiles) {
-		if (playerID == selfID) selfPlayTiles(tiles);
-		else otherPlayTiles(playerID, tiles);
-		gameScreenController.setRackButtonsEnabled(model.getCurrentPlayer() == selfID);
-	}
-	private void otherPlayTiles(int playerID, Tile[] tiles) {
-		model.playTiles(playerID, tiles);
-		view.getGame().addToBoard(tiles);
-		Player player = null;
-		for (Player player1 : model.getPlayers()) {
-			if (player1.getID() == playerID) player = player1;
-		}
-		view.getGame().updateScore(player.getName(), player.getScore());
-	}
-	private void selfPlayTiles(Tile[] tiles) {
-
-		int score = model.playTiles(selfID, tiles);
-		if (score >= 0) {
-			view.getGame().updateScore(model.getSelf().getName(), model.getSelf().getScore());
-			try {
-				getMessenger().sendMessage(new PlayTiles(selfID, selfID, tiles));
-				getView().getGame().disableLastPlayedTiles();
-			} catch (IOException e) {
-				getMessenger().halt();
-			}
-		}
-		else {
-			resetLastPlay(getView().getGame());
-		}
 	}
 
 	public void setupSocket(String ip, int port) throws IOException {
@@ -154,6 +136,43 @@ public class Controller implements PropertyChangeListener  {
 		if (model.getCurrentPlayer() != selfID) gameScreenController.setRackButtonsEnabled(false);
 	}
 
+	public void addTiles(Tile[] tiles) {
+		model.addTiles(tiles);
+		gameScreenController.addTiles(tiles);
+//		gameScreenController.setRackButtonsEnabled(false);
+	}
+
+	public void playTiles(int playerID, Tile[] tiles) {
+		if (playerID == selfID) selfPlayTiles(tiles);
+		else otherPlayTiles(playerID, tiles);
+		gameScreenController.setRackButtonsEnabled(model.getCurrentPlayer() == selfID);
+	}
+	private void otherPlayTiles(int playerID, Tile[] tiles) {
+		model.playTiles(playerID, tiles);
+		view.getGame().addToBoard(tiles);
+		Player player = null;
+		for (Player player1 : model.getPlayers()) {
+			if (player1.getID() == playerID) player = player1;
+		}
+		view.getGame().updateScore(player.getName(), player.getScore());
+	}
+	private void selfPlayTiles(Tile[] tiles) {
+
+		int score = model.playTiles(selfID, tiles);
+		if (score >= 0) {
+			view.getGame().updateScore(model.getSelf().getName(), model.getSelf().getScore());
+			try {
+				getMessenger().sendMessage(new PlayTiles(selfID, selfID, tiles));
+				getView().getGame().disableLastPlayedTiles();
+			} catch (IOException e) {
+				getMessenger().halt();
+			}
+		}
+		else {
+			resetLastPlay(getView().getGame());
+		}
+	}
+
 	public void resetLastPlay(GameScreen gameScreen){
 		//loop through the rack
 		int size = gameScreen.playedTiles.size();
@@ -163,7 +182,7 @@ public class Controller implements PropertyChangeListener  {
 	}
 
 	public void removeRackTile(Tile tile) {
-		RackPanel rackPanel = ((GameScreen) view.getGame()).getRackPanel();
+		RackPanel rackPanel = view.getGame().getRackPanel();
 		for(TilePanel tp: rackPanel.getTilePanels()){
 			if(tp.getButton().getText().equals(""+tile.getLetter())){
 				tp.setButton(new JButton(" "));
@@ -172,37 +191,16 @@ public class Controller implements PropertyChangeListener  {
 		}
 	}
 
-	public void replenishRack(Tile[] toAdd){
-		view.getGame().addTilesToRack(toAdd);
-	}
-
-	public void addPlayer(int playerID, String name) {
-		if (playerID == selfID) {
-			try {
-				messenger.sendMessage(new NewPlayer(selfID, selfID, name));
-			} catch (IOException ignore) {
-			}
-		}
-		if (this.host != null) {
-			view.getHost().addPlayerName(name);
-		}
-		else {
-			view.getWaiting().addPlayerName(name);
-		}
-	}
-
-	public void addTiles(Tile[] tiles) {
-		model.addTiles(tiles);
-		gameScreenController.addTiles(tiles);
-		gameScreenController.setRackButtonsEnabled(false);
-	}
-
 	public ScrabbleGUI getView() {
 		return view;
 	}
 
 	public Game getModel() {
 		return model;
+	}
+
+	public int getSelfID() {
+		return selfID;
 	}
 
 	public ClientMessenger getMessenger() {
@@ -318,6 +316,123 @@ public class Controller implements PropertyChangeListener  {
 		JOptionPane.showMessageDialog(view, "The Host refused to connect.\nCheck your IP Address!", "No Connection", JOptionPane.WARNING_MESSAGE);
 	}
 
+	/**
+	 * Implements communication with a host, using the objects in
+	 * the {@link scrabble.network.messages messages package}.
+	 * <p>
+	 *     A thread of this class continuously listens for message objects
+	 *     from the host which are then sent to the PropertyChangeListener
+	 *     passed in at construction. A client of this class can send messages to
+	 *     the host by calling {@link #sendMessage}. When this thread is no longer needed,
+	 *     calling the method {@link #halt} signals run to cease execution and close the socket.
+	 * </p>
+	 */
+	public static class ClientMessenger implements Runnable {
+
+		private final Socket server;	// socket to server/host
+
+		private final ObjectOutputStream outputStream;		// stream for sending objects to host
+		private final ObjectInputStream inputStream;		// stream for receiving objects from host
+
+		private final PropertyChangeSupport notifier;		// notifies listener of property changes
+															// that is, when messages are received
+		private boolean isListening;		// whether this object is listening for new messages
+
+		/**
+		 * Constructs a client-host messenger with an observer.
+		 * @param server the socket to the server. This value may not be null.
+		 * @param listener the observer which receives updates on new messages.
+		 * @throws IOException if an error occurs in getting the <code>server</code>'s
+		 * streams.
+		 */
+		public ClientMessenger(Socket server, PropertyChangeListener listener)
+				throws IOException {
+			// setting up streams
+			this.server = server;
+			outputStream = new ObjectOutputStream(server.getOutputStream());
+			inputStream = new ObjectInputStream(server.getInputStream());
+			notifier = new PropertyChangeSupport(this);
+			notifier.addPropertyChangeListener(listener);
+			isListening = false;
+		}
+
+		/**
+		 * Listens for messages from the host and sends them to the observer.
+		 * This method will cease execution after <code>halt</code> is called or
+		 * if the host closes the socket.
+		 */
+		public void run() {
+			// here we start listening for new messages to come in
+			isListening = true;
+			// container for new message.
+			Message message;
+			do {
+				try {
+					message = (Message) inputStream.readObject();
+				}
+				catch (SocketException | EOFException e) {
+					// Thrown when the host has closed their connection
+					message = new ExitParty(PartyHost.HOST_ID, PartyHost.HOST_ID);
+					this.halt();
+				}
+				catch (IOException | ClassNotFoundException e) {
+					throw new RuntimeException(e);
+				}
+
+				// we have received a message; tell listener so they can do stuff with it
+				if (message != null) {
+					notifier.firePropertyChange("Message", null, message);
+				}
+			} while (isListening);
+
+		/*
+		 this has stopped listening for new messages, perhaps because we have disconnected,
+		 perhaps the host has disconnected. either will have been handled by the controller
+		 In the former case, the controller would have sent a disconnect signal; in the latter, this
+		 will have notified the controller (see socketException catch clause)
+
+		 now, simply close the streams and end execution of this run().
+		 */
+			try {
+				closeStreams();
+			} catch (IOException ignore) {
+			}
+		}
+
+		/**
+		 * Sends a message to the host and flushes the stream.
+		 * @param message the message to be sent. Must be non-null.
+		 * @throws IOException if an error occurs in output stream.
+		 */
+		public void sendMessage(Message message) throws IOException {
+			outputStream.writeObject(message);
+			outputStream.flush();
+		}
+
+		/**
+		 * Ceases execution of <code>run()</code>.
+		 */
+		public void halt() {
+			isListening = false;
+			try {
+				inputStream.close();
+			} catch (IOException ignore) {
+			}
+		}
+
+		// close socket and associated streams
+		private void closeStreams() throws IOException {
+			inputStream.close();
+			outputStream.flush();
+			outputStream.close();
+			if (!server.isClosed()) server.close();
+		}
+	}
+
+	/* * * * * * * * * * * * * * * * * * * * * *
+	* 			Private Methods				   *
+	 * * * * * * * * * * * * * * * * * * * * * */
+
 	private void addListeners(ScrabbleGUI view) {
 		addMenuListeners(view.getMainMenu());
 		addHostListeners(view.getHost());
@@ -398,4 +513,5 @@ public class Controller implements PropertyChangeListener  {
 		}
 		view.dispose();
 	}
+
 }

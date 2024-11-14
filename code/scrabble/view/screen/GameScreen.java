@@ -208,9 +208,9 @@ public class GameScreen extends JPanel {
 		for (int i = 0; i < tilePanels.length; i++) {
 			if (!(tilePanels[i].getButton() instanceof TileButton)) {
 				TileButton button =
-						(tiles[index].isBlank() ?
-								new TileButton() :
-								new TileButton(TileScore.values()[tiles[index].getLetter() - 'A'])
+						(tiles[index].isBlank()
+								? new TileButton()
+								: new TileButton(TileScore.values()[tiles[index].getLetter() - 'A'])
 						);
 				tilePanels[i].setButton(button);
 				index++;

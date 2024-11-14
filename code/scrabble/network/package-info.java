@@ -4,12 +4,13 @@
  * </p>
  * <p>
  *     All communication between host and client is performed by reading and writing
- *     {@link scrabble.network.messages} objects. A client must establish a {@link java.net.Socket}
+ *     {@link scrabble.network.messages message} objects. A client must establish a <code>Socket</code>
  *     to a listening host before a game starts. The host will then listen for Message objects
  *     to be sent over the network.
  * </p>
  * <p>
- *     Use {@link scrabble.network.client.ClientMessenger} as a client and {@link scrabble.network.host.PartyHost}
+ *     Use {@link scrabble.controller.Controller.ClientMessenger ClientMessenger} as a client and
+ *     {@link scrabble.network.host.PartyHost PartyHost}
  *     as the host. A host may network with up to 4 clients. Note that the application which
  *     spawns the host is considered to be a client as well.
  * </p>
