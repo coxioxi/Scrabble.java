@@ -1,11 +1,22 @@
 package scrabble.model;
 
+/*
+ * Authors: Ian Boyer, David Carr, Samuel Costa, Maximus Latkovski, Jy'el Mason
+ * Course: COMP 3100
+ * Instructor: Dr. Barry Wittman
+ * Original date: 10/08/2024
+ */
+
 /**
  * This class represents a player over a network.
  */
 public class NetworkPlayer extends Player {
-	private int numTiles;		 // How many tiles the player has
-	private boolean isConnected; // Whether they are connected to the host
+
+	// How many tiles the player has
+	private int numTiles;
+
+	// Whether they are connected to the host
+	private boolean isConnected;
 
 	/**
 	 * Constructs a NetworkPlayer object
@@ -29,7 +40,7 @@ public class NetworkPlayer extends Player {
 	/**
 	 * Setter for isConnected
 	 * @param connected the value to change isConnected to.
-	 *                  false if they have lost connection, true otherwise
+	 * false if they have lost connection, true otherwise
 	 */
 	public void setConnected(boolean connected) {
 		isConnected = connected;
