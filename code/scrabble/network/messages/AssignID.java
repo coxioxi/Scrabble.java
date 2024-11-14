@@ -18,6 +18,6 @@ public class AssignID extends Message{
 
 	@Override
 	public void execute(PartyHost partyHost) {
-		// nothing
+		// ignore
 	}
 }

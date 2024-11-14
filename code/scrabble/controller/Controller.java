@@ -70,18 +70,38 @@ public class Controller implements PropertyChangeListener  {
 		new Controller();
 	}
 
+	/**
+	 * Constructs a new Controller object with a visible GUI.
+	 * The game is not yet initialized, as on screen changes must be made.
+	 */
 	public Controller() {
 		view = new ScrabbleGUI();
-		view.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
+		view.setDefaultCloseOperation(
+				WindowConstants.DO_NOTHING_ON_CLOSE
+		);				// Allow window listeners to handle closing events
 		addListeners(view);
 		this.showMain();
 	}
 
 	@Override
 	public void propertyChange(PropertyChangeEvent evt) {
+		// each message has its own implementation of changes which should be made in controller
 		((Message) evt.getNewValue()).execute(this);
 	}
 
+	/**
+	 * Creates a socket to a listening <code>ServerSocket</code> and creates a
+	 * thread to listen for messages.
+	 * <p>
+	 *    The thread listens for messages from the host then calls {@link Controller#propertyChange}
+	 *    to make appropriate changes. This thread also allows messages to be sent to the host.
+	 * </p>
+	 * @param ip the IP address of the host, represented in the standard IPv4, specified by <code>InetAddress</code>.
+	 * @param port the port number on which the host is listening
+	 * @throws IOException when the connection is unsuccessful
+	 * @see java.net.Inet4Address
+	 * @see Controller.ClientMessenger
+	 */
 	public void setupSocket(String ip, int port) throws IOException {
 		hostSocket = new Socket(ip, port);
 		messenger = new ClientMessenger(hostSocket, this);
@@ -89,10 +109,20 @@ public class Controller implements PropertyChangeListener  {
 		clientMessenger.start();
 	}
 
+	/**
+	 *
+	 * @param name
+	 * @throws IOException
+	 */
 	public void sendNewPlayer(String name) throws IOException {
 		messenger.sendMessage(new NewPlayer(0, 0, name));
 	}
 
+	/**
+	 *
+	 * @param name
+	 * @throws IOException
+	 */
 	public void setUpHost(String name) throws IOException {
 		host = new PartyHost(PORT);
 		host.start();
@@ -109,11 +139,25 @@ public class Controller implements PropertyChangeListener  {
 		hostScreen.addPlayerName(name);
 	}
 
+	/**
+	 *
+	 * @param challengesAllowed
+	 * @param dictionary
+	 * @param playerTime
+	 * @param gameTime
+	 */
 	public void sendRulesToHost(boolean challengesAllowed, String dictionary, int playerTime, int gameTime) {
 		Ruleset ruleset = new Ruleset(gameTime, playerTime, challengesAllowed, dictionary);
 		host.startGame(ruleset);
 	}
 
+	/**
+	 *
+	 * @param ruleset
+	 * @param playerNames
+	 * @param playerID
+	 * @param startingTiles
+	 */
 	public void startGame(Ruleset ruleset, String[] playerNames, int[] playerID, Tile[] startingTiles) {
 		// add tiles to game and gameScreen
 		// pass ruleset and the other stuff to setUpGameScreen
@@ -136,12 +180,21 @@ public class Controller implements PropertyChangeListener  {
 		if (model.getCurrentPlayer() != selfID) gameScreenController.setRackButtonsEnabled(false);
 	}
 
+	/**
+	 *
+	 * @param tiles
+	 */
 	public void addTiles(Tile[] tiles) {
 		model.addTiles(tiles);
 		gameScreenController.addTiles(tiles);
 //		gameScreenController.setRackButtonsEnabled(false);
 	}
 
+	/**
+	 *
+	 * @param playerID
+	 * @param tiles
+	 */
 	public void playTiles(int playerID, Tile[] tiles) {
 		if (playerID == selfID) selfPlayTiles(tiles);
 		else otherPlayTiles(playerID, tiles);
@@ -173,6 +226,10 @@ public class Controller implements PropertyChangeListener  {
 		}
 	}
 
+	/**
+	 *
+	 * @param gameScreen
+	 */
 	public void resetLastPlay(GameScreen gameScreen){
 		//loop through the rack
 		int size = gameScreen.playedTiles.size();
@@ -181,6 +238,10 @@ public class Controller implements PropertyChangeListener  {
 		}
 	}
 
+	/**
+	 *
+	 * @param tile
+	 */
 	public void removeRackTile(Tile tile) {
 		RackPanel rackPanel = view.getGame().getRackPanel();
 		for(TilePanel tp: rackPanel.getTilePanels()){
@@ -219,6 +280,9 @@ public class Controller implements PropertyChangeListener  {
 		this.selfID = selfID;
 	}
 
+	/**
+	 *
+	 */
 	public void showGame() {
 		view.showGame();
 		removeListeners();
@@ -230,6 +294,9 @@ public class Controller implements PropertyChangeListener  {
 		});
 	}
 
+	/**
+	 *
+	 */
 	public void showHost() {
 		view.showHost();
 		removeListeners();
@@ -241,6 +308,9 @@ public class Controller implements PropertyChangeListener  {
 		});
 	}
 
+	/**
+	 *
+	 */
 	public void showJoin() {
 		view.showJoin();
 		removeListeners();
@@ -252,6 +322,9 @@ public class Controller implements PropertyChangeListener  {
 		});
 	}
 
+	/**
+	 *
+	 */
 	public void showMain() {
 		view.showMain();
 		removeListeners();
@@ -264,6 +337,9 @@ public class Controller implements PropertyChangeListener  {
 		view.setMenuVisible(false);
 	}
 
+	/**
+	 *
+	 */
 	public void showWaiting() {
 		view.showWaiting();
 		removeListeners();
@@ -275,6 +351,9 @@ public class Controller implements PropertyChangeListener  {
 		});
 	}
 
+	/**
+	 *
+	 */
 	public void showWinner() {
 		view.showWinner();
 		removeListeners();
@@ -286,32 +365,54 @@ public class Controller implements PropertyChangeListener  {
 		});
 	}
 
+	/**
+	 *
+	 */
 	public void removeListeners() {
 		for (WindowListener wl : view.getWindowListeners()) {
 			view.removeWindowListener(wl);
 		}
 	}
 
+	/**
+	 *
+	 * @return
+	 */
 	public int showQuitDialog() {
 		return JOptionPane.showConfirmDialog(view, "Are you sure you want to leave?\nYou will not be able to rejoin.", "Quit?", JOptionPane.WARNING_MESSAGE);
 	}
 
+	/**
+	 *
+	 */
 	public void showRulesDialog() {
 		JOptionPane.showMessageDialog(view, "1.~~~~~~~~~\n2.~~~~~~~~~\n3.~~~~~~~~~~~~\n4.~~~~~~~~~~", "Rules", JOptionPane.INFORMATION_MESSAGE);
 	}
 
+	/**
+	 *
+	 */
 	public void showNoNameDialog() {
 		JOptionPane.showMessageDialog(view, "You must put in a name!", "No Name", JOptionPane.WARNING_MESSAGE);
 	}
 
+	/**
+	 *
+	 */
 	public void showNoIPDialog() {
 		JOptionPane.showMessageDialog(view, "You must input the host's IP Address!", "No IP", JOptionPane.WARNING_MESSAGE);
 	}
 
+	/**
+	 *
+	 */
 	public void showNoPortDialog() {
 		JOptionPane.showMessageDialog(view, "You must enter the host's port number!", "Incorrect Port Input", JOptionPane.WARNING_MESSAGE);
 	}
 
+	/**
+	 *
+	 */
 	public void showIPErrorDialog() {
 		JOptionPane.showMessageDialog(view, "The Host refused to connect.\nCheck your IP Address!", "No Connection", JOptionPane.WARNING_MESSAGE);
 	}
