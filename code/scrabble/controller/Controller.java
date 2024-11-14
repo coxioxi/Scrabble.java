@@ -41,20 +41,17 @@ public class Controller implements PropertyChangeListener  {
 	private HostScreenController hostScreenController;
 	private JoinScreenController joinScreenController;
 
-	private Ruleset ruleset;
-
 	/*
 	reference to the party host
 	when this controller is the manager of the party.
 	note that this field is null when this computer is not the host
 	 */
 	private PartyHost host;
+	private int selfID;
 
 	public int getSelfID() {
 		return selfID;
 	}
-
-	private int selfID;
 
 	public static void main(String[] args) {
 		new Controller();
@@ -77,7 +74,6 @@ public class Controller implements PropertyChangeListener  {
 		else otherPlayTiles(playerID, tiles);
 		gameScreenController.setRackButtonsEnabled(model.getCurrentPlayer() == selfID);
 	}
-
 	private void otherPlayTiles(int playerID, Tile[] tiles) {
 		model.playTiles(playerID, tiles);
 		view.getGame().addToBoard(tiles);
@@ -87,8 +83,6 @@ public class Controller implements PropertyChangeListener  {
 		}
 		view.getGame().updateScore(player.getName(), player.getScore());
 	}
-
-
 	private void selfPlayTiles(Tile[] tiles) {
 
 		int score = model.playTiles(selfID, tiles);
@@ -134,7 +128,7 @@ public class Controller implements PropertyChangeListener  {
 	}
 
 	public void sendRulesToHost(boolean challengesAllowed, String dictionary, int playerTime, int gameTime) {
-		ruleset = new Ruleset(gameTime, playerTime, challengesAllowed, dictionary);
+		Ruleset ruleset = new Ruleset(gameTime, playerTime, challengesAllowed, dictionary);
 		host.startGame(ruleset);
 	}
 
@@ -393,12 +387,15 @@ public class Controller implements PropertyChangeListener  {
 	private void gameClose() {
 		int selected = showQuitDialog();
 		if (selected == JOptionPane.YES_OPTION) {
-			if (messenger!= null) messenger.halt();
-			if (this.host != null) {
-				host.halt();
-			}
-			view.dispose();
-
+			this.exit();
 		}
+	}
+
+	public void exit() {
+		if (messenger!= null) messenger.halt();
+		if (this.host != null) {
+			host.halt();
+		}
+		view.dispose();
 	}
 }
