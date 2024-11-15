@@ -38,7 +38,7 @@ public class ExitParty extends Message {
 	/**
 	 * Getter for player ID
 	 *
-	 * @return player ID
+	 * @return Int player ID
 	 */
 	public int getPlayerID() {
 		return playerID;
@@ -62,8 +62,8 @@ public class ExitParty extends Message {
 	}
 
 	/**
-	 * This execute is responsible for sending the exit party message to all players but the one who sent
-	 * the message to the host so the other clients know that this player disconnected
+	 * This execute is responsible for sending the exit party message to all players. but the one who sent
+	 * so the other clients know that this player has disconnected and can update their views accordingly
 	 *
 	 * @param partyHost the <code>PartyHost</code> on which to make changes. Note that this object
 	 *                   must use public getter methods for all the components which should be changed.

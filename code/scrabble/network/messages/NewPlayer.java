@@ -40,7 +40,7 @@ public class NewPlayer extends Message implements Serializable {
     /**
      * Getter for playerID
      *
-     * @return Player ID
+     * @return Int player ID
      */
     public int getPlayerID() {
         return playerID;

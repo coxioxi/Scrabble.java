@@ -48,7 +48,7 @@ public class ExchangeTiles extends Message{
 	/**
 	 * Getter for playerID
 	 *
-	 * @return player ID
+	 * @return Int player ID
 	 */
 	public int getPlayerID() {
 		return playerID;
