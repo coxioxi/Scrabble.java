@@ -21,7 +21,6 @@ public class Tile implements Serializable {
     private char letter;            // The letter on the tile
     private final boolean isBlank;  // Whether the tile is blank or not
     private Point location;         // The location of the tile on the game board
-    private boolean isNew;          // Determines whether the tile has already been played
 
     /**
      * Creates a new, blank Tile object
@@ -115,7 +114,6 @@ public class Tile implements Serializable {
                 ", letter=" + letter +
                 ", isBlank=" + isBlank +
                 ", location=" + location +
-                ", isNew=" + isNew +
                 '}'; // Return a string representation of the Tile object
     }
 
