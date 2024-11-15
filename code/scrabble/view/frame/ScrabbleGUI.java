@@ -1,6 +1,7 @@
 package scrabble.view.frame;
 import scrabble.model.Player;
 import scrabble.model.Ruleset;
+import scrabble.model.Tile;
 import scrabble.view.screen.*;
 
 import javax.swing.*;
@@ -29,7 +30,7 @@ public class ScrabbleGUI extends JFrame{
 	private JPanel host		= new HostScreen();
 	private JPanel join 	= new JoinScreen();
 	private JPanel waiting 	= new WaitingScreen();
-	private JPanel game 	= new GameScreen();
+	private GameScreen game = new GameScreen();
 	private JPanel winner 	= new JPanel();	// temp bc these are not yet decided
 
 	private JMenuBar menuBar;
@@ -224,17 +225,13 @@ public class ScrabbleGUI extends JFrame{
 		panels[panels.length-1] = winner;
 	}
 
-	public void setupGameScreen(Ruleset rules, Player[] player, int playerNum) {
-		this.game = new GameScreen(rules, player, playerNum);
+	public void setupGameScreen(Ruleset ruleset, String[] playerNames, Tile[] startingTiles) {
+		this.game.setupGameItems(playerNames, ruleset.getTotalTime(), ruleset.getTurnTime(), startingTiles);
 	}
 
 	// minimum size, title, close op, pack, center in screen, show.
 	private void setupFrame() {
 		this.setTitle("Scrabble");
-
-		/*GraphicsEnvironment.getLocalGraphicsEnvironment().
-				getDefaultScreenDevice().setFullScreenWindow(this);
-		*/
 		setupDimensions();
 
 		this.setMaximumSize(maximumSize);

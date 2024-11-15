@@ -163,7 +163,7 @@ public class Controller implements PropertyChangeListener  {
 		// pass ruleset and the other stuff to setUpGameScreen
 		// use the info provided to make players for the game
 
-		this.getView().getGame().setupGameItems(playerNames, ruleset.getTotalTime(), ruleset.getTurnTime(), startingTiles);
+		this.getView().setupGameScreen(ruleset, playerNames, startingTiles);
 		gameScreenController.addRackTileListeners();
 		Player[] players = new Player[playerNames.length];
 		LocalPlayer self = null;
