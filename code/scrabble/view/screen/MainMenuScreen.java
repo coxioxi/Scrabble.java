@@ -3,8 +3,8 @@ package scrabble.view.screen;
 import javax.swing.*;
 import java.awt.*;
 
-import static scrabble.view.frame.GameFrame.audioOn;
-import static scrabble.view.frame.GameFrame.fxOn;
+import static scrabble.view.frame.ScrabbleGUI.audioOn;
+import static scrabble.view.frame.ScrabbleGUI.fxOn;
 
 /**
  * MainMenuScreen represents the main menu panel in the Scrabble game,

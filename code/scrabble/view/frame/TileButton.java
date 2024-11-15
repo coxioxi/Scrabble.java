@@ -52,7 +52,7 @@ public class TileButton extends JButton {
 
         // Draw the score near the bottom-right corner of the tile.
         if (this.letterScore != null) {
-            g2.drawString(letterScore.getScore() + "", getWidth() / 2 + 8, getHeight() / 2 + 8);
+            g2.drawString(letterScore.getScore() + "", getWidth() / 2 + 5, getHeight() / 2 + 8);
         }
         else {
             g2.drawString("_", getWidth() / 2 + 8, getHeight() / 2 + 8);
