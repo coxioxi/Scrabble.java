@@ -46,18 +46,27 @@ public class Game {
 		// TODO: From ruleset, set times
 	}
 
+	/**
+	 * @return this machines player
+	 */
 	public LocalPlayer getSelf() {
 		return self;
 	}
-
+	/**
+	 * @return the array of players in the current session
+	 */
 	public Player[] getPlayers() {
 		return players;
 	}
-
+	/**
+	 * @return the board object
+	 */
 	public Board getBoard() {
 		return board;
 	}
-
+	/**
+	 * @return the ruleset from the current session
+	 */
 	public Ruleset getRuleset() {
 		return ruleset;
 	}
@@ -157,19 +166,7 @@ public class Game {
 		player.increaseScore(amount);
 	}
 
-	/*
-	this helper method returns a reference to the player object
-	whose ID is equal to the parameter
- 	*/
-	private Player getPlayer(int playerID) {
-		Player finalPlayer = null; // Variable to hold the found player
-		for(Player player: players){ // Loop through players
-			if(playerID == player.getID()){ // Check if the player ID matches
-				finalPlayer = player; // Assign the matching player
-			}
-		}
-		return finalPlayer; // Return the found player
-	}
+
 
 
 	/**
@@ -294,6 +291,10 @@ public class Game {
 		return self.getRack();
 	}
 
+	/**
+	 * checks end game criteria
+	 * @return the state of the game
+	 */
 	public boolean isGameOver() {
 		isGameOver = false;
 //		if ( self.getRack().isEmpty()) {
@@ -307,6 +308,10 @@ public class Game {
 		return isGameOver;
 	}
 
+	/**
+	 * checks to see if all players are active
+	 * @return returns the state of all players
+	 */
 	private boolean allPlayersInactive(){
 		for(Player player: players){
 			if(player.isActive()){
@@ -314,6 +319,20 @@ public class Game {
 			}
 		}
 		return true;
+	}
+
+	/**
+	 * this helper method returns a reference to the player object
+	 * 	whose ID is equal to the parameter
+	 */
+	private Player getPlayer(int playerID) {
+		Player finalPlayer = null; // Variable to hold the found player
+		for(Player player: players){ // Loop through players
+			if(playerID == player.getID()){ // Check if the player ID matches
+				finalPlayer = player; // Assign the matching player
+			}
+		}
+		return finalPlayer; // Return the found player
 	}
 
 

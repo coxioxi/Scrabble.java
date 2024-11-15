@@ -86,6 +86,10 @@ public class LocalPlayer extends Player{
 		}
 	}
 
+	/**
+	 * getter for tiles last played
+	 * @return tiles played from the previous turn
+	 */
 	public Tile[] getLastPlay() {
 		return lastPlay;
 	}
