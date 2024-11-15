@@ -5,6 +5,13 @@ import scrabble.model.Tile;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Random;
+/*
+ * Authors: Ian Boyer, David Carr, Samuel Costa,
+ * Maximus Latkovski, Jy'el Mason
+ * Course: COMP 3100
+ * Instructor: Dr. Barry Wittman
+ * Original date: 10/08/2024
+ */
 
 /**
  * Maintains the bag of tiles. Allows tiles to be randomly removed and for tiles to be added.
