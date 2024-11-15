@@ -87,8 +87,8 @@ public class Ruleset implements Serializable {
 		return challengesAllowed;
 	}
 
-	 /*
-		Reads in the words in the dictionary using the pathname given
+	/**
+	 * Reads in the words in the dictionary using the pathname given
 	 */
 	public void setupDictionary() {
 		HashSet<String> list = new HashSet<>();

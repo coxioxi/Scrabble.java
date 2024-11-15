@@ -27,7 +27,7 @@ public abstract class Message implements Serializable {
 	private final int senderID;
 
 	/**
-	 * Constructs a message with a senderID. Only to be used by subclasses
+	 * Constructs a message with a senderID.
 	 * @param senderID the ID of the message's sender.
 	 */
 	protected Message(int senderID) {
@@ -55,13 +55,20 @@ public abstract class Message implements Serializable {
 	public abstract void execute(Controller controller);
 
 	/**
-	 * This method operates on the <code>host</code> to make changes to the clients
-	 * when necessary. For example, an execution of a <code>PlayTiles</code> message
-	 * would require new tiles to be sent to the sending client and for the original message
-	 * to be relayed to other players.
+	 * Makes changes on the host.
+	 * <p>
+	 *     A common implementation would be to send a return message to the original sender,
+	 *     then to relay the original message to other clients.
+	 *     For example, an execution of a <code>PlayTiles</code> message
+	 * 	   would require new tiles to be sent to the sending client and for the original message
+	 * 	   to be relayed to other players.
+	 * </p>
+	 * <p>
+	 *     Note that this method must use public getter methods for
+	 *     all the components which should be changed.
+	 * </p>
 	 *
-	 * @param partyHost the <code>PartyHost</code> on which to make changes. Note that this object
-	 *                   must use public getter methods for all the components which should be changed.
+	 * @param partyHost the PartyHost object on which to make changes.
 	 */
 	public abstract void execute(PartyHost partyHost);
 }

@@ -21,7 +21,7 @@ public class Player {
 	private final int ID;
 	private int turnID;			// Player's ID, their turn in play
 	/*
-		hasPassedLastTurn and isActive are for the requirements on turn passing.
+		passedLastTurn and isActive are for the requirements on turn passing.
 		If a player passes two consecutive turns, they will become
 		inactive, not able to make plays on the board.
 	 */

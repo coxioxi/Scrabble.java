@@ -17,17 +17,25 @@ import java.util.*;
  */
 public class Board {
 	/**
+	 * How many rows are on the board.
+	 */
+	public static final int BOARD_ROWS = 15;
+	/**
+	 * How many columns are on the board.
+	 */
+	public static final int BOARD_COLUMNS = 15;
+
+	/**
 	 * A map of {@link ModifierType modifier cells} accessible by {@link Point}.
 	 * Calling this.get(Point) returns the type of modifier cell at that point.
 	 * Note that a null value should be treated as a non-modifier cell.
 	 */
 	public static final Map<Point,ModifierType> MODIFIER_HASH_MAP = initializeModifierCells();
-	// Constants for the number of rows and columns on the Scrabble board
-	public static final int BOARD_ROWS = 15;
-	public static final int BOARD_COLUMNS = 15;
+
 
 	private Tile[][] board;  // where Tile objects are placed
-    private ArrayList<String> lastWordsPlayed = new ArrayList<>();   // the words which have most recently been played
+    private ArrayList<String> lastWordsPlayed
+			= new ArrayList<>();   // the words which have most recently been played
 
     public static void main(String[] args) {
         /*
@@ -186,9 +194,8 @@ public class Board {
 	public void removeTiles(Tile[] tiles)
 			throws NullPointerException {
 		for (Tile tile : tiles) {
-			Point p = tile.getLocation();
-			int x = (int) p.getX();
-			int y = (int) p.getY();
+			int x = tile.getLocation().x;
+			int y = tile.getLocation().y;
 
 			// check if position is null, then check letter value
 			if (board[x][y] != null && board[x][y].getLetter() == tile.getLetter()) {
@@ -207,15 +214,6 @@ public class Board {
    	public boolean hasAdjacentCaller(Point t){
 		return hasAdjacentTile(t);
 	}
-
-	/**
-	 * Gets a reference to {@link #MODIFIER_HASH_MAP}
-	 * @return the map of Points and ModifierTypes.
-	 * @see ModifierType ModifierType
-	 */
-    public Map<Point, ModifierType> getBoardSpecialCell(){
-           return MODIFIER_HASH_MAP;
-    }
 
     /**
 	 * Validates position of tiles, scores the word(s) made, and adds the tiles to the board.
@@ -469,19 +467,11 @@ public class Board {
 			int x = placement.x;
 			int y = placement.y;
 
-			// x = row
-			// y = column
-
 			// for this tile, find the topmost connected tile
 			int topMostTile = x;
 			while (topMostTile - 1 >= 0 && board[topMostTile - 1][y] != null) {
 				topMostTile--;
 			}
-
-//			System.out.println("Horizontal collateral. topmost for tile " +
-//					tile.getLocation().x + ", " + tile.getLocation().y +
-//					" is location " + topMostTile + " with value " +
-//					(board[topMostTile][y] == null ? "none" : board[topMostTile][y].getLetter()));
 
 			// move down from topmost, accumulating score.
 			// only stop when no letters below current tile
