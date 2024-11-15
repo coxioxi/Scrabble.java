@@ -25,7 +25,7 @@ public class HostScreen extends JPanel {
     public static final String[] playerTimeChoices =
             {"2 Minutes", "3 Minutes", "4 Minutes", "5 Minutes"};
     public static final String[] challengeChoices =
-            {"Challenges on", "Challenges off"};
+            {"Disabled", "Enabled"};
     public static final String[] dictionaryChoices =
             {"Dictionary 1"};
 
@@ -153,6 +153,8 @@ public class HostScreen extends JPanel {
         // Labels and combo boxes for each customization option
         JLabel challengeLabel = new JLabel("Challenges Allowed:", SwingConstants.RIGHT);
         challengeBox = new JComboBox<>(challengeChoices);
+        challengeLabel.setEnabled(false);
+        challengeBox.setEnabled(false);
         JLabel dictionaryLabel = new JLabel("Dictionary Used:", SwingConstants.RIGHT);
         dictionaryBox = new JComboBox<>(dictionaryChoices);
         dictionaryBox.setEditable(false);

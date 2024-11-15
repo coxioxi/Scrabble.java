@@ -20,13 +20,6 @@ import java.util.Random;
 public class TileBag {
     private ArrayList<Tile> tilebag;// stores a number of a given tile
 
-    public static void main(String[] args) {
-        TileBag tb = new TileBag();
-        tb.getNext(4);
-        tb.addTiles(new Tile[]{new Tile('A')});
-        System.out.println(tb.getRemainingTiles());
-    }
-
     /**
 	 * Constructs a TileBag with the standard 100 tiles - 2 (no blanks).
      * <br>

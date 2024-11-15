@@ -233,7 +233,7 @@ public class GameScreen extends JPanel {
 	 * @return A new PlayerPanel instance for the player.
 	 */
 	private JPanel setupPlayerPanel(String name, int playerTime) {
-		return new PlayerPanel(name, 0, playerTime);
+		return new PlayerPanel(name, 0, playerTime*60);
 	}
 
 	/**

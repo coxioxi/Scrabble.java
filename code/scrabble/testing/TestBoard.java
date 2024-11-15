@@ -7,7 +7,7 @@ package scrabble.testing;
  * Original date: 10/08/2024
  */
 
-import org.junit.Assert;
+//import org.junit.Assert;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;

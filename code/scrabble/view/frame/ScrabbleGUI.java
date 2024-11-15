@@ -47,6 +47,9 @@ public class ScrabbleGUI extends JFrame{
 	private JMenuItem fxItem;
 	private JMenuItem quitItem;
 
+	public static boolean audioOn = false;
+	public static boolean fxOn = false;
+
 
 	private JPanel[] panels = new JPanel[]{
 			mainMenu, host, join, waiting, game, winner
