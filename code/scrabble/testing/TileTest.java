@@ -37,20 +37,6 @@ public class TileTest{
     }
 
     @Test
-    public void testIsNew()  {
-        int score = board.playTiles(tiles);
-
-        for (Tile tile : tiles) {
-            Assertions.assertFalse(tile.getIsNew());
-        }
-
-        for (Tile tile : tiles) {
-            tile.setIsNew(true);
-            Assertions.assertTrue(tile.getIsNew());
-        }
-    }
-
-    @Test
     public void testIsBlank(){
         Tile tile = new Tile('A');
         Assertions.assertFalse(tile.isBlank());

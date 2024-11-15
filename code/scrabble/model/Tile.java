@@ -43,7 +43,6 @@ public class Tile implements Serializable {
         this.letter = letter;                           // Assign the letter to the tile
         score = TileScore.getScoreForLetter(letter);    // Get the score for the letter
         this.isBlank = false;                           // This tile is not blank
-        this.isNew = true;                              // Mark as new since it hasn't been played
     }
 
     /**
@@ -55,7 +54,6 @@ public class Tile implements Serializable {
         this.letter = letter;                           // Assign the letter to the tile
         score = TileScore.getScoreForLetter(letter);    // Get the score for the letter
         this.isBlank = false;                           // This tile is not blank
-        this.isNew = true;                              // Mark as new since it hasn't been played
         this.location = location;                       // Assign the location of the tile
     }
 
@@ -106,32 +104,6 @@ public class Tile implements Serializable {
      * @return the Point representing the tile's location.
      */
     public Point getLocation(){return location;}
-
-    /**
-     * Sets the isNew status of the tile.
-     * @param isNew true if the tile is newly created (not played), false otherwise.
-     */
-    public void setIsNew(boolean isNew){this.isNew = isNew;}
-
-    /**
-     * Getter for the isNew status of the tile.
-     * @return true if the tile is new, false if it has been played.
-     */
-    public boolean getIsNew(){return isNew;}
-
-    /**
-     * Utility method which extracts the points from a tile set
-     * @param tiles the tiles which have points set.
-     *              All indices must be non-null; all tiles must have locations
-     * @return each point of the tile array, returned as an array of the same length.
-     */
-    public static Point[] getPoints(Tile[] tiles) {
-        Point[] points = new Point[tiles.length];
-        for (int i = 0; i < tiles.length; i++) {
-            points[i] = tiles[i].getLocation();
-        }
-        return points;
-    }
 
     @Override
     public boolean equals(Object obj) {return this.toString().equals(obj.toString());}
