@@ -305,6 +305,10 @@ public class Board {
 	*/
 	private static HashMap<Point, ModifierType> initializeModifierCells() {
 		HashMap<Point, ModifierType> cells = new HashMap<>();
+		// Set all to be none, then override important ones
+		for (int row = 0; row < BOARD_ROWS; row++)
+			for (int col = 0; col < BOARD_COLUMNS; col++)
+				cells.put(new Point(row, col), ModifierType.NONE);
 		cells.put(new Point(0,0), ModifierType.TRIPLE_WORD);
 		cells.put(new Point(3,0), ModifierType.DOUBLE_LETTER);
 		cells.put(new Point(7,0), ModifierType.TRIPLE_WORD);
