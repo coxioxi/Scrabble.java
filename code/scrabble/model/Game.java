@@ -324,7 +324,7 @@ public class Game {
 	 * this helper method returns a reference to the player object
 	 * 	whose ID is equal to the parameter
 	 */
-	private Player getPlayer(int playerID) {
+	public Player getPlayer(int playerID) {
 		Player finalPlayer = null; // Variable to hold the found player
 		for(Player player: players){ // Loop through players
 			if(playerID == player.getID()){ // Check if the player ID matches

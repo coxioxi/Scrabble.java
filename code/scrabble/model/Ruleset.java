@@ -6,10 +6,7 @@ package scrabble.model;
  * Original date: 10/08/2024
  */
 
-import java.io.File;
-import java.io.IOException;
-import java.io.Serial;
-import java.io.Serializable;
+import java.io.*;
 import java.util.Scanner;
 
 import java.util.HashSet;
@@ -27,7 +24,7 @@ public class Ruleset implements Serializable {
 	private final int turnTime;					// Time allotted per turn for each player (in seconds)
 	private final boolean challengesAllowed;	// Indicates if challenges are allowed during gameplay
 	private final String dictionaryFileName;	// Path to the dictionary file
-	private HashSet<String> dictionary;			// Set of valid words from the dictionary
+	private transient HashSet<String> dictionary;			// Set of valid words from the dictionary
 
 
 	/**
@@ -45,7 +42,7 @@ public class Ruleset implements Serializable {
 		this.turnTime = turnTime;						// Initialize turn time
 		this.challengesAllowed = challengesAllowed;		// Set challenge allowed
 		this.dictionaryFileName = dictionaryFileName;	// Set dictionary file name
-		//dictionary = readInDictionary();				// Load words from the dictionary file
+		setupDictionary();				// Load words from the dictionary file
 	}
 
 	/**
@@ -104,5 +101,9 @@ public class Ruleset implements Serializable {
 		this.dictionary = list;
 	}
 
-
+	@Serial
+	private void readObject(ObjectInputStream in) throws ClassNotFoundException, IOException {
+		in.defaultReadObject();
+		this.setupDictionary();
+	}
 }

@@ -187,7 +187,6 @@ public class GameScreen extends JPanel {
 			boardPanel.setBoardCell(tb, x, y);
 			boardPanel.disableBoardCell(x, y);
 		}
-
 	}
 
 	/**
@@ -195,7 +194,7 @@ public class GameScreen extends JPanel {
 	 *
 	 * @param tile The tile to be removed.
 	 */
-	public void removeRackTile(Tile tile) {
+	public void removeTileFromRack(Tile tile) {
 		RackPanel rackPanel = this.rackPanel;
 		for (TilePanel tp : rackPanel.getTilePanels()) {
 			if (tp.getButton().getText().equals("" + tile.getLetter())) {

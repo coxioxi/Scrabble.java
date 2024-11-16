@@ -25,4 +25,13 @@ public class HostScreenController {
 		parent.sendRulesToHost(challengesEnabled, dictionaryFile, playerTime, gameTime);
 		parent.showGame();
 	}
+
+	public void setIPandPort(String IP, int port) {
+		hostScreen.getHostsIP().setText(IP);
+		hostScreen.getHostPort().setText(port+"");
+	}
+
+	public void addPlayer(String name) {
+		hostScreen.addPlayerName(name);
+	}
 }

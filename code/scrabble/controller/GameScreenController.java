@@ -14,7 +14,6 @@ import scrabble.view.screen.component.TilePanel;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionListener;
-import java.util.Arrays;
 
 public class GameScreenController {
 	private final Controller parent;
@@ -26,7 +25,23 @@ public class GameScreenController {
 		addActionListeners();
 	}
 
-	public void addTiles(Tile[] tiles) {
+	public void setupGameItems(String[] names, int gameTime, int turnTime, Tile[] startingTiles) {
+		gameScreen.setupGameItems(names, gameTime, turnTime, startingTiles);
+	}
+
+	public void disableLastPlayedTiles() {
+		gameScreen.disableLastPlayedTiles();
+	}
+
+	public void addToBoard(Tile[] tiles) {
+		gameScreen.addToBoard(tiles);
+	}
+
+	public void updateScore(String name, int newScore) {
+		gameScreen.updateScore(name, newScore);
+	}
+
+	public void addRackTiles(Tile[] tiles) {
 		gameScreen.addTilesToRack(tiles);
 		removeRackTileListeners();
 		addRackTileListeners();
@@ -37,6 +52,13 @@ public class GameScreenController {
 		for (int i = 0; i < 7; i++) {
 			TilePanel tilePanel = rackPanel.getTilePanels()[i];
 			removeActionListeners(tilePanel.getButton());
+		}
+	}
+
+	public void resetLastPlay() {
+		int size = gameScreen.getPlayedTiles().size();
+		for (int i = 0; i < size; ++i){
+			removeTile(gameScreen.getPlayedTiles().get(0));
 		}
 	}
 
