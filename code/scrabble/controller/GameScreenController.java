@@ -52,7 +52,7 @@ public class GameScreenController {
 	}
 
 	private void quitMenuClick() {
-		if (parent.showQuitDialog() == JOptionPane.YES_OPTION) parent.showMain();
+		if (parent.showQuitDialog() == JOptionPane.YES_OPTION) parent.exit();
 	}
 
 	private void fxMenuClick() {

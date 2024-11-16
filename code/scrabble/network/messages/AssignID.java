@@ -1,6 +1,7 @@
 package scrabble.network.messages;
 /*
- * Authors: Ian Boyer, David Carr, Samuel Costa, Maximus Latkovski, Jy'el Mason
+ * Authors: Ian Boyer, David Carr, Samuel Costa,
+ * Maximus Latkovski, Jy'el Mason
  * Course: COMP 3100
  * Instructor: Dr. Barry Wittman
  * Original date: 10/08/2024
@@ -10,7 +11,7 @@ import scrabble.controller.Controller;
 import scrabble.network.host.PartyHost;
 
 /**
- * This class is responsible for assigning IDs to players
+ * This class is responsible for assigning IDs to players.
  */
 public class AssignID extends Message{
 	private int playerID;
