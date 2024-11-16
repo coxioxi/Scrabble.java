@@ -98,11 +98,6 @@ public class GameScreen extends JPanel {
 		playedTiles.add(t);
 	}
 
-	//TODO: implement this method
-	public GameScreen(Ruleset rules, Player[] player, int playerNum) {
-
-	}
-
 	/**
 	 * @return The center panel containing the game board.
 	 */
@@ -159,6 +154,12 @@ public class GameScreen extends JPanel {
 	 */
 	public JButton getSubmitButton() {
 		return submitButton;
+	}
+
+	public JButton removeButtonFromRack(int col) {
+		JButton b = tilePanels[col].getButton();
+		tilePanels[col].setButton(new JButton(" "));
+		return b;
 	}
 
 
@@ -359,6 +360,4 @@ public class GameScreen extends JPanel {
 			tp.setButton(new JButton(" "));
 		}
 	}
-
-
 }

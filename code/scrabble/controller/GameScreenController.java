@@ -44,9 +44,7 @@ public class GameScreenController {
 		view.getQuitItem().addActionListener(e -> quitMenuClick());
 	}
 
-	public void addToBoard(Tile[] tiles) {
-		gameScreen.addToBoard(tiles);
-	}
+	public void addToBoard(Tile[] tiles) { gameScreen.addToBoard(tiles); }
 
 	public void removeTileFromBoard(Tile tile){ boardCellClick(tile.getLocation().x, tile.getLocation().y); }
 
@@ -86,6 +84,10 @@ public class GameScreenController {
 		}
 	}
 
+	/*
+	 * private methods
+	 */
+
 	private void removeRackTileListeners() {
 		for (int i = 0; i < GameScreen.RACK_SIZE; i++) {
 			gameScreen.removeRackTileActionListeners(i);
@@ -119,7 +121,7 @@ public class GameScreenController {
 		}
 	}
 
-	public void addRackTileListeners(){
+	private void addRackTileListeners(){
 		for (int col = 0; col < 7; col++) {
 			addTilePanelListener(col);
 		}
@@ -137,22 +139,13 @@ public class GameScreenController {
 
 	private void addTilePanelListener(int col) { gameScreen.addRackTileActionListener(col, e -> tilePanelClick(col)); }
 	private void tilePanelClick(int col) {
-		RackPanel rackPanel = gameScreen.getRackPanel();
-		TilePanel tilePanel = rackPanel.getTilePanels()[col];
-		JButton value = gameScreen.getValue();
-		if(value instanceof TileButton){
-			boolean foundBlank = false;
-			for (int j = 0; j < 7 && !foundBlank; j++){
-				TilePanel tile = rackPanel.getTilePanels()[j];
-				if(!(tile.getButton() instanceof TileButton)){
-					tile.setButton(value);
-					foundBlank = true;
-				}
-			}
+		if (gameScreen.getValue() instanceof TileButton) {
+			int index = gameScreen.addTileButtonToRack((TileButton) gameScreen.getValue());
+			gameScreen.removeRackTileActionListeners(index);
+			gameScreen.addRackTileActionListener(index, e -> tilePanelClick(index));
 		}
-		gameScreen.setValue(tilePanel.getButton());
-		tilePanel.setButton(new JButton(" "));
-//		System.out.println(gameScreen.getValue());
+		JButton removed = gameScreen.removeButtonFromRack(col);
+		gameScreen.setValue(removed);
 	}
 
 	private void addBoardCellPanelListener(BoardPanel boardPanel, int row, int col) { boardPanel.addActionListener(e -> boardCellClick(row, col), row, col); }
