@@ -78,12 +78,6 @@ public class ScrabbleGUI extends JFrame{
 		}
 		layoutManager.first(contentPane);
 
-		try {
-			// Set the look and feel to the system's default
-			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-		} catch (ClassNotFoundException | InstantiationException |
-				 IllegalAccessException | UnsupportedLookAndFeelException ignore) {}
-
 		this.setMaximumSize(maximumSize);
 		setupFrame();
 //		Dimension cpDim = ((GameScreen)game).getCenterPanel().getSize();

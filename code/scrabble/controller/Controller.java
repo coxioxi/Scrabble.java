@@ -73,6 +73,7 @@ public class Controller implements PropertyChangeListener  {
 	 * The game is not yet initialized, as on screen changes must be made.
 	 */
 	public Controller() {
+		try { UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName()); } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException ignore) {}
 		view = new ScrabbleGUI();
 		view.setDefaultCloseOperation(
 				WindowConstants.DO_NOTHING_ON_CLOSE
@@ -120,7 +121,7 @@ public class Controller implements PropertyChangeListener  {
 
 	/**
 	 * Initializes a <code>PartyHost</code> to manage network server issues and
-	 * updates the GUI's state.
+	 * updates the GUI's state to reflect changes.
 	 *
 	 * @param name the name of the player who is hosting.
 	 * @throws IOException if an error occurs in setting up the <code>PartyHost</code>
@@ -128,16 +129,14 @@ public class Controller implements PropertyChangeListener  {
 	public void setUpHost(String name) throws IOException {
 		host = new PartyHost(PORT);
 		host.start();
-		HostScreen hostScreen = view.getHost();
-		hostScreen.getHostsIP().setText(host.getIPAddress());
-		hostScreen.getHostPort().setText(""+host.getPort());
-		setupSocket(host.getIPAddress(), host.getPort());
+		String IP = host.getIPAddress();
+		int port = host.getPort();
+		hostScreenController.setIPandPort(IP, port);
+		setupSocket(IP, port);
 		try {
 			messenger.sendMessage(new NewPlayer(selfID, selfID, name));
-		} catch (IOException e) {
-			throw new RuntimeException(e);
-		}
-		hostScreen.addPlayerName(name);
+		} catch (IOException e) { throw new RuntimeException(e); }
+		hostScreenController.addPlayer(name);
 	}
 
 	/**
@@ -149,7 +148,8 @@ public class Controller implements PropertyChangeListener  {
 	 * @param playerTime how many seconds a player has to make their turn
 	 * @param gameTime how many seconds the game may last
 	 */
-	public void sendRulesToHost(boolean challengesAllowed, String dictionary, int playerTime, int gameTime) {
+	public void sendRulesToHost(boolean challengesAllowed, String dictionary,
+								int playerTime, int gameTime) {
 		Ruleset ruleset = new Ruleset(gameTime, playerTime, challengesAllowed, dictionary);
 		host.startGame(ruleset);
 	}
@@ -167,21 +167,20 @@ public class Controller implements PropertyChangeListener  {
 		// pass ruleset and the other stuff to setUpGameScreen
 		// use the info provided to make players for the game
 
-		this.getView().getGame().setupGameItems(playerNames, ruleset.getTotalTime(), ruleset.getTurnTime(), startingTiles);
+		gameScreenController.setupGameItems(playerNames, ruleset.getTotalTime(), ruleset.getTurnTime(), startingTiles);
 		gameScreenController.addRackTileListeners();
 		Player[] players = new Player[playerNames.length];
 		LocalPlayer self = null;
 		for (int i = 0; i < players.length; i++) {
 			if (playerID[i] == this.selfID) {
 				self = new LocalPlayer(playerNames[i], playerID[i], i, new ArrayList<>(List.of(startingTiles)));
-
 			}
 			players[i] = new Player(playerNames[i], playerID[i], i);
 		}
 		ruleset.setupDictionary();
 		model = new Game(players, new Board(), ruleset, self);
-		showGame();
 		if (model.getCurrentPlayer() != selfID) gameScreenController.setRackButtonsEnabled(false);
+		this.showGame();
 	}
 
 	/**
@@ -191,7 +190,6 @@ public class Controller implements PropertyChangeListener  {
 	public void addTiles(Tile[] tiles) {
 		model.addTiles(tiles);
 		gameScreenController.addTiles(tiles);
-//		gameScreenController.setRackButtonsEnabled(false);
 	}
 
 	/**

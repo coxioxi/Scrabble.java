@@ -26,6 +26,10 @@ public class GameScreenController {
 		addActionListeners();
 	}
 
+	public void setupGameItems(String[] names, int gameTime, int turnTime, Tile[] startingTiles) {
+		gameScreen.setupGameItems(names, gameTime, turnTime, startingTiles);
+	}
+
 	public void addTiles(Tile[] tiles) {
 		gameScreen.addTilesToRack(tiles);
 		removeRackTileListeners();
