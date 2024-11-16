@@ -164,7 +164,7 @@ public class GameScreen extends JPanel {
 		// Setup player panels
 		for (int i = 0; i < playerNames.length; i++) {
 			playerPanels[i] = (PlayerPanel) setupPlayerPanel(playerNames[i], playerTime);
-			if (i > 0 && i < 3) {
+			if (i == 1 || i == 2) {
 				eastPanel.add(playerPanels[i]);
 			} else {
 				westPanel.add(playerPanels[i]);
@@ -174,6 +174,8 @@ public class GameScreen extends JPanel {
 		addTilesToRack(rackTiles);
 
 		this.gameTime.setText(gameTime + ":00");
+		this.revalidate();
+		this.repaint();
 	}
 
 	public void addToBoard(Tile[] tiles) {
