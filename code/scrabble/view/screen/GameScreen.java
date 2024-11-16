@@ -7,6 +7,7 @@ package scrabble.view.screen;
  * Original date: 10/08/2024
  */
 
+import scrabble.controller.GameScreenController;
 import scrabble.model.*;
 import scrabble.view.frame.TileButton;
 import scrabble.view.screen.component.BoardPanel;
@@ -17,6 +18,7 @@ import scrabble.view.screen.component.TilePanel;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -49,7 +51,7 @@ public class GameScreen extends JPanel {
 	private PlayerPanel[] playerPanels;
 
 	// List of tiles that have been played in the current turn
-	public List<Tile> playedTiles = new ArrayList<>();
+	private List<Tile> playedTiles = new ArrayList<>();
 	private JButton value = new JButton(" ");
 
 	/**
@@ -86,6 +88,14 @@ public class GameScreen extends JPanel {
 			boardPanel.disableBoardCell(t.getLocation().x, t.getLocation().y);
 		}
 		playedTiles = new ArrayList<>();
+	}
+
+	public void removeFromPlayedTiles(Tile tile) {
+		playedTiles.remove(tile);
+	}
+
+	public void addToPlayedTiles(Tile t) {
+		playedTiles.add(t);
 	}
 
 	//TODO: implement this method
@@ -226,6 +236,25 @@ public class GameScreen extends JPanel {
 		}
 	}
 
+	public int addTileButtonToRack(TileButton t) {
+		int index = -1;
+		for (int i = 0; i < tilePanels.length && index == -1; i++) {
+			if (!(tilePanels[i].getButton() instanceof TileButton)) {
+				tilePanels[i].setButton(t);
+				index = i;
+			}
+		}
+		return index;
+	}
+
+	public void addRackTileActionListener(int index, ActionListener al) {
+		tilePanels[index].getButton().addActionListener(al);
+	}
+
+	public void removeRackTileActionListeners(int index) {
+		GameScreenController.removeActionListeners(tilePanels[index].getButton());
+	}
+
 	/**
 	 * Sets up a PlayerPanel with the specified player's name and time.
 	 *
@@ -330,4 +359,6 @@ public class GameScreen extends JPanel {
 			tp.setButton(new JButton(" "));
 		}
 	}
+
+
 }
