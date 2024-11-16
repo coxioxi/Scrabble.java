@@ -8,7 +8,6 @@ import scrabble.network.messages.NewPlayer;
 import scrabble.network.messages.PlayTiles;
 import scrabble.view.frame.ScrabbleGUI;
 import scrabble.view.screen.*;
-import scrabble.view.screen.GameScreen;
 import scrabble.view.screen.component.RackPanel;
 import scrabble.view.screen.component.TilePanel;
 
@@ -189,7 +188,7 @@ public class Controller implements PropertyChangeListener  {
 	 */
 	public void addTiles(Tile[] tiles) {
 		model.addTiles(tiles);
-		gameScreenController.addTiles(tiles);
+		gameScreenController.addRackTiles(tiles);
 	}
 
 	/**
@@ -206,21 +205,18 @@ public class Controller implements PropertyChangeListener  {
 	}
 	private void otherPlayTiles(int playerID, Tile[] tiles) {
 		model.playTiles(playerID, tiles);
-		view.getGame().addToBoard(tiles);
-		Player player = null;
-		for (Player player1 : model.getPlayers()) {
-			if (player1.getID() == playerID) player = player1;
-		}
-		view.getGame().updateScore(player.getName(), player.getScore());
+		gameScreenController.addToBoard(tiles);
+		Player player = model.getPlayer(playerID);
+		gameScreenController.updateScore(player.getName(), player.getScore());
 	}
 	private void selfPlayTiles(Tile[] tiles) {
-
 		int score = model.playTiles(selfID, tiles);
 		if (score >= 0) {
-			view.getGame().updateScore(model.getSelf().getName(), model.getSelf().getScore());
+			Player p = model.getSelf();
+			gameScreenController.updateScore(p.getName(), p.getScore());
 			try {
-				getMessenger().sendMessage(new PlayTiles(selfID, selfID, tiles));
-				getView().getGame().disableLastPlayedTiles();
+				messenger.sendMessage(new PlayTiles(selfID, selfID, tiles));
+				gameScreenController.disableLastPlayedTiles();
 			} catch (IOException e) {
 				getMessenger().halt();
 			}
@@ -235,10 +231,7 @@ public class Controller implements PropertyChangeListener  {
 	 */
 	public void resetLastPlay(){
 		//loop through the rack
-		int size = this.view.getGame().playedTiles.size();
-		for (int i = 0; i < size; ++i){
-			gameScreenController.removeTile(view.getGame().playedTiles.get(0));
-		}
+		gameScreenController.resetLastPlay();
 	}
 
 	/**
