@@ -1,7 +1,6 @@
 package scrabble.network.messages;
 /*
- * Authors: Ian Boyer, David Carr, Samuel Costa,
- * Maximus Latkovski, Jy'el Mason
+ * Authors: Ian Boyer, David Carr, Samuel Costa, Maximus Latkovski, Jy'el Mason
  * Course: COMP 3100
  * Instructor: Dr. Barry Wittman
  * Original date: 10/08/2024
@@ -26,14 +25,6 @@ public abstract class Message implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	private final int senderID;
-
-	/**
-	 * Prints a String representation of a message to the console.
-	 * @param message the message to be printed
-	 */
-	public static void printInstance(Message message) {
-		System.out.println(message);
-	}
 
 	/**
 	 * Constructs a message with a senderID.
