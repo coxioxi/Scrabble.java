@@ -14,6 +14,7 @@ import scrabble.view.frame.TileButton;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionListener;
 
 /**
  * BoardPanel is a JPanel that represents the game board in Scrabble.
@@ -21,6 +22,7 @@ import java.awt.*;
  */
 public class BoardPanel extends JPanel {
 	public static final Color MODIFIER_CELL_TEXT_COLOR = new Color(255, 255, 255);
+	public static final Color BOARDER_COLOR = new Color(112, 109, 109);
 
 	// Constants for panel size percentages
 	public static final float MAXIMUM_PANEL_SIZE_PERCENT = .55f;
@@ -58,7 +60,7 @@ public class BoardPanel extends JPanel {
 		this.setMaximumSize(maxPanelSize);
 
 		// Set the background color of the board panel
-		this.setBackground(new Color(112, 109, 109));
+		this.setBackground(BOARDER_COLOR);
 
 		// Set the layout as a grid for the board cells
 		this.setLayout(new GridLayout(Board.BOARD_ROWS,Board.BOARD_COLUMNS,SPACING,SPACING));
@@ -155,18 +157,93 @@ public class BoardPanel extends JPanel {
 	 */
 	public void disableBoardCell(int row, int col) {
 		JButton button = boardCells[row][col].getBoardButton();
-		 button.setEnabled(false);
+		button.setEnabled(false);
 		GameScreenController.removeActionListeners(button);
 	}
 
-	/**
-	 * Retrieves a specific BoardCellPanel from the board.
-	 *
-	 * @param row the row index of the cell
-	 * @param col the column index of the cell
-	 * @return the BoardCellPanel at the specified position
-	 */
-	public BoardCellPanel getBoardCell(int row, int col) {
-		return boardCells[row][col];
+	public void removeActionListeners(int row, int col) {
+		JButton button = boardCells[row][col].getBoardButton();
+		for (ActionListener al : button.getActionListeners()) {
+			button.removeActionListener(al);
+		}
 	}
+
+	public void addActionListener(ActionListener al, int row, int col) {
+		boardCells[row][col].addActionListener(al);
+	}
+
+	public boolean instanceOfTileButton(int row, int col) {
+		return (boardCells[row][col].getBoardButton() instanceof TileButton);
+	}
+
+	public String getButtonText(int row, int col) {
+		return boardCells[row][col].getBoardButton().getText();
+	}
+
+	public JButton getButton(int row, int col) {
+		return boardCells[row][col].getBoardButton();
+	}
+
+	/**
+	 * A panel that holds a single JButton representing a cell on the Scrabble board.
+	 */
+	private static class BoardCellPanel extends JPanel {
+		// The button representing the cell in the panel.
+		private JButton boardButton;
+
+		/**
+		 * Constructor that initializes the panel with a given button.
+		 *
+		 * @param button The button to be added to this panel.
+		 */
+		public BoardCellPanel(JButton button) {
+			// Set a layout manager with zero horizontal and vertical gaps.
+			FlowLayout manager = new FlowLayout();
+			manager.setHgap(0);
+			manager.setVgap(0);
+			this.setLayout(manager);
+
+			// Set the button for the panel.
+			this.setBoardButton(button);
+			//this.setPreferredSize(new Dimension(25, 25));
+		}
+
+		/**
+		 * Replaces the current button in the panel with a new button.
+		 *
+		 * @param boardButton The new button to be set in the panel.
+		 */
+		public void setBoardButton(JButton boardButton) {
+			// Remove the existing button, if present.
+			if (this.boardButton != null) this.remove(this.boardButton);
+
+			// Set the new button and adjust its font properties.
+			this.boardButton = boardButton;
+			this.boardButton.setFont(getFont().deriveFont(Font.BOLD, 15f));
+			//this.boardButton.setPreferredSize(new Dimension(22, 22));
+
+			// Add the new button to the panel and refresh the panel's state.
+			this.add(this.boardButton);
+			this.revalidate();
+			this.repaint();
+		}
+
+		/**
+		 * Gets the button currently in the panel.
+		 *
+		 * @return The JButton in the panel.
+		 */
+		public JButton getBoardButton() {
+			return boardButton;
+		}
+
+		/**
+		 * Adds an <code>ActionListener</code> to the button contained in this panel.
+		 * @param al the action listener to add to the button.
+		 */
+		public void addActionListener(ActionListener al) {
+			boardButton.addActionListener(al);
+		}
+	}
+
 }
