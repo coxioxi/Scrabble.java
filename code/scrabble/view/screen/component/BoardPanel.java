@@ -20,20 +20,7 @@ import java.awt.*;
  * It initializes and displays a grid of BoardCellPanels with appropriate colors and labels.
  */
 public class BoardPanel extends JPanel {
-	// Constant colors for different cell types on the board
-	public static final Color DOUBLE_WORD_COLOR = new Color(154, 75, 75);
-	public static final Color TRIPLE_WORD_COLOR = new Color(177, 19, 19);
-	public static final Color DOUBLE_LETTER_COLOR = new Color(57, 70, 140);
-	public static final Color TRIPLE_LETTER_COLOR = new Color(25, 43, 147);
-	public static final Color NORMAL_CELL_COLOR = new Color(221, 221, 221);
 	public static final Color MODIFIER_CELL_TEXT_COLOR = new Color(255, 255, 255);
-
-	// Text for various cell types
-	public static final String DOUBLE_WORD_TEXT = "DW";
-	public static final String TRIPLE_WORD_TEXT = "TW";
-	public static final String DOUBLE_LETTER_TEXT = "DL";
-	public static final String TRIPLE_LETTER_TEXT = "TL";
-	public static final String NORMAL_CELL_TEXT = " ";
 
 	// Constants for panel size percentages
 	public static final float MAXIMUM_PANEL_SIZE_PERCENT = .55f;
@@ -58,12 +45,6 @@ public class BoardPanel extends JPanel {
 	 * sets up dimensions, and adds cell panels.
 	 */
 	public BoardPanel() {
-		try {
-			// Set the look and feel to the system's appearance
-			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-		} catch (ClassNotFoundException | InstantiationException |
-				 IllegalAccessException | UnsupportedLookAndFeelException ignore) {}
-
 		// Get the screen dimensions from the default graphics environment
 		GraphicsDevice gd = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
 		environmentWidth = gd.getDisplayMode().getWidth();
@@ -109,10 +90,8 @@ public class BoardPanel extends JPanel {
 		boardCells = new BoardCellPanel[Board.BOARD_ROWS][Board.BOARD_COLUMNS];
 		for (int row = 0; row < Board.BOARD_ROWS; row++) {
 			for (int col = 0; col < Board.BOARD_COLUMNS; col++) {
-				JButton cell = new JButton();
-//				setButtonSizes(cell);
-//				cell.setFont(getFont().deriveFont(4f));
 				// Sets color and text based on the type of modifier for the cell
+				JButton cell = new JButton();
 				setColorAndText(cell, row, col);
 
 				// Create a BoardCellPanel for each cell and add it to the panel
@@ -144,56 +123,12 @@ public class BoardPanel extends JPanel {
 	 */
 	private void setColorAndText(JButton button, int row, int col) {
 		ModifierType mt = Board.MODIFIER_HASH_MAP.get(new Point(row, col));
-		button.setBackground(getColor(mt));
-		button.setText(getText(mt));
+		button.setBackground(mt.getColor());
+		button.setText(mt.getAbbreviation());
 		button.setForeground(MODIFIER_CELL_TEXT_COLOR);
 		button.setBorderPainted(false);
 	}
 
-
-	/**
-	 * Returns the color associated with a given modifier type.
-	 *
-	 * @param mt the modifier type
-	 * @return the color representing the modifier type
-	 */
-	private Color getColor(ModifierType mt) {
-		Color color;
-		if (mt == ModifierType.DOUBLE_WORD) {
-			color = DOUBLE_WORD_COLOR;
-		} else if (mt == ModifierType.TRIPLE_WORD) {
-			color = TRIPLE_WORD_COLOR;
-		} else if (mt == ModifierType.DOUBLE_LETTER) {
-			color = DOUBLE_LETTER_COLOR;
-		} else if (mt == ModifierType.TRIPLE_LETTER) {
-			color = TRIPLE_LETTER_COLOR;
-		} else {
-			color = NORMAL_CELL_COLOR;
-		}
-		return color;
-	}
-
-	/**
-	 * Returns the text associated with a given modifier type.
-	 *
-	 * @param mt the modifier type
-	 * @return the text representing the modifier type
-	 */
-	private String getText(ModifierType mt) {
-		String text;
-		if (mt == ModifierType.DOUBLE_WORD) {
-			text = DOUBLE_WORD_TEXT;
-		} else if (mt == ModifierType.TRIPLE_WORD) {
-			text = TRIPLE_WORD_TEXT;
-		} else if (mt == ModifierType.DOUBLE_LETTER) {
-			text = DOUBLE_LETTER_TEXT;
-		} else if (mt == ModifierType.TRIPLE_LETTER) {
-			text = TRIPLE_LETTER_TEXT;
-		} else {
-			text = NORMAL_CELL_TEXT;
-		}
-		return text;
-	}
 
 	/**
 	 * Updates a cell at a specified row and column with a new button.

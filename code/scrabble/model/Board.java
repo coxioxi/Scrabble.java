@@ -269,19 +269,11 @@ public class Board {
         for (int i = 0; i < board.length; i++) {
             for (int j = 0; j < board.length; j++) {
                 if (board[i][j] == null) {
-
-                    // Get modifier for special cells like Double Word, Triple Word, etc.
-                    ModifierType mt = MODIFIER_HASH_MAP.get(new Point(i, j));
-                    if (mt == ModifierType.DOUBLE_WORD)
-                        sb.append(" DW ");
-                    else if (mt == ModifierType.TRIPLE_WORD)
-                        sb.append(" TW ");
-                    else if (mt == ModifierType.DOUBLE_LETTER)
-                        sb.append(" DL ");
-                    else if (mt == ModifierType.TRIPLE_LETTER)
-                        sb.append(" TL ");
+					ModifierType mt = MODIFIER_HASH_MAP.get(new Point(i, j));
+                    if (mt == ModifierType.NONE)
+						sb.append(" __ ");
                     else
-                        sb.append(" __ ");
+                        sb.append(' ').append(mt.getAbbreviation()).append(' ');
                 }
                 else {
                     // Append the letter of the tile at the current position
@@ -484,17 +476,10 @@ public class Board {
 					currentWord.append(boardTile.getLetter());
 				} else {                          // if topMost is tile to be placed
 					ModifierType cellMod = MODIFIER_HASH_MAP.get(placement);
-					int letterMultiplier = 1;
-					if (cellMod == ModifierType.DOUBLE_LETTER) {
-						letterMultiplier *= 2;
-					} else if (cellMod == ModifierType.TRIPLE_LETTER) {
-						letterMultiplier *= 3;
-					} else if (cellMod == ModifierType.DOUBLE_WORD) {
-						wordMultiplier *= 2;
-					} else if (cellMod == ModifierType.TRIPLE_WORD) {
-						wordMultiplier *= 3;
-					}
-					currentWordScore += letterMultiplier * tile.getScore();
+
+					wordMultiplier *= (cellMod.isAppliesToWord() ? cellMod.getMultiplier() : 1);
+					currentWordScore += tile.getScore() * (!cellMod.isAppliesToWord() ? cellMod.getMultiplier() : 1);
+
 					currentWord.append(tile.getLetter());
 				}
 				topMostTile++;      // move down
@@ -591,20 +576,10 @@ public class Board {
             // Handle modifiers on current tile's cell, add tile value to counter
             // Add letter to string at end
             ModifierType cellMod = MODIFIER_HASH_MAP.get(placement);
-            int letterMultiplier = 1;
-            if (cellMod == ModifierType.DOUBLE_LETTER) {
-                letterMultiplier *= 2;
-            }
-            else if (cellMod == ModifierType.TRIPLE_LETTER) {
-                letterMultiplier *= 3;
-            }
-            else if (cellMod == ModifierType.DOUBLE_WORD) {
-                wordMultiplier *= 2;
-            }
-            else if (cellMod == ModifierType.TRIPLE_WORD) {
-                wordMultiplier *= 3;
-            }
-            mainWordScore += letterMultiplier*current.getScore();
+
+			wordMultiplier *= (cellMod.isAppliesToWord() ? cellMod.getMultiplier() : 1);
+			mainWordScore += current.getScore() * (!cellMod.isAppliesToWord() ? cellMod.getMultiplier() : 1);
+
             mainWordString.append(current.getLetter());
         }
         // check if tiles are to right, add to score
@@ -690,17 +665,10 @@ public class Board {
 					currentWord.append(boardTile.getLetter());
 				} else {                          // if leftMost is tile to be placed
 					ModifierType cellMod = MODIFIER_HASH_MAP.get(placement);
-					int letterMultiplier = 1;
-					if (cellMod == ModifierType.DOUBLE_LETTER) {
-						letterMultiplier *= 2;
-					} else if (cellMod == ModifierType.TRIPLE_LETTER) {
-						letterMultiplier *= 3;
-					} else if (cellMod == ModifierType.DOUBLE_WORD) {
-						wordMultiplier *= 2;
-					} else if (cellMod == ModifierType.TRIPLE_WORD) {
-						wordMultiplier *= 3;
-					}
-					currentWordScore += letterMultiplier * tile.getScore();
+
+					wordMultiplier *= (cellMod.isAppliesToWord() ? cellMod.getMultiplier() : 1);
+					currentWordScore += tile.getScore() * (!cellMod.isAppliesToWord() ? cellMod.getMultiplier() : 1);
+
 					currentWord.append(tile.getLetter());
 				}
 				leftMostTile++;
@@ -800,22 +768,11 @@ public class Board {
 
             // Handle modifiers on current tile's cell, add tile value to counter
             // Add letter to string at end
-            ModifierType cellMod = MODIFIER_HASH_MAP.get(placement);
-            //System.out.println(cellMod);
-            int letterMultiplier = 1;
-            if (cellMod == ModifierType.DOUBLE_LETTER) {
-                letterMultiplier *= 2;
-            }
-            else if (cellMod == ModifierType.TRIPLE_LETTER) {
-                letterMultiplier *= 3;
-            }
-            else if (cellMod == ModifierType.DOUBLE_WORD) {
-                wordMultiplier *= 2;
-            }
-            else if (cellMod == ModifierType.TRIPLE_WORD) {
-                wordMultiplier *= 3;
-            }
-            mainWordScore += letterMultiplier*current.getScore();
+			ModifierType cellMod = MODIFIER_HASH_MAP.get(placement);
+
+			wordMultiplier *= (cellMod.isAppliesToWord() ? cellMod.getMultiplier() : 1);
+			mainWordScore += current.getScore() * (!cellMod.isAppliesToWord() ? cellMod.getMultiplier() : 1);
+
             mainWordString.append(current.getLetter());
         }
         // check if tiles are below, add to score
