@@ -14,7 +14,7 @@
  *     the party host for convenience.
  * </p>
  * <p>
- * @see scrabble.network networking package
+ * @see scrabble.network.messages messages
  * </p>
  */
 package scrabble.controller;

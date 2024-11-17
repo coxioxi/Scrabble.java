@@ -21,13 +21,19 @@ import java.awt.event.ActionListener;
  * It initializes and displays a grid of BoardCellPanels with appropriate colors and labels.
  */
 public class BoardPanel extends JPanel {
+	/** The color of the text used for board modifier cells. */
 	public static final Color MODIFIER_CELL_TEXT_COLOR = new Color(255, 255, 255);
+	/**
+	 * The color of the <code>JPanel</code> holding cells.
+	 * This color fills in the gaps between cells and surrounds the board.
+	 */
 	public static final Color BOARDER_COLOR = new Color(112, 109, 109);
 
 	// Constants for panel size percentages
 	public static final float MAXIMUM_PANEL_SIZE_PERCENT = .55f;
 	public static final float PREFERRED_PANEL_SIZE_PERCENT = .40f;
 	public static final float MINIMUM_PANEL_SIZE_PERCENT = .2f;
+	/** Spacing between board cells. */
 	public static final int SPACING = 3;
 	public static final float MAXIMUM_CELL_PERCENT = .04f;
 	public static final float PREFERRED_CELL_PERCENT = .025f;
@@ -43,8 +49,7 @@ public class BoardPanel extends JPanel {
 				maxCellSize, preferredCellSize, minCellSize;
 
 	/**
-	 * Constructor for the BoardPanel class. Initializes the board panel,
-	 * sets up dimensions, and adds cell panels.
+	 * Initializes the board panel, sets up dimensions, and adds cell panels.
 	 */
 	public BoardPanel() {
 		// Get the screen dimensions from the default graphics environment
@@ -105,10 +110,8 @@ public class BoardPanel extends JPanel {
 	}
 
 
-	/**
+	/*
 	 * Sets the sizes for a given button to match the cell dimensions.
-	 *
-	 * @param button the button whose size is to be set
 	 */
 	private void setButtonSizes(JComponent button) {
 		button.setMaximumSize(maxCellSize);
@@ -116,12 +119,8 @@ public class BoardPanel extends JPanel {
 		button.setMinimumSize(minCellSize);
 	}
 
-	/**
+	/*
 	 * Sets the color and text of a button based on its modifier type.
-	 *
-	 * @param button the button to customize
-	 * @param row    the row index of the cell
-	 * @param col    the column index of the cell
 	 */
 	private void setColorAndText(JButton button, int row, int col) {
 		ModifierType mt = Board.MODIFIER_HASH_MAP.get(new Point(row, col));
@@ -152,8 +151,8 @@ public class BoardPanel extends JPanel {
 	/**
 	 * Disables a cell at a specific position on the board.
 	 *
-	 * @param row the row index of the cell
-	 * @param col the column index of the cell
+	 * @param row the row index of the cell.
+	 * @param col the column index of the cell.
 	 */
 	public void disableBoardCell(int row, int col) {
 		JButton button = boardCells[row][col].getBoardButton();
@@ -187,7 +186,7 @@ public class BoardPanel extends JPanel {
 	 * Gets whether a button at a location is a {@link TileButton}.
 	 * @param row the row of the button to check.
 	 * @param col the column of the button to check.
-	 * @return true if the button is an instance of <code>TileButton</code>. false otherwise.
+	 * @return True if the button is an instance of <code>TileButton</code>. False otherwise.
 	 */
 	public boolean instanceOfTileButton(int row, int col) {
 		return (boardCells[row][col].getBoardButton() instanceof TileButton);
@@ -197,7 +196,7 @@ public class BoardPanel extends JPanel {
 	 * Gets the text of the button at a location.
 	 * @param row the row of the button.
 	 * @param col the column of the button.
-	 * @return the text of the button at the location.
+	 * @return The text of the button at the location.
 	 */
 	public String getButtonText(int row, int col) {
 		return boardCells[row][col].getBoardButton().getText();
@@ -207,7 +206,7 @@ public class BoardPanel extends JPanel {
 	 * Gets the button at a location.
 	 * @param row the row the button to get.
 	 * @param col the column the button to get.
-	 * @return the <code>JButton</code> at the location.
+	 * @return The <code>JButton</code> at the location.
 	 * @see #getButtonText
 	 * @see #instanceOfTileButton
 	 * @see #addActionListener
@@ -215,7 +214,7 @@ public class BoardPanel extends JPanel {
 	 */
 	public JButton getButton(int row, int col) { return boardCells[row][col].getBoardButton(); }
 
-	/**
+	/*
 	 * A panel that holds a single JButton representing a cell on the Scrabble board.
 	 */
 	private static class BoardCellPanel extends JPanel {
@@ -276,5 +275,4 @@ public class BoardPanel extends JPanel {
 			boardButton.addActionListener(al);
 		}
 	}
-
 }

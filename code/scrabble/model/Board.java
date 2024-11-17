@@ -8,6 +8,7 @@ package scrabble.model;
 
 import java.awt.*;
 import java.util.*;
+import java.util.List;
 
 /**
  * This class represents the scrabble board. It maintains the placement of
@@ -17,18 +18,17 @@ import java.util.*;
  */
 public class Board {
 	/**
-	 * How many rows are on the board.
+	 * The number of rows on the board.
 	 */
 	public static final int BOARD_ROWS = 15;
 	/**
-	 * How many columns are on the board.
+	 * The number of columns on the board.
 	 */
 	public static final int BOARD_COLUMNS = 15;
 
 	/**
 	 * A map of {@link ModifierType modifier cells} accessible by {@link Point}.
-	 * Calling this.get(Point) returns the type of modifier cell at that point.
-	 * Note that a null value should be treated as a non-modifier cell.
+	 * Calling <code>MODIFIER_HASH_MAP.get(Point)</code> returns the type of modifier cell at that point.
 	 */
 	public static final Map<Point,ModifierType> MODIFIER_HASH_MAP = initializeModifierCells();
 
@@ -157,16 +157,16 @@ public class Board {
     }
 
     /**
-     * getter for lastWordsPlayed, the list of words added to the
+     * Getter for lastWordsPlayed, the list of words added to the
 	 * board on the previous call to {@link #playTiles}
-     * @return an array list of most recent words
+     * @return An array list of most recent words
      */
-    public ArrayList<String> getLastWordsPlayed() {
+    public List<String> getLastWordsPlayed() {
         return lastWordsPlayed;
     }
 
     /**
-     * Clears the board of all tiles, puts null values in their place
+     * Clears the board of all tiles, putting null values in their place.
      */
     public void clearBoard(){
         for (Tile[] tiles : board) {
@@ -175,10 +175,10 @@ public class Board {
     }
 
     /**
-     * Returns the tile object played on a given x and y.
-     * @param x row index
-     * @param y column index
-     * @return the tile at the specified (x, y) position. Null if none has been played here.
+     * Gets the tile object played at a given x and y.
+     * @param x row index.
+     * @param y column index.
+     * @return The tile at the specified (x, y) position. Null if none has been played here.
      */
     public Tile getTile(int x, int y){
         return board[x][y];
@@ -224,12 +224,12 @@ public class Board {
 	 *             <li>be adjacent to an already placed tile, or</li>
 	 *             <li>be placed at the starting tile (7, 7).</li>
 	 *         </ul></li>
-	 *         <li>Each {@link Tile#getLocation tile point} must correspond to an empty
+	 *         <li>Each tile {@link Tile#getLocation point} must correspond to an empty
 	 *         position on the board. That is, no tile has been placed at this point.</li>
-	 *         <li>Each tile point must be within the board bounds (x,y in {0,1,...,14}).</li>
+	 *         <li>Each tile point must be within the board bounds (x,y in {0,1,...,<code>BOARD_ROWS-1</code>}).</li>
 	 *         <li>All tiles must have either the same x/row or y/column value.</li>
 	 *         <li>Each tile location must be unique. That is, no two tiles in parameter
-	 *         tiles may have the same x and y values.</li>
+	 *         <code>tiles</code> may have the same x and y values.</li>
 	 *         <li>All tiles must be connected. That is, either a tile in tiles is
 	 *         adjacent to another tile in tiles, or it is adjacent to a board tile
 	 *         which is adjacent to a tile in tiles. In other words, there may be no
@@ -238,9 +238,9 @@ public class Board {
 	 *     If any of these conditions is not met, a negative number will be returned.
 	 * </p>
      *
-     * @param tiles the tiles which are being placed on the board
+     * @param tiles the tiles which are being placed on the board.
      *               Note the array may not be empty, but arrays of size 1 are allowed.
-     * @return the score of the word(s) played as an integer. A negative number is
+     * @return The score of the word(s) played as an integer. A negative number is
 	 * returned if the play is invalid (see above). Note that a score of 0 is possible.
 	 * There is no known limit to a scrabble score, though the highest calculated is in
 	 * the lower 1000's.
@@ -496,7 +496,6 @@ public class Board {
 				words.add(currentWord.toString());
 			}
 			else if (!words.isEmpty()){
-				System.out.println("Removing Letter...");
 				words.remove(0);
 				collateralWordsScore = 0;
 			}
@@ -688,7 +687,6 @@ public class Board {
 				words.add(currentWord.toString());
 			}
 			else if (!words.isEmpty()){
-				System.out.println("Removing Letter...");
 				words.remove(0);
 				collateralWordsScore = 0;
 			}

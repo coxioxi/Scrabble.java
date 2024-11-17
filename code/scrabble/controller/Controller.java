@@ -26,22 +26,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-/*
- * TODO:
- *  fix removeTile to not be ugly
- */
-
 /**
- * Run the other classes
+ * Run the other classes.
  */
-
 public class Controller implements PropertyChangeListener  {
 	/**
 	 * The port number to use for socket communication. 0 means the port is automatically allocated.
 	 * The port number can be accessed via <code>this.getHost().getPort()</code> when this controller is
 	 * hosting, or <code>this.getSocket().getPort()</code> when not hosting.
 	 * <br>
-	 * See also: {@link PartyHost#getPort() PartyHost.getPort()}
+	 * @see PartyHost#getPort
 	 */
 	public static final int PORT = 0;
 
@@ -63,11 +57,15 @@ public class Controller implements PropertyChangeListener  {
 	private PartyHost host;
 	private int selfID;		// Player ID associated with this instance. Assigned by Party's Host.
 
+	/**
+	 * Main, to make this class executable.
+	 * @param args ignored.
+	 */
 	public static void main(String[] args) { new Controller(); }
 
 	/**
 	 * Constructs a new Controller object with a visible GUI.
-	 * The game is not yet initialized, as on screen changes must be made.
+	 * The model (<code>Game</code>) is not yet initialized, as on-screen changes must be made.
 	 */
 	public Controller() {
 		try { UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName()); } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException ignore) {}
@@ -108,9 +106,14 @@ public class Controller implements PropertyChangeListener  {
 	/**
 	 * Initializes a <code>PartyHost</code> to manage network server issues and
 	 * updates the GUI's state to reflect changes.
+	 * <p>
+	 *     Invoking this method marks this <code>Controller</code> as being a host
+	 *     for other players to join.
+	 * </p>
 	 *
 	 * @param name the name of the player who is hosting.
 	 * @throws IOException if an error occurs in setting up the <code>PartyHost</code>
+	 * @see PartyHost
 	 */
 	public void setUpHost(String name) throws IOException {
 		host = new PartyHost(PORT);
@@ -126,7 +129,7 @@ public class Controller implements PropertyChangeListener  {
 	}
 
 	/**
-	 * Sends a NewPlayer message to the host. The ID of this player has not yet been decided,
+	 * Sends a <code>NewPlayer</code> message to the host. The ID of this player has not yet been decided,
 	 * so a stub ID is used.
 	 *
 	 * @param name the name of the player to add.
@@ -139,11 +142,16 @@ public class Controller implements PropertyChangeListener  {
 	/**
 	 * Sends a notification of the selected game options to the <code>PartyHost</code>
 	 * responsible for communication.
+	 * <p>
+	 *     Invoking this method causes the <code>PartyHost</code> running in this instance of
+	 *     <code>Controller</code> to send a <code>StartGame</code> message to the connected clients.
+	 * </p>
 	 *
 	 * @param challengesAllowed whether challenges are enabled.
 	 * @param dictionary the path to the dictionary.
-	 * @param playerTime how many seconds a player has to make their turn
-	 * @param gameTime how many seconds the game may last
+	 * @param playerTime how many seconds a player has to make their turn.
+	 * @param gameTime how many seconds the game may last.
+	 * @see scrabble.network.messages.StartGame
 	 */
 	public void sendRulesToHost(boolean challengesAllowed, String dictionary,
 								int playerTime, int gameTime) {
@@ -190,6 +198,26 @@ public class Controller implements PropertyChangeListener  {
 	/**
 	 * Plays specified tiles on the board for a player. The score of the word(s) is calculated
 	 * and added to that player's score.
+	 * <p>
+	 *     This method operates differently depending on what player is playing tiles.
+	 *     <ul>
+	 *         <li>
+	 *             For the local player (that is, the player making changes to this <code>Controller</code>'s GUI),
+	 *             the play is checked for validity. The play must adhere to the guidelines in the description for
+	 *             {@link Board#playTiles}. If the game's <code>Ruleset</code> has challenges disabled,
+	 *             all words resulting from the play are checked against the game's dictionary. When challenges
+	 *             are enabled, only the locations must be validated.
+	 *         </li>
+	 *         <li>
+	 *             For a network player making a play, the tiles are placed on the board (both in the model and
+	 *             the GUI), and the player's score is updated. Neither the location of the tiles,
+	 *             nor the resulting words are checked, as this work has already been done on the side of the
+	 *             sending client's application
+	 *         </li>
+	 *     </ul>
+	 *     After the local player's application validates a play, it is sent to the <code>PartyHost</code>
+	 *     to be distributed to other clients. Both cases update the score of the player.
+	 * </p>
 	 *
 	 * @param playerID the unique ID of the player who is changing the board.
 	 * @param tiles the tiles to be placed on the board
@@ -200,12 +228,14 @@ public class Controller implements PropertyChangeListener  {
 		gameScreenController.setRackButtonsEnabled(model.getCurrentPlayer() == selfID);
 	}
 	private void otherPlayTiles(int playerID, Tile[] tiles) {
+		// when the player is not from this application.
 		model.playTiles(playerID, tiles);
 		gameScreenController.addToBoard(tiles);
 		Player player = model.getPlayer(playerID);
 		gameScreenController.updateScore(player.getName(), player.getScore());
 	}
 	private void selfPlayTiles(Tile[] tiles) {
+		// when the player is this application's player.
 		int score = model.playTiles(selfID, tiles);
 		if (score >= 0) {
 			Player p = model.getSelf();
@@ -224,24 +254,25 @@ public class Controller implements PropertyChangeListener  {
 
 	/**
 	 * Removes the most recently played tiles from the board and places them in the rack.
+	 * @see GameScreenController#resetLastPlay
 	 */
 	public void resetLastPlay(){ gameScreenController.resetLastPlay(); }
 
 	/**
-	 * Removes a specific tiles from this player's rack.
+	 * Removes a specific tile from this player's rack.
 	 * @param tile the tile to be removed.
 	 */
 	public void removeRackTile(Tile tile) { gameScreenController.removeRackTile(tile); }
 
 	/**
 	 * Gets the view.
-	 * @return the view component.
+	 * @return The view component.
 	 */
 	public ScrabbleGUI getView() { return view; }
 
 	/**
 	 * Gets this controller's model.
-	 * @return the game model. Null if the player is not in game.
+	 * @return The game model. Null if this player is not in a game.
 	 */
 	public Game getModel() { return model; }
 
@@ -252,8 +283,8 @@ public class Controller implements PropertyChangeListener  {
 	public int getSelfID() { return selfID; }
 
 	/**
-	 * gets the messenger to the host
-	 * @return the <code>ClientMessenger</code>
+	 * Gets the messenger to the host.
+	 * @return This <code>Controller</code>'s <code>ClientMessenger</code>
 	 */
 	public ClientMessenger getMessenger() { return messenger; }
 
@@ -367,13 +398,13 @@ public class Controller implements PropertyChangeListener  {
 	}
 
 	/**
-	 * Removes Window listeners from the view.
+	 * Removes <code>WindowListener</code>s from the view.
 	 */
 	public void removeWindowListeners() { for (WindowListener wl : view.getWindowListeners()) view.removeWindowListener(wl); }
 
 	/**
 	 * Displays a dialog to confirm quitting/leaving a party.
-	 * @return an integer representing the choice selected
+	 * @return An integer representing the choice selected, as specified in <code>JOptionPane</code>.
 	 * @see JOptionPane
 	 */
 	public int showQuitDialog() { return JOptionPane.showConfirmDialog(view, "Are you sure you want to leave?\nYou will not be able to rejoin.", "Quit?", JOptionPane.WARNING_MESSAGE); }
@@ -411,10 +442,10 @@ public class Controller implements PropertyChangeListener  {
 
 	/**
 	 * Implements communication with a host, using the objects in
-	 * the {@link scrabble.network.messages messages package}.
+	 * the {@link scrabble.network.messages messages} package.
 	 * <p>
 	 *     A thread of this class continuously listens for message objects
-	 *     from the host which are then sent to the PropertyChangeListener
+	 *     from the host which are then sent to the <code>PropertyChangeListener</code>
 	 *     passed in at construction. A client of this class can send messages to
 	 *     the host by calling {@link #sendMessage}. When this thread is no longer needed,
 	 *     calling the method {@link #halt} signals run to cease execution and close the socket.
@@ -503,7 +534,7 @@ public class Controller implements PropertyChangeListener  {
 		}
 
 		/**
-		 * Ceases execution of <code>run()</code>.
+		 * Ceases execution of <code>run</code>.
 		 */
 		public void halt() {
 			isListening = false;

@@ -229,7 +229,7 @@ public class GameScreen extends JPanel {
 				TileButton button =
 						(tiles[index].isBlank()
 								? new TileButton()
-								: new TileButton(Tile.TileScore.getTileScoreForLetter(tiles[index].getLetter()))
+								: new TileButton(Tile.TileScore.valueOf(tiles[index].getLetter()+""))
 						);
 				tilePanels[i].setButton(button);
 				index++;
