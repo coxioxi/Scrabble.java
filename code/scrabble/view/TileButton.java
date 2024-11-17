@@ -7,7 +7,7 @@ package scrabble.view;
  * Original date: 10/08/2024
  */
 
-import scrabble.model.TileScore;
+import scrabble.model.Tile;
 
 import javax.swing.*;
 import java.awt.*;
@@ -16,7 +16,7 @@ import java.awt.*;
  * A JButton representing a tile in the Scrabble game, displaying both the letter and its score.
  */
 public class TileButton extends JButton {
-    private TileScore letterScore; // The score and letter associated with this tile.
+    private Tile.TileScore letterScore; // The score and letter associated with this tile.
     private final Font scoreFont; // The font used for displaying the score.
 
     /**
@@ -24,7 +24,7 @@ public class TileButton extends JButton {
      *
      * @param letterScore The TileScore object representing the letter and score of the tile.
      */
-    public TileButton(TileScore letterScore) {
+    public TileButton(Tile.TileScore letterScore) {
         // Call the parent JButton constructor with the name of the letter.
         super(letterScore.name());
         this.letterScore = letterScore;
