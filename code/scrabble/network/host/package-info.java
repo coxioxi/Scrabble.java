@@ -20,7 +20,7 @@
  *     	    <li>Get the PartyHost IP address and port for display ({@link scrabble.network.host.PartyHost#getIPAddress},
  *     	    		{@link scrabble.network.host.PartyHost#getPort}). </li>
  *     	    <li>Call {@link scrabble.network.host.PartyHost#run}.</li>
- *     	    <li>Call {@link scrabble.network.host.PartyHost#startGame}.</li>
+ *     	    <li>Call {@link scrabble.network.host.PartyHost#startGame(scrabble.model.Ruleset)}.</li>
  *     	</ol>
  *     	Item 3 accepts clients to the server. Item 4 disables acceptance and informs players that the game has started.
  * </p>
