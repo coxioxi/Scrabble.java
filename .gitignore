@@ -26,6 +26,7 @@
 hs_err_pid*
 replay_pid*
 
+# project files
 /out
 /out/*
 /project-documentation*
@@ -33,5 +34,9 @@ replay_pid*
 /project-resources*
 /project-documentation/java-docs
 
+# david's personal sounds
 click.wav
 click2.wav
+
+# IDE environment
+/.idea
