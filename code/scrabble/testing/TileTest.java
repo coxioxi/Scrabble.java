@@ -49,8 +49,8 @@ public class TileTest{
         char letter = 'A';
         for(int i = 65; i <= 90; ++i){
             Tile tile = new Tile(letter++);
-            letterValue.put(tile.getLetter(),TileScore.getScoreForLetter(tile.getLetter()));
-            Assertions.assertEquals(TileScore.getScoreForLetter(tile.getLetter()), letterValue.get(tile.getLetter()));
+            letterValue.put(tile.getLetter(), Tile.TileScore.getScoreForLetter(tile.getLetter()));
+            Assertions.assertEquals(Tile.TileScore.getScoreForLetter(tile.getLetter()), letterValue.get(tile.getLetter()));
         }
     }
 
