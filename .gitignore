@@ -28,9 +28,9 @@ replay_pid*
 
 /out
 /out/*
-/project-documentation
-/Docs
-/project-resources
+/project-documentation*
+/Docs*
+/project-resources*
 
 click.wav
 click2.wav
