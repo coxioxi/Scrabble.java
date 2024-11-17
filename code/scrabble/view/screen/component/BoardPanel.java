@@ -10,7 +10,7 @@ package scrabble.view.screen.component;
 import scrabble.controller.GameScreenController;
 import scrabble.model.Board;
 import scrabble.model.ModifierType;
-import scrabble.view.frame.TileButton;
+import scrabble.view.TileButton;
 
 import javax.swing.*;
 import java.awt.*;

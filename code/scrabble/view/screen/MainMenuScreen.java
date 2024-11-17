@@ -10,8 +10,8 @@ package scrabble.view.screen;
 import javax.swing.*;
 import java.awt.*;
 
-import static scrabble.view.frame.ScrabbleGUI.audioOn;
-import static scrabble.view.frame.ScrabbleGUI.fxOn;
+import static scrabble.view.ScrabbleGUI.audioOn;
+import static scrabble.view.ScrabbleGUI.fxOn;
 
 /**
  * MainMenuScreen represents the main menu panel in the Scrabble game,

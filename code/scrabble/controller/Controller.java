@@ -6,7 +6,7 @@ import scrabble.network.messages.Message;
 import scrabble.network.host.PartyHost;
 import scrabble.network.messages.NewPlayer;
 import scrabble.network.messages.PlayTiles;
-import scrabble.view.frame.ScrabbleGUI;
+import scrabble.view.ScrabbleGUI;
 import scrabble.view.screen.*;
 
 import javax.swing.*;

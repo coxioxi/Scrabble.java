@@ -7,7 +7,7 @@
  *     <br>
  *     The primary class {@link scrabble.network.host.PartyHost} should be used and run as the host object.
  *     PartyHost uses the remaining classes as implementers. PartyHost spawns
- *     {@link scrabble.network.host.HostReceiver} threads for client listening and sending.
+ *     threads for client listening and sending.
  *     PartyHost uses {@link scrabble.network.host.TileBag} to randomly select tiles from the
  *     set number of tiles created at the game's beginning.
  * </p>

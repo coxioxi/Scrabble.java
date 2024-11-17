@@ -9,7 +9,7 @@ package scrabble.view.screen;
 
 import scrabble.controller.GameScreenController;
 import scrabble.model.*;
-import scrabble.view.frame.TileButton;
+import scrabble.view.TileButton;
 import scrabble.view.screen.component.BoardPanel;
 import scrabble.view.screen.component.PlayerPanel;
 import scrabble.view.screen.component.RackPanel;

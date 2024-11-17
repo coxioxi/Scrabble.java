@@ -1,4 +1,4 @@
-package scrabble.view.frame;
+package scrabble.view;
 /*
  * Authors: Ian Boyer, David Carr, Samuel Costa,
  * Maximus Latkovski, Jy'el Mason

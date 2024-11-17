@@ -7,7 +7,7 @@ package scrabble.view.screen.component;
  * Original date: 10/08/2024
  */
 
-import scrabble.view.frame.TileButton;
+import scrabble.view.TileButton;
 import scrabble.view.screen.GameScreen;
 
 import javax.swing.*;

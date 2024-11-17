@@ -1,4 +1,4 @@
-package scrabble.view.frame;
+package scrabble.view;
 /*
  * Authors: Ian Boyer, David Carr, Samuel Costa,
  * Maximus Latkovski, Jy'el Mason
@@ -8,7 +8,6 @@ package scrabble.view.frame;
  */
 
 import scrabble.model.Player;
-import scrabble.model.Ruleset;
 import scrabble.view.screen.*;
 
 import javax.swing.*;
