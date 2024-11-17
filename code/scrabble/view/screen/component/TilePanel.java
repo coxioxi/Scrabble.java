@@ -36,9 +36,7 @@ public class TilePanel extends JPanel {
      *
      * @return the current JButton instance
      */
-    public JButton getButton() {
-        return tileButton;
-    }
+    public JButton getButton() { return tileButton; }
 
     /**
      * Sets a new button in the panel. If a button already exists, it removes the old one
