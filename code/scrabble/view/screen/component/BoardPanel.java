@@ -85,7 +85,7 @@ public class BoardPanel extends JPanel {
 				(int)(MAXIMUM_CELL_PERCENT*environmentHeight));
 	}
 
-	/**
+	/*
 	 * Initializes the board cells and adds them to the panel.
 	 */
 	private void setupBoardCellPanels() {
@@ -161,6 +161,11 @@ public class BoardPanel extends JPanel {
 		GameScreenController.removeActionListeners(button);
 	}
 
+	/**
+	 * Removes all <code>ActionListener</code>s from the button at a location.
+	 * @param row the row of the button.
+	 * @param col the column of the button.
+	 */
 	public void removeActionListeners(int row, int col) {
 		JButton button = boardCells[row][col].getBoardButton();
 		for (ActionListener al : button.getActionListeners()) {
@@ -168,21 +173,47 @@ public class BoardPanel extends JPanel {
 		}
 	}
 
+	/**
+	 * Adds an action listener to a button at a location.
+	 * @param al the <code>ActionListener</code> to add to the button.
+	 * @param row the row of the button.
+	 * @param col the column of the button.
+	 */
 	public void addActionListener(ActionListener al, int row, int col) {
 		boardCells[row][col].addActionListener(al);
 	}
 
+	/**
+	 * Gets whether a button at a location is a {@link TileButton}.
+	 * @param row the row of the button to check.
+	 * @param col the column of the button to check.
+	 * @return true if the button is an instance of <code>TileButton</code>. false otherwise.
+	 */
 	public boolean instanceOfTileButton(int row, int col) {
 		return (boardCells[row][col].getBoardButton() instanceof TileButton);
 	}
 
+	/**
+	 * Gets the text of the button at a location.
+	 * @param row the row of the button.
+	 * @param col the column of the button.
+	 * @return the text of the button at the location.
+	 */
 	public String getButtonText(int row, int col) {
 		return boardCells[row][col].getBoardButton().getText();
 	}
 
-	public JButton getButton(int row, int col) {
-		return boardCells[row][col].getBoardButton();
-	}
+	/**
+	 * Gets the button at a location.
+	 * @param row the row the button to get.
+	 * @param col the column the button to get.
+	 * @return the <code>JButton</code> at the location.
+	 * @see #getButtonText
+	 * @see #instanceOfTileButton
+	 * @see #addActionListener
+	 * @see #removeActionListeners
+	 */
+	public JButton getButton(int row, int col) { return boardCells[row][col].getBoardButton(); }
 
 	/**
 	 * A panel that holds a single JButton representing a cell on the Scrabble board.

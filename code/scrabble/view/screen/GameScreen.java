@@ -193,7 +193,7 @@ public class GameScreen extends JPanel {
 		for (int i = 0; i < tiles.length; i++) {
 			TileButton tb = (tiles[i].isBlank() ?
 					new TileButton() :
-					new TileButton(TileScore.values()[tiles[i].getLetter() - 'A'])
+					new TileButton(Tile.TileScore.getTileScoreForLetter(tiles[i].getLetter()))
 			);
 			int x = tiles[i].getLocation().x;
 			int y = tiles[i].getLocation().y;
@@ -229,7 +229,7 @@ public class GameScreen extends JPanel {
 				TileButton button =
 						(tiles[index].isBlank()
 								? new TileButton()
-								: new TileButton(TileScore.values()[tiles[index].getLetter() - 'A'])
+								: new TileButton(Tile.TileScore.getTileScoreForLetter(tiles[index].getLetter()))
 						);
 				tilePanels[i].setButton(button);
 				index++;
@@ -283,7 +283,7 @@ public class GameScreen extends JPanel {
 		// Initialize tile panels for the rack
 		tilePanels = new TilePanel[RACK_SIZE];
 		for (int i = 0; i < tilePanels.length; i++) {
-			tilePanels[i] = new TilePanel(new TileButton(TileScore.values()[i]));
+			tilePanels[i] = new TilePanel(new TileButton(Tile.TileScore.values()[i]));
 		}
 		this.rackPanel = new RackPanel(tilePanels);
 
