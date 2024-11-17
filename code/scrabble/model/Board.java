@@ -33,7 +33,7 @@ public class Board {
 	public static final Map<Point,ModifierType> MODIFIER_HASH_MAP = initializeModifierCells();
 
 
-	private Tile[][] board;  // where Tile objects are placed
+	private final Tile[][] board;  // where Tile objects are placed
     private ArrayList<String> lastWordsPlayed
 			= new ArrayList<>();   // the words which have most recently been played
 
@@ -261,7 +261,7 @@ public class Board {
      * or, simply "__" is shown when neither condition is met.
      * each cell is padded with spaces in the String. A newline is
      * added to the end of board rows.
-     * @returns a String representation, with formatting as stated above
+     * @return a String representation, with formatting as stated above
 	 */
     public String toString() {
         // String representation of the board
@@ -845,15 +845,6 @@ public class Board {
         all tiles are connected, either by adjacency, or adjacency to adjacency
      */
     private boolean validatePositions(Tile[] tiles) {
-        /*
-        System.out.println("Inbounds: " + arePointsInbounds(tiles));
-        System.out.println("SameRow: " + allSameRow(tiles));
-        System.out.println("SameCol: " + allSameCol(tiles));
-        System.out.println("notOccupied: " + pointsNotOccupied(tiles));
-        System.out.println("Starting or Adjacent: " + arePointsStartingOrAdjacent(tiles));
-        System.out.println("arePointsConnected: " + arePointsConnected(tiles));
-         */
-
         return (arePointsInbounds(tiles) &&
 			   (allSameRow(tiles) || allSameCol(tiles)) &&
 				hasNoDuplicates(tiles) &&
