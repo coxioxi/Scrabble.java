@@ -1,4 +1,11 @@
 package scrabble.view.screen.component;
+/*
+ * Authors: Ian Boyer, David Carr, Samuel Costa,
+ * Maximus Latkovski, Jy'el Mason
+ * Course: COMP 3100
+ * Instructor: Dr. Barry Wittman
+ * Original date: 10/08/2024
+ */
 
 import javax.swing.*;
 import java.awt.*;
@@ -34,7 +41,7 @@ public class PlayerPanel extends JPanel {
 
 		// Label for remaining time, formatted as minutes and seconds
 		JLabel playerTimeLabel = new JLabel("Time:", SwingConstants.RIGHT);
-		this.time = new JLabel(time / 60 + ":" + time % 60 + " ");
+		this.time = new JLabel(time / 60 + ":" + (time % 60 < 10 ? "0":"") + time % 60);
 
 		// Label for player's score
 		JLabel playerScoreLabel = new JLabel("Score:", SwingConstants.RIGHT);

@@ -4,24 +4,32 @@ import scrabble.view.screen.JoinScreen;
 
 import java.io.IOException;
 
+/**
+ * Handles <code>JoinScreen</code> events.
+ */
 public class JoinScreenController {
     private final Controller parent;
     private final JoinScreen joinScreen;
-    private String userName;
-    private String hostsIP;
-    private String hostsPort;
 
-    public JoinScreenController (Controller parent, JoinScreen joinScreen) {
+    /**
+     * Constructs a JoinScreenController from a parent and a JoinScreen.
+     * @param parent the <code>Controller</code> on which changes should be made.
+     * @param joinScreen the join screen to which <code>ActionListeners</code> are added.
+     */
+	public JoinScreenController (Controller parent, JoinScreen joinScreen) {
         this.parent = parent;
         this.joinScreen = joinScreen;
 
         joinScreen.getJoinButton().addActionListener(e -> joinClick());
     }
 
+    /*
+     * Handles the Join button being pressed
+     */
     private void joinClick() {
-        userName = joinScreen.getNameTextField().getText();
-        hostsIP = joinScreen.getIPTextField().getText().trim();
-        hostsPort = joinScreen.getPort().getText().trim();
+		String userName = joinScreen.getNameTextField().getText();
+		String hostsIP = joinScreen.getIPTextField().getText().trim();
+		String hostsPort = joinScreen.getPort().getText().trim();
         if (userName.isBlank()) {
             parent.showNoNameDialog();
         } else if (hostsIP.isBlank()) {

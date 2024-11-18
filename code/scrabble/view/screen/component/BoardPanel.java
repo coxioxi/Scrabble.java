@@ -1,37 +1,39 @@
 package scrabble.view.screen.component;
+/*
+ * Authors: Ian Boyer, David Carr, Samuel Costa,
+ * Maximus Latkovski, Jy'el Mason
+ * Course: COMP 3100
+ * Instructor: Dr. Barry Wittman
+ * Original date: 10/08/2024
+ */
 
 import scrabble.controller.GameScreenController;
 import scrabble.model.Board;
 import scrabble.model.ModifierType;
-import scrabble.view.frame.TileButton;
+import scrabble.view.TileButton;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionListener;
 
 /**
  * BoardPanel is a JPanel that represents the game board in Scrabble.
  * It initializes and displays a grid of BoardCellPanels with appropriate colors and labels.
  */
 public class BoardPanel extends JPanel {
-	// Constant colors for different cell types on the board
-	public static final Color DOUBLE_WORD_COLOR = new Color(154, 75, 75);
-	public static final Color TRIPLE_WORD_COLOR = new Color(177, 19, 19);
-	public static final Color DOUBLE_LETTER_COLOR = new Color(57, 70, 140);
-	public static final Color TRIPLE_LETTER_COLOR = new Color(25, 43, 147);
-	public static final Color NORMAL_CELL_COLOR = new Color(221, 221, 221);
+	/** The color of the text used for board modifier cells. */
 	public static final Color MODIFIER_CELL_TEXT_COLOR = new Color(255, 255, 255);
-
-	// Text for various cell types
-	public static final String DOUBLE_WORD_TEXT = "DW";
-	public static final String TRIPLE_WORD_TEXT = "TW";
-	public static final String DOUBLE_LETTER_TEXT = "DL";
-	public static final String TRIPLE_LETTER_TEXT = "TL";
-	public static final String NORMAL_CELL_TEXT = " ";
+	/**
+	 * The color of the <code>JPanel</code> holding cells.
+	 * This color fills in the gaps between cells and surrounds the board.
+	 */
+	public static final Color BOARDER_COLOR = new Color(112, 109, 109);
 
 	// Constants for panel size percentages
 	public static final float MAXIMUM_PANEL_SIZE_PERCENT = .55f;
 	public static final float PREFERRED_PANEL_SIZE_PERCENT = .40f;
 	public static final float MINIMUM_PANEL_SIZE_PERCENT = .2f;
+	/** Spacing between board cells. */
 	public static final int SPACING = 3;
 	public static final float MAXIMUM_CELL_PERCENT = .04f;
 	public static final float PREFERRED_CELL_PERCENT = .025f;
@@ -47,16 +49,9 @@ public class BoardPanel extends JPanel {
 				maxCellSize, preferredCellSize, minCellSize;
 
 	/**
-	 * Constructor for the BoardPanel class. Initializes the board panel,
-	 * sets up dimensions, and adds cell panels.
+	 * Initializes the board panel, sets up dimensions, and adds cell panels.
 	 */
 	public BoardPanel() {
-		try {
-			// Set the look and feel to the system's appearance
-			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-		} catch (ClassNotFoundException | InstantiationException |
-				 IllegalAccessException | UnsupportedLookAndFeelException ignore) {}
-
 		// Get the screen dimensions from the default graphics environment
 		GraphicsDevice gd = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
 		environmentWidth = gd.getDisplayMode().getWidth();
@@ -70,7 +65,7 @@ public class BoardPanel extends JPanel {
 		this.setMaximumSize(maxPanelSize);
 
 		// Set the background color of the board panel
-		this.setBackground(new Color(112, 109, 109));
+		this.setBackground(BOARDER_COLOR);
 
 		// Set the layout as a grid for the board cells
 		this.setLayout(new GridLayout(Board.BOARD_ROWS,Board.BOARD_COLUMNS,SPACING,SPACING));
@@ -95,17 +90,15 @@ public class BoardPanel extends JPanel {
 				(int)(MAXIMUM_CELL_PERCENT*environmentHeight));
 	}
 
-	/**
+	/*
 	 * Initializes the board cells and adds them to the panel.
 	 */
 	private void setupBoardCellPanels() {
 		boardCells = new BoardCellPanel[Board.BOARD_ROWS][Board.BOARD_COLUMNS];
 		for (int row = 0; row < Board.BOARD_ROWS; row++) {
 			for (int col = 0; col < Board.BOARD_COLUMNS; col++) {
-				JButton cell = new JButton();
-//				setButtonSizes(cell);
-//				cell.setFont(getFont().deriveFont(4f));
 				// Sets color and text based on the type of modifier for the cell
+				JButton cell = new JButton();
 				setColorAndText(cell, row, col);
 
 				// Create a BoardCellPanel for each cell and add it to the panel
@@ -117,10 +110,8 @@ public class BoardPanel extends JPanel {
 	}
 
 
-	/**
+	/*
 	 * Sets the sizes for a given button to match the cell dimensions.
-	 *
-	 * @param button the button whose size is to be set
 	 */
 	private void setButtonSizes(JComponent button) {
 		button.setMaximumSize(maxCellSize);
@@ -128,65 +119,17 @@ public class BoardPanel extends JPanel {
 		button.setMinimumSize(minCellSize);
 	}
 
-	/**
+	/*
 	 * Sets the color and text of a button based on its modifier type.
-	 *
-	 * @param button the button to customize
-	 * @param row    the row index of the cell
-	 * @param col    the column index of the cell
 	 */
 	private void setColorAndText(JButton button, int row, int col) {
 		ModifierType mt = Board.MODIFIER_HASH_MAP.get(new Point(row, col));
-		button.setBackground(getColor(mt));
-		button.setText(getText(mt));
+		button.setBackground(mt.getColor());
+		button.setText(mt.getAbbreviation());
 		button.setForeground(MODIFIER_CELL_TEXT_COLOR);
 		button.setBorderPainted(false);
 	}
 
-
-	/**
-	 * Returns the color associated with a given modifier type.
-	 *
-	 * @param mt the modifier type
-	 * @return the color representing the modifier type
-	 */
-	private Color getColor(ModifierType mt) {
-		Color color;
-		if (mt == ModifierType.DOUBLE_WORD) {
-			color = DOUBLE_WORD_COLOR;
-		} else if (mt == ModifierType.TRIPLE_WORD) {
-			color = TRIPLE_WORD_COLOR;
-		} else if (mt == ModifierType.DOUBLE_LETTER) {
-			color = DOUBLE_LETTER_COLOR;
-		} else if (mt == ModifierType.TRIPLE_LETTER) {
-			color = TRIPLE_LETTER_COLOR;
-		} else {
-			color = NORMAL_CELL_COLOR;
-		}
-		return color;
-	}
-
-	/**
-	 * Returns the text associated with a given modifier type.
-	 *
-	 * @param mt the modifier type
-	 * @return the text representing the modifier type
-	 */
-	private String getText(ModifierType mt) {
-		String text;
-		if (mt == ModifierType.DOUBLE_WORD) {
-			text = DOUBLE_WORD_TEXT;
-		} else if (mt == ModifierType.TRIPLE_WORD) {
-			text = TRIPLE_WORD_TEXT;
-		} else if (mt == ModifierType.DOUBLE_LETTER) {
-			text = DOUBLE_LETTER_TEXT;
-		} else if (mt == ModifierType.TRIPLE_LETTER) {
-			text = TRIPLE_LETTER_TEXT;
-		} else {
-			text = NORMAL_CELL_TEXT;
-		}
-		return text;
-	}
 
 	/**
 	 * Updates a cell at a specified row and column with a new button.
@@ -208,23 +151,128 @@ public class BoardPanel extends JPanel {
 	/**
 	 * Disables a cell at a specific position on the board.
 	 *
-	 * @param row the row index of the cell
-	 * @param col the column index of the cell
+	 * @param row the row index of the cell.
+	 * @param col the column index of the cell.
 	 */
 	public void disableBoardCell(int row, int col) {
 		JButton button = boardCells[row][col].getBoardButton();
-		 button.setEnabled(false);
+		button.setEnabled(false);
 		GameScreenController.removeActionListeners(button);
 	}
 
 	/**
-	 * Retrieves a specific BoardCellPanel from the board.
-	 *
-	 * @param row the row index of the cell
-	 * @param col the column index of the cell
-	 * @return the BoardCellPanel at the specified position
+	 * Removes all <code>ActionListener</code>s from the button at a location.
+	 * @param row the row of the button.
+	 * @param col the column of the button.
 	 */
-	public BoardCellPanel getBoardCell(int row, int col) {
-		return boardCells[row][col];
+	public void removeActionListeners(int row, int col) {
+		JButton button = boardCells[row][col].getBoardButton();
+		for (ActionListener al : button.getActionListeners()) {
+			button.removeActionListener(al);
+		}
+	}
+
+	/**
+	 * Adds an action listener to a button at a location.
+	 * @param al the <code>ActionListener</code> to add to the button.
+	 * @param row the row of the button.
+	 * @param col the column of the button.
+	 */
+	public void addActionListener(ActionListener al, int row, int col) {
+		boardCells[row][col].addActionListener(al);
+	}
+
+	/**
+	 * Gets whether a button at a location is a {@link TileButton}.
+	 * @param row the row of the button to check.
+	 * @param col the column of the button to check.
+	 * @return True if the button is an instance of <code>TileButton</code>. False otherwise.
+	 */
+	public boolean instanceOfTileButton(int row, int col) {
+		return (boardCells[row][col].getBoardButton() instanceof TileButton);
+	}
+
+	/**
+	 * Gets the text of the button at a location.
+	 * @param row the row of the button.
+	 * @param col the column of the button.
+	 * @return The text of the button at the location.
+	 */
+	public String getButtonText(int row, int col) {
+		return boardCells[row][col].getBoardButton().getText();
+	}
+
+	/**
+	 * Gets the button at a location.
+	 * @param row the row the button to get.
+	 * @param col the column the button to get.
+	 * @return The <code>JButton</code> at the location.
+	 * @see #getButtonText
+	 * @see #instanceOfTileButton
+	 * @see #addActionListener
+	 * @see #removeActionListeners
+	 */
+	public JButton getButton(int row, int col) { return boardCells[row][col].getBoardButton(); }
+
+	/*
+	 * A panel that holds a single JButton representing a cell on the Scrabble board.
+	 */
+	private static class BoardCellPanel extends JPanel {
+		// The button representing the cell in the panel.
+		private JButton boardButton;
+
+		/**
+		 * Constructor that initializes the panel with a given button.
+		 *
+		 * @param button The button to be added to this panel.
+		 */
+		public BoardCellPanel(JButton button) {
+			// Set a layout manager with zero horizontal and vertical gaps.
+			FlowLayout manager = new FlowLayout();
+			manager.setHgap(0);
+			manager.setVgap(0);
+			this.setLayout(manager);
+
+			// Set the button for the panel.
+			this.setBoardButton(button);
+			//this.setPreferredSize(new Dimension(25, 25));
+		}
+
+		/**
+		 * Replaces the current button in the panel with a new button.
+		 *
+		 * @param boardButton The new button to be set in the panel.
+		 */
+		public void setBoardButton(JButton boardButton) {
+			// Remove the existing button, if present.
+			if (this.boardButton != null) this.remove(this.boardButton);
+
+			// Set the new button and adjust its font properties.
+			this.boardButton = boardButton;
+			this.boardButton.setFont(getFont().deriveFont(Font.BOLD, 15f));
+			//this.boardButton.setPreferredSize(new Dimension(22, 22));
+
+			// Add the new button to the panel and refresh the panel's state.
+			this.add(this.boardButton);
+			this.revalidate();
+			this.repaint();
+		}
+
+		/**
+		 * Gets the button currently in the panel.
+		 *
+		 * @return The JButton in the panel.
+		 */
+		public JButton getBoardButton() {
+			return boardButton;
+		}
+
+		/**
+		 * Adds an <code>ActionListener</code> to the button contained in this panel.
+		 * @param al the action listener to add to the button.
+		 */
+		public void addActionListener(ActionListener al) {
+			boardButton.addActionListener(al);
+		}
 	}
 }

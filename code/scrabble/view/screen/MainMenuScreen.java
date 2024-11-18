@@ -1,10 +1,17 @@
 package scrabble.view.screen;
+/*
+ * Authors: Ian Boyer, David Carr, Samuel Costa,
+ * Maximus Latkovski, Jy'el Mason
+ * Course: COMP 3100
+ * Instructor: Dr. Barry Wittman
+ * Original date: 10/08/2024
+ */
 
 import javax.swing.*;
 import java.awt.*;
 
-import static scrabble.view.frame.GameFrame.audioOn;
-import static scrabble.view.frame.GameFrame.fxOn;
+import static scrabble.view.ScrabbleGUI.audioOn;
+import static scrabble.view.ScrabbleGUI.fxOn;
 
 /**
  * MainMenuScreen represents the main menu panel in the Scrabble game,

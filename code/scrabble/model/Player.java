@@ -1,4 +1,10 @@
 package scrabble.model;
+/*
+ * Authors: Ian Boyer, David Carr, Samuel Costa, Maximus Latkovski, Jy'el Mason
+ * Course: COMP 3100
+ * Instructor: Dr. Barry Wittman
+ * Original date: 10/08/2024
+ */
 
 /**
  * Generalized representation of a Player.
@@ -15,7 +21,7 @@ public class Player {
 	private final int ID;
 	private int turnID;			// Player's ID, their turn in play
 	/*
-		hasPassedLastTurn and isActive are for the requirements on turn passing.
+		passedLastTurn and isActive are for the requirements on turn passing.
 		If a player passes two consecutive turns, they will become
 		inactive, not able to make plays on the board.
 	 */

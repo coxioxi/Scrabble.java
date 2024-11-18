@@ -6,11 +6,8 @@ import scrabble.network.messages.Message;
 import scrabble.network.host.PartyHost;
 import scrabble.network.messages.NewPlayer;
 import scrabble.network.messages.PlayTiles;
-import scrabble.view.frame.ScrabbleGUI;
+import scrabble.view.ScrabbleGUI;
 import scrabble.view.screen.*;
-import scrabble.view.screen.GameScreen;
-import scrabble.view.screen.component.RackPanel;
-import scrabble.view.screen.component.TilePanel;
 
 import javax.swing.*;
 import java.awt.event.WindowAdapter;
@@ -29,22 +26,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-/*
- * TODO:
- *  fix removeTile to not be ugly
- */
-
 /**
- * Run the other classes
+ * Run the other classes.
  */
-
 public class Controller implements PropertyChangeListener  {
 	/**
 	 * The port number to use for socket communication. 0 means the port is automatically allocated.
 	 * The port number can be accessed via <code>this.getHost().getPort()</code> when this controller is
 	 * hosting, or <code>this.getSocket().getPort()</code> when not hosting.
 	 * <br>
-	 * See also: {@link PartyHost#getPort() PartyHost.getPort()}
+	 * @see PartyHost#getPort
 	 */
 	public static final int PORT = 0;
 
@@ -66,15 +57,18 @@ public class Controller implements PropertyChangeListener  {
 	private PartyHost host;
 	private int selfID;		// Player ID associated with this instance. Assigned by Party's Host.
 
-	public static void main(String[] args) {
-		new Controller();
-	}
+	/**
+	 * Main, to make this class executable.
+	 * @param args ignored.
+	 */
+	public static void main(String[] args) { new Controller(); }
 
 	/**
 	 * Constructs a new Controller object with a visible GUI.
-	 * The game is not yet initialized, as on screen changes must be made.
+	 * The model (<code>Game</code>) is not yet initialized, as on-screen changes must be made.
 	 */
 	public Controller() {
+		try { UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName()); } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException ignore) {}
 		view = new ScrabbleGUI();
 		view.setDefaultCloseOperation(
 				WindowConstants.DO_NOTHING_ON_CLOSE
@@ -110,90 +104,123 @@ public class Controller implements PropertyChangeListener  {
 	}
 
 	/**
+	 * Initializes a <code>PartyHost</code> to manage network server issues and
+	 * updates the GUI's state to reflect changes.
+	 * <p>
+	 *     Invoking this method marks this <code>Controller</code> as being a host
+	 *     for other players to join.
+	 * </p>
 	 *
-	 * @param name
-	 * @throws IOException
+	 * @param name the name of the player who is hosting.
+	 * @throws IOException if an error occurs in setting up the <code>PartyHost</code>
+	 * @see PartyHost
+	 */
+	public void setUpHost(String name) throws IOException {
+		host = new PartyHost(PORT);
+		host.start();
+		String IP = host.getIPAddress();
+		int port = host.getPort();
+		hostScreenController.setIPandPort(IP, port);
+		setupSocket(IP, port);
+		try {
+			messenger.sendMessage(new NewPlayer(selfID, selfID, name));
+		} catch (IOException e) { throw new RuntimeException(e); }
+		hostScreenController.addPlayer(name);
+	}
+
+	/**
+	 * Sends a <code>NewPlayer</code> message to the host. The ID of this player has not yet been decided,
+	 * so a stub ID is used.
+	 *
+	 * @param name the name of the player to add.
+	 * @throws IOException if an error occurs in sending the message.
 	 */
 	public void sendNewPlayer(String name) throws IOException {
 		messenger.sendMessage(new NewPlayer(0, 0, name));
 	}
 
 	/**
+	 * Sends a notification of the selected game options to the <code>PartyHost</code>
+	 * responsible for communication.
+	 * <p>
+	 *     Invoking this method causes the <code>PartyHost</code> running in this instance of
+	 *     <code>Controller</code> to send a <code>StartGame</code> message to the connected clients.
+	 * </p>
 	 *
-	 * @param name
-	 * @throws IOException
+	 * @param challengesAllowed whether challenges are enabled.
+	 * @param dictionary the path to the dictionary.
+	 * @param playerTime how many seconds a player has to make their turn.
+	 * @param gameTime how many seconds the game may last.
+	 * @see scrabble.network.messages.StartGame
 	 */
-	public void setUpHost(String name) throws IOException {
-		host = new PartyHost(PORT);
-		host.start();
-//		System.out.println(host.getIPAddress() + " " + host.getPort());
-		HostScreen hostScreen = view.getHost();
-		hostScreen.getHostsIP().setText(host.getIPAddress());
-		hostScreen.getHostPort().setText(""+host.getPort());
-		setupSocket(host.getIPAddress(), host.getPort());
-		try {
-			messenger.sendMessage(new NewPlayer(selfID, selfID, name));
-		} catch (IOException e) {
-			throw new RuntimeException(e);
-		}
-		hostScreen.addPlayerName(name);
-	}
-
-	/**
-	 *
-	 * @param challengesAllowed
-	 * @param dictionary
-	 * @param playerTime
-	 * @param gameTime
-	 */
-	public void sendRulesToHost(boolean challengesAllowed, String dictionary, int playerTime, int gameTime) {
+	public void sendRulesToHost(boolean challengesAllowed, String dictionary,
+								int playerTime, int gameTime) {
 		Ruleset ruleset = new Ruleset(gameTime, playerTime, challengesAllowed, dictionary);
 		host.startGame(ruleset);
 	}
 
 	/**
+	 * Initializes the state of the game model and updates the GUI to the board screen.
 	 *
-	 * @param ruleset
-	 * @param playerNames
-	 * @param playerID
-	 * @param startingTiles
+	 * @param ruleset the ruleset which applies to the game.
+	 * @param playerNames the names of the players in the game. These should be ordered by turn number.
+	 * @param playerID the IDs of the players. These should correspond to those in <code>playerNames</code>.
+	 * @param startingTiles the tiles which this player has at the start of the game.
 	 */
 	public void startGame(Ruleset ruleset, String[] playerNames, int[] playerID, Tile[] startingTiles) {
 		// add tiles to game and gameScreen
 		// pass ruleset and the other stuff to setUpGameScreen
 		// use the info provided to make players for the game
 
-		this.getView().getGame().setupGameItems(playerNames, ruleset.getTotalTime(), ruleset.getTurnTime(), startingTiles);
-		gameScreenController.addRackTileListeners();
+		gameScreenController.setupGameItems(playerNames, ruleset.getTotalTime(), ruleset.getTurnTime(), startingTiles);
 		Player[] players = new Player[playerNames.length];
 		LocalPlayer self = null;
 		for (int i = 0; i < players.length; i++) {
 			if (playerID[i] == this.selfID) {
 				self = new LocalPlayer(playerNames[i], playerID[i], i, new ArrayList<>(List.of(startingTiles)));
-
 			}
 			players[i] = new Player(playerNames[i], playerID[i], i);
 		}
-		ruleset.setupDictionary();
 		model = new Game(players, new Board(), ruleset, self);
-		showGame();
 		if (model.getCurrentPlayer() != selfID) gameScreenController.setRackButtonsEnabled(false);
+		this.showGame();
 	}
 
 	/**
-	 *
-	 * @param tiles
+	 * Adds specified tiles to this player's rack (shown in the GUI).
+	 * @param tiles the tiles to add.
 	 */
 	public void addTiles(Tile[] tiles) {
 		model.addTiles(tiles);
-		gameScreenController.addTiles(tiles);
-//		gameScreenController.setRackButtonsEnabled(false);
+		gameScreenController.addRackTiles(tiles);
 	}
 
 	/**
+	 * Plays specified tiles on the board for a player. The score of the word(s) is calculated
+	 * and added to that player's score.
+	 * <p>
+	 *     This method operates differently depending on what player is playing tiles.
+	 *     <ul>
+	 *         <li>
+	 *             For the local player (that is, the player making changes to this <code>Controller</code>'s GUI),
+	 *             the play is checked for validity. The play must adhere to the guidelines in the description for
+	 *             {@link Board#playTiles}. If the game's <code>Ruleset</code> has challenges disabled,
+	 *             all words resulting from the play are checked against the game's dictionary. When challenges
+	 *             are enabled, only the locations must be validated.
+	 *         </li>
+	 *         <li>
+	 *             For a network player making a play, the tiles are placed on the board (both in the model and
+	 *             the GUI), and the player's score is updated. Neither the location of the tiles,
+	 *             nor the resulting words are checked, as this work has already been done on the side of the
+	 *             sending client's application
+	 *         </li>
+	 *     </ul>
+	 *     After the local player's application validates a play, it is sent to the <code>PartyHost</code>
+	 *     to be distributed to other clients. Both cases update the score of the player.
+	 * </p>
 	 *
-	 * @param playerID
-	 * @param tiles
+	 * @param playerID the unique ID of the player who is changing the board.
+	 * @param tiles the tiles to be placed on the board
 	 */
 	public void playTiles(int playerID, Tile[] tiles) {
 		if (playerID == selfID) selfPlayTiles(tiles);
@@ -201,91 +228,91 @@ public class Controller implements PropertyChangeListener  {
 		gameScreenController.setRackButtonsEnabled(model.getCurrentPlayer() == selfID);
 	}
 	private void otherPlayTiles(int playerID, Tile[] tiles) {
+		// when the player is not from this application.
 		model.playTiles(playerID, tiles);
-		view.getGame().addToBoard(tiles);
-		Player player = null;
-		for (Player player1 : model.getPlayers()) {
-			if (player1.getID() == playerID) player = player1;
-		}
-		view.getGame().updateScore(player.getName(), player.getScore());
+		gameScreenController.addToBoard(tiles);
+		Player player = model.getPlayer(playerID);
+		gameScreenController.updateScore(player.getName(), player.getScore());
 	}
 	private void selfPlayTiles(Tile[] tiles) {
-
+		// when the player is this application's player.
 		int score = model.playTiles(selfID, tiles);
 		if (score >= 0) {
-			view.getGame().updateScore(model.getSelf().getName(), model.getSelf().getScore());
+			Player p = model.getSelf();
+			gameScreenController.updateScore(p.getName(), p.getScore());
 			try {
-				getMessenger().sendMessage(new PlayTiles(selfID, selfID, tiles));
-				getView().getGame().disableLastPlayedTiles();
+				messenger.sendMessage(new PlayTiles(selfID, selfID, tiles));
+				gameScreenController.disableLastPlayedTiles();
 			} catch (IOException e) {
 				getMessenger().halt();
 			}
 		}
 		else {
-			resetLastPlay(getView().getGame());
+			resetLastPlay();
 		}
 	}
 
 	/**
-	 *
-	 * @param gameScreen
+	 * Removes the most recently played tiles from the board and places them in the rack.
+	 * @see GameScreenController#resetLastPlay
 	 */
-	public void resetLastPlay(GameScreen gameScreen){
-		//loop through the rack
-		int size = gameScreen.playedTiles.size();
-		for (int i = 0; i < size; ++i){
-			gameScreenController.removeTile(gameScreen.playedTiles.get(0));
-		}
-	}
+	public void resetLastPlay(){ gameScreenController.resetLastPlay(); }
 
 	/**
-	 *
-	 * @param tile
+	 * Removes a specific tile from this player's rack.
+	 * @param tile the tile to be removed.
 	 */
-	public void removeRackTile(Tile tile) {
-		RackPanel rackPanel = view.getGame().getRackPanel();
-		for(TilePanel tp: rackPanel.getTilePanels()){
-			if(tp.getButton().getText().equals(""+tile.getLetter())){
-				tp.setButton(new JButton(" "));
-				break;
-			}
-		}
-	}
-
-	public ScrabbleGUI getView() {
-		return view;
-	}
-
-	public Game getModel() {
-		return model;
-	}
-
-	public int getSelfID() {
-		return selfID;
-	}
-
-	public ClientMessenger getMessenger() {
-		return messenger;
-	}
-
-	public Socket getHostSocket() {
-		return hostSocket;
-	}
-
-	public PartyHost getHost() {
-		return host;
-	}
-
-	public void setSelfID(int selfID) {
-		this.selfID = selfID;
-	}
+	public void removeRackTile(Tile tile) { gameScreenController.removeRackTile(tile); }
 
 	/**
-	 *
+	 * Gets the view.
+	 * @return The view component.
+	 */
+	public ScrabbleGUI getView() { return view; }
+
+	/**
+	 * Gets this controller's model.
+	 * @return The game model. Null if this player is not in a game.
+	 */
+	public Game getModel() { return model; }
+
+	/**
+	 * The player ID of this player.
+	 * @return the integer ID of this player.
+	 */
+	public int getSelfID() { return selfID; }
+
+	/**
+	 * Gets the messenger to the host.
+	 * @return This <code>Controller</code>'s <code>ClientMessenger</code>
+	 */
+	public ClientMessenger getMessenger() { return messenger; }
+
+	/**
+	 * Gets the socket to the host.
+	 * @return a socket to the host. Null if it has not yet been created.
+	 */
+	public Socket getHostSocket() { return hostSocket; }
+
+	/**
+	 * Gets the host of this party.
+	 * @return the <code>PartyHost</code> of this party. Null if this controller is not hosting.
+	 */
+	public PartyHost getHost() { return host; }
+
+	/**
+	 * Sets the ID of this player.
+	 * @param selfID the new ID of this player
+	 */
+	public void setSelfID(int selfID) { this.selfID = selfID; }
+
+	/**
+	 * Changes the state of the GUI to display the game, with the appropriate
+	 * <code>WindowClosing</code> listener.
 	 */
 	public void showGame() {
 		view.showGame();
-		removeListeners();
+		removeWindowListeners();
 		view.addWindowListener(new WindowAdapter() {
 			@Override
 			public void windowClosing(WindowEvent e) {
@@ -295,11 +322,12 @@ public class Controller implements PropertyChangeListener  {
 	}
 
 	/**
-	 *
+	 * Changes the state of the GUI to display the host screen, with the appropriate
+	 * <code>WindowClosing</code> listener.
 	 */
 	public void showHost() {
 		view.showHost();
-		removeListeners();
+		removeWindowListeners();
 		view.addWindowListener(new WindowAdapter() {
 			@Override
 			public void windowClosing(WindowEvent e) {
@@ -309,11 +337,12 @@ public class Controller implements PropertyChangeListener  {
 	}
 
 	/**
-	 *
+	 * Changes the state of the GUI to display the join screen, with the appropriate
+	 * <code>WindowClosing</code> listener.
 	 */
 	public void showJoin() {
 		view.showJoin();
-		removeListeners();
+		removeWindowListeners();
 		view.addWindowListener(new WindowAdapter() {
 			@Override
 			public void windowClosing(WindowEvent e) {
@@ -323,11 +352,12 @@ public class Controller implements PropertyChangeListener  {
 	}
 
 	/**
-	 *
+	 * Changes the state of the GUI to display the main menu, with the appropriate
+	 * <code>WindowClosing</code> listener.
 	 */
 	public void showMain() {
 		view.showMain();
-		removeListeners();
+		removeWindowListeners();
 		view.addWindowListener(new WindowAdapter() {
 			@Override
 			public void windowClosing(WindowEvent e) {
@@ -338,11 +368,12 @@ public class Controller implements PropertyChangeListener  {
 	}
 
 	/**
-	 *
+	 * Changes the state of the GUI to display the waiting screen, with the appropriate
+	 * <code>WindowClosing</code> listener.
 	 */
 	public void showWaiting() {
 		view.showWaiting();
-		removeListeners();
+		removeWindowListeners();
 		view.addWindowListener(new WindowAdapter() {
 			@Override
 			public void windowClosing(WindowEvent e) {
@@ -352,11 +383,12 @@ public class Controller implements PropertyChangeListener  {
 	}
 
 	/**
-	 *
+	 * Changes the state of the GUI to display the winner screen, with the appropriate
+	 * <code>WindowClosing</code> listener.
 	 */
 	public void showWinner() {
 		view.showWinner();
-		removeListeners();
+		removeWindowListeners();
 		view.addWindowListener(new WindowAdapter() {
 			@Override
 			public void windowClosing(WindowEvent e) {
@@ -366,63 +398,54 @@ public class Controller implements PropertyChangeListener  {
 	}
 
 	/**
-	 *
+	 * Removes <code>WindowListener</code>s from the view.
 	 */
-	public void removeListeners() {
-		for (WindowListener wl : view.getWindowListeners()) {
-			view.removeWindowListener(wl);
-		}
-	}
+	public void removeWindowListeners() { for (WindowListener wl : view.getWindowListeners()) view.removeWindowListener(wl); }
 
 	/**
-	 *
-	 * @return
+	 * Displays a dialog to confirm quitting/leaving a party.
+	 * @return An integer representing the choice selected, as specified in <code>JOptionPane</code>.
+	 * @see JOptionPane
 	 */
-	public int showQuitDialog() {
-		return JOptionPane.showConfirmDialog(view, "Are you sure you want to leave?\nYou will not be able to rejoin.", "Quit?", JOptionPane.WARNING_MESSAGE);
-	}
+	public int showQuitDialog() { return JOptionPane.showConfirmDialog(view, "Are you sure you want to leave?\nYou will not be able to rejoin.", "Quit?", JOptionPane.WARNING_MESSAGE); }
 
 	/**
-	 *
+	 * Displays the set of rules used for the current game, specified by the
+	 * game's <code>Ruleset</code>.
 	 */
-	public void showRulesDialog() {
-		JOptionPane.showMessageDialog(view, "1.~~~~~~~~~\n2.~~~~~~~~~\n3.~~~~~~~~~~~~\n4.~~~~~~~~~~", "Rules", JOptionPane.INFORMATION_MESSAGE);
-	}
+	public void showRulesDialog() { JOptionPane.showMessageDialog(view, "1.~~~~~~~~~\n2.~~~~~~~~~\n3.~~~~~~~~~~~~\n4.~~~~~~~~~~", "Rules", JOptionPane.INFORMATION_MESSAGE); }
 
 	/**
-	 *
+	 * Displays a warning that the player has not entered their name.
 	 */
-	public void showNoNameDialog() {
-		JOptionPane.showMessageDialog(view, "You must put in a name!", "No Name", JOptionPane.WARNING_MESSAGE);
-	}
+	public void showNoNameDialog() { JOptionPane.showMessageDialog(view, "You must put in a name!", "No Name", JOptionPane.WARNING_MESSAGE); }
 
 	/**
-	 *
+	 * Displays a warning that the player has not entered the host's IP.
 	 */
-	public void showNoIPDialog() {
-		JOptionPane.showMessageDialog(view, "You must input the host's IP Address!", "No IP", JOptionPane.WARNING_MESSAGE);
-	}
+	public void showNoIPDialog() { JOptionPane.showMessageDialog(view, "You must input the host's IP Address!", "No IP", JOptionPane.WARNING_MESSAGE);}
 
 	/**
-	 *
+	 * Displays a warning that the player has not entered the host's port.
 	 */
-	public void showNoPortDialog() {
-		JOptionPane.showMessageDialog(view, "You must enter the host's port number!", "Incorrect Port Input", JOptionPane.WARNING_MESSAGE);
-	}
+	public void showNoPortDialog() { JOptionPane.showMessageDialog(view, "You must enter the host's port number!", "Incorrect Port Input", JOptionPane.WARNING_MESSAGE); }
 
 	/**
-	 *
+	 * Displays an error that the application could not connect with the host.
 	 */
-	public void showIPErrorDialog() {
-		JOptionPane.showMessageDialog(view, "The Host refused to connect.\nCheck your IP Address!", "No Connection", JOptionPane.WARNING_MESSAGE);
-	}
+	public void showIPErrorDialog() { JOptionPane.showMessageDialog(view, "The Host refused to connect.\nCheck your IP Address!", "No Connection", JOptionPane.WARNING_MESSAGE); }
+
+	/**
+	 * Stops the execution of this application.
+	 */
+	public void exit() { view.dispose(); haltThreads(); }
 
 	/**
 	 * Implements communication with a host, using the objects in
-	 * the {@link scrabble.network.messages messages package}.
+	 * the {@link scrabble.network.messages messages} package.
 	 * <p>
 	 *     A thread of this class continuously listens for message objects
-	 *     from the host which are then sent to the PropertyChangeListener
+	 *     from the host which are then sent to the <code>PropertyChangeListener</code>
 	 *     passed in at construction. A client of this class can send messages to
 	 *     the host by calling {@link #sendMessage}. When this thread is no longer needed,
 	 *     calling the method {@link #halt} signals run to cease execution and close the socket.
@@ -511,7 +534,7 @@ public class Controller implements PropertyChangeListener  {
 		}
 
 		/**
-		 * Ceases execution of <code>run()</code>.
+		 * Ceases execution of <code>run</code>.
 		 */
 		public void halt() {
 			isListening = false;
@@ -534,64 +557,75 @@ public class Controller implements PropertyChangeListener  {
 	* 			Private Methods				   *
 	 * * * * * * * * * * * * * * * * * * * * * */
 
+	/*
+	 * adds listeners to the individual screens
+	 */
 	private void addListeners(ScrabbleGUI view) {
 		addMenuListeners(view.getMainMenu());
 		addHostListeners(view.getHost());
 		addJoinListeners(view.getJoin());
-		addWaitingListeners(view.getWaiting());
 
-		// stub, not for active game. see propertyChangeListener
-		this.gameScreenController = new GameScreenController(this, (GameScreen) view.getGame());
+		this.gameScreenController = new GameScreenController(this, view.getGame());
 		gameScreenController.setupMenuListeners(view);
-		//this.mainMenuController = new MainMenuController(this, (MainMenuScreen) view.getMainMenu());
-
 	}
 
-	private void addWaitingListeners(JPanel waiting) {
-		// add listeners to the buttons on the waiting players screen
-	}
+	private void addWaitingListeners(JPanel waiting) {}
 
+	/*
+	 * adds listeners to the Join screen; allows player to enter name and host info,
+	 * then attempt to join.
+	 */
 	private void addJoinListeners(JoinScreen join) {
-		// add listeners to the buttons on the join game screen
 		joinScreenController = new JoinScreenController(this, join);
 	}
 
+	/*
+	 * adds listeners to the Host screen; allows player to change options and start the game.
+	 */
 	private void addHostListeners(HostScreen host) {
-		// add listeners to the buttons on the host screen
 		hostScreenController = new HostScreenController(this, host);
 	}
 
+	/*
+	 * adds listeners to the menu screen; allows player to select join, host, or quit, with options for sound
+	 */
 	private void addMenuListeners(MainMenuScreen mainMenu) {
-		// add listeners to the buttons on the main menu
 		mainMenuController = new MainMenuController(this, mainMenu);
-
 	}
 
-	private void mainClose() {
-		view.dispose();
-		if (messenger!=null) messenger.halt();
-		if (host != null)
-			host.halt();
-	}
+	/*
+	 * handles 'X' being pressed from the main menu.
+	 */
+	public void mainClose() { exit(); }
 
+	/*
+	 * handles 'X' being pressed from the host screen.
+	 */
 	private void hostClose() {
 		int selected = showQuitDialog();
 		if (selected == JOptionPane.YES_OPTION) {
-			host.halt();
+			haltThreads();
 			view.getHost().resetPlayerNames();
 			this.showMain();
 		}
 	}
 
+	/*
+	 * handles 'X' being pressed from the join screen.
+	 */
 	private void joinClose() {
 		if (host != null) host.halt();
 		this.showMain();
 	}
 
-	private void winnerClose() {
-		this.showMain();
-	}
+	/*
+	 * handles 'X' being pressed from the winner screen.
+	 */
+	private void winnerClose() { this.showMain(); }
 
+	/*
+	 * handles 'X' being pressed from the waiting screen.
+	 */
 	private void waitingClose() {
 		int selected = showQuitDialog();
 		if (selected == JOptionPane.YES_OPTION) {
@@ -600,19 +634,24 @@ public class Controller implements PropertyChangeListener  {
 		}
 	}
 
+	/*
+	 * handles 'X' being pressed from the game screen.
+	 */
 	private void gameClose() {
+		// double check that they meant to end their game, then quit the application.
 		int selected = showQuitDialog();
 		if (selected == JOptionPane.YES_OPTION) {
 			this.exit();
 		}
 	}
 
-	public void exit() {
+	/*
+	 * stops the execution of threads running in the background.
+	 */
+	private void haltThreads() {
 		if (messenger!= null) messenger.halt();
 		if (this.host != null) {
 			host.halt();
 		}
-		view.dispose();
 	}
-
 }

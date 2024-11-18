@@ -1,5 +1,13 @@
 package scrabble.view.screen.component;
+/*
+ * Authors: Ian Boyer, David Carr, Samuel Costa,
+ * Maximus Latkovski, Jy'el Mason
+ * Course: COMP 3100
+ * Instructor: Dr. Barry Wittman
+ * Original date: 10/08/2024
+ */
 
+import scrabble.view.TileButton;
 import scrabble.view.screen.GameScreen;
 
 import javax.swing.*;
@@ -57,6 +65,16 @@ public class RackPanel extends JPanel {
 
         // Repaints the panel
         this.repaint();
+    }
+
+    public void addToRack(TileButton button) {
+        boolean searching = true;
+        for (int i = 0; i < tilePanels.length && searching; i++) {
+            if (!(tilePanels[i].getButton() instanceof TileButton)) {
+                setButton(button, i);
+                searching = false;
+            }
+        }
     }
 
 }

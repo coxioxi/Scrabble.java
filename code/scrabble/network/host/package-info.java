@@ -7,7 +7,7 @@
  *     <br>
  *     The primary class {@link scrabble.network.host.PartyHost} should be used and run as the host object.
  *     PartyHost uses the remaining classes as implementers. PartyHost spawns
- *     {@link scrabble.network.host.HostReceiver} threads for client listening and sending.
+ *     threads for client listening and sending.
  *     PartyHost uses {@link scrabble.network.host.TileBag} to randomly select tiles from the
  *     set number of tiles created at the game's beginning.
  * </p>
@@ -20,7 +20,7 @@
  *     	    <li>Get the PartyHost IP address and port for display ({@link scrabble.network.host.PartyHost#getIPAddress},
  *     	    		{@link scrabble.network.host.PartyHost#getPort}). </li>
  *     	    <li>Call {@link scrabble.network.host.PartyHost#run}.</li>
- *     	    <li>Call {@link scrabble.network.host.PartyHost#startGame}.</li>
+ *     	    <li>Call {@link scrabble.network.host.PartyHost#startGame(scrabble.model.Ruleset)}.</li>
  *     	</ol>
  *     	Item 3 accepts clients to the server. Item 4 disables acceptance and informs players that the game has started.
  * </p>
