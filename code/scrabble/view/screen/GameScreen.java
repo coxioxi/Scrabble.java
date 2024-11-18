@@ -188,7 +188,7 @@ public class GameScreen extends JPanel {
 		for (int i = 0; i < tiles.length; i++) {
 			TileButton tb = (tiles[i].isBlank() ?
 					new TileButton() :
-					new TileButton(Tile.TileScore.getTileScoreForLetter(tiles[i].getLetter()))
+					new TileButton(Tile.TileScore.valueOf(tiles[i].getLetter()+""))
 			);
 			int x = tiles[i].getLocation().x;
 			int y = tiles[i].getLocation().y;
