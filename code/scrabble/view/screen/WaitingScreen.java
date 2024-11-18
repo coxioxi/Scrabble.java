@@ -54,11 +54,19 @@ public class WaitingScreen extends JPanel {
         return playersWaiting;
     }
 
+    /**
+     * Updates the label of the next available player slot with the given player name.
+     *
+     * @param name The name of the player to display.
+     */
     public void addPlayerName(String name) {
         players[numPlayers].setText(name);
         numPlayers++;
     }
 
+    /**
+     * Resets all player labels to the default state.
+     */
     public void resetPlayerNames() {
         for (JLabel player : players) {
             player.setText(WAITING);

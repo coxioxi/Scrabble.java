@@ -60,10 +60,6 @@ public class GameScreen extends JPanel {
 		southPanel = setupSouthPanel();
 
 		//Drop down menu
-		/*JComboBox<String> comboBox = getStringJComboBox();
-
-		this.add(comboBox);
-		 */
 		this.add(northPanel, BorderLayout.NORTH);
 		this.add(centerPanel, BorderLayout.CENTER);
 		this.add(westPanel, BorderLayout.WEST);
@@ -79,11 +75,6 @@ public class GameScreen extends JPanel {
 			boardPanel.disableBoardCell(t.getLocation().x, t.getLocation().y);
 		}
 		playedTiles = new ArrayList<>();
-	}
-
-	//TODO: implement this method
-	public GameScreen(Ruleset rules, Player[] player, int playerNum) {
-
 	}
 
 	/**
@@ -165,7 +156,6 @@ public class GameScreen extends JPanel {
 		}
 		resetRack();
 		addTilesToRack(rackTiles);
-
 		this.gameTime.setText(gameTime + ":00");
 	}
 
@@ -181,21 +171,6 @@ public class GameScreen extends JPanel {
 			boardPanel.disableBoardCell(x, y);
 		}
 
-	}
-
-	/**
-	 * Removes a tile from the rack.
-	 *
-	 * @param tile The tile to be removed.
-	 */
-	public void removeRackTile(Tile tile) {
-		RackPanel rackPanel = this.rackPanel;
-		for (TilePanel tp : rackPanel.getTilePanels()) {
-			if (tp.getButton().getText().equals("" + tile.getLetter())) {
-				tp.setButton(new JButton(" "));
-				break;
-			}
-		}
 	}
 
 	/**
@@ -284,35 +259,6 @@ public class GameScreen extends JPanel {
 		northPanel.add(gameTime);
 		return northPanel;
 	}
-
-	/**
-	 * Creates a JComboBox with game options.
-	 *
-	 * @return The JComboBox with game options.
-	 */
-	private static JComboBox<String> getStringJComboBox() {
-		String[] options = {"Rules", "Game Audio", "Game FX", "Quit"};
-		JComboBox<String> comboBox = new JComboBox<>(options);
-		comboBox.setBounds(0, 0, 100, 25);
-
-		// Add action listener for the combo box
-		comboBox.setAction(new AbstractAction() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				if (e.getSource() == comboBox) {
-					String menu = options[comboBox.getSelectedIndex()];
-					switch (menu) {
-						case "Rules" -> System.out.println("There are no rules man, We laust!");
-						case "Game Audio" -> System.out.println("No audio for now :( ");
-						case "Game FX" -> System.out.println("No FX either :( ");
-						case "Quit" -> System.out.println("I wish dude!");
-					}
-				}
-			}
-		});
-		return comboBox;
-	}
-
 
 	/**
 	 * Resets the rack by clearing all tiles.

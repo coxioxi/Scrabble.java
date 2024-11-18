@@ -46,13 +46,9 @@ public class WinnerScreen extends JPanel {
         fourthPlaceName.setBorder(BorderFactory.createEtchedBorder());
 
         // Add each ranking label to the podium panel in order
-        //podium.add(firstPlaceLabel);
         podium.add(firstPlaceName);
-        //podium.add(secondPlaceLabel);
         podium.add(secondPlaceName);
-        //podium.add(thirdPlaceLabel);
         podium.add(thirdPlaceName);
-        //podium.add(fourthPlaceLabel);
         podium.add(fourthPlaceName);
 
         // Add the podium to the center panel and set it to the center of the main layout

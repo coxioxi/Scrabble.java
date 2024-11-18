@@ -49,18 +49,29 @@ public class PlayerPanel extends JPanel {
 		this.add(this.score);
 	}
 
-	public PlayerPanel() {
-
-	}
-
+	/**
+	 * Gets the label displaying the player's name.
+	 *
+	 * @return JLabel labeling the player's name.
+	 */
 	public JLabel getNameLabel() {
 		return name;
 	}
 
+	/**
+	 * Gets the label displaying the remaining time.
+	 *
+	 * @return JLabel representing the player's remaining time.
+	 */
 	public JLabel getTime() {
 		return time;
 	}
 
+	/**
+	 * Gets the label displaying the player's score.
+	 *
+	 * @return JLabel labeling the player's score.
+	 */
 	public JLabel getScore() {
 		return score;
 	}
