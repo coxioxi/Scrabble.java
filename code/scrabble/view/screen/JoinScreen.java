@@ -15,7 +15,7 @@ import java.awt.*;
  */
 public class JoinScreen extends JPanel {
 
-    // Input fields for player's name and host IP, and a button to initiate joining the game
+    // Input fields for player's name and host IP, host's port and a button to initiate joining the game
     private JTextField name;
     private JTextField IP;
     private JTextField port;
@@ -50,9 +50,10 @@ public class JoinScreen extends JPanel {
         IP = new JTextField();
         IP.setColumns(10); // Set the text field width to 10 columns
 
+        // Label and text field for entering host port
         JLabel portLabel = new JLabel("Enter Host Port:", SwingConstants.RIGHT);
         port = new JTextField();
-        name.setColumns(10);
+        name.setColumns(10); // Set the text field width to 10 columns
 
         // Button to join the game
         join = new JButton("Join");
@@ -64,7 +65,7 @@ public class JoinScreen extends JPanel {
         northPanel.add(namePanel); // Add the name panel to the north panel
         this.add(northPanel, BorderLayout.NORTH); // Place the north panel at the top of the layout
 
-        // Create sub-panel for arranging the IP label and text field in a grid
+        // Create sub-panel for arranging the IP and port label and text field in a grid
         JPanel hostInfoPanel = new JPanel(new GridLayout(2,2,7,10));
         hostInfoPanel.add(hostIPLabel);
         hostInfoPanel.add(IP);
@@ -102,6 +103,11 @@ public class JoinScreen extends JPanel {
         return join;
     }
 
+    /**
+     * Returns the text field for entering the host port number.
+     *
+     * @return JTextField for host port input
+     */
     public JTextField getPort() {
         return port;
     }

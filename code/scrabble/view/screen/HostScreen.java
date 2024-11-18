@@ -30,15 +30,15 @@ public class HostScreen extends JPanel {
             {"Dictionary 1"};
 
     // Components for user input and display
-    private JLabel[] players;
-    private int numPlayers;
-    private JComboBox<String> challengeBox;
-    private JComboBox<String> dictionaryBox;
-    private JComboBox<String> playerTimeBox;
-    private JComboBox<String> gameTimeBox;
-    private JButton hostButton;
-    private JLabel hostsIP;
-    private JLabel hostPort;
+    private JLabel[] players; // Labels for showing player slots
+    private int numPlayers; // Counter for the number of players added
+    private JComboBox<String> challengeBox; // Dropdown for challenge mode selection
+    private JComboBox<String> dictionaryBox; // Dropdown for dictionary selection
+    private JComboBox<String> playerTimeBox; // Dropdown for player time selection
+    private JComboBox<String> gameTimeBox; // Dropdown for game time selection
+    private JButton hostButton; // Button to start hosting the game
+    private JLabel hostsIP; // Label to display the host's IP address
+    private JLabel hostPort; // Label to display the port number
 
 
     /**
@@ -77,6 +77,11 @@ public class HostScreen extends JPanel {
         this.add(westPanel, BorderLayout.WEST);
     }
 
+    /**
+     * Adds a player's name to the waiting list on the screen.
+     *
+     * @param name The name of the player to add.
+     */
     public void addPlayerName(String name) {
         System.out.println("Adding player name to host screen...");
         players[numPlayers].setText(name);
@@ -85,6 +90,9 @@ public class HostScreen extends JPanel {
         numPlayers++;
     }
 
+    /**
+     * Resets all player name slots to the default waiting text.
+     */
     public void resetPlayerNames() {
         for (JLabel label : players) {
             label.setText(DEFAULT_WAITING_TEXT);
@@ -133,6 +141,7 @@ public class HostScreen extends JPanel {
         JPanel playersWaiting = new JPanel(new GridLayout(4,1,0,10));
         players = new JLabel[4];
 
+        // Initialize each player slot with the default text and a border
         for (int i = 0; i < players.length; i++) {
             players[i] = new JLabel(DEFAULT_WAITING_TEXT, SwingConstants.CENTER);
             players[i].setBorder(BorderFactory.createEtchedBorder());
@@ -175,7 +184,7 @@ public class HostScreen extends JPanel {
         return customizations;
     }
 
-    // Getters for the components
+    // Getters for UI components to allow external access
     public JLabel[] getPlayers() {
         return players;
     }

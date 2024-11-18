@@ -85,7 +85,8 @@ public class Game {
 			score = board.playTiles(tiles);
 			if(score >= 0) {
 				boolean	areValid;
-				areValid = ruleset.isWordInDictionary(board.getLastWordsPlayed().toArray(new String[0]));
+				areValid = ruleset.isWordInDictionary(
+						board.getLastWordsPlayed().toArray(new String[0]));
 				if(areValid) {
 					player.increaseScore(score);
 					if (playerID == self.getID()) self.increaseScore(score);
@@ -116,10 +117,10 @@ public class Game {
 		return true;
 	}
 
-	/*
-	this helper method changes whose turn it is to the next
-	person in the turn list.
- 	*/
+	/**
+	 * this helper method changes whose turn it is to the next
+	 * person in the turn list.
+	 */
 	public void nextTurn() {
 		this.currentPlayer = (this.currentPlayer + 1) % this.players.length;
 	}
@@ -296,9 +297,6 @@ public class Game {
 	 */
 	public boolean isGameOver() {
 		isGameOver = false;
-//		if ( self.getRack().isEmpty()) {
-//			isGameOver = true;
-//		}
 		if(allPlayersInactive()){
 			isGameOver = true;
 		} else if (ruleset.getTotalTime() == 0) {
@@ -322,7 +320,8 @@ public class Game {
 
 	/**
 	 * this helper method returns a reference to the player object
-	 * 	whose ID is equal to the parameter
+	 * @param playerID the id assigned by the host
+	 * @return reference to player object corresponding to the ID
 	 */
 	public Player getPlayer(int playerID) {
 		Player finalPlayer = null; // Variable to hold the found player
