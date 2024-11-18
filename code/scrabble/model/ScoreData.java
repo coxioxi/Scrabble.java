@@ -13,8 +13,8 @@ import java.util.ArrayList;
  * it is a stand-alone convenience class for helper methods of Board.score()
  */
 public class ScoreData {
-	private ArrayList<String> words;
-	private int score;
+	private ArrayList<String> words; // list of the words played
+	private int score; // current running score
 
 	/**
 	 * Constructs an object from a list of words and a score
