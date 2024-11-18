@@ -1,7 +1,13 @@
-package scrabble.view.frame;
+package scrabble.view;
+/*
+ * Authors: Ian Boyer, David Carr, Samuel Costa,
+ * Maximus Latkovski, Jy'el Mason
+ * Course: COMP 3100
+ * Instructor: Dr. Barry Wittman
+ * Original date: 10/08/2024
+ */
+
 import scrabble.model.Player;
-import scrabble.model.Ruleset;
-import scrabble.model.Tile;
 import scrabble.view.screen.*;
 
 import javax.swing.*;
@@ -30,7 +36,7 @@ public class ScrabbleGUI extends JFrame{
 	private JPanel host		= new HostScreen();
 	private JPanel join 	= new JoinScreen();
 	private JPanel waiting 	= new WaitingScreen();
-	private GameScreen game = new GameScreen();
+	private JPanel game 	= new GameScreen();
 	private JPanel winner 	= new JPanel();	// temp bc these are not yet decided
 
 	private JMenuBar menuBar;
@@ -70,12 +76,6 @@ public class ScrabbleGUI extends JFrame{
 			contentPane.add(panels[i], SCREEN_NAMES[i]);
 		}
 		layoutManager.first(contentPane);
-
-		try {
-			// Set the look and feel to the system's default
-			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-		} catch (ClassNotFoundException | InstantiationException |
-				 IllegalAccessException | UnsupportedLookAndFeelException ignore) {}
 
 		this.setMaximumSize(maximumSize);
 		setupFrame();
@@ -223,10 +223,6 @@ public class ScrabbleGUI extends JFrame{
 		winner = new WinnerScreen(players);
 		layoutManager.addLayoutComponent(winner, PODIUM);
 		panels[panels.length-1] = winner;
-	}
-
-	public void setupGameScreen(Ruleset ruleset, String[] playerNames, Tile[] startingTiles) {
-		this.game.setupGameItems(playerNames, ruleset.getTotalTime(), ruleset.getTurnTime(), startingTiles);
 	}
 
 	// minimum size, title, close op, pack, center in screen, show.

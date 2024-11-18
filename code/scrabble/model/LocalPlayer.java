@@ -1,5 +1,4 @@
 package scrabble.model;
-
 /*
  * Authors: Ian Boyer, David Carr, Samuel Costa, Maximus Latkovski, Jy'el Mason
  * Course: COMP 3100
@@ -86,6 +85,10 @@ public class LocalPlayer extends Player{
 		}
 	}
 
+	/**
+	 * getter for tiles last played
+	 * @return tiles played from the previous turn
+	 */
 	public Tile[] getLastPlay() {
 		return lastPlay;
 	}

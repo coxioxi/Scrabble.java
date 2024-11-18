@@ -1,7 +1,6 @@
 package scrabble.model;
 /*
- * Authors: Ian Boyer, David Carr, Samuel Costa,
- * Maximus Latkovski, Jy'el Mason
+ * Authors: Ian Boyer, David Carr, Samuel Costa, Maximus Latkovski, Jy'el Mason
  * Course: COMP 3100
  * Instructor: Dr. Barry Wittman
  * Original date: 10/08/2024
@@ -21,7 +20,6 @@ public class Tile implements Serializable {
     private char letter;            // The letter on the tile
     private final boolean isBlank;  // Whether the tile is blank or not
     private Point location;         // The location of the tile on the game board
-    private boolean isNew;          // Determines whether the tile has already been played
 
     /**
      * Creates a new, blank Tile object
@@ -43,7 +41,6 @@ public class Tile implements Serializable {
         this.letter = letter;                           // Assign the letter to the tile
         score = TileScore.getScoreForLetter(letter);    // Get the score for the letter
         this.isBlank = false;                           // This tile is not blank
-        this.isNew = true;                              // Mark as new since it hasn't been played
     }
 
     /**
@@ -55,7 +52,6 @@ public class Tile implements Serializable {
         this.letter = letter;                           // Assign the letter to the tile
         score = TileScore.getScoreForLetter(letter);    // Get the score for the letter
         this.isBlank = false;                           // This tile is not blank
-        this.isNew = true;                              // Mark as new since it hasn't been played
         this.location = location;                       // Assign the location of the tile
     }
 
@@ -107,32 +103,6 @@ public class Tile implements Serializable {
      */
     public Point getLocation(){return location;}
 
-    /**
-     * Sets the isNew status of the tile.
-     * @param isNew true if the tile is newly created (not played), false otherwise.
-     */
-    public void setIsNew(boolean isNew){this.isNew = isNew;}
-
-    /**
-     * Getter for the isNew status of the tile.
-     * @return true if the tile is new, false if it has been played.
-     */
-    public boolean getIsNew(){return isNew;}
-
-    /**
-     * Utility method which extracts the points from a tile set
-     * @param tiles the tiles which have points set.
-     *              All indices must be non-null; all tiles must have locations
-     * @return each point of the tile array, returned as an array of the same length.
-     */
-    public static Point[] getPoints(Tile[] tiles) {
-        Point[] points = new Point[tiles.length];
-        for (int i = 0; i < tiles.length; i++) {
-            points[i] = tiles[i].getLocation();
-        }
-        return points;
-    }
-
     @Override
     public boolean equals(Object obj) {return this.toString().equals(obj.toString());}
 
@@ -143,8 +113,64 @@ public class Tile implements Serializable {
                 ", letter=" + letter +
                 ", isBlank=" + isBlank +
                 ", location=" + location +
-                ", isNew=" + isNew +
                 '}'; // Return a string representation of the Tile object
     }
 
+    /**
+     * An enumeration of the values of the tiles in Scrabble.
+     */
+    public enum TileScore {
+        /** The letter A, worth 1 point. */ A(1), /** The letter B, worth 3 points. */ B(3),
+        /** The letter C, worth 3 points. */ C(3), /** The letter D, worth 2 points. */ D(2),
+        /** The letter E, worth 1 point. */ E(1), /** The letter F, worth 4 points. */ F(4),
+        /** The letter G, worth 2 points. */ G(2), /** The letter H, worth 4 points. */ H(4),
+        /** The letter I, worth 1 point. */ I(1), /** The letter J, worth 8 points. */ J(8),
+        /** The letter K, worth 5 points. */ K(5), /** The letter L, worth 1 point. */ L(1),
+        /** The letter M, worth 3 points. */ M(3), /** The letter N, worth 1 point. */ N(1),
+        /** The letter O, worth 1 point. */ O(1), /** The letter P, worth 3 points. */ P(3),
+        /** The letter Q, worth 10 points. */ Q(10), /** The letter R, worth 1 point. */ R(1),
+        /** The letter S, worth 1 point. */ S(1), /** The letter T, worth 1 point. */ T(1),
+        /** The letter U, worth 1 point. */ U(1), /** The letter V, worth 4 points. */ V(4),
+        /** The letter W, worth 4 points. */ W(4), /** The letter X, worth 8 points. */ X(8),
+        /** The letter Y, worth 4 points. */ Y(4), /** The letter Z, worth 10 point. */ Z(10),
+        /** A blank letter, worth 0 points. */ BLANK(0);
+
+        private final int score;	// The value of the letter
+
+        /**
+         * Creates a TileScore object with a score
+         * @param score value of playing this tile
+         */
+        TileScore(int score) {
+            this.score = score;
+        }
+
+        /**
+         * Gives the value of the letter
+         * @return the value of the letter
+         */
+        public int getScore() {
+            return score;
+        }
+
+        /**
+         * A way to get the value of a letter for any letter
+         * @param letter the letter to get the value of. Must be an alphabetical letter.
+         * @return the value of the letter. Between 1-10
+         */
+        public static int getScoreForLetter(char letter) {
+            return TileScore.valueOf( String.valueOf(letter).toUpperCase() ).getScore();
+        }
+
+        /**
+         * Gets the <code>TileScore</code> which corresponds to the letter passed in.
+         * Use '_' for <code>BLANK</code>. Any other values must be a letter.
+         *
+         * @param letter the character for which to find the corresponding Enum.
+         * @return the <code>TileScore</code> corresponding to the letter.
+         */
+        public static TileScore getTileScoreForLetter(char letter) {
+            return (letter == '_' ? BLANK : TileScore.values()['A' - Character.toUpperCase(letter)]);
+        }
+    }
 }

@@ -1,13 +1,25 @@
 package scrabble.network.host;
+/*
+ * Authors: Ian Boyer, David Carr, Samuel Costa,
+ * Maximus Latkovski, Jy'el Mason
+ * Course: COMP 3100
+ * Instructor: Dr. Barry Wittman
+ * Original date: 10/08/2024
+ */
 
 import scrabble.model.Player;
 import scrabble.model.Ruleset;
 import scrabble.model.Tile;
 import scrabble.network.messages.*;
+import scrabble.view.screen.GameScreen;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
+import java.io.EOFException;
 import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.net.*;
 import java.util.*;
 
@@ -18,29 +30,23 @@ import java.util.*;
  * and {@link TileBag} to randomly send tiles to replenish player racks.
  * <p>
  *     A running thread of this class continuously accepts new clients until
- *     this is signalled to start the game. Only 4 clients can be accepted into a game.
+ *     this is signalled to start the game. Only <code>MAX_NUM_PLAYERS</code> clients can be accepted into a game.
  * </p>
  * @see scrabble.network.messages
  */
 public class PartyHost extends Thread implements PropertyChangeListener {
-	/*
-	Some message processing is likely to be needed depending on the messages received.
-	For example, when a PlayTiles message is received, the host must send a NewTiles message
-	to the client who sent the PlayTiles. Host then must send PlayTiles to the other
-	clients, with the new number of tiles which the original client has in their rack.
-
-	For example implementation, see the class of the same name in ../networkPrototype
-	 */
 
 	/**
 	 * The identifying number of the host. Used in <code>Message</code> objects to
 	 * signify the sender.
 	 */
 	public static final int HOST_ID = -1;
+	public static final int MAX_NUM_PLAYERS = 4;
 
 	private final String IPAddress;
 	private ServerSocket server;
 	private TileBag tileBag;
+
 	private HashMap<HostReceiver, Integer> playerIdMap;
 	private HashMap<HostReceiver, ArrayList<Tile>> playerTiles;
 	private HashMap<Integer, HostReceiver> playerIdToMessenger;
@@ -48,19 +54,7 @@ public class PartyHost extends Thread implements PropertyChangeListener {
 	private PropertyChangeEvent evt;
 	private Ruleset ruleset;
 	private boolean inGame;
-	private final int TILE_RACK_SIZE = 7;
 
-	public static void main(String[] args) throws UnknownHostException {
-		int port = 0;
-
-		System.out.println("Your IP: " + Inet4Address.getLocalHost().getHostAddress());
-		PartyHost partyHost = new PartyHost(port);
-		System.out.println("Listening at port " + partyHost.getPort());
-
-
-		Thread thread = new Thread(partyHost);
-		thread.start();
-	}
 
 	/**
 	 * Constructs a PartyHost object listening to a port.
@@ -71,10 +65,10 @@ public class PartyHost extends Thread implements PropertyChangeListener {
 		super();
 		server = null;
 		tileBag = new TileBag();
-		playerIdMap = new HashMap<>(4);
-		playerTiles = new HashMap<>(4);
-		playerIdToMessenger = new HashMap<>(4);
-		playerNames = new HashMap<>(4);
+		playerIdMap = new HashMap<>(MAX_NUM_PLAYERS);
+		playerTiles = new HashMap<>(MAX_NUM_PLAYERS);
+		playerIdToMessenger = new HashMap<>(MAX_NUM_PLAYERS);
+		playerNames = new HashMap<>(MAX_NUM_PLAYERS);
 		inGame = false;
 
 		// create a server socket that refreshes every second
@@ -92,9 +86,7 @@ public class PartyHost extends Thread implements PropertyChangeListener {
 	 * Gets the local host's IP address.
 	 * @return the raw IP address in a String format.
 	 */
-	public String getIPAddress() {
-		return IPAddress;
-	}
+	public String getIPAddress() { return IPAddress; }
 
 	/**
 	 * Gets the listening port.
@@ -125,16 +117,13 @@ public class PartyHost extends Thread implements PropertyChangeListener {
 	@Override
 	public void run() {
 		// accept clients if not in a game.
-		// once game starts, stop accepting clients.
 		while (!inGame) {
-			while (!inGame && playerIdMap.size()<4) {
+			while (!inGame && playerIdMap.size()<MAX_NUM_PLAYERS) {
 				acceptClients();
 			}
 		}
-
 		// game has started, stop looking
 		// all future changes handled through ClientHandler objects' calls to property change
-
 	}
 
 	@Override
@@ -193,10 +182,10 @@ public class PartyHost extends Thread implements PropertyChangeListener {
 		playerIdMap.keySet().forEach(HostReceiver::halt);
 	}
 
-	public void startGame() throws IOException {
+	private void startGame() throws IOException {
 		// Make a starting rack for each player.
 		for (HostReceiver host: playerIdMap.keySet()){
-			playerTiles.put(host, new ArrayList<>(Arrays.asList(tileBag.getNext(TILE_RACK_SIZE))));
+			playerTiles.put(host, new ArrayList<>(Arrays.asList(tileBag.getNext(GameScreen.RACK_SIZE))));
 		}
 
 		int[] randomNumbers = new int[playerIdMap.size()];
@@ -274,77 +263,116 @@ public class PartyHost extends Thread implements PropertyChangeListener {
 		}
 	}
 
-	/*
-	received playTiles message; relay to other clients, then send new tiles to sender
+	/**
+	 * ClientHandler is responsible for listening for new messages coming in from the clients
+	 * It maintains a reference to the PartyHost (PropertyChangeListener) to notify it when messages are received.
+	 * For example,
+	 * <code>
+	 * 		Message message = inputStream.readObject();
+	 * 		partyHost.sendMessage(message)
+	 * 	</code>
+	 * The party host is then responsible for handling the message that was received.
+	 * Party host creates one ClientHandler thread for each client who joins the game
+	 *
 	 */
-	private void handlePlayTiles(HostReceiver source, PlayTiles newValue) throws IOException {
-		for (HostReceiver host: playerIdMap.keySet()) {
-			if(!playerIdMap.get(host).equals(playerIdMap.get(source))) {
-				PlayTiles playTilesMessage = new PlayTiles(HOST_ID, newValue.getPlayerID(), newValue.getTiles());
-				host.sendMessage(playTilesMessage);
+	private static class HostReceiver implements Runnable {
+
+		private final PropertyChangeSupport notifier;		// notifies listener of messages received
+		private final Socket socket; 	// the socket to the client
+		private final ObjectInputStream inputStream;	// the stream from which message objects are read
+		private final ObjectOutputStream outputStream;
+		private boolean listening;	// whether we are listening for new messages from client
+
+		/**
+		 * Constructs a host-client messenger with an observer.
+		 * @param socket the socket to the client. Must be non-null.
+		 * @param listener the observer to which this sends updates.
+		 * @throws IOException if an error occurs in getting the <code>socket</code>'s
+		 * 	 			streams.
+		 */
+		public HostReceiver(Socket socket, PropertyChangeListener listener)
+				throws IOException {
+			this.socket = socket;
+			this.inputStream = new ObjectInputStream(socket.getInputStream());
+			this.outputStream = new ObjectOutputStream(socket.getOutputStream());
+			notifier = new PropertyChangeSupport(this);
+			notifier.addPropertyChangeListener(listener);
+			listening = false;
+
+		}
+
+		/**
+		 * Gets the socket of this class.
+		 * @return the socket.
+		 */
+		public Socket getSocket() { return socket; }
+
+		/**
+		 * Listens for messages from the client and sends them to the observer.
+		 * This method will cease execution after <code>halt</code> is called or
+		 * if the client closes the socket.
+		 */
+		public void run() {
+			// listen for objects from the stream
+			// use the ObjectInputStream to get the objects.
+			// send a notification to the listener via PropertyChangeSupport object
+
+			// listen for new messages. stop when this is told to halt, or when socket has been closed
+			listening = true;
+			Message newMessage = null;
+			while (listening) {
+				try {
+					newMessage = (Message) inputStream.readObject();
+				} catch (EOFException | SocketException e) {
+					// Client has closed socket.
+					PartyHost ph = (PartyHost) notifier.getPropertyChangeListeners()[0];
+					newMessage = new ExitParty(ph.getPlayerID(this), ph.getPlayerID(this));
+					this.halt();
+				} catch (IOException | ClassNotFoundException e) {
+					throw new RuntimeException(e);
+				}
+				// got a message. tell the listener
+				notifier.firePropertyChange("message", null, newMessage);
+			}
+
+			// we have stopped listening. close streams
+			try {
+				closeStreams();
+			} catch (IOException e) {
+				throw new RuntimeException(e);
 			}
 		}
 
-		Tile[] sendTiles = tileBag.getNext(newValue.getTiles().length);
-		NewTiles message = new NewTiles(HOST_ID, sendTiles);
-		source.sendMessage(message);
-	}
+		// closes socket and associated streams
+		private void closeStreams() throws IOException {
+			inputStream.close();
+			outputStream.flush();
+			outputStream.close();
+			socket.close();
+		}
 
-	/*
-	received PassTurn message; relay.
-	 */
-	private void handlePassTurn(HostReceiver source, PassTurn newValue) throws IOException {
-		for (HostReceiver host: playerIdMap.keySet()) {
-			if(!playerIdMap.get(host).equals(playerIdMap.get(source))) {
-				PassTurn passTurnMessage = new PassTurn(HOST_ID, newValue.getPlayerID());
-				host.sendMessage(passTurnMessage);
-			}
+		/**
+		 * Sends a message to the client associated with this object.
+		 * @param message the message to send. Must be non-null.
+		 * @throws IOException when an error occurs in writing to client stream.
+		 */
+		public void sendMessage(Message message) throws IOException {
+			outputStream.writeObject(message);
+			outputStream.flush();
+		}
+
+		/**
+		 * Stops the execution of the <code>run</code> method, closing the connection to the client.
+		 */
+		public void halt() { listening = false; }
+
+		@Override
+		public boolean equals(Object obj) {
+			if (!(obj instanceof HostReceiver)) return false;
+			Socket socket2 = ((HostReceiver)obj).getSocket();
+			return (obj.getClass() == this.getClass()) &&
+					socket.equals(socket2);
 		}
 	}
 
-	/*
-	received ExitParty message; relay and replace player's tiles into tile bag
-	 */
-	private void handleExitParty(HostReceiver source, ExitParty newValue) throws IOException {
-		for (HostReceiver host: playerIdMap.keySet()) {
-			if(!playerIdMap.get(host).equals(playerIdMap.get(source))) {
-				ExitParty passTurnMessage = new ExitParty(HOST_ID, newValue.getPlayerID());
-				host.sendMessage(passTurnMessage);
-			}
-		}
-		ArrayList<Tile> playerRack = playerTiles.get(source);
-		tileBag.addTiles(playerRack.toArray(new Tile[0]));
-		source.halt();
-	}
-
-	/*
-	Exchange tiles message received. update this representation of player's rack,
-	then send new tiles to player
-	 */
-	private void handleExchangeTiles(HostReceiver source, ExchangeTiles newValue) throws IOException {
-		Tile[] exchangedTiles = newValue.getToExchange();
-		for(Tile oldTile: exchangedTiles) {
-			playerTiles.get(source).remove(oldTile);
-		}
-		Tile[] newTiles = tileBag.getNext(exchangedTiles.length);
-		tileBag.addTiles(exchangedTiles);
-		NewTiles newTilesMessage = new NewTiles(newValue.getPlayerID(),newTiles);
-		for(Tile newTile: newTiles) {
-			playerTiles.get(source).add(newTile);
-		}
-		source.sendMessage(newTilesMessage);
-	}
-
-	private void handleNewPlayer(HostReceiver source, NewPlayer message) throws IOException {
-
-	}
-
-	/*
-	Leave for later.
-	is extension feature.
-	 */
-	private void handleChallenge(HostReceiver source, Challenge newValue) throws IOException {
-
-		source.sendMessage(newValue);
-	}
 }

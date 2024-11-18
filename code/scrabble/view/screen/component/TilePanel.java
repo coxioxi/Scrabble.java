@@ -1,6 +1,13 @@
 package scrabble.view.screen.component;
+/*
+ * Authors: Ian Boyer, David Carr, Samuel Costa,
+ * Maximus Latkovski, Jy'el Mason
+ * Course: COMP 3100
+ * Instructor: Dr. Barry Wittman
+ * Original date: 10/08/2024
+ */
 
-import scrabble.view.frame.TileButton;
+import scrabble.view.TileButton;
 
 import javax.swing.*;
 import java.awt.*;
@@ -29,9 +36,7 @@ public class TilePanel extends JPanel {
      *
      * @return the current JButton instance
      */
-    public JButton getButton() {
-        return tileButton;
-    }
+    public JButton getButton() { return tileButton; }
 
     /**
      * Sets a new button in the panel. If a button already exists, it removes the old one

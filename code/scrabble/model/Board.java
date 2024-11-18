@@ -1,7 +1,6 @@
 package scrabble.model;
 /*
- * Authors: Ian Boyer, David Carr, Samuel Costa,
- *      Maximus Latkovski, Jy'el Mason
+ * Authors: Ian Boyer, David Carr, Samuel Costa, Maximus Latkovski, Jy'el Mason
  * Course: COMP 3100
  * Instructor: Dr. Barry Wittman
  * Original date: 10/08/2024
@@ -9,6 +8,7 @@ package scrabble.model;
 
 import java.awt.*;
 import java.util.*;
+import java.util.List;
 
 /**
  * This class represents the scrabble board. It maintains the placement of
@@ -18,23 +18,22 @@ import java.util.*;
  */
 public class Board {
 	/**
-	 * How many rows are on the board.
+	 * The number of rows on the board.
 	 */
 	public static final int BOARD_ROWS = 15;
 	/**
-	 * How many columns are on the board.
+	 * The number of columns on the board.
 	 */
 	public static final int BOARD_COLUMNS = 15;
 
 	/**
 	 * A map of {@link ModifierType modifier cells} accessible by {@link Point}.
-	 * Calling this.get(Point) returns the type of modifier cell at that point.
-	 * Note that a null value should be treated as a non-modifier cell.
+	 * Calling <code>MODIFIER_HASH_MAP.get(Point)</code> returns the type of modifier cell at that point.
 	 */
 	public static final Map<Point,ModifierType> MODIFIER_HASH_MAP = initializeModifierCells();
 
 
-	private Tile[][] board;  // where Tile objects are placed
+	private final Tile[][] board;  // where Tile objects are placed
     private ArrayList<String> lastWordsPlayed
 			= new ArrayList<>();   // the words which have most recently been played
 
@@ -158,16 +157,16 @@ public class Board {
     }
 
     /**
-     * getter for lastWordsPlayed, the list of words added to the
+     * Getter for lastWordsPlayed, the list of words added to the
 	 * board on the previous call to {@link #playTiles}
-     * @return an array list of most recent words
+     * @return An array list of most recent words
      */
-    public ArrayList<String> getLastWordsPlayed() {
+    public List<String> getLastWordsPlayed() {
         return lastWordsPlayed;
     }
 
     /**
-     * Clears the board of all tiles, puts null values in their place
+     * Clears the board of all tiles, putting null values in their place.
      */
     public void clearBoard(){
         for (Tile[] tiles : board) {
@@ -176,10 +175,10 @@ public class Board {
     }
 
     /**
-     * Returns the tile object played on a given x and y.
-     * @param x row index
-     * @param y column index
-     * @return the tile at the specified (x, y) position. Null if none has been played here.
+     * Gets the tile object played at a given x and y.
+     * @param x row index.
+     * @param y column index.
+     * @return The tile at the specified (x, y) position. Null if none has been played here.
      */
     public Tile getTile(int x, int y){
         return board[x][y];
@@ -225,12 +224,12 @@ public class Board {
 	 *             <li>be adjacent to an already placed tile, or</li>
 	 *             <li>be placed at the starting tile (7, 7).</li>
 	 *         </ul></li>
-	 *         <li>Each {@link Tile#getLocation tile point} must correspond to an empty
+	 *         <li>Each tile {@link Tile#getLocation point} must correspond to an empty
 	 *         position on the board. That is, no tile has been placed at this point.</li>
-	 *         <li>Each tile point must be within the board bounds (x,y in {0,1,...,14}).</li>
+	 *         <li>Each tile point must be within the board bounds (x,y in {0,1,...,<code>BOARD_ROWS-1</code>}).</li>
 	 *         <li>All tiles must have either the same x/row or y/column value.</li>
 	 *         <li>Each tile location must be unique. That is, no two tiles in parameter
-	 *         tiles may have the same x and y values.</li>
+	 *         <code>tiles</code> may have the same x and y values.</li>
 	 *         <li>All tiles must be connected. That is, either a tile in tiles is
 	 *         adjacent to another tile in tiles, or it is adjacent to a board tile
 	 *         which is adjacent to a tile in tiles. In other words, there may be no
@@ -239,9 +238,9 @@ public class Board {
 	 *     If any of these conditions is not met, a negative number will be returned.
 	 * </p>
      *
-     * @param tiles the tiles which are being placed on the board
+     * @param tiles the tiles which are being placed on the board.
      *               Note the array may not be empty, but arrays of size 1 are allowed.
-     * @return the score of the word(s) played as an integer. A negative number is
+     * @return The score of the word(s) played as an integer. A negative number is
 	 * returned if the play is invalid (see above). Note that a score of 0 is possible.
 	 * There is no known limit to a scrabble score, though the highest calculated is in
 	 * the lower 1000's.
@@ -262,7 +261,7 @@ public class Board {
      * or, simply "__" is shown when neither condition is met.
      * each cell is padded with spaces in the String. A newline is
      * added to the end of board rows.
-     * @returns a String representation, with formatting as stated above
+     * @return a String representation, with formatting as stated above
 	 */
     public String toString() {
         // String representation of the board
@@ -270,19 +269,11 @@ public class Board {
         for (int i = 0; i < board.length; i++) {
             for (int j = 0; j < board.length; j++) {
                 if (board[i][j] == null) {
-
-                    // Get modifier for special cells like Double Word, Triple Word, etc.
-                    ModifierType mt = MODIFIER_HASH_MAP.get(new Point(i, j));
-                    if (mt == ModifierType.DOUBLE_WORD)
-                        sb.append(" DW ");
-                    else if (mt == ModifierType.TRIPLE_WORD)
-                        sb.append(" TW ");
-                    else if (mt == ModifierType.DOUBLE_LETTER)
-                        sb.append(" DL ");
-                    else if (mt == ModifierType.TRIPLE_LETTER)
-                        sb.append(" TL ");
+					ModifierType mt = MODIFIER_HASH_MAP.get(new Point(i, j));
+                    if (mt == ModifierType.NONE)
+						sb.append(" __ ");
                     else
-                        sb.append(" __ ");
+                        sb.append(' ').append(mt.getAbbreviation()).append(' ');
                 }
                 else {
                     // Append the letter of the tile at the current position
@@ -314,6 +305,10 @@ public class Board {
 	*/
 	private static HashMap<Point, ModifierType> initializeModifierCells() {
 		HashMap<Point, ModifierType> cells = new HashMap<>();
+		// Set all to be none, then override important ones
+		for (int row = 0; row < BOARD_ROWS; row++)
+			for (int col = 0; col < BOARD_COLUMNS; col++)
+				cells.put(new Point(row, col), ModifierType.NONE);
 		cells.put(new Point(0,0), ModifierType.TRIPLE_WORD);
 		cells.put(new Point(3,0), ModifierType.DOUBLE_LETTER);
 		cells.put(new Point(7,0), ModifierType.TRIPLE_WORD);
@@ -485,17 +480,10 @@ public class Board {
 					currentWord.append(boardTile.getLetter());
 				} else {                          // if topMost is tile to be placed
 					ModifierType cellMod = MODIFIER_HASH_MAP.get(placement);
-					int letterMultiplier = 1;
-					if (cellMod == ModifierType.DOUBLE_LETTER) {
-						letterMultiplier *= 2;
-					} else if (cellMod == ModifierType.TRIPLE_LETTER) {
-						letterMultiplier *= 3;
-					} else if (cellMod == ModifierType.DOUBLE_WORD) {
-						wordMultiplier *= 2;
-					} else if (cellMod == ModifierType.TRIPLE_WORD) {
-						wordMultiplier *= 3;
-					}
-					currentWordScore += letterMultiplier * tile.getScore();
+
+					wordMultiplier *= (cellMod.isAppliesToWord() ? cellMod.getMultiplier() : 1);
+					currentWordScore += tile.getScore() * (!cellMod.isAppliesToWord() ? cellMod.getMultiplier() : 1);
+
 					currentWord.append(tile.getLetter());
 				}
 				topMostTile++;      // move down
@@ -508,7 +496,6 @@ public class Board {
 				words.add(currentWord.toString());
 			}
 			else if (!words.isEmpty()){
-				System.out.println("Removing Letter...");
 				words.remove(0);
 				collateralWordsScore = 0;
 			}
@@ -592,20 +579,10 @@ public class Board {
             // Handle modifiers on current tile's cell, add tile value to counter
             // Add letter to string at end
             ModifierType cellMod = MODIFIER_HASH_MAP.get(placement);
-            int letterMultiplier = 1;
-            if (cellMod == ModifierType.DOUBLE_LETTER) {
-                letterMultiplier *= 2;
-            }
-            else if (cellMod == ModifierType.TRIPLE_LETTER) {
-                letterMultiplier *= 3;
-            }
-            else if (cellMod == ModifierType.DOUBLE_WORD) {
-                wordMultiplier *= 2;
-            }
-            else if (cellMod == ModifierType.TRIPLE_WORD) {
-                wordMultiplier *= 3;
-            }
-            mainWordScore += letterMultiplier*current.getScore();
+
+			wordMultiplier *= (cellMod.isAppliesToWord() ? cellMod.getMultiplier() : 1);
+			mainWordScore += current.getScore() * (!cellMod.isAppliesToWord() ? cellMod.getMultiplier() : 1);
+
             mainWordString.append(current.getLetter());
         }
         // check if tiles are to right, add to score
@@ -691,17 +668,10 @@ public class Board {
 					currentWord.append(boardTile.getLetter());
 				} else {                          // if leftMost is tile to be placed
 					ModifierType cellMod = MODIFIER_HASH_MAP.get(placement);
-					int letterMultiplier = 1;
-					if (cellMod == ModifierType.DOUBLE_LETTER) {
-						letterMultiplier *= 2;
-					} else if (cellMod == ModifierType.TRIPLE_LETTER) {
-						letterMultiplier *= 3;
-					} else if (cellMod == ModifierType.DOUBLE_WORD) {
-						wordMultiplier *= 2;
-					} else if (cellMod == ModifierType.TRIPLE_WORD) {
-						wordMultiplier *= 3;
-					}
-					currentWordScore += letterMultiplier * tile.getScore();
+
+					wordMultiplier *= (cellMod.isAppliesToWord() ? cellMod.getMultiplier() : 1);
+					currentWordScore += tile.getScore() * (!cellMod.isAppliesToWord() ? cellMod.getMultiplier() : 1);
+
 					currentWord.append(tile.getLetter());
 				}
 				leftMostTile++;
@@ -717,7 +687,6 @@ public class Board {
 				words.add(currentWord.toString());
 			}
 			else if (!words.isEmpty()){
-				System.out.println("Removing Letter...");
 				words.remove(0);
 				collateralWordsScore = 0;
 			}
@@ -801,22 +770,11 @@ public class Board {
 
             // Handle modifiers on current tile's cell, add tile value to counter
             // Add letter to string at end
-            ModifierType cellMod = MODIFIER_HASH_MAP.get(placement);
-            //System.out.println(cellMod);
-            int letterMultiplier = 1;
-            if (cellMod == ModifierType.DOUBLE_LETTER) {
-                letterMultiplier *= 2;
-            }
-            else if (cellMod == ModifierType.TRIPLE_LETTER) {
-                letterMultiplier *= 3;
-            }
-            else if (cellMod == ModifierType.DOUBLE_WORD) {
-                wordMultiplier *= 2;
-            }
-            else if (cellMod == ModifierType.TRIPLE_WORD) {
-                wordMultiplier *= 3;
-            }
-            mainWordScore += letterMultiplier*current.getScore();
+			ModifierType cellMod = MODIFIER_HASH_MAP.get(placement);
+
+			wordMultiplier *= (cellMod.isAppliesToWord() ? cellMod.getMultiplier() : 1);
+			mainWordScore += current.getScore() * (!cellMod.isAppliesToWord() ? cellMod.getMultiplier() : 1);
+
             mainWordString.append(current.getLetter());
         }
         // check if tiles are below, add to score
@@ -885,15 +843,6 @@ public class Board {
         all tiles are connected, either by adjacency, or adjacency to adjacency
      */
     private boolean validatePositions(Tile[] tiles) {
-        /*
-        System.out.println("Inbounds: " + arePointsInbounds(tiles));
-        System.out.println("SameRow: " + allSameRow(tiles));
-        System.out.println("SameCol: " + allSameCol(tiles));
-        System.out.println("notOccupied: " + pointsNotOccupied(tiles));
-        System.out.println("Starting or Adjacent: " + arePointsStartingOrAdjacent(tiles));
-        System.out.println("arePointsConnected: " + arePointsConnected(tiles));
-         */
-
         return (arePointsInbounds(tiles) &&
 			   (allSameRow(tiles) || allSameCol(tiles)) &&
 				hasNoDuplicates(tiles) &&

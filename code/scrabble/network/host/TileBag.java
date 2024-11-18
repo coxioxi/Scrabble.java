@@ -5,6 +5,13 @@ import scrabble.model.Tile;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Random;
+/*
+ * Authors: Ian Boyer, David Carr, Samuel Costa,
+ * Maximus Latkovski, Jy'el Mason
+ * Course: COMP 3100
+ * Instructor: Dr. Barry Wittman
+ * Original date: 10/08/2024
+ */
 
 /**
  * Maintains the bag of tiles. Allows tiles to be randomly removed and for tiles to be added.
@@ -12,13 +19,6 @@ import java.util.Random;
  */
 public class TileBag {
     private ArrayList<Tile> tilebag;// stores a number of a given tile
-
-    public static void main(String[] args) {
-        TileBag tb = new TileBag();
-        tb.getNext(4);
-        tb.addTiles(new Tile[]{new Tile('A')});
-        System.out.println(tb.getRemainingTiles());
-    }
 
     /**
 	 * Constructs a TileBag with the standard 100 tiles - 2 (no blanks).

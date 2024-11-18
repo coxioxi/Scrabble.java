@@ -1,4 +1,11 @@
 package scrabble.network.messages;
+/*
+ * Authors: Ian Boyer, David Carr, Samuel Costa,
+ * Maximus Latkovski, Jy'el Mason
+ * Course: COMP 3100
+ * Instructor: Dr. Barry Wittman
+ * Original date: 10/08/2024
+ */
 
 import scrabble.controller.Controller;
 import scrabble.model.Tile;
@@ -48,7 +55,7 @@ public class ExchangeTiles extends Message{
 	/**
 	 * Getter for playerID
 	 *
-	 * @return player ID
+	 * @return Int player ID
 	 */
 	public int getPlayerID() {
 		return playerID;
@@ -65,7 +72,7 @@ public class ExchangeTiles extends Message{
 
 
 	/**
-	 *
+	 * Uses helper methods to exchange tiles with the host and pass the turn once tiles were exchanged
 	 *
 	 * @param controller the controller on which to make changes. Note that this object
 	 *                   must use public getter methods for all the components
