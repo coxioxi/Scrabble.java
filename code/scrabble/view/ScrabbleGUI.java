@@ -13,6 +13,9 @@ import scrabble.view.screen.*;
 import javax.swing.*;
 import java.awt.*;
 
+/**
+ * ScrabbleGUI is the JFrame that holds all the different panels for the game
+ */
 public class ScrabbleGUI extends JFrame{
 	public static final float PREFERRED_SIZE_PERCENT = .6f;
 	public static final float MINIMUM_SIZE_PERCENT = .5f;
@@ -25,9 +28,7 @@ public class ScrabbleGUI extends JFrame{
 	public static final String GAME  	 = "GAME";
 	public static final String PODIUM 	 = "WINNER";
 
-	public static final String[] SCREEN_NAMES = new String[] {
-			MAIN_MENU, HOST, JOIN, WAIT, GAME, PODIUM
-	};
+	public static final String[] SCREEN_NAMES = new String[] {MAIN_MENU, HOST, JOIN, WAIT, GAME, PODIUM};
 
 	private CardLayout layoutManager;
 	private Container contentPane;
@@ -49,21 +50,14 @@ public class ScrabbleGUI extends JFrame{
 	public static boolean audioOn = false;
 	public static boolean fxOn = false;
 
-
-	private JPanel[] panels = new JPanel[]{
-			mainMenu, host, join, waiting, game, winner
-	};
+	private JPanel[] panels = new JPanel[]{mainMenu, host, join, waiting, game, winner};
 
 	private Dimension preferredSize, maximumSize, minimumSize;
 
-	public static void main(String[] args) throws InterruptedException {
-		ScrabbleGUI frame = new ScrabbleGUI();
-		Thread.sleep(3000);
-		frame.showGame();
-		Thread.sleep(4000);
-		frame.showWinner();
-	}
-
+	/**
+	 * Constructor for ScrabbleGUI
+	 * Sets up the card layout and adds the screens to the frame
+	 */
 	public ScrabbleGUI() {
 		// Creating the frame
 		super();
@@ -79,11 +73,12 @@ public class ScrabbleGUI extends JFrame{
 
 		this.setMaximumSize(maximumSize);
 		setupFrame();
-//		Dimension cpDim = ((GameScreen)game).getCenterPanel().getSize();
-//		System.out.println("Center panel dim: " + cpDim.width + "x"+cpDim.height);
 		menuSetup();
 	}
 
+	/**
+	 * Sets up all the items for the menu of the game screen
+	 */
 	private void menuSetup() {
 		menuBar = new JMenuBar();
 		gameMenu = new JMenu("Game");
@@ -101,18 +96,30 @@ public class ScrabbleGUI extends JFrame{
 		menuBar.setVisible(false);
 	}
 
+	/**
+	 *
+	 */
 	public void resetGameScreen() {
 		layoutManager.removeLayoutComponent(game);
 		game = new GameScreen();
 		layoutManager.addLayoutComponent(game, GAME);
 	}
 
+	/**
+	 *
+	 */
 	public void resetWaitingScreen() {
 		((WaitingScreen) waiting).resetPlayerNames();
 		waiting.revalidate();
 		waiting.repaint();
 	}
 
+	/**
+	 * Makes the menuBar visible or not
+	 *
+	 * @param enabled the boolean that tells us if the menu bar should be
+	 * 		visible to the player or not
+	 */
 	public void setMenuVisible(boolean enabled) {
 		menuBar.setVisible(enabled);
 	}
@@ -121,55 +128,118 @@ public class ScrabbleGUI extends JFrame{
 	getters
 	 */
 
+	/**
+	 * Getter for the Rules menu item
+	 *
+	 * @return the JMenuItem for the "Rules"
+	 */
 	public JMenuItem getRulesItem() {
 		return rulesItem;
 	}
 
+	/**
+	 * Getter for the Audio menu item
+	 * 	 *
+	 * 	 * @return the JMenuItem for the "Audio"
+	 */
 	public JMenuItem getAudioItem() {
 		return audioItem;
 	}
 
+	/**
+	 * Getter for the Fx menu item
+	 * 	 *
+	 * 	 * @return the JMenuItem for the "Fx"
+	 */
 	public JMenuItem getFxItem() {
 		return fxItem;
 	}
 
+	/**
+	 * Getter for the Quit menu item
+	 * 	 *
+	 * 	 * @return the JMenuItem for "Quit"
+	 */
 	public JMenuItem getQuitItem() {
 		return quitItem;
 	}
 
+	/**
+	 *
+	 */
 	public CardLayout getLayoutManager() {
 		return layoutManager;
 	}
 
+	/**
+	 * Getter for the contentPane container
+	 *
+	 * @return the Container that holds all the panels
+	 */
 	@Override
 	public Container getContentPane() {
 		return contentPane;
 	}
 
+	/**
+	 * Getter for the Main Menu panel
+	 *
+	 * @return MainMenuScreen object for the main menu panel
+	 */
 	public MainMenuScreen getMainMenu() {
 		return (MainMenuScreen) mainMenu;
 	}
 
+	/**
+	 * Getter for the Host Screen panel
+	 *
+	 * @return HostScreen object for the host panel
+	 */
 	public HostScreen getHost() {
 		return (HostScreen) host;
 	}
 
+	/**
+	 * Getter for the Join Screen panel
+	 *
+	 * @return JoinScreen object for the join panel
+	 */
 	public JoinScreen getJoin() {
 		return (JoinScreen) join;
 	}
 
+	/**
+	 * Getter for the Waiting Screen panel
+	 *
+	 * @return WaitingScreen object for the waiting panel
+	 */
 	public WaitingScreen getWaiting() {
 		return (WaitingScreen) waiting;
 	}
 
+	/**
+	 * Getter for the Game Screen panel
+	 *
+	 * @return GameScreen object for the game panel
+	 */
 	public GameScreen getGame() {
 		return (GameScreen) game;
 	}
 
+	/**
+	 * Getter for the Winner Screen panel
+	 *
+	 * @return WinnerScreen object for the winner panel
+	 */
 	public WinnerScreen getWinner() {
 		return (WinnerScreen) winner;
 	}
 
+	/**
+	 * Getter for all panels
+	 *
+	 * @return JPanel array of all panels for the frame
+	 */
 	public JPanel[] getPanels() {
 		return panels;
 	}
@@ -178,36 +248,59 @@ public class ScrabbleGUI extends JFrame{
 	setters: change shown panel
 	 */
 
+	/**
+	 * Makes the visible screen the one that is passed in
+	 *
+	 * @param screen the String name of the screen to be displayed
+	 */
 	public void show(String screen) {
 		layoutManager.show(contentPane, screen);
 	}
 
+	/**
+	 * Makes the Game panel the one that is shown
+	 */
 	public void showGame() {
 		layoutManager.show(this.contentPane, GAME);
 		// change window listener
 		menuBar.setVisible(true);
 	}
 
+	/**
+	 * Makes the Host panel the one that is shown
+	 */
 	public void showHost() {
 		layoutManager.show(this.contentPane, HOST);
 		this.setMinimumSize(new Dimension(600, 400));
 		this.pack();
 	}
 
+	/**
+	 * Makes the Join panel the one that is shown
+	 */
 	public void showJoin() {
 		layoutManager.show(this.contentPane, JOIN);
 	}
 
+	/**
+	 * Makes the Main Menu panel the one that is shown
+	 */
 	public void showMain() {
 		layoutManager.show(this.contentPane, MAIN_MENU);
 		this.setupFrame();
 	}
 
+	/**
+	 * Makes the Waiting panel the one that is shown
+	 */
 	public void showWaiting() {
 		layoutManager.show(this.contentPane, WAIT);
 		this.setupFrame();
 	}
 
+	/**
+	 * Makes the Winner panel the one that is shown
+	 */
 	public void showWinner() {
 		layoutManager.show(this.contentPane, PODIUM);
 		menuBar.setVisible(false);
@@ -218,6 +311,11 @@ public class ScrabbleGUI extends JFrame{
 	resets the original temp variable used.
 	need to call showWinner or show(PODIUM) to display.
 	 */
+	/**
+	 * Sets up the podium for the players to show the player that won
+	 *
+	 * @param players the array of Player objects which contain each player's score
+	 */
 	public void setupPodium(Player[] players) {
 		layoutManager.removeLayoutComponent(winner);
 		winner = new WinnerScreen(players);
@@ -225,7 +323,9 @@ public class ScrabbleGUI extends JFrame{
 		panels[panels.length-1] = winner;
 	}
 
-	// minimum size, title, close op, pack, center in screen, show.
+	/**
+	 * Sets how the Frame should look
+	 */
 	private void setupFrame() {
 		this.setTitle("Scrabble");
 		setupDimensions();
@@ -239,6 +339,9 @@ public class ScrabbleGUI extends JFrame{
 		this.setVisible(true);
 	}
 
+	/**
+	 * Sets the dimensions of the JFrame
+	 */
 	private void setupDimensions() {
 		GraphicsDevice gd = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
 		int width = gd.getDisplayMode().getWidth();

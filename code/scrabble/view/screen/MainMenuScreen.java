@@ -20,13 +20,13 @@ import static scrabble.view.ScrabbleGUI.fxOn;
 public class MainMenuScreen extends JPanel {
 
     // Buttons for hosting, joining, and quitting the game
-    private JButton hostButton;
-    private JButton joinButton;
-    private JButton quitButton;
+    private JButton hostButton;     //
+    private JButton joinButton;     //
+    private JButton quitButton;     //
 
     // Checkboxes for toggling game audio and sound effects
-    private JCheckBox audioCheck;
-    private JCheckBox fxCheck;
+    private JCheckBox audioCheck;   //
+    private JCheckBox fxCheck;      //
 
     /**
      * Constructor for MainMenuScreen. Initializes the layout, buttons, and checkboxes.
@@ -53,23 +53,47 @@ public class MainMenuScreen extends JPanel {
         this.add(menuFrame, BorderLayout.CENTER);
     }
 
-    // Getter methods for each button and checkbox
+    /**
+     * getter method for the Host button
+     *
+     * @return the JButton related to the "Host" button
+     */
     public JButton getHostButton() {
         return hostButton;
     }
 
+    /**
+     * getter method for the Quit button
+     *
+     * @return the JButton related to the "Quit" button
+     */
     public JButton getQuitButton() {
         return quitButton;
     }
 
+    /**
+     * getter method for the Join button
+     *
+     * @return the JButton related to the "Join" button
+     */
     public JButton getJoinButton() {
         return joinButton;
     }
 
+    /**
+     * getter method for the FX check box
+     *
+     * @return The JCheckBox related to the "FX" check box
+     */
     public JCheckBox getFxCheck() {
         return fxCheck;
     }
 
+    /**
+     * getter method for the audio check box
+     *
+     * @return The JCheckBox related to the "Audio" check box
+     */
     public JCheckBox getAudioCheck() {
         return audioCheck;
     }

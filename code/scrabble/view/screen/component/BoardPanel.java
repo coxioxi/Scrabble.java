@@ -90,7 +90,7 @@ public class BoardPanel extends JPanel {
 				(int)(MAXIMUM_CELL_PERCENT*environmentHeight));
 	}
 
-	/*
+	/**
 	 * Initializes the board cells and adds them to the panel.
 	 */
 	private void setupBoardCellPanels() {
@@ -110,7 +110,7 @@ public class BoardPanel extends JPanel {
 	}
 
 
-	/*
+	/**
 	 * Sets the sizes for a given button to match the cell dimensions.
 	 */
 	private void setButtonSizes(JComponent button) {
@@ -119,8 +119,12 @@ public class BoardPanel extends JPanel {
 		button.setMinimumSize(minCellSize);
 	}
 
-	/*
-	 * Sets the color and text of a button based on its modifier type.
+	/**
+	 * Sets the color and text of a button on the oard based on its modifier type.
+	 *
+	 * @param button the button that is being changed
+	 * @param row the row of the button
+	 * @param col the column of the button
 	 */
 	private void setColorAndText(JButton button, int row, int col) {
 		ModifierType mt = Board.MODIFIER_HASH_MAP.get(new Point(row, col));
@@ -135,8 +139,8 @@ public class BoardPanel extends JPanel {
 	 * Updates a cell at a specified row and column with a new button.
 	 *
 	 * @param button the new button to set
-	 * @param row    the row index of the cell
-	 * @param col    the column index of the cell
+	 * @param row the row index of the cell
+	 * @param col the column index of the cell
 	 */
 	public void setBoardCell(JButton button, int row, int col) {
 		if (!(button instanceof TileButton)) {
@@ -162,6 +166,7 @@ public class BoardPanel extends JPanel {
 
 	/**
 	 * Removes all <code>ActionListener</code>s from the button at a location.
+	 *
 	 * @param row the row of the button.
 	 * @param col the column of the button.
 	 */
@@ -174,6 +179,7 @@ public class BoardPanel extends JPanel {
 
 	/**
 	 * Adds an action listener to a button at a location.
+	 *
 	 * @param al the <code>ActionListener</code> to add to the button.
 	 * @param row the row of the button.
 	 * @param col the column of the button.
@@ -184,6 +190,7 @@ public class BoardPanel extends JPanel {
 
 	/**
 	 * Gets whether a button at a location is a {@link TileButton}.
+	 *
 	 * @param row the row of the button to check.
 	 * @param col the column of the button to check.
 	 * @return True if the button is an instance of <code>TileButton</code>. False otherwise.
@@ -194,6 +201,7 @@ public class BoardPanel extends JPanel {
 
 	/**
 	 * Gets the text of the button at a location.
+	 *
 	 * @param row the row of the button.
 	 * @param col the column of the button.
 	 * @return The text of the button at the location.
@@ -214,7 +222,7 @@ public class BoardPanel extends JPanel {
 	 */
 	public JButton getButton(int row, int col) { return boardCells[row][col].getBoardButton(); }
 
-	/*
+	/**
 	 * A panel that holds a single JButton representing a cell on the Scrabble board.
 	 */
 	private static class BoardCellPanel extends JPanel {
