@@ -16,7 +16,6 @@ import java.io.Serializable;
  * This message class is responsible for sending new player messages to the host and other players
  * in the party when a new player joins the session
  */
-
 public class NewPlayer extends Message implements Serializable {
 
     private String playerName;

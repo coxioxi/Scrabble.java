@@ -15,6 +15,9 @@ import scrabble.view.screen.GameScreen;
 import java.io.IOException;
 import java.io.Serial;
 
+/**
+ * This message class is responsible for sending a play tiles message to the clients and update their views
+ */
 public class PlayTiles extends Message {
 
 	@Serial
