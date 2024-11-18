@@ -10,8 +10,8 @@
  * </p>
  * <p>
  *     Use {@link scrabble.controller.Controller.ClientMessenger ClientMessenger} as a client and
- *     {@link scrabble.network.host.PartyHost PartyHost}
- *     as the host. A host may network with up to 4 clients. Note that the application which
+ *     {@link scrabble.network.PartyHost PartyHost} as the host.
+ *     A host may network with up to 4 clients. Note that the application which
  *     spawns the host is considered to be a client as well.
  * </p>
  */

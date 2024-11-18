@@ -7,13 +7,9 @@ package scrabble.network.messages;
  */
 
 import scrabble.controller.Controller;
-import scrabble.model.NotBlankException;
-import scrabble.model.Tile;
-import scrabble.network.host.PartyHost;
+import scrabble.network.PartyHost;
 
-import java.awt.*;
 import java.io.*;
-import java.util.ArrayList;
 
 /**
  see <a href="https://docs.oracle.com/javase/8/docs/api/java/io/Serializable.html">

@@ -8,10 +8,9 @@ package scrabble.network.messages;
  */
 
 import scrabble.controller.Controller;
-import scrabble.model.Player;
 import scrabble.model.Ruleset;
 import scrabble.model.Tile;
-import scrabble.network.host.PartyHost;
+import scrabble.network.PartyHost;
 
 import java.util.*;
 

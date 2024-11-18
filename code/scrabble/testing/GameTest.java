@@ -4,19 +4,18 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import scrabble.model.*;
-import scrabble.network.host.TileBag;
+import scrabble.network.PartyHost;
 
 import java.io.File;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Scanner;
 
 public class GameTest {
-    TileBag tileBag;
+    PartyHost.TileBag tileBag;
     Game game;
     @BeforeEach
     public void startGame(){
-        tileBag = new TileBag();
+        tileBag = new PartyHost.TileBag();
         game = new Game(new Player[]{new Player("Player 1",0,0),
                 new Player("Player 2",1,2),new Player("Player 3",2,1)  },
                 new Board(),

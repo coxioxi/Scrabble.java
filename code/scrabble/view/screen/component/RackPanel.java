@@ -52,6 +52,7 @@ public class RackPanel extends JPanel {
 
     /**
      * Replaces the button at a specific position in the rack.
+     * Invoking this method revalidates and repaints the rack.
      *
      * @param tileButton the new JButton to be set in the specified TilePanel
      * @param i the index of the TilePanel where the button will be set

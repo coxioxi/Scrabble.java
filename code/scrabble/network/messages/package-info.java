@@ -11,7 +11,7 @@
  *     is the same as the application's Local player object, then the message is relayed to the host.
  * </p>
  * <p>
- *     Similarly, the abstract {@link scrabble.network.messages.Message#execute(scrabble.network.host.PartyHost)}
+ *     Similarly, the abstract {@link scrabble.network.messages.Message#execute(PartyHost)}
  *     operates on the <code>PartyHost</code> object. Calling <code>execute</code> makes any
  *     necessary changes to the host (such as returning tiles, ending the listening thread, etc.),
  *     then sends to the other clients.
@@ -21,3 +21,5 @@
  * </p>
  */
 package scrabble.network.messages;
+
+import scrabble.network.PartyHost;

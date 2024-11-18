@@ -7,7 +7,7 @@ package scrabble.network.messages;
  */
 
 import scrabble.controller.Controller;
-import scrabble.network.host.PartyHost;
+import scrabble.network.PartyHost;
 
 import java.io.IOException;
 import java.io.Serial;

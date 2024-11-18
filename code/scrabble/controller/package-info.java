@@ -10,7 +10,7 @@
  *     listener is responsible for updating the model as necessary and sending
  *     {@link scrabble.network.messages} objects to the host, who then relays the messages to the
  *     other players. If the application running on this computer is designated as the
- *     {@link scrabble.network.host.PartyHost}, then controller maintains a reference to
+ *     {@link scrabble.network.PartyHost}, then controller maintains a reference to
  *     the party host for convenience.
  * </p>
  * <p>

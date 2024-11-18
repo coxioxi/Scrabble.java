@@ -3,7 +3,7 @@ package scrabble.controller;
 import scrabble.model.*;
 import scrabble.network.messages.ExitParty;
 import scrabble.network.messages.Message;
-import scrabble.network.host.PartyHost;
+import scrabble.network.PartyHost;
 import scrabble.network.messages.NewPlayer;
 import scrabble.network.messages.PlayTiles;
 import scrabble.view.ScrabbleGUI;

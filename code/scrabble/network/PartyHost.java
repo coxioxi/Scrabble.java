@@ -1,4 +1,4 @@
-package scrabble.network.host;
+package scrabble.network;
 /*
  * Authors: Ian Boyer, David Carr, Samuel Costa,
  * Maximus Latkovski, Jy'el Mason
@@ -7,7 +7,6 @@ package scrabble.network.host;
  * Original date: 10/08/2024
  */
 
-import scrabble.model.Player;
 import scrabble.model.Ruleset;
 import scrabble.model.Tile;
 import scrabble.network.messages.*;
@@ -23,16 +22,58 @@ import java.io.ObjectOutputStream;
 import java.net.*;
 import java.util.*;
 
+
 /**
- * This class implements host responsibilities for a Scrabble game. It accepts
- * messages from clients, executes any changes on the host end, and relays messages
- * to other clients. It uses threads of {@link HostReceiver} to listen for new messages
- * and {@link TileBag} to randomly send tiles to replenish player racks.
  * <p>
- *     A running thread of this class continuously accepts new clients until
- *     this is signalled to start the game. Only <code>MAX_NUM_PLAYERS</code> clients can be accepted into a game.
+ *     <b>Using PartyHost</b>
+ *     <br>
+ *     PartyHost should be used as follows:
+ *     	<ol>
+ *     	    <li>Create a PartyHost object.</li>
+ *     	    <li>Get the PartyHost IP address and port for display ({@link scrabble.network.PartyHost#getIPAddress},
+ *     	    		{@link scrabble.network.PartyHost#getPort}). </li>
+ *     	    <li>Call {@link scrabble.network.PartyHost#run}.</li>
+ *     	    <li>Call {@link scrabble.network.PartyHost#startGame(scrabble.model.Ruleset)}.</li>
+ *     	</ol>
+ *     	Item 3 accepts clients to the server. Item 4 disables acceptance and informs players that the game has started.
  * </p>
+ */
+
+/**
  * @see scrabble.network.messages
+ */
+
+/**
+ * <p>
+ *     Accepts and messages clients for the running of a Scrabble game. <code>PartyHost</code> maintains
+ *     a representation of a standard Scrabble tile bag to randomly assign tiles to clients.
+ *     In case of a client disconnection, <code>PartyHost</code> tracks the tiles assigned to each player
+ *     and returns them to the bag.
+ * </p>
+ * <p>
+ *     <h4>Overview</h4>
+ *     A thread of <code>PartyHost</code> accepts clients until the game has started or until the number
+ *     of connected clients is at the {@link #MAX_NUM_PLAYERS maximum}. Each connection
+ *     spawns a new thread for client communication. This thread continuously listens for new messages from
+ *     the associated client while also allowing messages to be sent simultaneously. Each thread is passed
+ *     the creating instance of <code>PartyHost</code> and invokes the {@link #propertyChange} method
+ *     when a message is received. Typically, <code>PartyHost</code> responds to the client
+ *     and passes the message on to other connected players.
+ * </p>
+ * <p>
+ *     <h4>Usage</h4>
+ *     PartyHost should be used as follows:
+ *     	<ol>
+ *     	    <li>Create a PartyHost object.</li>
+ *     	    <li>Get the PartyHost IP address and port for display ({@link PartyHost#getIPAddress},
+ *     	    		{@link PartyHost#getPort}). </li>
+ *     	    <li>Invoke {@link PartyHost#run}; this call allows clients to be accepted to the socket.</li>
+ *     	    <li>Invoke {@link PartyHost#startGame(scrabble.model.Ruleset)};
+ *     	    	this call transitions <code>PartyHost</code> into a game state and
+ *     	    	informs clients of the rules of the game.</li>
+ *     	</ol>
+ *     	Item 3 accepts clients to the server. Item 4 disables acceptance and informs players that the game has started.
+ * </p>
  */
 public class PartyHost extends Thread implements PropertyChangeListener {
 
@@ -41,6 +82,9 @@ public class PartyHost extends Thread implements PropertyChangeListener {
 	 * signify the sender.
 	 */
 	public static final int HOST_ID = -1;
+	/**
+	 * The maximum number of clients which can be accepted into the game.
+	 */
 	public static final int MAX_NUM_PLAYERS = 4;
 
 	private final String IPAddress;
@@ -375,4 +419,71 @@ public class PartyHost extends Thread implements PropertyChangeListener {
 		}
 	}
 
+	/**
+	 * Maintains the bag of tiles. Allows tiles to be randomly removed and for tiles to be added.
+	 */
+	public static class TileBag {
+		private ArrayList<Tile> tileBag;// stores a number of a given tile
+
+		/**
+		 * Constructs a TileBag with the standard 100 tiles - 2 (no blanks).
+		 * <br>
+		 * See also: <a href="https://en.wikipedia.org/wiki/Scrabble_letter_distributions">Letter distributions</a>
+		 */
+		public TileBag() {
+			fillTileBag();
+		}
+
+		/**
+		 * Adds a collection of tiles to the bag.
+		 * @param tiles the tiles to add to the bag.
+		 */
+		public void addTiles(Tile[] tiles) { tileBag.addAll(Arrays.asList(tiles)); }
+
+
+		public ArrayList<Tile> getTileBag() { return tileBag; }
+
+		/**
+		 * Randomly selects the next <code>numTiles</code> tiles from the bag.
+		 * @param numTiles how many tiles should be returned. If this number
+		 *                 exceeds the number of tiles remaining, the array returned will
+		 *                 be of size <code>getRemainingTiles</code>.
+		 * @return a randomly picked array of tiles with length <code>numTiles</code>.
+		 */
+		public Tile[] getNext(int numTiles) {
+			Tile[] newTiles = new Tile[numTiles];
+			Random random = new Random();
+			for(int i = 0; i < numTiles; i++){
+				if(!tileBag.isEmpty()) {
+					Tile tile = tileBag.get(random.nextInt(tileBag.size()));
+					newTiles[i] = tile;
+					tileBag.remove(tile);
+				}
+			}
+			return newTiles;
+		}
+
+		/**
+		 * Gets the number of remaining tiles available to be removed.
+		 * @return number of remaining tiles.
+		 */
+		public int getRemainingTiles() { return tileBag.size(); }
+
+		private void fillTileBag() {
+			char[] letters = new char[]{'A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z',' '};
+
+			int[] letterNum = new int[]{9,2,2,4,12,2,3,2,9,1,1,4,2,6,8,2,1,6,4,6,4,2,2,1,2,1,2};
+			ArrayList<Tile> letterList = new ArrayList<>();
+			for(int i = 0; i < letters.length; ++i){
+				for(int j = 0; j <letterNum[i]; ++j){
+					if(letters[i] != ' ') {
+						letterList.add(new Tile(letters[i]) );
+					}else{
+						letterList.add(new Tile());
+					}
+				}
+			}
+			tileBag = letterList;
+		}
+	}
 }

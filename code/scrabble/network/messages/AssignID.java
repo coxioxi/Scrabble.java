@@ -8,7 +8,7 @@ package scrabble.network.messages;
  */
 
 import scrabble.controller.Controller;
-import scrabble.network.host.PartyHost;
+import scrabble.network.PartyHost;
 
 /**
  * This class is responsible for assigning IDs to players.
