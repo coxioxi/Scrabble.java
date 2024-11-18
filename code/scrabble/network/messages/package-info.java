@@ -17,7 +17,7 @@
  *     then sends to the other clients.
  * </p>
  * <p>
- * @see scrabble.model.LocalPlayer LocalPlayer
+ * @see scrabble.model.Player.LocalPlayer LocalPlayer
  * </p>
  */
 package scrabble.network.messages;

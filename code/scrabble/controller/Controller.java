@@ -174,10 +174,10 @@ public class Controller implements PropertyChangeListener  {
 
 		gameScreenController.setupGameItems(playerNames, ruleset.getTotalTime(), ruleset.getTurnTime(), startingTiles);
 		Player[] players = new Player[playerNames.length];
-		LocalPlayer self = null;
+		Player.LocalPlayer self = null;
 		for (int i = 0; i < players.length; i++) {
 			if (playerID[i] == this.selfID) {
-				self = new LocalPlayer(playerNames[i], playerID[i], i, new ArrayList<>(List.of(startingTiles)));
+				self = new Player.LocalPlayer(playerNames[i], playerID[i], i, new ArrayList<>(List.of(startingTiles)));
 			}
 			players[i] = new Player(playerNames[i], playerID[i], i);
 		}
