@@ -52,7 +52,6 @@ import java.util.*;
  *     	    	this call transitions <code>PartyHost</code> into a game state and
  *     	    	informs clients of the rules of the game.</li>
  *     	</ol>
- *     	Item 3 accepts clients to the server. Item 4 disables acceptance and informs players that the game has started.
  * </p>
  */
 public class PartyHost extends Thread implements PropertyChangeListener {
