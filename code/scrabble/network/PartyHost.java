@@ -23,27 +23,6 @@ import java.net.*;
 import java.sql.Array;
 import java.util.*;
 
-
-/**
- * <p>
- *     <b>Using PartyHost</b>
- *     <br>
- *     PartyHost should be used as follows:
- *     	<ol>
- *     	    <li>Create a PartyHost object.</li>
- *     	    <li>Get the PartyHost IP address and port for display ({@link scrabble.network.PartyHost#getIPAddress},
- *     	    		{@link scrabble.network.PartyHost#getPort}). </li>
- *     	    <li>Call {@link scrabble.network.PartyHost#run}.</li>
- *     	    <li>Call {@link scrabble.network.PartyHost#startGame(scrabble.model.Ruleset)}.</li>
- *     	</ol>
- *     	Item 3 accepts clients to the server. Item 4 disables acceptance and informs players that the game has started.
- * </p>
- */
-
-/**
- * @see scrabble.network.messages
- */
-
 /**
  * <p>
  *     Accepts and messages clients for the running of a Scrabble game. <code>PartyHost</code> maintains
