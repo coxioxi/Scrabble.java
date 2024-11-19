@@ -8,8 +8,6 @@ package scrabble.model;
 
 import java.awt.*;
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Arrays;
 
 /**
  * This class represents the tiles of the Scrabble game.
@@ -26,7 +24,8 @@ public class Tile implements Serializable {
     /**
      * Creates a new, blank Tile object
      * This tile has a score of 0 and an unset letter value.
-     * this letter value must be set at a future point to be a true representation of scrabble
+     * this letter value must be set at a future point to be a true representation of scrabble.
+     * @deprecated Use {@link #Tile(TileScore)} with {@link TileScore#BLANK}.
      */
     public Tile() {
         this.isBlank = true;        // Set to true as this is a blank tile
@@ -38,6 +37,7 @@ public class Tile implements Serializable {
      * @param letter the letter on the face of the tile. Must be an alphabetical
      *      character A-Z. The letter is automatically scored according to the
      *      rules of Scrabble, and as outlined in class TileScore
+     * @deprecated Use {@link #Tile(TileScore)}.
      */
     public Tile(char letter) {
         this.letter = letter;                           // Assign the letter to the tile
@@ -49,6 +49,7 @@ public class Tile implements Serializable {
      * Creates a new Tile object from a letter and location.
      * @param letter the letter on the tile.
      * @param location the Point representing the tile's location on the board.
+     * @deprecated Use {@link #Tile(TileScore, Point)}.
      */
     public Tile(char letter, Point location) {
         this.letter = letter;                           // Assign the letter to the tile
@@ -65,6 +66,16 @@ public class Tile implements Serializable {
         this.letter = ts.letter;
         this.isBlank = (ts.letter == TileScore.BLANK.letter);
         this.score = ts.score;
+    }
+
+    /**
+     * Constructs a Tile from a <code>TileScore</code> enum at a location.
+     * @param ts the enum from which this <code>Tile</code> is created.
+     * @param point the point at which this tile is placed.
+     */
+    public Tile(TileScore ts, Point point) {
+        this(ts);
+        this.location = point;
     }
 
     /**
@@ -133,7 +144,7 @@ public class Tile implements Serializable {
     public Point getLocation(){return location;}
 
     @Override
-    public boolean equals(Object obj) {return this.toString().equals(obj.toString());}
+    public boolean equals(Object obj) {return obj.getClass() == this.getClass() && this.toString().equals(obj.toString());}
 
     @Override
     public String toString() {
@@ -211,5 +222,12 @@ public class Tile implements Serializable {
         public static int getScoreForLetter(char letter) {
             return TileScore.valueOf( String.valueOf(letter).toUpperCase() ).getScore();
         }
+    }
+
+    /**
+     * Thrown when a tile's letter is attempted to be set when it already has been assigned.
+     */
+    public static class NotBlankException extends Exception {
+        public NotBlankException(String s) {super(s);}
     }
 }
