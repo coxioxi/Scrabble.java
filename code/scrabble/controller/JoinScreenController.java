@@ -27,9 +27,9 @@ public class JoinScreenController {
      * Handles the Join button being pressed
      */
     private void joinClick() {
-		String userName = joinScreen.getNameTextField().getText();
-		String hostsIP = joinScreen.getIPTextField().getText().trim();
-		String hostsPort = joinScreen.getPort().getText().trim();
+		String userName = joinScreen.getNameText();
+		String hostsIP = joinScreen.getIPText();
+		String hostsPort = joinScreen.getPortText();
         if (userName.isBlank()) {
             parent.showNoNameDialog();
         } else if (hostsIP.isBlank()) {
@@ -50,5 +50,4 @@ public class JoinScreenController {
             }
         }
     }
-
 }
