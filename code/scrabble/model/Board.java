@@ -37,6 +37,10 @@ public class Board {
     private ArrayList<String> lastWordsPlayed
 			= new ArrayList<>();   // the words which have most recently been played
 
+	/**
+	 * Main, for testing.
+	 * @param args ignored.
+	 */
     public static void main(String[] args) {
         /*
         Usage: Follow prompts in console. initial play is made,
@@ -290,10 +294,30 @@ public class Board {
 	 * or a letter, it can have a multiplier from 1-3 (inclusive), a name, an abbreviation, and an associated color.
 	 */
 	public enum ModifierType {
+		/**
+		 * A double-letter modifier. Applies to a letter, has a multiplier of two, is named "Double Letter",
+		 * is abbreviated as "DL", and has a desaturated blue color.
+		 */
 		DOUBLE_LETTER(false, 2, "Double Letter", "DL", new Color(57, 70, 140)), // Doubles the score of the letter placed on this cell.
+		/**
+		 * A triple-letter modifier. Applies to a letter, has a multiplier of three, is named "Triple Letter",
+		 * is abbreviated as "TL", and has a desaturated blue color which is more vibrant than that of Double Letter.
+		 */
 		TRIPLE_LETTER(false, 3, "Triple Letter", "TL", new Color(25, 43, 147)), // Triples the score of the letter placed on this cell.
+		/**
+		 * A double-word modifier. Applies to a word, has a multiplier of two, is named "Double Word",
+		 * is abbreviated as "DW", and has a desaturated red color.
+		 */
 		DOUBLE_WORD(true , 2, "Double Word", "DW", new Color(154, 75, 75)), // Doubles the score of the entire word when a tile is placed on this cell.
+		/**
+		 * A triple-word modifier. Applies to a word, has a multiplier of three, is named "Triple Word",
+		 * is abbreviated as "TW", and has a desaturated red color which is more vibrant than that of Double Word.
+		 */
 		TRIPLE_WORD(true , 3, "Triple Word", "TW", new Color(177, 19, 19)), // Triples the score of the entire word when a tile is placed on this cell.
+		/**
+		 * A normal, non-modifying cell. Does not apply to a word, has a multiplier of 1, is named "Normal Cell",
+		 * is rendered with text " ", and has an off-white color.
+		 */
 		NONE(false, 1, "Normal Cell", " ", new Color(221, 221, 221));  	// Normal cell.
 
 		private final boolean appliesToWord;
@@ -346,7 +370,7 @@ public class Board {
 		}
 
 		/**
-		 * Gets the shorted version of this enum's name, or what text should be displayed on a corresponding cell.
+		 * Gets the shortened version of this enum's name, or what text should be displayed on a corresponding cell.
 		 * @return The abbreviation of this enum.
 		 */
 		public String getAbbreviation() {

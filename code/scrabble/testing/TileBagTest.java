@@ -22,13 +22,13 @@ public class TileBagTest {
         tileBag = new PartyHost.TileBag();
         tileBag.getNext(100);
         tiles = tileBag.getNext(3);
-        Assertions.assertEquals(0,tileBag.getTileBag().size(),failMessage);
+        Assertions.assertEquals(0,tileBag.getRemainingTiles(),failMessage);
 
 
         tileBag = new PartyHost.TileBag();
         tileBag.getNext(7);
         tiles = tileBag.getNext(3);
-        Assertions.assertEquals(90,tileBag.getTileBag().size(),failMessage);
+        Assertions.assertEquals(90,tileBag.getRemainingTiles(),failMessage);
 
 
     }

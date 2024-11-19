@@ -61,7 +61,7 @@ public class TileTest{
             tile.setLetter('B');
             Assertions.fail();
         }
-        catch (NotBlankException e){
+        catch (Tile.NotBlankException e){
             System.out.println("nuh uh, "+e.getMessage());
         }
     }
