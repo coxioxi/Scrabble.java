@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.*;
+import java.sql.Array;
 import java.util.*;
 
 
@@ -455,9 +456,8 @@ public class PartyHost extends Thread implements PropertyChangeListener {
 			Random random = new Random();
 			for(int i = 0; i < numTiles; i++){
 				if(!tileBag.isEmpty()) {
-					Tile tile = tileBag.get(random.nextInt(tileBag.size()));
-					newTiles[i] = tile;
-					tileBag.remove(tile);
+					newTiles[i] = tileBag.get(random.nextInt(tileBag.size()));
+					tileBag.remove(newTiles[i]);
 				}
 			}
 			return newTiles;
@@ -469,21 +469,38 @@ public class PartyHost extends Thread implements PropertyChangeListener {
 		 */
 		public int getRemainingTiles() { return tileBag.size(); }
 
+		/*
+		 * Fills the tile bag with the correct number of each Tile, as specified by Tile.TileScore.
+		 */
 		private void fillTileBag() {
-			char[] letters = new char[]{'A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z',' '};
-
-			int[] letterNum = new int[]{9,2,2,4,12,2,3,2,9,1,1,4,2,6,8,2,1,6,4,6,4,2,2,1,2,1,2};
 			ArrayList<Tile> letterList = new ArrayList<>();
-			for(int i = 0; i < letters.length; ++i){
-				for(int j = 0; j <letterNum[i]; ++j){
-					if(letters[i] != ' ') {
-						letterList.add(new Tile(letters[i]) );
-					}else{
-						letterList.add(new Tile());
-					}
-				}
+			for (Tile.TileScore tileScore : Tile.TileScore.values()) {
+				Collections.addAll(letterList, Tile.getTiles(tileScore));
 			}
 			tileBag = letterList;
+			System.out.println(this);
+		}
+
+		/**
+		 * Creates a <code>String</code> representation of this <code>TileBag</code>.
+		 * The string contains all letters in the bag and their frequencies.
+		 * @return A string of this bag.
+		 */
+		public String toString() {
+			StringBuilder sb = new StringBuilder();
+			char current = this.tileBag.get(0).getLetter();
+			int numCurrent = 1;
+			for (int i = 1; i < tileBag.size(); i++) {
+				char letter = tileBag.get(i).getLetter();
+				if (letter == current) numCurrent++;
+				else {
+					sb.append(current).append(':').append(numCurrent).append("; ");
+					current = letter;
+					numCurrent = 1;
+				}
+			}
+			sb.append(current).append(": ").append(numCurrent);
+			return sb.toString();
 		}
 	}
 }
