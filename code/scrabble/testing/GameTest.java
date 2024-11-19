@@ -20,7 +20,7 @@ public class GameTest {
                 new Player("Player 2",1,2),new Player("Player 3",2,1)  },
                 new Board(),
                 new Ruleset(99,99,false,"dictionary.txt"),
-                new LocalPlayer("Player 1",0,0));
+                new Player.LocalPlayer("Player 1",0,0));
         game.setActive(0,true);
         game.setActive(1,true);
         game.setActive(2,true);

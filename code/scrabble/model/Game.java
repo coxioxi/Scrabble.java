@@ -20,7 +20,7 @@ public class Game {
 	private Player[] players;
 	private Board board; 	    // The game board
 	private final Ruleset ruleset;	// The game ruleset
-	private LocalPlayer self;	// The local player
+	private Player.LocalPlayer self;	// The local player
 
 	private int currentPlayerTime;	// How much time (in seconds) the current player has
 	private int gameTime;			// How much time (in seconds) remains in the game
@@ -37,7 +37,7 @@ public class Game {
 	 * @param ruleset The ruleset for the game
 	 * @param me The local player
 	 */
-	public Game(Player[] players, Board board, Ruleset ruleset, LocalPlayer me){
+	public Game(Player[] players, Board board, Ruleset ruleset, Player.LocalPlayer me){
 		this.players = players;
 		this.board = board;
 		this.ruleset = ruleset;
@@ -48,7 +48,7 @@ public class Game {
 	/**
 	 * @return this machines player
 	 */
-	public LocalPlayer getSelf() {
+	public Player.LocalPlayer getSelf() {
 		return self;
 	}
 	/**
@@ -196,7 +196,7 @@ public class Game {
 	 * @param isConnected The new status of the player
 	 */
 	public void setConnected(int playerID, boolean isConnected) {
-		NetworkPlayer player = (NetworkPlayer) players[playerID]; // Cast player to NetworkPlayer
+		Player.NetworkPlayer player = (Player.NetworkPlayer) players[playerID]; // Cast player to NetworkPlayer
 		if(isConnected){
 			player.setConnected(true); // Set connected status to true
 		}else{
@@ -211,7 +211,7 @@ public class Game {
 	 * @return true if the player is connected, false otherwise
 	 */
 	public boolean isConnected(int playerID) {
-		NetworkPlayer player = (NetworkPlayer) players[playerID]; // Cast player to NetworkPlayer
+		Player.NetworkPlayer player = (Player.NetworkPlayer) players[playerID]; // Cast player to NetworkPlayer
 		return player.isConnected(); // Return network status
 	}
 
@@ -222,7 +222,7 @@ public class Game {
 	 * @return true if the player is active, false otherwise
 	 */
 	public boolean isActive(int playerID) {
-		NetworkPlayer player = (NetworkPlayer) players[playerID]; // Cast player to NetworkPlayer
+		Player.NetworkPlayer player = (Player.NetworkPlayer) players[playerID]; // Cast player to NetworkPlayer
 		return player.isActive(); // Return activity status
 	}
 
@@ -244,7 +244,7 @@ public class Game {
 	 *               the total size of a player's rack should never exceed 7.
 	 */
 	public void decreaseRack(int playerID, int amount) {
-		NetworkPlayer player = (NetworkPlayer) players[playerID]; // Cast player to NetworkPlayer
+		Player.NetworkPlayer player = (Player.NetworkPlayer) players[playerID]; // Cast player to NetworkPlayer
 		int numTiles = player.getNumTiles() - amount; // Calculate new number of tiles
 		player.setNumTiles(numTiles); // Update the player's tile count
 
@@ -257,7 +257,7 @@ public class Game {
 	 * @return The number of tiles the player has
 	 */
 	public int getNumTiles(int playerID) {
-		NetworkPlayer player = (NetworkPlayer)players[playerID]; // Cast player to NetworkPlayer
+		Player.NetworkPlayer player = (Player.NetworkPlayer)players[playerID]; // Cast player to NetworkPlayer
 		return player.getNumTiles();
 	}
 
