@@ -404,9 +404,8 @@ public class PartyHost extends Thread implements PropertyChangeListener {
 		private ArrayList<Tile> tileBag;// stores a number of a given tile
 
 		/**
-		 * Constructs a TileBag with the standard 100 tiles - 2 (no blanks).
-		 * <br>
-		 * See also: <a href="https://en.wikipedia.org/wiki/Scrabble_letter_distributions">Letter distributions</a>
+		 * Constructs a TileBag with the standard 100 tiles.
+		 * @see <a href="https://en.wikipedia.org/wiki/Scrabble_letter_distributions">Letter distributions</a>
 		 */
 		public TileBag() {
 			fillTileBag();
@@ -417,9 +416,6 @@ public class PartyHost extends Thread implements PropertyChangeListener {
 		 * @param tiles the tiles to add to the bag.
 		 */
 		public void addTiles(Tile[] tiles) { tileBag.addAll(Arrays.asList(tiles)); }
-
-
-		public ArrayList<Tile> getTileBag() { return tileBag; }
 
 		/**
 		 * Randomly selects the next <code>numTiles</code> tiles from the bag.
