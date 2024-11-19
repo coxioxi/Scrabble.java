@@ -9,7 +9,6 @@ package scrabble.view.screen.component;
 
 import scrabble.controller.GameScreenController;
 import scrabble.model.Board;
-import scrabble.model.ModifierType;
 import scrabble.view.TileButton;
 
 import javax.swing.*;
@@ -127,7 +126,7 @@ public class BoardPanel extends JPanel {
 	 * @param col the column of the button
 	 */
 	private void setColorAndText(JButton button, int row, int col) {
-		ModifierType mt = Board.MODIFIER_HASH_MAP.get(new Point(row, col));
+		Board.ModifierType mt = Board.MODIFIER_HASH_MAP.get(new Point(row, col));
 		button.setBackground(mt.getColor());
 		button.setText(mt.getAbbreviation());
 		button.setForeground(MODIFIER_CELL_TEXT_COLOR);

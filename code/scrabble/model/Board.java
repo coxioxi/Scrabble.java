@@ -285,6 +285,83 @@ public class Board {
         return sb.toString();
     }
 
+	/**
+	 * Enumeration of the modifier types on the Scrabble board. A board modifier cell may apply to either a word
+	 * or a letter, it can have a multiplier from 1-3 (inclusive), a name, an abbreviation, and an associated color.
+	 */
+	public enum ModifierType {
+		DOUBLE_LETTER(false, 2, "Double Letter", "DL", new Color(57, 70, 140)), // Doubles the score of the letter placed on this cell.
+		TRIPLE_LETTER(false, 3, "Triple Letter", "TL", new Color(25, 43, 147)), // Triples the score of the letter placed on this cell.
+		DOUBLE_WORD(true , 2, "Double Word", "DW", new Color(154, 75, 75)), // Doubles the score of the entire word when a tile is placed on this cell.
+		TRIPLE_WORD(true , 3, "Triple Word", "TW", new Color(177, 19, 19)), // Triples the score of the entire word when a tile is placed on this cell.
+		NONE(false, 1, "Normal Cell", " ", new Color(221, 221, 221));  	// Normal cell.
+
+		private final boolean appliesToWord;
+		private final int multiplier;
+		private final String name;
+		private final String abbreviation;
+		private final Color color;
+
+		/**
+		 * Constructs an enum from given information.
+		 * @param appliesToWord whether this modifier applies to the score of the entire word or merely to a letter.
+		 *                      True signals the former, false the latter.
+		 * @param multiplier the amount by which the modified item is increased.
+		 * @param name the name of this modifier type. Should be of the form [multiplier][what-is-increased].
+		 *             For example, a cell which applies a multiplier of 2 to a full word is called a "Double Word"
+		 *             modifier. An exception to this rule is a multiplier of 1, which is simply called a "Normal Cell".
+		 * @param abbreviation the abbreviation of this modifier type, or what should be displayed on a board.
+		 * @param color the color to render this cell.
+		 */
+		ModifierType(boolean appliesToWord, int multiplier, String name, String abbreviation, Color color) {
+			this.appliesToWord = appliesToWord;
+			this.multiplier = multiplier;
+			this.name = name;
+			this.abbreviation = abbreviation;
+			this.color = color;
+		}
+
+		/**
+		 * Gets whether this enum applies to word.
+		 * @return True if this enum applies to a word; false if it applies to a letter.
+		 */
+		public boolean appliesToWord() {
+			return appliesToWord;
+		}
+
+		/**
+		 * Gets the multiplier to apply.
+		 * @return An <code>int</code> multiplier.
+		 */
+		public int getMultiplier() {
+			return multiplier;
+		}
+
+		/**
+		 * Gets the name of this enum.
+		 * @return The name of this enum.
+		 */
+		public String getName() {
+			return name;
+		}
+
+		/**
+		 * Gets the shorted version of this enum's name, or what text should be displayed on a corresponding cell.
+		 * @return The abbreviation of this enum.
+		 */
+		public String getAbbreviation() {
+			return abbreviation;
+		}
+
+		/**
+		 * Gets the color associated with this cell.
+		 * @return The color enums of this type should be rendered as.
+		 */
+		public Color getColor() {
+			return color;
+		}
+	}
+
     /**********************************************
                     Private methods
      **********************************************/
@@ -301,7 +378,7 @@ public class Board {
 
 	/*
 	this method sets up the boardSpecialCell field with all the correct placements
-	for modifier cells using Point objects and scrabble.model.ModifierType enumerations.
+	for modifier cells using Point objects and scrabble.model.Board.ModifierType enumerations.
 	*/
 	private static HashMap<Point, ModifierType> initializeModifierCells() {
 		HashMap<Point, ModifierType> cells = new HashMap<>();
@@ -421,10 +498,10 @@ public class Board {
 
         lastWordsPlayed = new ArrayList<>();
 
-		lastWordsPlayed.addAll(mainWord.getWords());
-		lastWordsPlayed.addAll(collateralWords.getWords());
+		lastWordsPlayed.addAll(mainWord.words());
+		lastWordsPlayed.addAll(collateralWords.words());
 
-		turnScore = collateralWords.getScore() + mainWord.getScore();       // update turn score
+		turnScore = collateralWords.score() + mainWord.score();       // update turn score
 		return turnScore;
     }
 
@@ -481,8 +558,8 @@ public class Board {
 				} else {                          // if topMost is tile to be placed
 					ModifierType cellMod = MODIFIER_HASH_MAP.get(placement);
 
-					wordMultiplier *= (cellMod.isAppliesToWord() ? cellMod.getMultiplier() : 1);
-					currentWordScore += tile.getScore() * (!cellMod.isAppliesToWord() ? cellMod.getMultiplier() : 1);
+					wordMultiplier *= (cellMod.appliesToWord() ? cellMod.getMultiplier() : 1);
+					currentWordScore += tile.getScore() * (!cellMod.appliesToWord() ? cellMod.getMultiplier() : 1);
 
 					currentWord.append(tile.getLetter());
 				}
@@ -580,8 +657,8 @@ public class Board {
             // Add letter to string at end
             ModifierType cellMod = MODIFIER_HASH_MAP.get(placement);
 
-			wordMultiplier *= (cellMod.isAppliesToWord() ? cellMod.getMultiplier() : 1);
-			mainWordScore += current.getScore() * (!cellMod.isAppliesToWord() ? cellMod.getMultiplier() : 1);
+			wordMultiplier *= (cellMod.appliesToWord() ? cellMod.getMultiplier() : 1);
+			mainWordScore += current.getScore() * (!cellMod.appliesToWord() ? cellMod.getMultiplier() : 1);
 
             mainWordString.append(current.getLetter());
         }
@@ -669,8 +746,8 @@ public class Board {
 				} else {                          // if leftMost is tile to be placed
 					ModifierType cellMod = MODIFIER_HASH_MAP.get(placement);
 
-					wordMultiplier *= (cellMod.isAppliesToWord() ? cellMod.getMultiplier() : 1);
-					currentWordScore += tile.getScore() * (!cellMod.isAppliesToWord() ? cellMod.getMultiplier() : 1);
+					wordMultiplier *= (cellMod.appliesToWord() ? cellMod.getMultiplier() : 1);
+					currentWordScore += tile.getScore() * (!cellMod.appliesToWord() ? cellMod.getMultiplier() : 1);
 
 					currentWord.append(tile.getLetter());
 				}
@@ -772,8 +849,8 @@ public class Board {
             // Add letter to string at end
 			ModifierType cellMod = MODIFIER_HASH_MAP.get(placement);
 
-			wordMultiplier *= (cellMod.isAppliesToWord() ? cellMod.getMultiplier() : 1);
-			mainWordScore += current.getScore() * (!cellMod.isAppliesToWord() ? cellMod.getMultiplier() : 1);
+			wordMultiplier *= (cellMod.appliesToWord() ? cellMod.getMultiplier() : 1);
+			mainWordScore += current.getScore() * (!cellMod.appliesToWord() ? cellMod.getMultiplier() : 1);
 
             mainWordString.append(current.getLetter());
         }
@@ -1054,4 +1131,12 @@ public class Board {
 		}
 		return hasSameX;
 	}
+
+	/**
+	 * A record useful for scoring a play. Used by <code>score()</code> to track the
+	 * words created and score accumulated for a set of <code>Tile</code>s played.
+	 * @param words list of the words played.
+	 * @param score current running score.
+	 */
+	private record ScoreData(ArrayList<String> words, int score) {}
 }
