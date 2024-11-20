@@ -1,6 +1,6 @@
 package scrabble.controller;
 
-import scrabble.view.screen.MainMenuScreen;
+import scrabble.view.ScrabbleGUI;
 
 import javax.swing.*;
 import java.io.IOException;
@@ -10,7 +10,7 @@ import java.io.IOException;
  */
 public class MainMenuController {
 	private final Controller parent;			// An instance of the Controller
-	private final MainMenuScreen menuScreen;	// An instance of the MainMenuScreen Object
+	private final ScrabbleGUI.MainMenuScreen menuScreen;	// An instance of the MainMenuScreen Object
 
 	/**
 	 * Constructor that initializes the parent and menu screen. Then it adds the action listeners
@@ -19,7 +19,7 @@ public class MainMenuController {
 	 * @param parent the Controller object that represents the games controller
 	 * @param menuScreen the MainMenuScreen object that represents the screen for the main menu
 	 */
-	public MainMenuController(Controller parent, MainMenuScreen menuScreen) {
+	public MainMenuController(Controller parent, ScrabbleGUI.MainMenuScreen menuScreen) {
 		this.parent = parent;
 		this.menuScreen = menuScreen;
 		addActionListeners();
