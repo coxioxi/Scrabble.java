@@ -45,15 +45,13 @@ public class Controller implements PropertyChangeListener  {
 	private ClientMessenger messenger;		// inner class for communication with host
 	private Socket hostSocket;				// socket to the partyHost
 	private GameScreenController gameScreenController;		// makes changes to view.screen.gameScreen
-	private MainMenuController mainMenuController;			// makes changes to view.screen.MainMenu
-	private HostScreenController hostScreenController;		// makes changes to view.screen.HostScreen
-	private JoinScreenController joinScreenController;		// makes changes to view.screen.JoinScreen
+    private HostScreenController hostScreenController;		// makes changes to view.screen.HostScreen
 
-	/*
-	reference to the party host
-	when this controller is the manager of the party.
-	note that this field is null when this computer is not the host
-	 */
+    /*
+    reference to the party host
+    when this controller is the manager of the party.
+    note that this field is null when this computer is not the host
+     */
 	private PartyHost host;
 	private int selfID;		// Player ID associated with this instance. Assigned by Party's Host.
 
@@ -576,7 +574,8 @@ public class Controller implements PropertyChangeListener  {
 	 * then attempt to join.
 	 */
 	private void addJoinListeners(JoinScreen join) {
-		joinScreenController = new JoinScreenController(this, join);
+        // makes changes to view.screen.JoinScreen
+        JoinScreenController joinScreenController = new JoinScreenController(this, join);
 	}
 
 	/*
@@ -590,7 +589,8 @@ public class Controller implements PropertyChangeListener  {
 	 * adds listeners to the menu screen; allows player to select join, host, or quit, with options for sound
 	 */
 	private void addMenuListeners(ScrabbleGUI.MainMenuScreen mainMenu) {
-		mainMenuController = new MainMenuController(this, mainMenu);
+        // makes changes to view.screen.MainMenu
+        MainMenuController mainMenuController = new MainMenuController(this, mainMenu);
 	}
 
 	/*
@@ -653,5 +653,152 @@ public class Controller implements PropertyChangeListener  {
 		if (this.host != null) {
 			host.halt();
 		}
+	}
+
+    /**
+     * Handles components being clicked on the <code>HostScreen</code> and provides convenience
+     * methods for changes.
+     */
+    private static class HostScreenController {
+        private final Controller parent;
+        private final HostScreen hostScreen;
+
+
+        /**
+         * Constructs a HostScreenController from a parent and a <code>HostScreen</code>.
+         *
+         * @param parent the <code>Controller</code> on which changes are made based on user input.
+         * @param hostScreen the screen to which listeners are added.
+         */
+        public HostScreenController(Controller parent, HostScreen hostScreen) {
+            this.parent = parent;
+            this.hostScreen = hostScreen;
+            hostScreen.getHostButton().addActionListener(e -> hostButtonClick());
+        }
+
+        /**
+         * Sets the IP and Port label of this object's <code>HostScreen</code>.
+         *
+         * @param IP the String representation of the Host's IP.
+         * @param port the port number on which the host is listening.
+         */
+        public void setIPandPort(String IP, int port) {
+            hostScreen.getHostsIP().setText(IP);
+            hostScreen.getHostPort().setText(port+"");
+        }
+
+        /**
+         * Adds the name of a player to the list of players waiting.
+         * @param name the name of the player to add.
+         * @see HostScreen#addPlayerName
+         */
+        public void addPlayer(String name) { hostScreen.addPlayerName(name); }
+
+        /*
+         * handles the submit button being clicked. Gets the options selected, then sends them to parent.
+         */
+        private void hostButtonClick() {
+            boolean challengesEnabled = hostScreen.getChallengeBox();
+            String dictionaryFile = hostScreen.getDictionaryPath();
+            int playerTime = Integer.parseInt(hostScreen.getPlayerTimeBox().split(" ")[0]);
+            int gameTime = Integer.parseInt(hostScreen.getGameTimeBox().split(" ")[0]);
+
+            parent.sendRulesToHost(challengesEnabled, dictionaryFile, playerTime, gameTime);
+            parent.showGame();
+        }
+
+    }
+
+	/**
+	 * Handles <code>JoinScreen</code> events.
+	 */
+	private static class JoinScreenController {
+		private final Controller parent;
+		private final JoinScreen joinScreen;
+
+		/**
+		 * Constructs a JoinScreenController from a parent and a JoinScreen.
+		 * @param parent the <code>Controller</code> on which changes should be made.
+		 * @param joinScreen the join screen to which <code>ActionListeners</code> are added.
+		 */
+		public JoinScreenController (Controller parent, JoinScreen joinScreen) {
+			this.parent = parent;
+			this.joinScreen = joinScreen;
+
+			joinScreen.getJoinButton().addActionListener(e -> joinClick());
+		}
+
+		/*
+		 * Handles the Join button being pressed
+		 */
+		private void joinClick() {
+			String userName = joinScreen.getNameText();
+			String hostsIP = joinScreen.getIPText();
+			String hostsPort = joinScreen.getPortText();
+			if (userName.isBlank()) {
+				parent.showNoNameDialog();
+			} else if (hostsIP.isBlank()) {
+				parent.showNoIPDialog();
+			} else if (hostsPort.isBlank()) {
+				parent.showNoPortDialog();
+			} else {
+				int portNumber;
+				try {
+					portNumber = Integer.parseInt(hostsPort);
+					parent.setupSocket(hostsIP, portNumber);
+					parent.sendNewPlayer(userName);
+					parent.showWaiting();
+				} catch (NumberFormatException e) {
+					parent.showNoPortDialog();
+				} catch (IOException e) {
+					parent.showIPErrorDialog();
+				}
+			}
+		}
+
+	}
+
+	private static class MainMenuController {
+		private final Controller parent;
+		private final ScrabbleGUI.MainMenuScreen menuScreen;
+
+		public MainMenuController(Controller parent, ScrabbleGUI.MainMenuScreen menuScreen) {
+			this.parent = parent;
+			this.menuScreen = menuScreen;
+			addActionListeners();
+		}
+
+		private void addActionListeners() {
+			menuScreen.getHostButton().addActionListener(e -> hostButtonClick());
+			menuScreen.getJoinButton().addActionListener(e -> parent.showJoin());
+			menuScreen.getAudioCheck().addActionListener(e -> audioCheckChanged());
+			menuScreen.getFxCheck().addActionListener(e -> fxCheckChanged());
+			menuScreen.getQuitButton().addActionListener(e -> parent.exit());
+		}
+
+		private void hostButtonClick() {
+			// set up the partyHost and change screen
+			String name = JOptionPane.showInputDialog(parent.getView(), "Enter your name: ");
+			if (name != null && !name.isBlank()) {
+				try {
+					parent.setUpHost(name);
+					parent.showHost();
+				} catch (IOException e) {
+					throw new RuntimeException(e);
+				}
+			}
+			else {
+				parent.showNoNameDialog();
+			}
+		}
+
+		private void fxCheckChanged() {
+			//fx is not yet implemented
+		}
+
+		private void audioCheckChanged() {
+			//Audio is not yet implemented
+		}
+
 	}
 }
