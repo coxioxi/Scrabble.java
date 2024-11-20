@@ -45,15 +45,13 @@ public class Controller implements PropertyChangeListener  {
 	private ClientMessenger messenger;		// inner class for communication with host
 	private Socket hostSocket;				// socket to the partyHost
 	private GameScreenController gameScreenController;		// makes changes to view.screen.gameScreen
-	private MainMenuController mainMenuController;			// makes changes to view.screen.MainMenu
-	private HostScreenController hostScreenController;		// makes changes to view.screen.HostScreen
-	private JoinScreenController joinScreenController;		// makes changes to view.screen.JoinScreen
+    private HostScreenController hostScreenController;		// makes changes to view.screen.HostScreen
 
-	/*
-	reference to the party host
-	when this controller is the manager of the party.
-	note that this field is null when this computer is not the host
-	 */
+    /*
+    reference to the party host
+    when this controller is the manager of the party.
+    note that this field is null when this computer is not the host
+     */
 	private PartyHost host;
 	private int selfID;		// Player ID associated with this instance. Assigned by Party's Host.
 
@@ -576,7 +574,8 @@ public class Controller implements PropertyChangeListener  {
 	 * then attempt to join.
 	 */
 	private void addJoinListeners(JoinScreen join) {
-		joinScreenController = new JoinScreenController(this, join);
+        // makes changes to view.screen.JoinScreen
+        JoinScreenController joinScreenController = new JoinScreenController(this, join);
 	}
 
 	/*
@@ -590,7 +589,8 @@ public class Controller implements PropertyChangeListener  {
 	 * adds listeners to the menu screen; allows player to select join, host, or quit, with options for sound
 	 */
 	private void addMenuListeners(MainMenuScreen mainMenu) {
-		mainMenuController = new MainMenuController(this, mainMenu);
+        // makes changes to view.screen.MainMenu
+        MainMenuController mainMenuController = new MainMenuController(this, mainMenu);
 	}
 
 	/*
