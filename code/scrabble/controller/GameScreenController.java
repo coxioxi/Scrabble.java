@@ -6,9 +6,6 @@ import scrabble.network.messages.PlayTiles;
 import scrabble.view.ScrabbleGUI;
 import scrabble.view.TileButton;
 import scrabble.view.screen.*;
-import scrabble.view.screen.component.BoardPanel;
-import scrabble.view.screen.component.RackPanel;
-import scrabble.view.screen.component.TilePanel;
 
 import javax.swing.*;
 import java.awt.*;
@@ -117,8 +114,8 @@ public class GameScreenController {
 	 * @param tile the Tile object to be taken off of the rack
 	 */
 	public void removeRackTile(Tile tile) {
-		RackPanel rackPanel = gameScreen.getRackPanel();
-		for(TilePanel tp: rackPanel.getTilePanels()){
+		GameScreen.RackPanel rackPanel = gameScreen.getRackPanel();
+		for(GameScreen.RackPanel.TilePanel tp: rackPanel.getTilePanels()){
 			if(tp.getButton().getText().equals(""+tile.getLetter())){
 				tp.setButton(new JButton(" "));
 				break;
@@ -144,8 +141,8 @@ public class GameScreenController {
 	 */
 	public void setRackButtonsEnabled(boolean enabled) {
 		this.isRackEnabled = enabled;
-		RackPanel rackPanel = gameScreen.getRackPanel();
-		for (TilePanel tp : rackPanel.getTilePanels()) {
+		GameScreen.RackPanel rackPanel = gameScreen.getRackPanel();
+		for (GameScreen.RackPanel.TilePanel tp : rackPanel.getTilePanels()) {
 			tp.getButton().setEnabled(enabled);
 		}
 	}
@@ -200,7 +197,7 @@ public class GameScreenController {
 	 * Adds the listeners to each panel of the board
 	 */
 	private void addBoardCellListeners() {
-		BoardPanel boardPanel = gameScreen.getBoardPanel();
+		GameScreen.BoardPanel boardPanel = gameScreen.getBoardPanel();
 		for (int row = 0; row < Board.BOARD_ROWS; row++) {
 			for (int col = 0; col < Board.BOARD_COLUMNS; col++) {
 				addBoardCellPanelListener(boardPanel, row, col);
@@ -215,7 +212,7 @@ public class GameScreenController {
 	 * @param row the row of the given panel
 	 * @param col the column of the given panel
 	 */
-	private void addBoardCellPanelListener(BoardPanel boardPanel, int row, int col) {
+	private void addBoardCellPanelListener(GameScreen.BoardPanel boardPanel, int row, int col) {
 		boardPanel.addActionListener(e -> boardCellClick(row, col), row, col);}
 
 	/**
@@ -232,7 +229,7 @@ public class GameScreenController {
 		if this button is a TileButton, put it in the rack.
 		if value is a tileButton put it in this panel
 		 */
-		BoardPanel boardPanel = gameScreen.getBoardPanel();
+		GameScreen.BoardPanel boardPanel = gameScreen.getBoardPanel();
 		if (boardPanel.instanceOfTileButton(row, col)) {
 			//put in rack
 			boardPanel.removeActionListeners(row, col);
