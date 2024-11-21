@@ -10,6 +10,8 @@ import scrabble.view.screen.*;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionListener;
+import java.util.TimerTask;
+import java.util.Timer;
 
 /**
  * GameScreenController is the controller that takes care of all actions of the Game screen
@@ -77,9 +79,10 @@ public class GameScreenController {
 	public void addToBoard(Tile[] tiles) { gameScreen.addToBoard(tiles); }
 
 	/**
-	 * Removes a singular tile from the board
+	 * Removes a singular tile from the board and places it in the rack.
 	 *
-	 * @param tile the individual Tile object to be removed from the board
+	 * @param tile the individual Tile object to be removed from the board. The location of the tile
+	 *             is the location of the board cell to remove.
 	 */
 	public void removeTileFromBoard(Tile tile){ boardCellClick(tile.getLocation().x, tile.getLocation().y); }
 
@@ -284,6 +287,27 @@ public class GameScreenController {
 		int playerID = parent.getSelfID();
 		PlayTiles playTiles = new PlayTiles(playerID, playerID, gameScreen.getPlayedTiles().toArray(new Tile[0]));
 		playTiles.execute(parent);
+	}
+
+	private static class GameTimeController {
+		private java.util.Timer scheduler;
+		private TimerTask task;
+
+		public GameTimeController(int gameLength) {
+			// schedule task to run every second for however the game runs.
+			scheduler = new Timer();
+			task = new PlayerTask();
+			scheduler.schedule(task, 0, gameLength* 1000L);
+		}
+
+		private static class PlayerTask extends TimerTask {
+			public PlayerTask() {super();}
+
+			@Override
+			public void run() {
+				// decrease time.
+			}
+		}
 	}
 
 }
