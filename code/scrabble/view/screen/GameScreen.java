@@ -12,6 +12,7 @@ import scrabble.model.*;
 import scrabble.view.TileButton;
 
 import javax.swing.*;
+import javax.swing.border.TitledBorder;
 import java.awt.*;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
@@ -42,6 +43,8 @@ public class GameScreen extends JPanel {
 	private RackPanel rackPanel; // Panel representing the player's rack
 	private JButton submitButton; // Button for submitting a move
 	private JButton passButton; // Button for passing a turn
+	private JButton exchangeButton;
+	private JButton challengeButton;
 
 	private PlayerPanel[] playerPanels;
 
@@ -61,7 +64,7 @@ public class GameScreen extends JPanel {
 		centerPanel = setupCenterPanel();
 		eastPanel = new JPanel(new GridLayout(2, 1, 0, GAP));
 		westPanel = new JPanel(new GridLayout(2, 1, 0, GAP));
-		southPanel = setupSouthPanel();
+		southPanel = setupGameControlsPanel();
 
 		//Drop down menu
 		this.add(northPanel, BorderLayout.NORTH);
@@ -290,13 +293,19 @@ public class GameScreen extends JPanel {
 	 *
 	 * @return The south panel.
 	 */
-	private JPanel setupSouthPanel() {
+	private JPanel setupGameControlsPanel() {
 		JPanel tempPanel = new JPanel(new FlowLayout());
-		JPanel submitAndRack = new JPanel(new GridLayout(2, 1, 0, 10));
-		JPanel subAndPass = new JPanel(new GridLayout(1, 2, 10, 0));
+		JPanel gameControlsPanel = new JPanel(new BorderLayout());
+		JPanel subAndPass = new JPanel(new GridLayout(2, 1, 0, 10));
+		JPanel centerRack = new JPanel(new FlowLayout());
+		centerRack.setBorder(new TitledBorder("Rack"));
+		JPanel exAndChall = new JPanel(new GridLayout(2,1,0,10));
 		passButton = new JButton("Pass Turn");
 		submitButton = new JButton("Submit");
 		submitButton.setPreferredSize(new Dimension(50, 10));
+		exchangeButton = new JButton("Exchange Tiles");
+		challengeButton = new JButton("Challenge");
+
 
 		// Initialize tile panels for the rack
 		tilePanels = new RackPanel.TilePanel[RACK_SIZE];
@@ -307,10 +316,53 @@ public class GameScreen extends JPanel {
 
 		subAndPass.add(submitButton);
 		subAndPass.add(passButton);
-		submitAndRack.add(subAndPass);
-		submitAndRack.add(rackPanel);
-		tempPanel.add(submitAndRack);
+		gameControlsPanel.add(subAndPass, BorderLayout.WEST);
+		centerRack.add(rackPanel);
+		gameControlsPanel.add(centerRack, BorderLayout.CENTER);
+		exAndChall.add(exchangeButton);
+		exAndChall.add(challengeButton);
+		gameControlsPanel.add(exAndChall, BorderLayout.EAST);
+		tempPanel.add(gameControlsPanel);
 		return tempPanel;
+	}
+
+	private JPanel setupExchangePanel() {
+		JPanel basePanel = new JPanel(new FlowLayout());
+		JPanel exchangePanel = new JPanel(new BorderLayout());
+
+		JPanel centerPanel = new JPanel(new GridLayout(3,1,20,10));
+		JLabel exchangeText = new JLabel("Exchange One or All:");
+		JComboBox<String> numberSelect = new JComboBox<>(new String[]{"One", "All"});
+		JComboBox<String> letterSelect = new JComboBox<>(new String[]{"A", "B", "C", "D", "E", "F", "G"});
+		centerPanel.add(exchangeText);
+		centerPanel.add(numberSelect);
+		centerPanel.add(letterSelect);
+
+		JPanel eastPanel = new JPanel(new GridLayout(2,1,10, 20));
+		JButton backButton = new JButton("Go Back");
+		JButton submitButton = new JButton("Submit");
+		eastPanel.add(backButton, 0);
+		eastPanel.add(submitButton,1);
+
+		exchangePanel.add(centerPanel, BorderLayout.CENTER);
+		exchangePanel.add(eastPanel, BorderLayout.EAST);
+		basePanel.add(exchangePanel);
+		return basePanel;
+	}
+
+	private JPanel setupBlankPanel() {
+		JPanel basePanel = new JPanel(new FlowLayout());
+
+		JPanel controlsPanel = new JPanel(new GridLayout(3,1,0,20));
+		JLabel chooseLabel = new JLabel("Which Letter would you like?");
+		JComboBox<String> letterSelect = new JComboBox<>(new String[] {"A", "B", "C", "D"});
+		JButton submitButton = new JButton("Submit");
+
+		controlsPanel.add(chooseLabel);
+		controlsPanel.add(letterSelect);
+		controlsPanel.add(submitButton);
+		basePanel.add(controlsPanel);
+		return basePanel;
 	}
 
 	/**
