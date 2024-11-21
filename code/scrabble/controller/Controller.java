@@ -9,6 +9,7 @@ import scrabble.network.messages.PlayTiles;
 import scrabble.view.ScrabbleGUI;
 import scrabble.view.screen.*;
 
+import javax.sound.sampled.*;
 import javax.swing.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
@@ -16,10 +17,7 @@ import java.awt.event.WindowListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
-import java.io.EOFException;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
+import java.io.*;
 import java.net.Socket;
 import java.net.SocketException;
 import java.util.ArrayList;
@@ -766,6 +764,8 @@ public class Controller implements PropertyChangeListener  {
 			this.parent = parent;
 			this.menuScreen = menuScreen;
 			addActionListeners();
+			Thread elevatorMusic = new Thread(new ElevatorMusicPlayer("Bossa nova.wav"));
+			elevatorMusic.start();
 		}
 
 		private void addActionListeners() {
@@ -799,6 +799,52 @@ public class Controller implements PropertyChangeListener  {
 		private void audioCheckChanged() {
 			//Audio is not yet implemented
 		}
+	}
 
+
+	private static class ElevatorMusicPlayer implements Runnable{
+		private String soundFile;
+		Clip clip;
+		boolean enabled;
+
+		public ElevatorMusicPlayer(String mainMusicFile) {
+			this.soundFile = mainMusicFile;
+		}
+
+		@Override
+		public void run() {
+			try {
+				AudioInputStream audioStream = AudioSystem.getAudioInputStream(new File(soundFile));
+				clip = AudioSystem.getClip();
+				clip.open(audioStream);
+
+				FloatControl gainControl = (FloatControl) clip.getControl(FloatControl.Type.MASTER_GAIN);
+				gainControl.setValue(20f * (float) Math.log10(0.3));
+
+				clip.loop(Clip.LOOP_CONTINUOUSLY);
+
+			} catch (UnsupportedAudioFileException | IOException | LineUnavailableException e) {
+				System.out.println(e.getMessage());
+			}
+		}
+	}
+
+	private static class FxPlayer {
+
+		private void tilePlacementFx(){
+			try {
+				AudioInputStream audioStream = AudioSystem.getAudioInputStream(new File("tilePlacedSound.wav"));
+				Clip fxClip = AudioSystem.getClip();
+				fxClip.open(audioStream);
+				fxClip.start();
+			} catch (UnsupportedAudioFileException | IOException | LineUnavailableException e) {
+				System.out.println(e.getMessage());
+			}
+		}
+	}
+
+	public void playTileFx(){
+		FxPlayer fxPlayer = new FxPlayer();
+		fxPlayer.tilePlacementFx();
 	}
 }

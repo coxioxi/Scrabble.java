@@ -7,6 +7,7 @@ import scrabble.view.ScrabbleGUI;
 import scrabble.view.TileButton;
 import scrabble.view.screen.*;
 
+import javax.naming.ldap.Control;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionListener;
@@ -238,6 +239,7 @@ public class GameScreenController {
 		gameScreen.setBoardCellOfBoardPanel(toAdd, row, col);
 		addBoardCellPanelListener(row, col);
 		gameScreen.setValue(new JButton(" "));
+		parent.playTileFx();
 	}
 
 	/**
