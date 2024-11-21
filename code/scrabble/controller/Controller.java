@@ -835,12 +835,16 @@ public class Controller implements PropertyChangeListener  {
 	}
 
 	private static class FxPlayer {
+		AudioInputStream audioStream;
+		Clip fxClip;
+
 		private void tilePlacementFx(){
 			try {
-				AudioInputStream audioStream = AudioSystem.getAudioInputStream(new File("tilePlaySound.wav"));
-				Clip fxClip = AudioSystem.getClip();
+				audioStream = AudioSystem.getAudioInputStream(new File("tilePlaySound.wav"));
+				fxClip = AudioSystem.getClip();
 				fxClip.open(audioStream);
 				fxClip.start();
+
 			} catch (UnsupportedAudioFileException | IOException | LineUnavailableException e) {
 				System.out.println(e.getMessage());
 			}
@@ -848,14 +852,15 @@ public class Controller implements PropertyChangeListener  {
 
 		private void rightPlacementFx(){
 			try {
-				AudioInputStream audioStream = AudioSystem.getAudioInputStream(new File("rightPlaySound.wav"));
-				Clip fxClip = AudioSystem.getClip();
+				audioStream = AudioSystem.getAudioInputStream(new File("rightPlaySound.wav"));
+				fxClip = AudioSystem.getClip();
 				fxClip.open(audioStream);
+
 
 				FloatControl gainControl = (FloatControl) fxClip.getControl(FloatControl.Type.MASTER_GAIN);
 				gainControl.setValue(20f * (float) Math.log10(0.7));
-
 				fxClip.start();
+
 			} catch (UnsupportedAudioFileException | IOException | LineUnavailableException e) {
 				System.out.println(e.getMessage());
 			}
@@ -863,14 +868,14 @@ public class Controller implements PropertyChangeListener  {
 
 		private void wrongPlacementFx(){
 			try {
-				AudioInputStream audioStream = AudioSystem.getAudioInputStream(new File("wrongPlaySound.wav"));
-				Clip fxClip = AudioSystem.getClip();
+				audioStream = AudioSystem.getAudioInputStream(new File("wrongPlaySound.wav"));
+				fxClip = AudioSystem.getClip();
 				fxClip.open(audioStream);
 
 				FloatControl gainControl = (FloatControl) fxClip.getControl(FloatControl.Type.MASTER_GAIN);
 				gainControl.setValue(20f * (float) Math.log10(0.2));
-
 				fxClip.start();
+
 			} catch (UnsupportedAudioFileException | IOException | LineUnavailableException e) {
 				System.out.println(e.getMessage());
 			}
