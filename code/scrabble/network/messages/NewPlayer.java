@@ -58,7 +58,7 @@ public class NewPlayer extends Message implements Serializable {
         //Create player connection to the host
         //Add getPlayerName to controller in order to add players to waiting screen and game screen
         if (controller.getHost()==null) {
-            controller.getView().getWaiting().addPlayerName(this.playerName);
+            controller.getView().addWaitingPlayer(this.playerName);
         }
         else {
             controller.getView().getHost().addPlayerName(this.playerName);

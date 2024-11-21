@@ -588,7 +588,7 @@ public class Controller implements PropertyChangeListener  {
 	/*
 	 * adds listeners to the menu screen; allows player to select join, host, or quit, with options for sound
 	 */
-	private void addMenuListeners(MainMenuScreen mainMenu) {
+	private void addMenuListeners(ScrabbleGUI.MainMenuScreen mainMenu) {
         // makes changes to view.screen.MainMenu
         MainMenuController mainMenuController = new MainMenuController(this, mainMenu);
 	}
@@ -760,9 +760,9 @@ public class Controller implements PropertyChangeListener  {
 
 	private static class MainMenuController {
 		private final Controller parent;
-		private final MainMenuScreen menuScreen;
+		private final ScrabbleGUI.MainMenuScreen menuScreen;
 
-		public MainMenuController(Controller parent, MainMenuScreen menuScreen) {
+		public MainMenuController(Controller parent, ScrabbleGUI.MainMenuScreen menuScreen) {
 			this.parent = parent;
 			this.menuScreen = menuScreen;
 			addActionListeners();

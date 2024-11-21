@@ -226,8 +226,8 @@ public class GameScreenController {
 	 */
 	private void boardCellClick(int row, int col) {
 		/*
-		if this button is a TileButton, put it in the rack.
-		if value is a tileButton put it in this panel
+		If this button is a TileButton, put it in the rack.
+		If value is a tileButton put it in this panel
 		 */
 		GameScreen.BoardPanel boardPanel = gameScreen.getBoardPanel();
 		if (boardPanel.instanceOfTileButton(row, col)) {
