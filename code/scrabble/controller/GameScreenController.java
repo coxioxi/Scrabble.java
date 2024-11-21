@@ -7,6 +7,7 @@ import scrabble.view.ScrabbleGUI;
 import scrabble.view.TileButton;
 import scrabble.view.screen.*;
 
+import javax.naming.ldap.Control;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionListener;
@@ -249,8 +250,13 @@ public class GameScreenController {
 		}
 		boardPanel.setBoardCell(toAdd, row, col);
 		addBoardCellPanelListener(boardPanel, row, col);
+
 		gameScreen.setValue(new JButton(" "));
+		parent.playTileFx();
 	}
+
+	//Controller controller = new Controller();
+
 
 	/**
 	 * Adds the listeners to each panel of the rack
