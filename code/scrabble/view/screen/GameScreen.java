@@ -208,22 +208,18 @@ public class GameScreen extends JPanel {
 	}
 
 	/**
-	 * Adds tiles to the player's rack.
+	 * Adds all specified tiles into the <code>GameScreen</code>'s rack as buttons.
 	 *
 	 * @param tiles Array of tiles to be added.
 	 */
 	public void addTilesToRack(Tile[] tiles) {
-		int index = 0;
-		for (int i = 0; i < tilePanels.length; i++) {
-			if (!(tilePanels[i].getButton() instanceof TileButton)) {
-				TileButton button =
-						(tiles[index].isBlank()
-								? new TileButton()
-								: new TileButton(Tile.TileScore.valueOf(tiles[index].getLetter()+""))
-						);
-				tilePanels[i].setButton(button);
-				index++;
-			}
+		for(Tile t : tiles) {
+			TileButton button =
+					(t.isBlank()
+							? new TileButton()
+							: new TileButton(Tile.TileScore.valueOf(t.getLetter()+""))
+					);
+			rackPanel.addToRack(button);
 		}
 	}
 
@@ -244,6 +240,38 @@ public class GameScreen extends JPanel {
 
 	public void removeRackTileActionListeners(int index) {
 		GameScreenController.removeActionListeners(tilePanels[index].getButton());
+	}
+
+	public void setBoardCellOfBoardPanel(JButton button, int row, int col) {
+		boardPanel.setBoardCell(button, row, col);
+	}
+
+	public void addActionListenerToBoardCell(ActionListener al, int row, int col) {
+		boardPanel.addActionListener(al, row, col);
+	}
+
+	public boolean instanceOfTileButton(int row, int col) {
+		return boardPanel.instanceOfTileButton(row, col);
+	}
+
+	public void removeBoardPanelActionListeners (int row, int col) {
+		boardPanel.removeActionListeners(row, col);
+	}
+
+	public String getBoardButtonText(int row, int col) {
+		return boardPanel.getButtonText(row, col);
+	}
+
+	public JButton getBoardButton(int row, int col) {
+		return boardPanel.getButton(row, col);
+	}
+
+	public int removeButtonFromRack(String letter) {
+		return rackPanel.removeFromRack(letter);
+	}
+
+	public void setRackButtonsEnabled(boolean enabled) {
+		rackPanel.setRackButtonEnabled(enabled);
 	}
 
 	/**
@@ -331,8 +359,9 @@ public class GameScreen extends JPanel {
 
 		// Labels to display player's name, time, and score
 		private JLabel name;
-		private JLabel time;
+		private JLabel timeLabel;
 		private JLabel score;
+		private int time;
 
 		/**
 		 * Constructor for PlayerPanel. Sets up the panel layout and populates it with player information.
@@ -354,7 +383,7 @@ public class GameScreen extends JPanel {
 
 			// Label for remaining time, formatted as minutes and seconds
 			JLabel playerTimeLabel = new JLabel("Time:", SwingConstants.RIGHT);
-			this.time = new JLabel(time / 60 + ":" + (time % 60 < 10 ? "0":"") + time % 60);
+			this.timeLabel = new JLabel(time / 60 + ":" + (time % 60 < 10 ? "0":"") + time % 60);
 
 			// Label for player's score
 			JLabel playerScoreLabel = new JLabel("Score:", SwingConstants.RIGHT);
@@ -364,7 +393,7 @@ public class GameScreen extends JPanel {
 			this.add(playerNameLabel);
 			this.add(name);
 			this.add(playerTimeLabel);
-			this.add(this.time);
+			this.add(this.timeLabel);
 			this.add(playerScoreLabel);
 			this.add(this.score);
 		}
@@ -383,8 +412,8 @@ public class GameScreen extends JPanel {
 		 *
 		 * @return JLabel representing the player's remaining time.
 		 */
-		public JLabel getTime() {
-			return time;
+		public JLabel getTimeLabel() {
+			return timeLabel;
 		}
 
 		/**
@@ -401,7 +430,7 @@ public class GameScreen extends JPanel {
 	 * BoardPanel is a JPanel that represents the game board in Scrabble.
 	 * It initializes and displays a grid of BoardCellPanels with appropriate colors and labels.
 	 */
-	public static class BoardPanel extends JPanel {
+	private static class BoardPanel extends JPanel {
 		/** The color of the text used for board modifier cells. */
 		public static final Color MODIFIER_CELL_TEXT_COLOR = new Color(255, 255, 255);
 		/**
@@ -490,16 +519,6 @@ public class GameScreen extends JPanel {
 			}
 		}
 
-
-		/**
-		 * Sets the sizes for a given button to match the cell dimensions.
-		 */
-		private void setButtonSizes(JComponent button) {
-			button.setMaximumSize(maxCellSize);
-			button.setPreferredSize(preferredCellSize);
-			button.setMinimumSize(minCellSize);
-		}
-
 		/**
 		 * Sets the color and text of a button on the oard based on its modifier type.
 		 *
@@ -515,7 +534,6 @@ public class GameScreen extends JPanel {
 			button.setBorderPainted(false);
 		}
 
-
 		/**
 		 * Updates a cell at a specified row and column with a new button.
 		 *
@@ -525,15 +543,12 @@ public class GameScreen extends JPanel {
 		 */
 		public void setBoardCell(JButton button, int row, int col) {
 			if (!(button instanceof TileButton)) {
-				//setButtonSizes(button);
 				setColorAndText(button, row, col);
 			}
 			this.boardCells[row][col].setBoardButton(button);
 			this.boardCells[row][col].revalidate();
 			this.boardCells[row][col].repaint();
 		}
-		// Need to create a method in Game Screen that can be called by GameScreen Controller
-
 
 		/**
 		 * Disables a cell at a specific position on the board.
@@ -672,7 +687,7 @@ public class GameScreen extends JPanel {
 	 * RackPanel is a JPanel that represents a rack of TilePanels,
 	 * displaying the tiles a player currently holds.
 	 */
-	public static class RackPanel extends JPanel {
+	private static class RackPanel extends JPanel {
 		// Array to hold the TilePanels that make up the player's rack
 
 		private TilePanel[] tilePanels;
@@ -730,6 +745,22 @@ public class GameScreen extends JPanel {
 					setButton(button, i);
 					searching = false;
 				}
+			}
+		}
+
+		public int removeFromRack(String letter) {
+			for(int i = 0; i < tilePanels.length; i++){
+				if(tilePanels[i].getButton().getText().equals(letter)){
+					tilePanels[i].setButton(new JButton(" "));
+					return i;
+				}
+			}
+			return -1;
+		}
+
+		public void setRackButtonEnabled (boolean enabled) {
+			for (TilePanel tp : tilePanels) {
+				tp.getButton().setEnabled(enabled);
 			}
 		}
 

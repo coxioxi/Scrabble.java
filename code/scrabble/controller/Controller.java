@@ -260,7 +260,7 @@ public class Controller implements PropertyChangeListener  {
 	 * Removes a specific tile from this player's rack.
 	 * @param tile the tile to be removed.
 	 */
-	public void removeRackTile(Tile tile) { gameScreenController.removeRackTile(tile); }
+	public void removeRackTile(Tile tile) { int removedLocation = gameScreenController.removeRackTile(tile); }
 
 	/**
 	 * Gets the view.

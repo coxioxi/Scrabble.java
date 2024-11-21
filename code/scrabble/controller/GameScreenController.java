@@ -113,14 +113,8 @@ public class GameScreenController {
 	 *
 	 * @param tile the Tile object to be taken off of the rack
 	 */
-	public void removeRackTile(Tile tile) {
-		GameScreen.RackPanel rackPanel = gameScreen.getRackPanel();
-		for(GameScreen.RackPanel.TilePanel tp: rackPanel.getTilePanels()){
-			if(tp.getButton().getText().equals(""+tile.getLetter())){
-				tp.setButton(new JButton(" "));
-				break;
-			}
-		}
+	public int removeRackTile(Tile tile) {
+		return gameScreen.removeButtonFromRack(tile.getLetter() + "");
 	}
 
 	/**
@@ -141,10 +135,7 @@ public class GameScreenController {
 	 */
 	public void setRackButtonsEnabled(boolean enabled) {
 		this.isRackEnabled = enabled;
-		GameScreen.RackPanel rackPanel = gameScreen.getRackPanel();
-		for (GameScreen.RackPanel.TilePanel tp : rackPanel.getTilePanels()) {
-			tp.getButton().setEnabled(enabled);
-		}
+		gameScreen.setRackButtonsEnabled(enabled);
 	}
 
 	/*
@@ -197,10 +188,9 @@ public class GameScreenController {
 	 * Adds the listeners to each panel of the board
 	 */
 	private void addBoardCellListeners() {
-		GameScreen.BoardPanel boardPanel = gameScreen.getBoardPanel();
 		for (int row = 0; row < Board.BOARD_ROWS; row++) {
 			for (int col = 0; col < Board.BOARD_COLUMNS; col++) {
-				addBoardCellPanelListener(boardPanel, row, col);
+				addBoardCellPanelListener(row, col);
 			}
 		}
 	}
@@ -208,12 +198,12 @@ public class GameScreenController {
 	/**
 	 * Creates the action listener for each panel of the board
 	 *
-	 * @param boardPanel the panel which we are adding the listener to
 	 * @param row the row of the given panel
 	 * @param col the column of the given panel
 	 */
-	private void addBoardCellPanelListener(GameScreen.BoardPanel boardPanel, int row, int col) {
-		boardPanel.addActionListener(e -> boardCellClick(row, col), row, col);}
+	private void addBoardCellPanelListener(int row, int col) {
+		gameScreen.addActionListenerToBoardCell((e -> boardCellClick(row, col)), row, col);
+	}
 
 	/**
 	 * Puts a tile into the cell that is clicked by the player
@@ -225,18 +215,13 @@ public class GameScreenController {
 	 * @param col the column of the button that is clicked
 	 */
 	private void boardCellClick(int row, int col) {
-		/*
-		if this button is a TileButton, put it in the rack.
-		if value is a tileButton put it in this panel
-		 */
-		GameScreen.BoardPanel boardPanel = gameScreen.getBoardPanel();
-		if (boardPanel.instanceOfTileButton(row, col)) {
+		if (gameScreen.instanceOfTileButton(row, col)) {
 			//put in rack
-			boardPanel.removeActionListeners(row, col);
+			gameScreen.removeBoardPanelActionListeners(row, col);
 			gameScreen.removeFromPlayedTiles(
-					new Tile(boardPanel.getButtonText(row, col).charAt(0), new Point(row, col))
+					new Tile(gameScreen.getBoardButtonText(row, col).charAt(0), new Point(row, col))
 			);
-			int index = gameScreen.addTileButtonToRack((TileButton) boardPanel.getButton(row, col));
+			int index = gameScreen.addTileButtonToRack((TileButton) gameScreen.getBoardButton(row, col));
 			addTilePanelListener(index);
 		}
 		// add value to panel
@@ -247,8 +232,8 @@ public class GameScreenController {
 					new Tile(toAdd.getText().charAt(0), new Point(row, col))
 			);
 		}
-		boardPanel.setBoardCell(toAdd, row, col);
-		addBoardCellPanelListener(boardPanel, row, col);
+		gameScreen.setBoardCellOfBoardPanel(toAdd, row, col);
+		addBoardCellPanelListener(row, col);
 		gameScreen.setValue(new JButton(" "));
 	}
 
