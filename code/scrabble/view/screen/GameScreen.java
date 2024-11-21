@@ -27,6 +27,10 @@ public class GameScreen extends JPanel {
 	public static final int GAP = 150; // Spacing used between panels
 	public static final int RACK_SIZE = 7; // Number of tiles in a player's rack
 
+	private static final String RACK_PANEL = "RACK";
+	private static final String EXCHANGE_PANEL = "EXCHANGE";
+	private static final String BLANK_PANEL = "BLANK";
+
 	private JLabel gameTime; // Label displaying the game timer
 	private BoardPanel boardPanel; // Panel representing the game board
 
@@ -64,7 +68,7 @@ public class GameScreen extends JPanel {
 		centerPanel = setupCenterPanel();
 		eastPanel = new JPanel(new GridLayout(2, 1, 0, GAP));
 		westPanel = new JPanel(new GridLayout(2, 1, 0, GAP));
-		southPanel = setupGameControlsPanel();
+		southPanel = setupCardBasedSouthPanel();
 
 		//Drop down menu
 		this.add(northPanel, BorderLayout.NORTH);
@@ -288,11 +292,6 @@ public class GameScreen extends JPanel {
 		return new PlayerPanel(name, 0, playerTime*60);
 	}
 
-	/**
-	 * Sets up the panel at the bottom of the screen, including the rack and action buttons.
-	 *
-	 * @return The south panel.
-	 */
 	private JPanel setupGameControlsPanel() {
 		JPanel tempPanel = new JPanel(new FlowLayout());
 		JPanel gameControlsPanel = new JPanel(new BorderLayout());
@@ -328,7 +327,7 @@ public class GameScreen extends JPanel {
 
 	private JPanel setupExchangePanel() {
 		JPanel basePanel = new JPanel(new FlowLayout());
-		JPanel exchangePanel = new JPanel(new BorderLayout());
+		JPanel exchangePanel = new JPanel(new GridLayout(1, 2, 30, 0));
 
 		JPanel centerPanel = new JPanel(new GridLayout(3,1,20,10));
 		JLabel exchangeText = new JLabel("Exchange One or All:");
@@ -344,8 +343,8 @@ public class GameScreen extends JPanel {
 		eastPanel.add(backButton, 0);
 		eastPanel.add(submitButton,1);
 
-		exchangePanel.add(centerPanel, BorderLayout.CENTER);
-		exchangePanel.add(eastPanel, BorderLayout.EAST);
+		exchangePanel.add(centerPanel);
+		exchangePanel.add(eastPanel);
 		basePanel.add(exchangePanel);
 		return basePanel;
 	}
@@ -353,7 +352,7 @@ public class GameScreen extends JPanel {
 	private JPanel setupBlankPanel() {
 		JPanel basePanel = new JPanel(new FlowLayout());
 
-		JPanel controlsPanel = new JPanel(new GridLayout(3,1,0,20));
+		JPanel controlsPanel = new JPanel(new GridLayout(3,1,0,10));
 		JLabel chooseLabel = new JLabel("Which Letter would you like?");
 		JComboBox<String> letterSelect = new JComboBox<>(new String[] {"A", "B", "C", "D"});
 		JButton submitButton = new JButton("Submit");
@@ -363,6 +362,21 @@ public class GameScreen extends JPanel {
 		controlsPanel.add(submitButton);
 		basePanel.add(controlsPanel);
 		return basePanel;
+	}
+
+	private JPanel setupCardBasedSouthPanel() {
+		CardLayout c = new CardLayout();
+		JPanel south = new JPanel(c);
+		JPanel rackPanel = setupGameControlsPanel();
+		JPanel exchangePanel = setupExchangePanel();
+		JPanel blankPanel = setupBlankPanel();
+		south.add(rackPanel, RACK_PANEL);
+		south.add(exchangePanel, EXCHANGE_PANEL);
+		south.add(blankPanel, BLANK_PANEL);
+		c.show(south, RACK_PANEL);
+
+
+		return south;
 	}
 
 	/**
