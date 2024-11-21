@@ -242,9 +242,14 @@ public class Controller implements PropertyChangeListener  {
 			} catch (IOException e) {
 				getMessenger().halt();
 			}
+			//Play sound cue for when tiles are right
+			rightTileFx();
 		}
 		else {
 			resetLastPlay();
+
+			//Play sound cue for when tiles are wrong
+			wrongTileFx();
 		}
 	}
 
@@ -819,7 +824,7 @@ public class Controller implements PropertyChangeListener  {
 				clip.open(audioStream);
 
 				FloatControl gainControl = (FloatControl) clip.getControl(FloatControl.Type.MASTER_GAIN);
-				gainControl.setValue(20f * (float) Math.log10(0.3));
+				gainControl.setValue(20f * (float) Math.log10(0.1));
 
 				clip.loop(Clip.LOOP_CONTINUOUSLY);
 
@@ -830,12 +835,41 @@ public class Controller implements PropertyChangeListener  {
 	}
 
 	private static class FxPlayer {
-
 		private void tilePlacementFx(){
 			try {
-				AudioInputStream audioStream = AudioSystem.getAudioInputStream(new File("tilePlacedSound.wav"));
+				AudioInputStream audioStream = AudioSystem.getAudioInputStream(new File("tilePlaySound.wav"));
 				Clip fxClip = AudioSystem.getClip();
 				fxClip.open(audioStream);
+				fxClip.start();
+			} catch (UnsupportedAudioFileException | IOException | LineUnavailableException e) {
+				System.out.println(e.getMessage());
+			}
+		}
+
+		private void rightPlacementFx(){
+			try {
+				AudioInputStream audioStream = AudioSystem.getAudioInputStream(new File("rightPlaySound.wav"));
+				Clip fxClip = AudioSystem.getClip();
+				fxClip.open(audioStream);
+
+				FloatControl gainControl = (FloatControl) fxClip.getControl(FloatControl.Type.MASTER_GAIN);
+				gainControl.setValue(20f * (float) Math.log10(0.7));
+
+				fxClip.start();
+			} catch (UnsupportedAudioFileException | IOException | LineUnavailableException e) {
+				System.out.println(e.getMessage());
+			}
+		}
+
+		private void wrongPlacementFx(){
+			try {
+				AudioInputStream audioStream = AudioSystem.getAudioInputStream(new File("wrongPlaySound.wav"));
+				Clip fxClip = AudioSystem.getClip();
+				fxClip.open(audioStream);
+
+				FloatControl gainControl = (FloatControl) fxClip.getControl(FloatControl.Type.MASTER_GAIN);
+				gainControl.setValue(20f * (float) Math.log10(0.2));
+
 				fxClip.start();
 			} catch (UnsupportedAudioFileException | IOException | LineUnavailableException e) {
 				System.out.println(e.getMessage());
@@ -847,4 +881,14 @@ public class Controller implements PropertyChangeListener  {
 		FxPlayer fxPlayer = new FxPlayer();
 		fxPlayer.tilePlacementFx();
 	}
+	public void rightTileFx(){
+		FxPlayer fxPlayer = new FxPlayer();
+		fxPlayer.rightPlacementFx();
+	}
+
+	public void wrongTileFx(){
+		FxPlayer fxPlayer = new FxPlayer();
+		fxPlayer.wrongPlacementFx();
+	}
+
 }
