@@ -181,7 +181,7 @@ public class Controller implements PropertyChangeListener  {
 		}
 		model = new Game(players, new Board(), ruleset, self);
 		if (model.getCurrentPlayer() != selfID) gameScreenController.setRackButtonsEnabled(false);
-		this.showGame();
+		SwingUtilities.invokeLater(this::showGame);
 	}
 
 	/**
@@ -704,7 +704,7 @@ public class Controller implements PropertyChangeListener  {
             int gameTime = Integer.parseInt(hostScreen.getGameTimeBox().split(" ")[0]);
 
             parent.sendRulesToHost(challengesEnabled, dictionaryFile, playerTime, gameTime);
-            parent.showGame();
+//            parent.showGame();
         }
 
     }
