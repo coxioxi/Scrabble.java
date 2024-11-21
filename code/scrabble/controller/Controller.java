@@ -39,11 +39,14 @@ public class Controller implements PropertyChangeListener  {
 
 	private ScrabbleGUI view;	// maintains the GUI
 	private Game model;			// maintains Scrabble game data
+	private boolean fxEnable = true;
+	private boolean musicEnable = true;
 
 	private ClientMessenger messenger;		// inner class for communication with host
 	private Socket hostSocket;				// socket to the partyHost
 	private GameScreenController gameScreenController;		// makes changes to view.screen.gameScreen
     private HostScreenController hostScreenController;		// makes changes to view.screen.HostScreen
+
 
     /*
     reference to the party host
@@ -223,6 +226,27 @@ public class Controller implements PropertyChangeListener  {
 		else otherPlayTiles(playerID, tiles);
 		gameScreenController.setRackButtonsEnabled(model.getCurrentPlayer() == selfID);
 	}
+
+	public void playTileFx(){
+		if(fxEnable) {
+			FxPlayer fxPlayer = new FxPlayer();
+			fxPlayer.tilePlacementFx();
+		}
+	}
+	public void rightTileFx(){
+		if(fxEnable) {
+			FxPlayer fxPlayer = new FxPlayer();
+			fxPlayer.rightPlacementFx();
+		}
+	}
+
+	public void wrongTileFx(){
+		if(fxEnable){
+		FxPlayer fxPlayer = new FxPlayer();
+		fxPlayer.wrongPlacementFx();
+		}
+	}
+
 	private void otherPlayTiles(int playerID, Tile[] tiles) {
 		// when the player is not from this application.
 		model.playTiles(playerID, tiles);
@@ -769,6 +793,7 @@ public class Controller implements PropertyChangeListener  {
 			this.parent = parent;
 			this.menuScreen = menuScreen;
 			addActionListeners();
+
 			Thread elevatorMusic = new Thread(new ElevatorMusicPlayer("Bossa nova.wav"));
 			elevatorMusic.start();
 		}
@@ -791,26 +816,23 @@ public class Controller implements PropertyChangeListener  {
 				} catch (IOException e) {
 					throw new RuntimeException(e);
 				}
-			}
-			else {
+			} else {
 				parent.showNoNameDialog();
 			}
 		}
 
 		private void fxCheckChanged() {
-			//fx is not yet implemented
+			parent.fxEnable = !parent.fxEnable;
 		}
 
 		private void audioCheckChanged() {
-			//Audio is not yet implemented
+			parent.musicEnable = !parent.musicEnable;
 		}
 	}
 
-
-	private static class ElevatorMusicPlayer implements Runnable{
-		private String soundFile;
+	private static class ElevatorMusicPlayer implements Runnable {
+		private final String soundFile;
 		Clip clip;
-		boolean enabled;
 
 		public ElevatorMusicPlayer(String mainMusicFile) {
 			this.soundFile = mainMusicFile;
@@ -826,6 +848,7 @@ public class Controller implements PropertyChangeListener  {
 				FloatControl gainControl = (FloatControl) clip.getControl(FloatControl.Type.MASTER_GAIN);
 				gainControl.setValue(20f * (float) Math.log10(0.1));
 
+
 				clip.loop(Clip.LOOP_CONTINUOUSLY);
 
 			} catch (UnsupportedAudioFileException | IOException | LineUnavailableException e) {
@@ -836,9 +859,10 @@ public class Controller implements PropertyChangeListener  {
 
 	private static class FxPlayer {
 		AudioInputStream audioStream;
+		FloatControl gainControl;
 		Clip fxClip;
 
-		private void tilePlacementFx(){
+		private void tilePlacementFx() {
 			try {
 				audioStream = AudioSystem.getAudioInputStream(new File("tilePlaySound.wav"));
 				fxClip = AudioSystem.getClip();
@@ -850,14 +874,14 @@ public class Controller implements PropertyChangeListener  {
 			}
 		}
 
-		private void rightPlacementFx(){
+		private void rightPlacementFx() {
 			try {
 				audioStream = AudioSystem.getAudioInputStream(new File("rightPlaySound.wav"));
 				fxClip = AudioSystem.getClip();
 				fxClip.open(audioStream);
 
 
-				FloatControl gainControl = (FloatControl) fxClip.getControl(FloatControl.Type.MASTER_GAIN);
+				gainControl = (FloatControl) fxClip.getControl(FloatControl.Type.MASTER_GAIN);
 				gainControl.setValue(20f * (float) Math.log10(0.7));
 				fxClip.start();
 
@@ -866,13 +890,13 @@ public class Controller implements PropertyChangeListener  {
 			}
 		}
 
-		private void wrongPlacementFx(){
+		private void wrongPlacementFx() {
 			try {
 				audioStream = AudioSystem.getAudioInputStream(new File("wrongPlaySound.wav"));
 				fxClip = AudioSystem.getClip();
 				fxClip.open(audioStream);
 
-				FloatControl gainControl = (FloatControl) fxClip.getControl(FloatControl.Type.MASTER_GAIN);
+				gainControl = (FloatControl) fxClip.getControl(FloatControl.Type.MASTER_GAIN);
 				gainControl.setValue(20f * (float) Math.log10(0.2));
 				fxClip.start();
 
@@ -881,19 +905,4 @@ public class Controller implements PropertyChangeListener  {
 			}
 		}
 	}
-
-	public void playTileFx(){
-		FxPlayer fxPlayer = new FxPlayer();
-		fxPlayer.tilePlacementFx();
-	}
-	public void rightTileFx(){
-		FxPlayer fxPlayer = new FxPlayer();
-		fxPlayer.rightPlacementFx();
-	}
-
-	public void wrongTileFx(){
-		FxPlayer fxPlayer = new FxPlayer();
-		fxPlayer.wrongPlacementFx();
-	}
-
 }
