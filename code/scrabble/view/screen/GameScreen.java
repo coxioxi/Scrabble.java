@@ -8,7 +8,8 @@ package scrabble.view.screen;
  */
 
 import scrabble.controller.GameScreenController;
-import scrabble.model.*;
+import scrabble.model.Board;
+import scrabble.model.Tile;
 import scrabble.view.TileButton;
 
 import javax.swing.*;
@@ -34,9 +35,10 @@ public class GameScreen extends JPanel {
 	private JLabel gameTime; // Label displaying the game timer
 	private BoardPanel boardPanel; // Panel representing the game board
 
-	private final JPanel centerPanel; // Panel for the game board
 	private final JPanel eastPanel; // Panel for player panels on the right side
 	private final JPanel westPanel; // Panel for player panels on the left side
+
+	private final GameControls gameControls;
 
 	private RackPanel rackPanel; // Panel representing the player's rack
 	private JButton submitButton; // Button for submitting a move
@@ -56,11 +58,13 @@ public class GameScreen extends JPanel {
 	public GameScreen() {
 		this.setLayout(new BorderLayout()); // Set layout for the main panel
 		playerPanels = new PlayerPanel[4];
+		gameControls = new GameControls();
 
 		// Initialize and add the panels for different sections of the game screen
 		// Panel for the game timer
 		JPanel northPanel = setupNorthPanel();
-		centerPanel = setupCenterPanel();
+		// Panel for the game board
+		JPanel centerPanel = setupCenterPanel();
 		eastPanel = new JPanel(new GridLayout(2, 1, 0, GAP));
 		westPanel = new JPanel(new GridLayout(2, 1, 0, GAP));
 		// Panel for the player's rack and action buttons
@@ -364,30 +368,6 @@ public class GameScreen extends JPanel {
 	 */
 	private void resetRack() {
 		rackPanel.resetRack();
-	}
-
-	private class GameControls extends JPanel {
-		private static final String RACK_PANEL = "RACK";
-		private static final String EXCHANGE_PANEL = "EXCHANGE";
-		private static final String BLANK_PANEL = "BLANK";
-
-		private final CardLayout layout;
-
-		public GameControls() {
-			layout = new CardLayout();
-			this.setLayout(layout);
-			layout.addLayoutComponent(setupBlankPanel(), BLANK_PANEL);
-			layout.addLayoutComponent(setupGameControlsPanel(), RACK_PANEL);
-			layout.addLayoutComponent(setupExchangePanel(), EXCHANGE_PANEL);
-			layout.show(this, RACK_PANEL);
-		}
-
-		public void showExchange() {layout.show(this, EXCHANGE_PANEL);}
-		public void showRack() {layout.show(this, RACK_PANEL);}
-		public void showBlank() {layout.show(this, BLANK_PANEL);}
-
-
-
 	}
 
 
