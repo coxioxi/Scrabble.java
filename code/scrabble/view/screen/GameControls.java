@@ -20,6 +20,7 @@ public class GameControls extends JPanel {
 
 	private final MainControlsPanel mainControlsPanel;
 	private final ExchangePanel exchangePanel;
+	private final BlankPanel blankPanel;
 //	private final
 
 	public GameControls() {
@@ -27,7 +28,8 @@ public class GameControls extends JPanel {
 		this.setLayout(layout);
 		mainControlsPanel = new MainControlsPanel();
 		exchangePanel = new ExchangePanel();
-		layout.addLayoutComponent(setupBlankPanel(), BLANK_PANEL);
+		blankPanel = new BlankPanel();
+		layout.addLayoutComponent(blankPanel, BLANK_PANEL);
 		layout.addLayoutComponent(mainControlsPanel, RACK_PANEL);
 		layout.addLayoutComponent(exchangePanel, EXCHANGE_PANEL);
 		layout.show(this, RACK_PANEL);
@@ -37,23 +39,54 @@ public class GameControls extends JPanel {
 	public void showRack() {layout.show(this, RACK_PANEL);}
 	public void showBlank() {layout.show(this, BLANK_PANEL);}
 
-
-	private JPanel setupBlankPanel() {
-		JPanel basePanel = new JPanel(new FlowLayout());
-
-		JPanel controlsPanel = new JPanel(new GridLayout(3,1,0,10));
-		JLabel chooseLabel = new JLabel("Which Letter would you like?");
-		JComboBox<String> letterSelect = new JComboBox<>(new String[] {"A", "B", "C", "D"});
-		JButton submitButton = new JButton("Submit");
-
-		controlsPanel.add(chooseLabel);
-		controlsPanel.add(letterSelect);
-		controlsPanel.add(submitButton);
-		basePanel.add(controlsPanel);
-		return basePanel;
+	public MainControlsPanel getMainControlsPanel() {
+		return mainControlsPanel;
 	}
 
-	private static class ExchangePanel extends JPanel {
+	public ExchangePanel getExchangePanel() {
+		return exchangePanel;
+	}
+
+	public BlankPanel getBlankPanel() {
+		return blankPanel;
+	}
+
+	public static class BlankPanel extends JPanel {
+		private Character[] alphabet;
+
+		private JComboBox<Character> letterSelect;
+		private JButton submitButton;
+
+		public BlankPanel () {
+			this.setLayout(new FlowLayout());
+
+			JPanel controlsPanel = new JPanel(new GridLayout(3,1,0,10));
+			JLabel chooseLabel = new JLabel("Which Letter would you like?");
+			setAlphabet();
+			letterSelect = new JComboBox<>(alphabet);
+			submitButton = new JButton("Submit");
+			controlsPanel.add(chooseLabel);
+			controlsPanel.add(letterSelect);
+			controlsPanel.add(submitButton);
+			this.add(controlsPanel);
+		}
+
+		public JButton getSubmitButton() {
+			return submitButton;
+		}
+
+		private void setAlphabet() {
+			for (int i = 0; i < Tile.TileScore.values().length - 1; i++) {
+				alphabet[i] = Tile.TileScore.values()[i].getLetter();
+			}
+		}
+
+		public Character getSelectedLetter() {
+			return (Character) letterSelect.getSelectedItem();
+		}
+	}
+
+	public static class ExchangePanel extends JPanel {
 		private static final String ONE = "One";
 		private static final String ALL = "All";
 
@@ -114,7 +147,7 @@ public class GameControls extends JPanel {
 		}
 	}
 
-	private static class MainControlsPanel extends JPanel {
+	public static class MainControlsPanel extends JPanel {
 		private final RackPanel rackPanel;
 
 		private final JButton passButton;
