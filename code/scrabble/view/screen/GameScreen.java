@@ -37,16 +37,14 @@ public class GameScreen extends JPanel {
 	private final JPanel centerPanel; // Panel for the game board
 	private final JPanel eastPanel; // Panel for player panels on the right side
 	private final JPanel westPanel; // Panel for player panels on the left side
-	private final JPanel northPanel; // Panel for the game timer
 
-	private RackPanel.TilePanel[] tilePanels; // Array representing the tile panels
 	private RackPanel rackPanel; // Panel representing the player's rack
 	private JButton submitButton; // Button for submitting a move
 	private JButton passButton; // Button for passing a turn
 	private JButton exchangeButton;
 	private JButton challengeButton;
 
-	private PlayerPanel[] playerPanels;
+	private final PlayerPanel[] playerPanels;
 
 	// List of tiles that have been played in the current turn
 	private List<Tile> playedTiles = new ArrayList<>();
@@ -60,7 +58,8 @@ public class GameScreen extends JPanel {
 		playerPanels = new PlayerPanel[4];
 
 		// Initialize and add the panels for different sections of the game screen
-		northPanel = setupNorthPanel();
+		// Panel for the game timer
+		JPanel northPanel = setupNorthPanel();
 		centerPanel = setupCenterPanel();
 		eastPanel = new JPanel(new GridLayout(2, 1, 0, GAP));
 		westPanel = new JPanel(new GridLayout(2, 1, 0, GAP));
@@ -94,13 +93,6 @@ public class GameScreen extends JPanel {
 	}
 
 	/**
-	 * @return The center panel containing the game board.
-	 */
-	public JPanel getCenterPanel() {
-		return centerPanel;
-	}
-
-	/**
 	 * @return List of tiles that have been played in the current turn.
 	 */
 	public List<Tile> getPlayedTiles() {
@@ -124,24 +116,10 @@ public class GameScreen extends JPanel {
 	}
 
 	/**
-	 * @return The panel representing the game board.
-	 */
-	public BoardPanel getBoardPanel() {
-		return boardPanel;
-	}
-
-	/**
 	 * @return The label representing the game timer.
 	 */
 	public JLabel getGameTime() {
 		return gameTime;
-	}
-
-	/**
-	 * @return The panel representing the player's rack.
-	 */
-	public RackPanel getRackPanel() {
-		return rackPanel;
 	}
 
 	/**
@@ -191,21 +169,6 @@ public class GameScreen extends JPanel {
 			int y = tiles[i].getLocation().y;
 			boardPanel.setBoardCell(tb, x, y);
 			boardPanel.disableBoardCell(x, y);
-		}
-	}
-
-	/**
-	 * Removes a tile from the rack.
-	 *
-	 * @param tile The tile to be removed.
-	 */
-	public void removeTileFromRack(Tile tile) {
-		RackPanel rackPanel = this.rackPanel;
-		for (RackPanel.TilePanel tp : rackPanel.getTilePanels()) {
-			if (tp.getButton().getText().equals("" + tile.getLetter())) {
-				tp.setButton(new JButton(" "));
-				break;
-			}
 		}
 	}
 
@@ -295,7 +258,8 @@ public class GameScreen extends JPanel {
 
 
 		// Initialize tile panels for the rack
-		tilePanels = new RackPanel.TilePanel[RACK_SIZE];
+		// Array representing the tile panels
+		RackPanel.TilePanel[] tilePanels = new RackPanel.TilePanel[RACK_SIZE];
 		for (int i = 0; i < tilePanels.length; i++) {
 			tilePanels[i] = new RackPanel.TilePanel(new TileButton(Tile.TileScore.values()[i]));
 		}
@@ -399,9 +363,31 @@ public class GameScreen extends JPanel {
 	 * Resets the rack by clearing all tiles.
 	 */
 	private void resetRack() {
-		for (RackPanel.TilePanel tp : tilePanels) {
-			tp.setButton(new JButton(" "));
+		rackPanel.resetRack();
+	}
+
+	private class GameControls extends JPanel {
+		private static final String RACK_PANEL = "RACK";
+		private static final String EXCHANGE_PANEL = "EXCHANGE";
+		private static final String BLANK_PANEL = "BLANK";
+
+		private final CardLayout layout;
+
+		public GameControls() {
+			layout = new CardLayout();
+			this.setLayout(layout);
+			layout.addLayoutComponent(setupBlankPanel(), BLANK_PANEL);
+			layout.addLayoutComponent(setupGameControlsPanel(), RACK_PANEL);
+			layout.addLayoutComponent(setupExchangePanel(), EXCHANGE_PANEL);
+			layout.show(this, RACK_PANEL);
 		}
+
+		public void showExchange() {layout.show(this, EXCHANGE_PANEL);}
+		public void showRack() {layout.show(this, RACK_PANEL);}
+		public void showBlank() {layout.show(this, BLANK_PANEL);}
+
+
+
 	}
 
 
@@ -744,7 +730,7 @@ public class GameScreen extends JPanel {
 	private static class RackPanel extends JPanel {
 		// Array to hold the TilePanels that make up the player's rack
 
-		private TilePanel[] tilePanels;
+		private final TilePanel[] tilePanels;
 
 		/**
 		 * Constructor to initialize the RackPanel with an array of TilePanels.
@@ -763,15 +749,6 @@ public class GameScreen extends JPanel {
 			for (TilePanel tp : this.tilePanels) {
 				this.add(tp);
 			}
-		}
-
-		/**
-		 * Getter method for retrieving the TilePanels in the rack.
-		 *
-		 * @return an array of TilePanels currently displayed in the rack
-		 */
-		public TilePanel[] getTilePanels() {
-			return tilePanels;
 		}
 
 		/**
@@ -841,6 +818,12 @@ public class GameScreen extends JPanel {
 
 		public void removeActionListeners(int index) {
 			tilePanels[index].removeButtonActionListeners();
+		}
+
+		public void resetRack() {
+			for (TilePanel tp : tilePanels) {
+				tp.setButton(new JButton(" "));
+			}
 		}
 
 		/**
