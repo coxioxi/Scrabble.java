@@ -164,14 +164,14 @@ public class GameScreenController {
 	 * Action listener for the audio item on the menu of the frame
 	 */
 	private void audioMenuClick() {
-		// haha, great question
+		parent.toggleMusic();
 	}
 
 	/**
 	 * Action listener for the fx item on the menu of the frame
 	 */
 	private void fxMenuClick() {
-		// haha, great question
+		parent.toggleFx();
 	}
 
 	/**
@@ -291,6 +291,15 @@ public class GameScreenController {
 		int playerID = parent.getSelfID();
 		PlayTiles playTiles = new PlayTiles(playerID, playerID, gameScreen.getPlayedTiles().toArray(new Tile[0]));
 		playTiles.execute(parent);
+	}
+
+	public void setAudio(boolean musicEnable, boolean fxEnable) {
+
+	}
+
+	public void setEnabled(boolean musicEnabled, boolean fxEnabled){
+		parent.getView().getAudioItem().setSelected(musicEnabled);
+		parent.getView().getFxItem().setSelected(fxEnabled);
 	}
 
 	private static class GameTimeController {

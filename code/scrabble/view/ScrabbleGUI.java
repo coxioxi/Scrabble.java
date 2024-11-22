@@ -43,12 +43,12 @@ public class ScrabbleGUI extends JFrame{
 	private JMenuBar menuBar;
 	private JMenu gameMenu;
 	private JMenuItem rulesItem;
-	private JMenuItem audioItem;
-	private JMenuItem fxItem;
+	private JCheckBoxMenuItem audioItem;
+	private JCheckBoxMenuItem fxItem;
 	private JMenuItem quitItem;
 
-	public static boolean audioOn = false;
-	public static boolean fxOn = false;
+	public static boolean audioOn = true;
+	public static boolean fxOn = true;
 
 	private JPanel[] panels = new JPanel[]{mainMenu, host, join, waiting, game, winner};
 
@@ -83,9 +83,12 @@ public class ScrabbleGUI extends JFrame{
 		menuBar = new JMenuBar();
 		gameMenu = new JMenu("Game");
 		rulesItem = new JMenuItem("Rules");
-		audioItem = new JMenuItem("Audio On/Off");
-		fxItem = new JMenuItem("Fx On/Off");
+		audioItem = new JCheckBoxMenuItem("Audio On/Off");
+		fxItem = new JCheckBoxMenuItem("Fx On/Off");
 		quitItem = new JMenuItem("Quit");
+
+		audioItem.setState(true);
+		fxItem.setState(true);
 
 		gameMenu.add(rulesItem);
 		gameMenu.add(audioItem);
@@ -142,7 +145,7 @@ public class ScrabbleGUI extends JFrame{
 	 * 	 *
 	 * 	 * @return the JMenuItem for the "Audio"
 	 */
-	public JMenuItem getAudioItem() {
+	public JCheckBoxMenuItem getAudioItem() {
 		return audioItem;
 	}
 
@@ -151,7 +154,7 @@ public class ScrabbleGUI extends JFrame{
 	 * 	 *
 	 * 	 * @return the JMenuItem for the "Fx"
 	 */
-	public JMenuItem getFxItem() {
+	public JCheckBoxMenuItem getFxItem() {
 		return fxItem;
 	}
 
@@ -523,6 +526,9 @@ public class ScrabbleGUI extends JFrame{
 			fxCheck = new JCheckBox("Game FX", fxOn);
 			quitButton = new JButton("Quit");
 
+			audioCheck.setSelected(audioOn);
+			fxCheck.setSelected(fxOn);
+
 			// Add components to menu panel and frame
 			menuFrame.add(hostButton);
 			menuFrame.add(joinButton);
@@ -530,6 +536,11 @@ public class ScrabbleGUI extends JFrame{
 			menuFrame.add(fxCheck);
 			menuFrame.add(quitButton);
 			this.add(menuFrame, BorderLayout.CENTER);
+		}
+
+		public void setEnabled(boolean musicEnabled, boolean fxEnabled){
+			audioOn = musicEnabled;
+			fxOn = fxEnabled;
 		}
 
 		/**
