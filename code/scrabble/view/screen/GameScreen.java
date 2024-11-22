@@ -34,14 +34,10 @@ public class GameScreen extends JPanel {
 	private JLabel gameTime; // Label displaying the game timer
 	private BoardPanel boardPanel; // Panel representing the game board
 
-	// 2D array representing the board's state
-	public Tile[][] letters = new Tile[Board.BOARD_ROWS][Board.BOARD_COLUMNS];
-
-	private JPanel centerPanel; // Panel for the game board
-	private JPanel eastPanel; // Panel for player panels on the right side
-	private JPanel westPanel; // Panel for player panels on the left side
-	private JPanel southPanel; // Panel for the player's rack and action buttons
-	private JPanel northPanel; // Panel for the game timer
+	private final JPanel centerPanel; // Panel for the game board
+	private final JPanel eastPanel; // Panel for player panels on the right side
+	private final JPanel westPanel; // Panel for player panels on the left side
+	private final JPanel northPanel; // Panel for the game timer
 
 	private RackPanel.TilePanel[] tilePanels; // Array representing the tile panels
 	private RackPanel rackPanel; // Panel representing the player's rack
@@ -68,7 +64,8 @@ public class GameScreen extends JPanel {
 		centerPanel = setupCenterPanel();
 		eastPanel = new JPanel(new GridLayout(2, 1, 0, GAP));
 		westPanel = new JPanel(new GridLayout(2, 1, 0, GAP));
-		southPanel = setupCardBasedSouthPanel();
+		// Panel for the player's rack and action buttons
+		JPanel southPanel = setupCardBasedSouthPanel();
 
 		//Drop down menu
 		this.add(northPanel, BorderLayout.NORTH);
@@ -155,9 +152,7 @@ public class GameScreen extends JPanel {
 	}
 
 	public JButton removeButtonFromRack(int col) {
-		JButton b = tilePanels[col].getButton();
-		tilePanels[col].setButton(new JButton(" "));
-		return b;
+		return rackPanel.removeButtonFromRack(col);
 	}
 
 
@@ -231,22 +226,15 @@ public class GameScreen extends JPanel {
 	}
 
 	public int addTileButtonToRack(TileButton t) {
-		int index = -1;
-		for (int i = 0; i < tilePanels.length && index == -1; i++) {
-			if (!(tilePanels[i].getButton() instanceof TileButton)) {
-				tilePanels[i].setButton(t);
-				index = i;
-			}
-		}
-		return index;
+		return rackPanel.addTileButtonToRack(t);
 	}
 
 	public void addRackTileActionListener(int index, ActionListener al) {
-		tilePanels[index].getButton().addActionListener(al);
+		rackPanel.addRackTileActionListener(al, index);
 	}
 
 	public void removeRackTileActionListeners(int index) {
-		GameScreenController.removeActionListeners(tilePanels[index].getButton());
+		rackPanel.removeActionListeners(index);
 	}
 
 	public void setBoardCellOfBoardPanel(JButton button, int row, int col) {
@@ -814,6 +802,17 @@ public class GameScreen extends JPanel {
 			}
 		}
 
+		public int addTileButtonToRack(TileButton t) {
+			int index = -1;
+			for (int i = 0; i < tilePanels.length && index == -1; i++) {
+				if (!(tilePanels[i].getButton() instanceof TileButton)) {
+					tilePanels[i].setButton(t);
+					index = i;
+				}
+			}
+			return index;
+		}
+
 		public int removeFromRack(String letter) {
 			for(int i = 0; i < tilePanels.length; i++){
 				if(tilePanels[i].getButton().getText().equals(letter)){
@@ -824,10 +823,24 @@ public class GameScreen extends JPanel {
 			return -1;
 		}
 
+		public JButton removeButtonFromRack(int col) {
+			JButton b = tilePanels[col].getButton();
+			tilePanels[col].setButton(new JButton(" "));
+			return b;
+		}
+
 		public void setRackButtonEnabled (boolean enabled) {
 			for (TilePanel tp : tilePanels) {
 				tp.getButton().setEnabled(enabled);
 			}
+		}
+
+		public void addRackTileActionListener(ActionListener al, int index) {
+			tilePanels[index].addButtonActionListener(al);
+		}
+
+		public void removeActionListeners(int index) {
+			tilePanels[index].removeButtonActionListeners();
 		}
 
 		/**
@@ -874,6 +887,14 @@ public class GameScreen extends JPanel {
 				this.add(this.tileButton);
 				this.revalidate(); // Revalidates the component hierarchy
 				this.repaint(); // Repaints the component to reflect changes
+			}
+
+			public void addButtonActionListener(ActionListener al) {
+				this.tileButton.addActionListener(al);
+			}
+
+			public void removeButtonActionListeners() {
+				GameScreenController.removeActionListeners(this.tileButton);
 			}
 		}
 	}
