@@ -788,13 +788,14 @@ public class Controller implements PropertyChangeListener  {
 	private static class MainMenuController {
 		private final Controller parent;
 		private final ScrabbleGUI.MainMenuScreen menuScreen;
+		private final ElevatorMusicPlayer elevatorMusicPlayer = new ElevatorMusicPlayer("Bossa nova.wav");
 
 		public MainMenuController(Controller parent, ScrabbleGUI.MainMenuScreen menuScreen) {
 			this.parent = parent;
 			this.menuScreen = menuScreen;
 			addActionListeners();
 
-			Thread elevatorMusic = new Thread(new ElevatorMusicPlayer("Bossa nova.wav"));
+			Thread elevatorMusic = new Thread(elevatorMusicPlayer);
 			elevatorMusic.start();
 		}
 
@@ -827,14 +828,19 @@ public class Controller implements PropertyChangeListener  {
 
 		private void audioCheckChanged() {
 			parent.musicEnable = !parent.musicEnable;
+
+			if(parent.musicEnable)
+				elevatorMusicPlayer.startMusic();
+			else
+				elevatorMusicPlayer.stopMusic();
 		}
 	}
 
-	private static class ElevatorMusicPlayer implements Runnable {
+	private static class ElevatorMusicPlayer implements Runnable{
 		private final String soundFile;
 		Clip clip;
 
-		public ElevatorMusicPlayer(String mainMusicFile) {
+		private ElevatorMusicPlayer(String mainMusicFile) {
 			this.soundFile = mainMusicFile;
 		}
 
@@ -848,13 +854,15 @@ public class Controller implements PropertyChangeListener  {
 				FloatControl gainControl = (FloatControl) clip.getControl(FloatControl.Type.MASTER_GAIN);
 				gainControl.setValue(20f * (float) Math.log10(0.1));
 
-
 				clip.loop(Clip.LOOP_CONTINUOUSLY);
 
 			} catch (UnsupportedAudioFileException | IOException | LineUnavailableException e) {
 				System.out.println(e.getMessage());
 			}
 		}
+
+		private void stopMusic(){clip.stop();}
+		private void startMusic(){clip.loop(Clip.LOOP_CONTINUOUSLY);}
 	}
 
 	private static class FxPlayer {
