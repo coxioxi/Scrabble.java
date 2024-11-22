@@ -239,6 +239,8 @@ public class GameScreenController {
 		gameScreen.setBoardCellOfBoardPanel(toAdd, row, col);
 		addBoardCellPanelListener(row, col);
 		gameScreen.setValue(new JButton(" "));
+
+		//Play audio for when tiles are being placed on the board
 		parent.playTileFx();
 	}
 
