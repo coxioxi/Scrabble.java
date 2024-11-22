@@ -890,7 +890,7 @@ public class Controller implements PropertyChangeListener  {
 
 
 				gainControl = (FloatControl) fxClip.getControl(FloatControl.Type.MASTER_GAIN);
-				gainControl.setValue(20f * (float) Math.log10(0.7));
+				gainControl.setValue(20f * (float) Math.log10(0.5));
 				fxClip.start();
 
 			} catch (UnsupportedAudioFileException | IOException | LineUnavailableException e) {
@@ -905,7 +905,7 @@ public class Controller implements PropertyChangeListener  {
 				fxClip.open(audioStream);
 
 				gainControl = (FloatControl) fxClip.getControl(FloatControl.Type.MASTER_GAIN);
-				gainControl.setValue(20f * (float) Math.log10(0.2));
+				gainControl.setValue(20f * (float) Math.log10(0.06));
 				fxClip.start();
 
 			} catch (UnsupportedAudioFileException | IOException | LineUnavailableException e) {
