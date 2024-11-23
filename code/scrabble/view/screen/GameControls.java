@@ -8,9 +8,18 @@ import javax.swing.*;
 import javax.swing.border.TitledBorder;
 import java.awt.*;
 import java.awt.event.ActionListener;
+import java.util.Objects;
 
 import static scrabble.view.screen.GameScreen.RACK_SIZE;
 
+
+/**
+ * Allows controls to be swapped out on the bottom of the Game Screen.
+ * <p>
+ *     Uses a <code>CardLayout</code> to display an exchange tiles, main controls, and
+ *     blank tile panel depending on the user's inputs.
+ * </p>
+ */
 public class GameControls extends JPanel {
 	private static final String RACK_PANEL = "RACK";
 	private static final String EXCHANGE_PANEL = "EXCHANGE";
@@ -23,6 +32,9 @@ public class GameControls extends JPanel {
 	private final BlankPanel blankPanel;
 //	private final
 
+	/**
+	 * Constructs a <code>GameControls</code> object with the three different views.
+	 */
 	public GameControls() {
 		layout = new CardLayout();
 		this.setLayout(layout);
@@ -35,8 +47,11 @@ public class GameControls extends JPanel {
 		layout.show(this, RACK_PANEL);
 	}
 
+	/** Shows the Exchange screen on this component. */
 	public void showExchange() {layout.show(this, EXCHANGE_PANEL);}
+	/** Shows the Main controls (with tile rack) screen on this component. */
 	public void showRack() {layout.show(this, RACK_PANEL);}
+	/** Shows the Blank Tile screen on this component. */
 	public void showBlank() {layout.show(this, BLANK_PANEL);}
 
 	public MainControlsPanel getMainControlsPanel() {
@@ -51,12 +66,23 @@ public class GameControls extends JPanel {
 		return blankPanel;
 	}
 
+	/**
+	 * The panel for setting the letter of a blank tile to some letter.
+	 * <p>
+	 *     Uses a <code>JComboBox</code> to allow a letter to be selected.
+	 *     The user must press the submit button to trigger the letter being set.
+	 * </p>
+	 */
 	public static class BlankPanel extends JPanel {
-		private Character[] alphabet;
+		private Character[] alphabet;		// the options for the blank tile.
 
-		private JComboBox<Character> letterSelect;
-		private JButton submitButton;
+		private final JComboBox<Character> letterSelect;		// box for selecting a letter.
+		private final JButton submitButton;		// Submit button for setting the letter.
 
+		/**
+		 * Constructs a panel for setting a blank tile.
+		 * Contains the combo box and submit button.
+		 */
 		public BlankPanel () {
 			this.setLayout(new FlowLayout());
 
@@ -71,10 +97,12 @@ public class GameControls extends JPanel {
 			this.add(controlsPanel);
 		}
 
-		public JButton getSubmitButton() {
-			return submitButton;
-		}
+		public void removeSubmitListeners() {GameScreenController.removeActionListeners(submitButton); }
+		public void addSubmitActionListener(ActionListener al) { submitButton.addActionListener(al); }
 
+		/*
+		 * stores all letters of the English alphabet in the Character array.
+		 */
 		private void setAlphabet() {
 			this.alphabet = new Character[26];
 			for (int i = 0; i < Tile.TileScore.values().length - 1; i++) {
@@ -82,11 +110,22 @@ public class GameControls extends JPanel {
 			}
 		}
 
+		/**
+		 * Gets the letter which has been selected in the combo box.
+		 * @return The letter which was selected, as a <code>Character</code>.
+		 */
 		public Character getSelectedLetter() {
 			return (Character) letterSelect.getSelectedItem();
 		}
 	}
 
+	/**
+	 * The panel for choosing a letter or all letters to be exchanged for new tile(s).
+	 * <p>
+	 *     Uses two <code>JComboBox</code> to select letters, one to set the number of tiles to exchange,
+	 *     one to select a letter if only one is to be exchanged.
+	 * </p>
+	 */
 	public static class ExchangePanel extends JPanel {
 		private static final String ONE = "One";
 		private static final String ALL = "All";
@@ -97,6 +136,9 @@ public class GameControls extends JPanel {
 		private final JComboBox<Character> letterSelect;
 
 
+		/**
+		 * Constructs a panel for exchanging tiles.
+		 */
 		public ExchangePanel() {
 			this.setLayout(new FlowLayout());
 			JPanel exchangePanel = new JPanel(new GridLayout(1, 2, 30, 0));
@@ -120,36 +162,63 @@ public class GameControls extends JPanel {
 			this.add(exchangePanel);
 		}
 
-		public JButton getBackButton() {
-			return backButton;
-		}
+		public void addBackActionListener(ActionListener al) { backButton.addActionListener(al); }
+		public void removeBackListeners() {GameScreenController.removeActionListeners(backButton);}
 
-		public JButton getSubmitButton() {
-			return submitButton;
-		}
+		public void addSubmitActionListener(ActionListener al) { submitButton.addActionListener(al); }
+		public void removeSubmitListeners() {GameScreenController.removeActionListeners(submitButton);}
 
+		/**
+		 * Removes all letters stored in the <code>JComboBox</code> used for selecting a
+		 * single letter.
+		 */
 		public void removeAllLetters() {
 			letterSelect.removeAllItems();
 		}
 
-		public void addLetters(Character[] letters) {
+		/**
+		 * Adds letters into the <code>JComboBox</code> used for selecting a single letter.
+		 * @param letters the letters to put into the combo box.
+		 */
+		public void addLetters(char[] letters) {
 			for (Character l : letters) {
 				letterSelect.addItem(l);
 			}
 		}
 
+		/**
+		 * Gets the letter which was selected in the box.
+		 * @return The letter selected as a <code>Character</code>.
+		 */
 		public Character getSelectedLetter() {
 			return (Character) letterSelect.getSelectedItem();
 		}
 
+		/**
+		 * Gets the number of tiles which are to be exchanged.
+		 * @return The number of tiles to exchange. 1 or <code>RACK_SIZE</code>.
+		 */
 		public int getNumberToExchange() {
 			String selected = (String) numberSelect.getSelectedItem();
-			return (selected.equals(ONE) ? 1 : RACK_SIZE);
+			return (Objects.equals(selected, ONE) ? 1 : RACK_SIZE);
+		}
+
+		/**
+		 * Sets the letter select box to be enabled or disabled. When the combo box is disabled,
+		 * items cannot be selected and values cannot be typed into its field (if it is editable).
+		 * @param enable whether to enable or disable the box. True to enable.
+		 */
+		public void enableLetterSelect(boolean enable) {
+			letterSelect.setEnabled(enable);
 		}
 	}
 
+	/**
+	 * The panel for choosing options and for rack tiles.
+	 * Allows users to choose to pass turn, play tiles on the board, and exchange tiles.
+	 */
 	public static class MainControlsPanel extends JPanel {
-		private final RackPanel rackPanel;
+		private final RackPanel rackPanel;		//
 
 		private final JButton passButton;
 		private final JButton submitButton;
@@ -157,6 +226,9 @@ public class GameControls extends JPanel {
 		private final JButton challengeButton;
 
 
+		/**
+		 * Constructs a main controls panel with buttons for passing, exchanging, submitting, and challenging (disabled).
+		 */
 		public MainControlsPanel() {
 			this.setLayout(new FlowLayout());
 			JPanel gameControlsPanel = new JPanel(new BorderLayout());
@@ -169,6 +241,7 @@ public class GameControls extends JPanel {
 			submitButton.setPreferredSize(new Dimension(50, 10));
 			exchangeButton = new JButton("Exchange Tiles");
 			challengeButton = new JButton("Challenge");
+			challengeButton.setEnabled(false);
 
 			this.rackPanel = new RackPanel();
 
@@ -183,10 +256,24 @@ public class GameControls extends JPanel {
 			this.add(gameControlsPanel);
 		}
 
-		public JButton getPassButton() { return passButton; }
-		public JButton getSubmitButton() { return submitButton; }
-		public JButton getExchangeButton() { return exchangeButton; }
+
+		public void addSubmitActionListener(ActionListener al) {
+			submitButton.addActionListener(al);
+		}
+
+		public void removeSubmitListeners() {
+			GameScreenController.removeActionListeners(submitButton);
+		}
+
+		public void addExchangeActionListener(ActionListener al) { exchangeButton.addActionListener(al);}
+		public void removeExchangeListeners() { GameScreenController.removeActionListeners(exchangeButton); }
+
+		public void addPassActionListener(ActionListener al) { passButton.addActionListener(al);}
+		public void removePassListeners() { GameScreenController.removeActionListeners(passButton); }
+
 		public JButton getChallengeButton() { return challengeButton; }
+
+		public RackPanel getRackPanel() { return rackPanel; }
 
 		/**
 		 * RackPanel is a JPanel that represents a rack of TilePanels,
@@ -210,19 +297,20 @@ public class GameControls extends JPanel {
 			/**
 			 * Constructor to initialize the RackPanel with an array of TilePanels.
 			 *
-			 * @param tilePanels an array of TilePanels to be displayed in the rack
+			 * @param tileButtons an array of TileButtons to be displayed in the rack.
 			 */
-			public RackPanel(TilePanel[] tilePanels){
+			public RackPanel(TileButton[] tileButtons){
 				// Assigns the given array of TilePanels to the class field
-				this.tilePanels = tilePanels;
+				this.tilePanels = new TilePanel[tileButtons.length];
 
 				// Sets the layout of the panel to a GridLayout with 1 row, RACK_SIZE columns,
 				// and a horizontal gap of 10 pixels between components
 				this.setLayout(new GridLayout(1, RACK_SIZE, 10, 0));
 
 				// Adds each TilePanel to the RackPanel
-				for (TilePanel tp : this.tilePanels) {
-					this.add(tp);
+				for (int i = 0; i < tileButtons.length; i++) {
+					this.tilePanels[i] = new TilePanel(tileButtons[i]);
+					this.add(this.tilePanels[i]);
 				}
 			}
 
@@ -305,7 +393,7 @@ public class GameControls extends JPanel {
 			 * TilePanel is a JPanel component that holds a TileButton and provides
 			 * methods for adding and updating the button in the panel.
 			 */
-			public static class TilePanel extends JPanel {
+			private static class TilePanel extends JPanel {
 				// A JButton to represent the tile displayed in this panel
 				private JButton tileButton;
 

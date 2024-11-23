@@ -135,11 +135,6 @@ public class GameScreen extends JPanel {
 		return submitButton;
 	}
 
-	public JButton removeButtonFromRack(int col) {
-		return rackPanel.removeButtonFromRack(col);
-	}
-
-
 	public void updateScore(String playerName, int score) {
 		for (PlayerPanel player : playerPanels) {
 			if (player != null && Objects.equals(player.getNameLabel().getText(), playerName)) {
@@ -192,6 +187,10 @@ public class GameScreen extends JPanel {
 					);
 			rackPanel.addToRack(button);
 		}
+	}
+
+	public JButton removeButtonFromRack(int col) {
+		return rackPanel.removeButtonFromRack(col);
 	}
 
 	public int addTileButtonToRack(TileButton t) {
