@@ -805,19 +805,31 @@ public class Controller implements PropertyChangeListener  {
 
 	}
 
+	/**
+	 * Handles <code>MainMenu</code> screen events.
+	 */
 	private static class MainMenuController {
 		private final Controller parent;
 		private final ScrabbleGUI.MainMenuScreen menuScreen;
 
+		/**
+		 * Constructs a MainMenuController with a parent and a MainMenuScreen.
+		 * @param parent the main <code>Controller</code> of the application.
+		 * @param menuScreen the main menu screen to manage.
+		 */
 		public MainMenuController(Controller parent, ScrabbleGUI.MainMenuScreen menuScreen) {
 			this.parent = parent;
 			this.menuScreen = menuScreen;
-			addActionListeners();
+			addActionListeners(); // Add action listeners to menu screen buttons.
 
+			// Start elevator music in a separate thread.
 			Thread elevatorMusic = new Thread(parent.getElevatorMusicPlayer());
 			elevatorMusic.start();
 		}
 
+		/**
+		 * Adds action listeners to menu screen buttons.
+		 */
 		private void addActionListeners() {
 			menuScreen.getHostButton().addActionListener(e -> hostButtonClick());
 			menuScreen.getJoinButton().addActionListener(e -> parent.showJoin());
@@ -826,30 +838,43 @@ public class Controller implements PropertyChangeListener  {
 			menuScreen.getQuitButton().addActionListener(e -> parent.exit());
 		}
 
+		/**
+		 * Handles logic for when the Host button is clicked.
+		 */
 		private void hostButtonClick() {
 			// set up the partyHost and change screen
 			String name = JOptionPane.showInputDialog(parent.getView(), "Enter your name: ");
 			if (name != null && !name.isBlank()) {
 				try {
-					parent.setUpHost(name);
+					parent.setUpHost(name); // Set up host and navigate to host screen.
+
 					parent.showHost();
 				} catch (IOException e) {
 					throw new RuntimeException(e);
 				}
 			} else {
-				parent.showNoNameDialog();
+				parent.showNoNameDialog(); // Show dialog if no name is entered.
 			}
 		}
 
+		/**
+		 * Toggles FX (sound effects) based on checkbox state.
+		 */
 		private void fxCheckChanged() {
 			parent.toggleFx();
 		}
 
+		/**
+		 * Toggles background music based on checkbox state.
+		 */
 		private void audioCheckChanged() {
 			parent.toggleMusic();
 		}
 	}
 
+	/**
+	 * Toggles background music on or off.
+	 */
 	public void toggleMusic(){
 		musicEnable = !musicEnable;
 
@@ -859,18 +884,31 @@ public class Controller implements PropertyChangeListener  {
 			elevatorMusicPlayer.stopMusic();
 	}
 
+	/**
+	 * Toggles sound effects on or off.
+	 */
 	public void toggleFx(){
 		fxEnable = !fxEnable;
 	}
 
+	/**
+	 * Runnable class that plays elevator music in the background.
+	 */
 	public static class ElevatorMusicPlayer implements Runnable{
 		private final String soundFile;
 		Clip clip;
 
+		/**
+		 * Constructs an ElevatorMusicPlayer with the given sound file.
+		 * @param mainMusicFile the file path of the background music.
+		 */
 		private ElevatorMusicPlayer(String mainMusicFile) {
 			this.soundFile = mainMusicFile;
 		}
 
+		/**
+		 * Runs the music playback in a loop.
+		 */
 		@Override
 		public void run() {
 			try {
@@ -878,25 +916,39 @@ public class Controller implements PropertyChangeListener  {
 				clip = AudioSystem.getClip();
 				clip.open(audioStream);
 
+				// Set volume to a low level.
 				FloatControl gainControl = (FloatControl) clip.getControl(FloatControl.Type.MASTER_GAIN);
 				gainControl.setValue(20f * (float) Math.log10(0.1));
 
-				clip.loop(Clip.LOOP_CONTINUOUSLY);
+				clip.loop(Clip.LOOP_CONTINUOUSLY); // Loop music continuously.
 
 			} catch (UnsupportedAudioFileException | IOException | LineUnavailableException e) {
 				System.out.println(e.getMessage());
 			}
 		}
 
+		/**
+		 * Stops the music playback.
+		 */
 		private void stopMusic(){clip.stop();}
+
+		/**
+		 * Starts or resumes the music playback.
+		 */
 		private void startMusic(){clip.loop(Clip.LOOP_CONTINUOUSLY);}
 	}
 
+	/**
+	 * Class responsible for playing sound effects for different game actions.
+	 */
 	private static class FxPlayer {
 		AudioInputStream audioStream;
 		FloatControl gainControl;
 		Clip fxClip;
 
+		/**
+		 * Plays sound effect for tile placement.
+		 */
 		private void tilePlacementFx() {
 			try {
 				audioStream = AudioSystem.getAudioInputStream(new File("tilePlaySound.wav"));
@@ -909,13 +961,16 @@ public class Controller implements PropertyChangeListener  {
 			}
 		}
 
+		/**
+		 * Plays sound effect for correct tile placement.
+		 */
 		private void rightPlacementFx() {
 			try {
 				audioStream = AudioSystem.getAudioInputStream(new File("rightPlaySound.wav"));
 				fxClip = AudioSystem.getClip();
 				fxClip.open(audioStream);
 
-
+				// Set volume to a medium level.
 				gainControl = (FloatControl) fxClip.getControl(FloatControl.Type.MASTER_GAIN);
 				gainControl.setValue(20f * (float) Math.log10(0.5));
 				fxClip.start();
@@ -925,12 +980,16 @@ public class Controller implements PropertyChangeListener  {
 			}
 		}
 
+		/**
+		 * Plays sound effect for incorrect tile placement.
+		 */
 		private void wrongPlacementFx() {
 			try {
 				audioStream = AudioSystem.getAudioInputStream(new File("wrongPlaySound.wav"));
 				fxClip = AudioSystem.getClip();
 				fxClip.open(audioStream);
 
+				// Set volume to a very low level.
 				gainControl = (FloatControl) fxClip.getControl(FloatControl.Type.MASTER_GAIN);
 				gainControl.setValue(20f * (float) Math.log10(0.06));
 				fxClip.start();
