@@ -186,6 +186,7 @@ public class GameScreenController {
 		addRackTileListeners();
 		addBoardCellListeners();
 		addSubmitActionListener();
+		addGameControlsListeners();
 	}
 
 	/**
@@ -291,6 +292,11 @@ public class GameScreenController {
 		int playerID = parent.getSelfID();
 		PlayTiles playTiles = new PlayTiles(playerID, playerID, gameScreen.getPlayedTiles().toArray(new Tile[0]));
 		playTiles.execute(parent);
+	}
+
+	private void addGameControlsListeners() {
+		GameControls controls = gameScreen.getGameControls();
+
 	}
 
 	private static class GameTimeController {

@@ -78,6 +78,8 @@ public class GameScreen extends JPanel {
 		this.add(southPanel, BorderLayout.SOUTH);
 	}
 
+	public GameControls getGameControls() { return new GameControls(); }
+
 	/**
 	 * Disables the last played tiles on the board by updating the state of the cells.
 	 */

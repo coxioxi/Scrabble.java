@@ -76,6 +76,7 @@ public class GameControls extends JPanel {
 		}
 
 		private void setAlphabet() {
+			this.alphabet = new Character[26];
 			for (int i = 0; i < Tile.TileScore.values().length - 1; i++) {
 				alphabet[i] = Tile.TileScore.values()[i].getLetter();
 			}
@@ -356,7 +357,5 @@ public class GameControls extends JPanel {
 			}
 		}
 	}
-
-
 
 }
