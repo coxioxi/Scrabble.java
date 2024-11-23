@@ -39,6 +39,7 @@ public class Controller implements PropertyChangeListener  {
 
 	private ScrabbleGUI view;	// maintains the GUI
 	private Game model;			// maintains Scrabble game data
+
 	private boolean fxEnable = true;
 	private boolean musicEnable = true;
 
@@ -47,6 +48,7 @@ public class Controller implements PropertyChangeListener  {
 	private GameScreenController gameScreenController;		// makes changes to view.screen.gameScreen
     private HostScreenController hostScreenController;		// makes changes to view.screen.HostScreen
 
+	private final ElevatorMusicPlayer elevatorMusicPlayer = new ElevatorMusicPlayer("Bossa nova.wav");
 
     /*
     reference to the party host
@@ -326,6 +328,23 @@ public class Controller implements PropertyChangeListener  {
 	public PartyHost getHost() { return host; }
 
 	/**
+	 * Getter for the music player
+	 *
+	 * @return The elevator music player responsible for starting the background music
+	 */
+	public ElevatorMusicPlayer getElevatorMusicPlayer() {
+		return elevatorMusicPlayer;
+	}
+
+	public boolean isFxEnable() {
+		return fxEnable;
+	}
+
+	public boolean isMusicEnable() {
+		return musicEnable;
+	}
+
+	/**
 	 * Sets the ID of this player.
 	 * @param selfID the new ID of this player
 	 */
@@ -344,6 +363,7 @@ public class Controller implements PropertyChangeListener  {
 				gameClose();
 			}
 		});
+		gameScreenController.setEnabled(musicEnable, fxEnable);
 	}
 
 	/**
@@ -788,14 +808,13 @@ public class Controller implements PropertyChangeListener  {
 	private static class MainMenuController {
 		private final Controller parent;
 		private final ScrabbleGUI.MainMenuScreen menuScreen;
-		private final ElevatorMusicPlayer elevatorMusicPlayer = new ElevatorMusicPlayer("Bossa nova.wav");
 
 		public MainMenuController(Controller parent, ScrabbleGUI.MainMenuScreen menuScreen) {
 			this.parent = parent;
 			this.menuScreen = menuScreen;
 			addActionListeners();
 
-			Thread elevatorMusic = new Thread(elevatorMusicPlayer);
+			Thread elevatorMusic = new Thread(parent.getElevatorMusicPlayer());
 			elevatorMusic.start();
 		}
 
@@ -823,20 +842,28 @@ public class Controller implements PropertyChangeListener  {
 		}
 
 		private void fxCheckChanged() {
-			parent.fxEnable = !parent.fxEnable;
+			parent.toggleFx();
 		}
 
 		private void audioCheckChanged() {
-			parent.musicEnable = !parent.musicEnable;
-
-			if(parent.musicEnable)
-				elevatorMusicPlayer.startMusic();
-			else
-				elevatorMusicPlayer.stopMusic();
+			parent.toggleMusic();
 		}
 	}
 
-	private static class ElevatorMusicPlayer implements Runnable{
+	public void toggleMusic(){
+		musicEnable = !musicEnable;
+
+		if(musicEnable)
+			elevatorMusicPlayer.startMusic();
+		else
+			elevatorMusicPlayer.stopMusic();
+	}
+
+	public void toggleFx(){
+		fxEnable = !fxEnable;
+	}
+
+	public static class ElevatorMusicPlayer implements Runnable{
 		private final String soundFile;
 		Clip clip;
 
@@ -890,7 +917,7 @@ public class Controller implements PropertyChangeListener  {
 
 
 				gainControl = (FloatControl) fxClip.getControl(FloatControl.Type.MASTER_GAIN);
-				gainControl.setValue(20f * (float) Math.log10(0.7));
+				gainControl.setValue(20f * (float) Math.log10(0.5));
 				fxClip.start();
 
 			} catch (UnsupportedAudioFileException | IOException | LineUnavailableException e) {
@@ -905,7 +932,7 @@ public class Controller implements PropertyChangeListener  {
 				fxClip.open(audioStream);
 
 				gainControl = (FloatControl) fxClip.getControl(FloatControl.Type.MASTER_GAIN);
-				gainControl.setValue(20f * (float) Math.log10(0.2));
+				gainControl.setValue(20f * (float) Math.log10(0.06));
 				fxClip.start();
 
 			} catch (UnsupportedAudioFileException | IOException | LineUnavailableException e) {
