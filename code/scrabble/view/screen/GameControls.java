@@ -45,6 +45,7 @@ public class GameControls extends JPanel {
 		layout.addLayoutComponent(mainControlsPanel, RACK_PANEL);
 		layout.addLayoutComponent(exchangePanel, EXCHANGE_PANEL);
 		layout.show(this, RACK_PANEL);
+		this.setVisible(true);
 	}
 
 	/** Shows the Exchange screen on this component. */
@@ -353,6 +354,22 @@ public class GameControls extends JPanel {
 				return index;
 			}
 
+			/**
+			 * Adds all specified tiles into the <code>GameScreen</code>'s rack as buttons.
+			 *
+			 * @param tiles Array of tiles to be added.
+			 */
+			public void addTilesToRack(Tile[] tiles) {
+				for(Tile t : tiles) {
+					TileButton button =
+							(t.isBlank()
+									? new TileButton()
+									: new TileButton(Tile.TileScore.valueOf(t.getLetter()+""))
+							);
+					this.addToRack(button);
+				}
+			}
+
 			public int removeFromRack(String letter) {
 				for(int i = 0; i < tilePanels.length; i++){
 					if(tilePanels[i].getButton().getText().equals(letter)){
@@ -369,7 +386,7 @@ public class GameControls extends JPanel {
 				return b;
 			}
 
-			public void setRackButtonEnabled (boolean enabled) {
+			public void setRackButtonsEnabled (boolean enabled) {
 				for (TilePanel tp : tilePanels) {
 					tp.getButton().setEnabled(enabled);
 				}
@@ -445,5 +462,7 @@ public class GameControls extends JPanel {
 			}
 		}
 	}
+
+
 
 }

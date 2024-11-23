@@ -20,6 +20,7 @@ import java.util.Timer;
 public class GameScreenController {
 	private final Controller parent;
 	private final GameScreen gameScreen;
+	private final GameControls gameControls;
 	private boolean isRackEnabled;
 
 	/**
@@ -31,6 +32,7 @@ public class GameScreenController {
 	public GameScreenController(Controller parent, GameScreen gameScreen) {
 		this.parent = parent;
 		this.gameScreen = gameScreen;
+		this.gameControls = gameScreen.getGameControls();
 		addActionListeners();
 	}
 
@@ -106,7 +108,7 @@ public class GameScreenController {
 	 * @param tiles the Tile objects that are the player's new tiles
 	 */
 	public void addRackTiles(Tile[] tiles) {
-		gameScreen.addTilesToRack(tiles);
+		gameControls.getMainControlsPanel().getRackPanel().addTilesToRack(tiles);
 		removeRackTileListeners();
 		addRackTileListeners();
 		setRackButtonsEnabled(this.isRackEnabled);
@@ -118,7 +120,7 @@ public class GameScreenController {
 	 * @param tile the Tile object to be taken off of the rack
 	 */
 	public int removeRackTile(Tile tile) {
-		return gameScreen.removeButtonFromRack(tile.getLetter() + "");
+		return gameControls.getMainControlsPanel().getRackPanel().removeFromRack(tile.getLetter() + "");
 	}
 
 	/**
@@ -139,7 +141,7 @@ public class GameScreenController {
 	 */
 	public void setRackButtonsEnabled(boolean enabled) {
 		this.isRackEnabled = enabled;
-		gameScreen.setRackButtonsEnabled(enabled);
+		gameControls.getMainControlsPanel().getRackPanel().setRackButtonsEnabled(enabled);
 	}
 
 	/*
@@ -151,7 +153,7 @@ public class GameScreenController {
 	 */
 	private void removeRackTileListeners() {
 		for (int i = 0; i < GameScreen.RACK_SIZE; i++) {
-			gameScreen.removeRackTileActionListeners(i);
+			gameControls.getMainControlsPanel().getRackPanel().removeActionListeners(i);
 		}
 	}
 
@@ -225,7 +227,8 @@ public class GameScreenController {
 			gameScreen.removeFromPlayedTiles(
 					new Tile(gameScreen.getBoardButtonText(row, col).charAt(0), new Point(row, col))
 			);
-			int index = gameScreen.addTileButtonToRack((TileButton) gameScreen.getBoardButton(row, col));
+			int index = gameControls.getMainControlsPanel().getRackPanel().addTileButtonToRack(
+					(TileButton) gameScreen.getBoardButton(row, col));
 			addTilePanelListener(index);
 		}
 		// add value to panel
@@ -258,7 +261,7 @@ public class GameScreenController {
 	 *
 	 * @param col the column of the rack tile
 	 */
-	private void addTilePanelListener(int col) { gameScreen.addRackTileActionListener(col, e -> tilePanelClick(col)); }
+	private void addTilePanelListener(int col) { gameControls.getMainControlsPanel().getRackPanel().addRackTileActionListener(e -> tilePanelClick(col), col); }
 
 	/**
 	 * Takes the clicked tile off the rack to place it on the board
@@ -267,18 +270,18 @@ public class GameScreenController {
 	 */
 	private void tilePanelClick(int col) {
 		if (gameScreen.getValue() instanceof TileButton) {
-			int index = gameScreen.addTileButtonToRack((TileButton) gameScreen.getValue());
-			gameScreen.removeRackTileActionListeners(index);
-			gameScreen.addRackTileActionListener(index, e -> tilePanelClick(index));
+			int index = gameControls.getMainControlsPanel().getRackPanel().addTileButtonToRack((TileButton) gameScreen.getValue());
+			gameControls.getMainControlsPanel().getRackPanel().removeActionListeners(index);
+			gameControls.getMainControlsPanel().getRackPanel().addRackTileActionListener(e -> tilePanelClick(index), index);
 		}
-		JButton removed = gameScreen.removeButtonFromRack(col);
+		JButton removed = gameControls.getMainControlsPanel().getRackPanel().removeButtonFromRack(col);
 		gameScreen.setValue(removed);
 	}
 
 	/**
 	 * Creates the action listener for the submit button
 	 */
-	private void addSubmitActionListener() {gameScreen.getSubmitButton().addActionListener(e -> submitClick());}
+	private void addSubmitActionListener() {gameControls.getMainControlsPanel().addSubmitActionListener(e -> submitClick());}
 
 	/**
 	 * Submits the tiles played by the player on the board
@@ -286,7 +289,7 @@ public class GameScreenController {
 	 */
 	private void submitClick() {
 		if (gameScreen.getValue() instanceof TileButton) {
-			gameScreen.addTileButtonToRack((TileButton) gameScreen.getValue());
+			gameControls.getMainControlsPanel().getRackPanel().addTileButtonToRack((TileButton) gameScreen.getValue());
 		}
 		int playerID = parent.getSelfID();
 		PlayTiles playTiles = new PlayTiles(playerID, playerID, gameScreen.getPlayedTiles().toArray(new Tile[0]));
