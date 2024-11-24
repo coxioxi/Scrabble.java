@@ -364,6 +364,7 @@ public class Controller implements PropertyChangeListener  {
 			}
 		});
 		gameScreenController.setAudioEnabled(musicEnable, fxEnable);
+		showRulesDialog();
 	}
 
 	/**
