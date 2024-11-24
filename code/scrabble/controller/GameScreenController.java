@@ -7,7 +7,6 @@ import scrabble.view.ScrabbleGUI;
 import scrabble.view.TileButton;
 import scrabble.view.screen.*;
 
-import javax.naming.ldap.Control;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionListener;
@@ -24,6 +23,18 @@ public class GameScreenController {
 	private boolean isRackEnabled;
 
 	/**
+	 * Removes the action listener for a tile that has been played and will not be able
+	 * 		to be removed from the board
+	 *
+	 * @param button the JButton that the action listener is being removed from
+	 */
+	public static void removeActionListeners(JButton button) {
+		for (ActionListener al : button.getActionListeners()) {
+			button.removeActionListener(al);
+		}
+	}
+
+	/**
 	 * Constructor for the Game Screen
 	 *
 	 * @param parent the player's game controller
@@ -34,18 +45,6 @@ public class GameScreenController {
 		this.gameScreen = gameScreen;
 		this.gameControls = gameScreen.getGameControls();
 		addActionListeners();
-	}
-
-	/**
-	 * Removes the action listener for a tile that has been played and will not be able
-	 * 		to be removed from the board
-	 *
-	 * @param button the JButton that the action listener is being removed from
-	 */
-	public static void removeActionListeners(JButton button) {
-		for (ActionListener al : button.getActionListeners()) {
-			button.removeActionListener(al);
-		}
 	}
 
 	/**
@@ -149,39 +148,6 @@ public class GameScreenController {
 	 */
 
 	/**
-	 * Removes the action listeners for a tile on the rack when it is removed
-	 */
-	private void removeRackTileListeners() {
-		for (int i = 0; i < GameScreen.RACK_SIZE; i++) {
-			gameControls.getMainControlsPanel().getRackPanel().removeActionListeners(i);
-		}
-	}
-
-	/**
-	 * Action listener for the rules item on the menu of the frame
-	 */
-	private void rulesMenuClick() { parent.showRulesDialog(); }
-
-	/**
-	 * Action listener for the audio item on the menu of the frame
-	 */
-	private void audioMenuClick() {
-		parent.toggleMusic();
-	}
-
-	/**
-	 * Action listener for the fx item on the menu of the frame
-	 */
-	private void fxMenuClick() {
-		parent.toggleFx();
-	}
-
-	/**
-	 * Action listener for the quit item on the menu of the frame
-	 */
-	private void quitMenuClick() { if (parent.showQuitDialog() == JOptionPane.YES_OPTION) parent.exit(); }
-
-	/**
 	 * Adds the action listeners for the buttons on the game screen
 	 */
 	private void addActionListeners() {
@@ -189,7 +155,6 @@ public class GameScreenController {
 		addBoardCellListeners();
 		addSubmitActionListener();
 	}
-
 	/**
 	 * Adds the listeners to each panel of the board
 	 */
@@ -256,18 +221,9 @@ public class GameScreenController {
 		}
 	}
 
-	/**
-	 * Creates the action listener for each button in each panel
-	 *
-	 * @param col the column of the rack tile
-	 */
+	/* Creates the action listener for each button in each panel */
 	private void addTilePanelListener(int col) { gameControls.getMainControlsPanel().getRackPanel().addRackTileActionListener(e -> tilePanelClick(col), col); }
-
-	/**
-	 * Takes the clicked tile off the rack to place it on the board
-	 *
-	 * @param col the column of the tile clicked to remove from the rack
-	 */
+	/* Takes the clicked tile off the rack to place it on the board */
 	private void tilePanelClick(int col) {
 		if (gameScreen.getValue() instanceof TileButton) {
 			int index = gameControls.getMainControlsPanel().getRackPanel().addTileButtonToRack((TileButton) gameScreen.getValue());
@@ -277,16 +233,9 @@ public class GameScreenController {
 		JButton removed = gameControls.getMainControlsPanel().getRackPanel().removeButtonFromRack(col);
 		gameScreen.setValue(removed);
 	}
-
-	/**
-	 * Creates the action listener for the submit button
-	 */
+	/* Creates the action listener for the submit button */
 	private void addSubmitActionListener() {gameControls.getMainControlsPanel().addSubmitActionListener(e -> submitClick());}
-
-	/**
-	 * Submits the tiles played by the player on the board
-	 * 		and plays the tiles into the game
-	 */
+	/* Submits the tiles played by the player on the board and plays the tiles into the game */
 	private void submitClick() {
 		if (gameScreen.getValue() instanceof TileButton) {
 			gameControls.getMainControlsPanel().getRackPanel().addTileButtonToRack((TileButton) gameScreen.getValue());
@@ -296,11 +245,41 @@ public class GameScreenController {
 		playTiles.execute(parent);
 	}
 
-	public void setAudio(boolean musicEnable, boolean fxEnable) {
 
+	/**
+	 * Removes the action listeners for a tile on the rack when it is removed
+	 */
+	private void removeRackTileListeners() {
+		for (int i = 0; i < GameScreen.RACK_SIZE; i++) {
+			gameControls.getMainControlsPanel().getRackPanel().removeActionListeners(i);
+		}
 	}
 
-	public void setEnabled(boolean musicEnabled, boolean fxEnabled){
+	/**
+	 * Action listener for the rules item on the menu of the frame
+	 */
+	private void rulesMenuClick() { parent.showRulesDialog(); }
+
+	/**
+	 * Action listener for the audio item on the menu of the frame
+	 */
+	private void audioMenuClick() {
+		parent.toggleMusic();
+	}
+
+	/**
+	 * Action listener for the fx item on the menu of the frame
+	 */
+	private void fxMenuClick() {
+		parent.toggleFx();
+	}
+
+	/**
+	 * Action listener for the quit item on the menu of the frame
+	 */
+	private void quitMenuClick() { if (parent.showQuitDialog() == JOptionPane.YES_OPTION) parent.exit(); }
+
+	public void setAudioEnabled(boolean musicEnabled, boolean fxEnabled){
 		parent.getView().getAudioItem().setSelected(musicEnabled);
 		parent.getView().getFxItem().setSelected(fxEnabled);
 	}

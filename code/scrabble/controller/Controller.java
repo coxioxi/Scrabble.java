@@ -363,7 +363,7 @@ public class Controller implements PropertyChangeListener  {
 				gameClose();
 			}
 		});
-		gameScreenController.setEnabled(musicEnable, fxEnable);
+		gameScreenController.setAudioEnabled(musicEnable, fxEnable);
 	}
 
 	/**
