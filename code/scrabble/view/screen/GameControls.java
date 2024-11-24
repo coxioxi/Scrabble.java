@@ -203,6 +203,8 @@ public class GameControls extends JPanel {
 			return (Character) letterSelect.getSelectedItem();
 		}
 
+		public void addNumberSelectActionListener(ActionListener al) {numberSelect.addActionListener(al);}
+
 		/**
 		 * Gets the number of tiles which are to be exchanged.
 		 * @return The number of tiles to exchange. 1 or <code>RACK_SIZE</code>.
