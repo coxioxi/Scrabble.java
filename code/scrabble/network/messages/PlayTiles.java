@@ -21,8 +21,8 @@ public class PlayTiles extends Message {
 
 	@Serial
 	private static final long serialVersionUID = 7L;
-	private int playerID;
-	private Tile[] tiles;
+	private final int playerID;
+	private final Tile[] tiles;
 
 	/**
 	 *
