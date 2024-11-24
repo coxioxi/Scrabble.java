@@ -32,6 +32,15 @@ public class GameControls extends JPanel {
 	private final BlankPanel blankPanel;
 //	private final
 
+	public static void main(String[] args) {
+		JFrame frame = new JFrame("hello.");
+		frame.add(new GameControls());
+		frame.pack();
+		frame.setVisible(true);
+		frame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+		frame.setSize(new Dimension(100, 200));
+	}
+
 	/**
 	 * Constructs a <code>GameControls</code> object with the three different views.
 	 */
@@ -41,11 +50,10 @@ public class GameControls extends JPanel {
 		mainControlsPanel = new MainControlsPanel();
 		exchangePanel = new ExchangePanel();
 		blankPanel = new BlankPanel();
-		layout.addLayoutComponent(blankPanel, BLANK_PANEL);
-		layout.addLayoutComponent(mainControlsPanel, RACK_PANEL);
-		layout.addLayoutComponent(exchangePanel, EXCHANGE_PANEL);
+		this.add(blankPanel, BLANK_PANEL);
+		this.add(mainControlsPanel, RACK_PANEL);
+		this.add(exchangePanel, EXCHANGE_PANEL);
 		layout.show(this, RACK_PANEL);
-		this.setVisible(true);
 	}
 
 	/** Shows the Exchange screen on this component. */

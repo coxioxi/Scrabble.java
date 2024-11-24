@@ -63,7 +63,9 @@ public class GameScreen extends JPanel {
 		this.add(centerPanel, BorderLayout.CENTER);
 		this.add(westPanel, BorderLayout.WEST);
 		this.add(eastPanel, BorderLayout.EAST);
+		System.out.println("num components: " + this.getComponentCount() + "\n" + "adding gameControls...");
 		this.add(gameControls, BorderLayout.SOUTH);
+		System.out.println("num components: " + this.getComponentCount());
 	}
 
 	public GameControls getGameControls() { return gameControls; }
