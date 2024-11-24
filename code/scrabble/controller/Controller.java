@@ -480,6 +480,8 @@ public class Controller implements PropertyChangeListener  {
 	 */
 	public void showIPErrorDialog() { JOptionPane.showMessageDialog(view, "The Host refused to connect.\nCheck your IP Address!", "No Connection", JOptionPane.WARNING_MESSAGE); }
 
+	public int showConfirmPassTurnDialog() { return JOptionPane.showConfirmDialog(view, "Are you sure you want to pass your turn?", "pass turn confirm", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE); }
+
 	/**
 	 * Stops the execution of this application.
 	 */
