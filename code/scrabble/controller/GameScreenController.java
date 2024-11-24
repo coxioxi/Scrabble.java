@@ -2,7 +2,7 @@ package scrabble.controller;
 
 import scrabble.model.Board;
 import scrabble.model.Tile;
-import scrabble.network.messages.PlayTiles;
+import scrabble.network.messages.*;
 import scrabble.view.ScrabbleGUI;
 import scrabble.view.TileButton;
 import scrabble.view.screen.*;
@@ -159,7 +159,6 @@ public class GameScreenController {
 	}
 
 	private void addMainControlsListeners() {
-		GameControls.MainControlsPanel controlsPanel = gameControls.getMainControlsPanel();
 		addRackTileListeners();
 		addMainSubmitActionListener();
 		addPassTurnActionListener();
@@ -167,13 +166,23 @@ public class GameScreenController {
 		addChallengeButtonActionListener();
 	}
 	private void addPassTurnActionListener() {
-
+		gameControls.getMainControlsPanel().addPassActionListener(e -> passTurnClick());
 	}
-	private void addExchangeButtonActionListener() {
 
+	private void passTurnClick() {
+		int choice = parent.showConfirmPassTurnDialog();
+		if (choice == JOptionPane.YES_OPTION) {
+			int playerID = parent.getSelfID();
+			PassTurn pass = new PassTurn(playerID, playerID);
+			pass.execute(parent);
+		}
+	}
+
+	private void addExchangeButtonActionListener() {
+		gameControls.getMainControlsPanel().addExchangeActionListener(e -> gameControls.showExchange());
 	}
 	private void addChallengeButtonActionListener() {
-
+		gameControls.getMainControlsPanel().getChallengeButton().addActionListener(e -> System.out.println("get spawn killed :/"));
 	}
 
 	private void addExchangePanelListeners() {
@@ -182,19 +191,31 @@ public class GameScreenController {
 		addExchangeSubmitActionListener();
 	}
 	private void addNumberSelectActionListener() {
-
+		gameControls.getExchangePanel().addNumberSelectActionListener(e -> numberSelectChange());
 	}
-	private void addExchangeBackButtonActionListener() {
 
+	private void numberSelectChange() {
+		GameControls.ExchangePanel ep = gameControls.getExchangePanel();
+		ep.enableLetterSelect(ep.getNumberToExchange() != GameScreen.RACK_SIZE);
+	}
+
+	private void addExchangeBackButtonActionListener() {
+		gameControls.getExchangePanel().addBackActionListener(e -> gameControls.showRack());
 	}
 	private void addExchangeSubmitActionListener() {
+		gameControls.getExchangePanel().addSubmitActionListener(e -> exchangeSubmitClick());
+	}
 
+	private void exchangeSubmitClick() {
+		gameControls.showRack();
 	}
 
 	private void addBlankPanelListeners() {
 		gameControls.getBlankPanel().addSubmitActionListener(e -> blankSubmitClick());
 	}
 	private void blankSubmitClick() {
+
+		gameControls.showRack();
 	}
 
 
