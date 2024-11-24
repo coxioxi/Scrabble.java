@@ -28,10 +28,6 @@ public class GameScreen extends JPanel {
 	public static final int GAP = 150; // Spacing used between panels
 	public static final int RACK_SIZE = 7; // Number of tiles in a player's rack
 
-	private static final String RACK_PANEL = "RACK";
-	private static final String EXCHANGE_PANEL = "EXCHANGE";
-	private static final String BLANK_PANEL = "BLANK";
-
 	private JLabel gameTime; // Label displaying the game timer
 	private BoardPanel boardPanel; // Panel representing the game board
 
@@ -39,12 +35,6 @@ public class GameScreen extends JPanel {
 	private final JPanel westPanel; // Panel for player panels on the left side
 
 	private final GameControls gameControls;
-
-	private RackPanel rackPanel; // Panel representing the player's rack
-	private JButton submitButton; // Button for submitting a move
-	private JButton passButton; // Button for passing a turn
-	private JButton exchangeButton;
-	private JButton challengeButton;
 
 	private final PlayerPanel[] playerPanels;
 
@@ -67,18 +57,18 @@ public class GameScreen extends JPanel {
 		JPanel centerPanel = setupCenterPanel();
 		eastPanel = new JPanel(new GridLayout(2, 1, 0, GAP));
 		westPanel = new JPanel(new GridLayout(2, 1, 0, GAP));
-		// Panel for the player's rack and action buttons
-		JPanel southPanel = setupCardBasedSouthPanel();
 
 		//Drop down menu
 		this.add(northPanel, BorderLayout.NORTH);
 		this.add(centerPanel, BorderLayout.CENTER);
 		this.add(westPanel, BorderLayout.WEST);
 		this.add(eastPanel, BorderLayout.EAST);
-		this.add(southPanel, BorderLayout.SOUTH);
+		System.out.println("num components: " + this.getComponentCount() + "\n" + "adding gameControls...");
+		this.add(gameControls, BorderLayout.SOUTH);
+		System.out.println("num components: " + this.getComponentCount());
 	}
 
-	public GameControls getGameControls() { return new GameControls(); }
+	public GameControls getGameControls() { return gameControls; }
 
 	/**
 	 * Disables the last played tiles on the board by updating the state of the cells.
@@ -128,13 +118,6 @@ public class GameScreen extends JPanel {
 		return gameTime;
 	}
 
-	/**
-	 * @return The button for submitting a move.
-	 */
-	public JButton getSubmitButton() {
-		return submitButton;
-	}
-
 	public void updateScore(String playerName, int score) {
 		for (PlayerPanel player : playerPanels) {
 			if (player != null && Objects.equals(player.getNameLabel().getText(), playerName)) {
@@ -153,8 +136,8 @@ public class GameScreen extends JPanel {
 				westPanel.add(playerPanels[i]);
 			}
 		}
-		resetRack();
-		addTilesToRack(rackTiles);
+		gameControls.getMainControlsPanel().getRackPanel().resetRack();
+		gameControls.getMainControlsPanel().getRackPanel().addTilesToRack(rackTiles);
 		this.gameTime.setText(gameTime + ":00");
 		this.revalidate();
 		this.repaint();
@@ -171,38 +154,6 @@ public class GameScreen extends JPanel {
 			boardPanel.setBoardCell(tb, x, y);
 			boardPanel.disableBoardCell(x, y);
 		}
-	}
-
-	/**
-	 * Adds all specified tiles into the <code>GameScreen</code>'s rack as buttons.
-	 *
-	 * @param tiles Array of tiles to be added.
-	 */
-	public void addTilesToRack(Tile[] tiles) {
-		for(Tile t : tiles) {
-			TileButton button =
-					(t.isBlank()
-							? new TileButton()
-							: new TileButton(Tile.TileScore.valueOf(t.getLetter()+""))
-					);
-			rackPanel.addToRack(button);
-		}
-	}
-
-	public JButton removeButtonFromRack(int col) {
-		return rackPanel.removeButtonFromRack(col);
-	}
-
-	public int addTileButtonToRack(TileButton t) {
-		return rackPanel.addTileButtonToRack(t);
-	}
-
-	public void addRackTileActionListener(int index, ActionListener al) {
-		rackPanel.addRackTileActionListener(al, index);
-	}
-
-	public void removeRackTileActionListeners(int index) {
-		rackPanel.removeActionListeners(index);
 	}
 
 	public void setBoardCellOfBoardPanel(JButton button, int row, int col) {
@@ -229,14 +180,6 @@ public class GameScreen extends JPanel {
 		return boardPanel.getButton(row, col);
 	}
 
-	public int removeButtonFromRack(String letter) {
-		return rackPanel.removeFromRack(letter);
-	}
-
-	public void setRackButtonsEnabled(boolean enabled) {
-		rackPanel.setRackButtonEnabled(enabled);
-	}
-
 	/**
 	 * Sets up a PlayerPanel with the specified player's name and time.
 	 *
@@ -246,94 +189,6 @@ public class GameScreen extends JPanel {
 	 */
 	private JPanel setupPlayerPanel(String name, int playerTime) {
 		return new PlayerPanel(name, 0, playerTime*60);
-	}
-
-	private JPanel setupGameControlsPanel() {
-		JPanel tempPanel = new JPanel(new FlowLayout());
-		JPanel gameControlsPanel = new JPanel(new BorderLayout());
-		JPanel subAndPass = new JPanel(new GridLayout(2, 1, 0, 10));
-		JPanel centerRack = new JPanel(new FlowLayout());
-		centerRack.setBorder(new TitledBorder("Rack"));
-		JPanel exAndChall = new JPanel(new GridLayout(2,1,0,10));
-		passButton = new JButton("Pass Turn");
-		submitButton = new JButton("Submit");
-		submitButton.setPreferredSize(new Dimension(50, 10));
-		exchangeButton = new JButton("Exchange Tiles");
-		challengeButton = new JButton("Challenge");
-
-
-		// Initialize tile panels for the rack
-		// Array representing the tile panels
-		RackPanel.TilePanel[] tilePanels = new RackPanel.TilePanel[RACK_SIZE];
-		for (int i = 0; i < tilePanels.length; i++) {
-			tilePanels[i] = new RackPanel.TilePanel(new TileButton(Tile.TileScore.values()[i]));
-		}
-		this.rackPanel = new RackPanel(tilePanels);
-
-		subAndPass.add(submitButton);
-		subAndPass.add(passButton);
-		gameControlsPanel.add(subAndPass, BorderLayout.WEST);
-		centerRack.add(rackPanel);
-		gameControlsPanel.add(centerRack, BorderLayout.CENTER);
-		exAndChall.add(exchangeButton);
-		exAndChall.add(challengeButton);
-		gameControlsPanel.add(exAndChall, BorderLayout.EAST);
-		tempPanel.add(gameControlsPanel);
-		return tempPanel;
-	}
-
-	private JPanel setupExchangePanel() {
-		JPanel basePanel = new JPanel(new FlowLayout());
-		JPanel exchangePanel = new JPanel(new GridLayout(1, 2, 30, 0));
-
-		JPanel centerPanel = new JPanel(new GridLayout(3,1,20,10));
-		JLabel exchangeText = new JLabel("Exchange One or All:");
-		JComboBox<String> numberSelect = new JComboBox<>(new String[]{"One", "All"});
-		JComboBox<String> letterSelect = new JComboBox<>(new String[]{"A", "B", "C", "D", "E", "F", "G"});
-		centerPanel.add(exchangeText);
-		centerPanel.add(numberSelect);
-		centerPanel.add(letterSelect);
-
-		JPanel eastPanel = new JPanel(new GridLayout(2,1,10, 20));
-		JButton backButton = new JButton("Go Back");
-		JButton submitButton = new JButton("Submit");
-		eastPanel.add(backButton, 0);
-		eastPanel.add(submitButton,1);
-
-		exchangePanel.add(centerPanel);
-		exchangePanel.add(eastPanel);
-		basePanel.add(exchangePanel);
-		return basePanel;
-	}
-
-	private JPanel setupBlankPanel() {
-		JPanel basePanel = new JPanel(new FlowLayout());
-
-		JPanel controlsPanel = new JPanel(new GridLayout(3,1,0,10));
-		JLabel chooseLabel = new JLabel("Which Letter would you like?");
-		JComboBox<String> letterSelect = new JComboBox<>(new String[] {"A", "B", "C", "D"});
-		JButton submitButton = new JButton("Submit");
-
-		controlsPanel.add(chooseLabel);
-		controlsPanel.add(letterSelect);
-		controlsPanel.add(submitButton);
-		basePanel.add(controlsPanel);
-		return basePanel;
-	}
-
-	private JPanel setupCardBasedSouthPanel() {
-		CardLayout c = new CardLayout();
-		JPanel south = new JPanel(c);
-		JPanel rackPanel = setupGameControlsPanel();
-		JPanel exchangePanel = setupExchangePanel();
-		JPanel blankPanel = setupBlankPanel();
-		south.add(rackPanel, RACK_PANEL);
-		south.add(exchangePanel, EXCHANGE_PANEL);
-		south.add(blankPanel, BLANK_PANEL);
-		c.show(south, RACK_PANEL);
-
-
-		return south;
 	}
 
 	/**
@@ -363,14 +218,6 @@ public class GameScreen extends JPanel {
 		northPanel.add(gameTime);
 		return northPanel;
 	}
-
-	/**
-	 * Resets the rack by clearing all tiles.
-	 */
-	private void resetRack() {
-		rackPanel.resetRack();
-	}
-
 
 	/**
 	 * PlayerPanel displays the details of a player in the game, showing the player's
@@ -704,162 +551,5 @@ public class GameScreen extends JPanel {
 		}
 	}
 
-	/**
-	 * RackPanel is a JPanel that represents a rack of TilePanels,
-	 * displaying the tiles a player currently holds.
-	 */
-	private static class RackPanel extends JPanel {
-		// Array to hold the TilePanels that make up the player's rack
 
-		private final TilePanel[] tilePanels;
-
-		/**
-		 * Constructor to initialize the RackPanel with an array of TilePanels.
-		 *
-		 * @param tilePanels an array of TilePanels to be displayed in the rack
-		 */
-		public RackPanel(TilePanel[] tilePanels){
-			// Assigns the given array of TilePanels to the class field
-			this.tilePanels = tilePanels;
-
-			// Sets the layout of the panel to a GridLayout with 1 row, RACK_SIZE columns,
-			// and a horizontal gap of 10 pixels between components
-			this.setLayout(new GridLayout(1, RACK_SIZE, 10, 0));
-
-			// Adds each TilePanel to the RackPanel
-			for (TilePanel tp : this.tilePanels) {
-				this.add(tp);
-			}
-		}
-
-		/**
-		 * Replaces the button at a specific position in the rack.
-		 * Invoking this method revalidates and repaints the rack.
-		 *
-		 * @param tileButton the new JButton to be set in the specified TilePanel
-		 * @param i the index of the TilePanel where the button will be set
-		 */
-		public void setButton(JButton tileButton, int i) {
-			// Sets a new button in the specified TilePanel at index i
-			tilePanels[i].setButton(tileButton);
-
-			// Revalidates the panel to ensure the new button is displayed properly
-			this.revalidate();
-
-			// Repaints the panel
-			this.repaint();
-		}
-
-		public void addToRack(TileButton button) {
-			boolean searching = true;
-			for (int i = 0; i < tilePanels.length && searching; i++) {
-				if (!(tilePanels[i].getButton() instanceof TileButton)) {
-					setButton(button, i);
-					searching = false;
-				}
-			}
-		}
-
-		public int addTileButtonToRack(TileButton t) {
-			int index = -1;
-			for (int i = 0; i < tilePanels.length && index == -1; i++) {
-				if (!(tilePanels[i].getButton() instanceof TileButton)) {
-					tilePanels[i].setButton(t);
-					index = i;
-				}
-			}
-			return index;
-		}
-
-		public int removeFromRack(String letter) {
-			for(int i = 0; i < tilePanels.length; i++){
-				if(tilePanels[i].getButton().getText().equals(letter)){
-					tilePanels[i].setButton(new JButton(" "));
-					return i;
-				}
-			}
-			return -1;
-		}
-
-		public JButton removeButtonFromRack(int col) {
-			JButton b = tilePanels[col].getButton();
-			tilePanels[col].setButton(new JButton(" "));
-			return b;
-		}
-
-		public void setRackButtonEnabled (boolean enabled) {
-			for (TilePanel tp : tilePanels) {
-				tp.getButton().setEnabled(enabled);
-			}
-		}
-
-		public void addRackTileActionListener(ActionListener al, int index) {
-			tilePanels[index].addButtonActionListener(al);
-		}
-
-		public void removeActionListeners(int index) {
-			tilePanels[index].removeButtonActionListeners();
-		}
-
-		public void resetRack() {
-			for (TilePanel tp : tilePanels) {
-				tp.setButton(new JButton(" "));
-			}
-		}
-
-		/**
-		 * TilePanel is a JPanel component that holds a TileButton and provides
-		 * methods for adding and updating the button in the panel.
-		 */
-		public static class TilePanel extends JPanel {
-			// A JButton to represent the tile displayed in this panel
-			private JButton tileButton;
-
-			/**
-			 * Constructor that initializes the TilePanel with a given TileButton.
-			 *
-			 * @param tileButton the initial TileButton to be displayed in this panel
-			 */
-			public TilePanel(TileButton tileButton) {
-				// Set the layout to a flow layout to manage the placement of the button
-				this.setLayout(new FlowLayout());
-				this.setButton(tileButton); // Set the button in the panel
-			}
-
-			/**
-			 * Getter for the current TileButton in the panel.
-			 *
-			 * @return the current JButton instance
-			 */
-			public JButton getButton() { return tileButton; }
-
-			/**
-			 * Sets a new button in the panel. If a button already exists, it removes the old one
-			 * before adding the new button.
-			 *
-			 * @param tileButton the new JButton to be added to the panel
-			 */
-			public void setButton(JButton tileButton) {
-				// Remove the existing button if there is one
-				if (this.tileButton != null) this.remove(this.tileButton);
-
-				// Assign the new button and set its font properties
-				this.tileButton = tileButton;
-				this.tileButton.setFont(getFont().deriveFont(Font.BOLD, 12f));
-
-				// Add the button to the panel and refresh the panel display
-				this.add(this.tileButton);
-				this.revalidate(); // Revalidates the component hierarchy
-				this.repaint(); // Repaints the component to reflect changes
-			}
-
-			public void addButtonActionListener(ActionListener al) {
-				this.tileButton.addActionListener(al);
-			}
-
-			public void removeButtonActionListeners() {
-				GameScreenController.removeActionListeners(this.tileButton);
-			}
-		}
-	}
 }

@@ -32,6 +32,15 @@ public class GameControls extends JPanel {
 	private final BlankPanel blankPanel;
 //	private final
 
+	public static void main(String[] args) {
+		JFrame frame = new JFrame("hello.");
+		frame.add(new GameControls());
+		frame.pack();
+		frame.setVisible(true);
+		frame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+		frame.setSize(new Dimension(100, 200));
+	}
+
 	/**
 	 * Constructs a <code>GameControls</code> object with the three different views.
 	 */
@@ -41,9 +50,9 @@ public class GameControls extends JPanel {
 		mainControlsPanel = new MainControlsPanel();
 		exchangePanel = new ExchangePanel();
 		blankPanel = new BlankPanel();
-		layout.addLayoutComponent(blankPanel, BLANK_PANEL);
-		layout.addLayoutComponent(mainControlsPanel, RACK_PANEL);
-		layout.addLayoutComponent(exchangePanel, EXCHANGE_PANEL);
+		this.add(blankPanel, BLANK_PANEL);
+		this.add(mainControlsPanel, RACK_PANEL);
+		this.add(exchangePanel, EXCHANGE_PANEL);
 		layout.show(this, RACK_PANEL);
 	}
 
@@ -193,6 +202,8 @@ public class GameControls extends JPanel {
 		public Character getSelectedLetter() {
 			return (Character) letterSelect.getSelectedItem();
 		}
+
+		public void addNumberSelectActionListener(ActionListener al) {numberSelect.addActionListener(al);}
 
 		/**
 		 * Gets the number of tiles which are to be exchanged.
@@ -353,6 +364,22 @@ public class GameControls extends JPanel {
 				return index;
 			}
 
+			/**
+			 * Adds all specified tiles into the <code>GameScreen</code>'s rack as buttons.
+			 *
+			 * @param tiles Array of tiles to be added.
+			 */
+			public void addTilesToRack(Tile[] tiles) {
+				for(Tile t : tiles) {
+					TileButton button =
+							(t.isBlank()
+									? new TileButton()
+									: new TileButton(Tile.TileScore.valueOf(t.getLetter()+""))
+							);
+					this.addToRack(button);
+				}
+			}
+
 			public int removeFromRack(String letter) {
 				for(int i = 0; i < tilePanels.length; i++){
 					if(tilePanels[i].getButton().getText().equals(letter)){
@@ -369,7 +396,7 @@ public class GameControls extends JPanel {
 				return b;
 			}
 
-			public void setRackButtonEnabled (boolean enabled) {
+			public void setRackButtonsEnabled (boolean enabled) {
 				for (TilePanel tp : tilePanels) {
 					tp.getButton().setEnabled(enabled);
 				}
@@ -445,5 +472,7 @@ public class GameControls extends JPanel {
 			}
 		}
 	}
+
+
 
 }

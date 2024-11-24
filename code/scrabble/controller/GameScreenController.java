@@ -2,12 +2,11 @@ package scrabble.controller;
 
 import scrabble.model.Board;
 import scrabble.model.Tile;
-import scrabble.network.messages.PlayTiles;
+import scrabble.network.messages.*;
 import scrabble.view.ScrabbleGUI;
 import scrabble.view.TileButton;
 import scrabble.view.screen.*;
 
-import javax.naming.ldap.Control;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionListener;
@@ -20,19 +19,8 @@ import java.util.Timer;
 public class GameScreenController {
 	private final Controller parent;
 	private final GameScreen gameScreen;
+	private final GameControls gameControls;
 	private boolean isRackEnabled;
-
-	/**
-	 * Constructor for the Game Screen
-	 *
-	 * @param parent the player's game controller
-	 * @param gameScreen the game screen panel of the user
-	 */
-	public GameScreenController(Controller parent, GameScreen gameScreen) {
-		this.parent = parent;
-		this.gameScreen = gameScreen;
-		addActionListeners();
-	}
 
 	/**
 	 * Removes the action listener for a tile that has been played and will not be able
@@ -44,6 +32,19 @@ public class GameScreenController {
 		for (ActionListener al : button.getActionListeners()) {
 			button.removeActionListener(al);
 		}
+	}
+
+	/**
+	 * Constructor for the Game Screen
+	 *
+	 * @param parent the player's game controller
+	 * @param gameScreen the game screen panel of the user
+	 */
+	public GameScreenController(Controller parent, GameScreen gameScreen) {
+		this.parent = parent;
+		this.gameScreen = gameScreen;
+		this.gameControls = gameScreen.getGameControls();
+		addActionListeners();
 	}
 
 	/**
@@ -106,7 +107,7 @@ public class GameScreenController {
 	 * @param tiles the Tile objects that are the player's new tiles
 	 */
 	public void addRackTiles(Tile[] tiles) {
-		gameScreen.addTilesToRack(tiles);
+		gameControls.getMainControlsPanel().getRackPanel().addTilesToRack(tiles);
 		removeRackTileListeners();
 		addRackTileListeners();
 		setRackButtonsEnabled(this.isRackEnabled);
@@ -118,7 +119,7 @@ public class GameScreenController {
 	 * @param tile the Tile object to be taken off of the rack
 	 */
 	public int removeRackTile(Tile tile) {
-		return gameScreen.removeButtonFromRack(tile.getLetter() + "");
+		return gameControls.getMainControlsPanel().getRackPanel().removeFromRack(tile.getLetter() + "");
 	}
 
 	/**
@@ -139,7 +140,7 @@ public class GameScreenController {
 	 */
 	public void setRackButtonsEnabled(boolean enabled) {
 		this.isRackEnabled = enabled;
-		gameScreen.setRackButtonsEnabled(enabled);
+		gameControls.getMainControlsPanel().getRackPanel().setRackButtonsEnabled(enabled);
 	}
 
 	/*
@@ -147,11 +148,170 @@ public class GameScreenController {
 	 */
 
 	/**
+	 * Adds the action listeners for the buttons on the game screen
+	 */
+	private void addActionListeners() {
+		addBoardCellListeners();
+
+		addMainControlsListeners();
+		addExchangePanelListeners();
+		addBlankPanelListeners();
+	}
+
+	private void addMainControlsListeners() {
+		addRackTileListeners();
+		addMainSubmitActionListener();
+		addPassTurnActionListener();
+		addExchangeButtonActionListener();
+		addChallengeButtonActionListener();
+	}
+	private void addPassTurnActionListener() {
+		gameControls.getMainControlsPanel().addPassActionListener(e -> passTurnClick());
+	}
+
+	private void passTurnClick() {
+		int choice = parent.showConfirmPassTurnDialog();
+		if (choice == JOptionPane.YES_OPTION) {
+			int playerID = parent.getSelfID();
+			PassTurn pass = new PassTurn(playerID, playerID);
+			pass.execute(parent);
+		}
+	}
+
+	private void addExchangeButtonActionListener() {
+		gameControls.getMainControlsPanel().addExchangeActionListener(e -> gameControls.showExchange());
+	}
+	private void addChallengeButtonActionListener() {
+		gameControls.getMainControlsPanel().getChallengeButton().addActionListener(e -> System.out.println("get spawn killed :/"));
+	}
+
+	private void addExchangePanelListeners() {
+		addNumberSelectActionListener();
+		addExchangeBackButtonActionListener();
+		addExchangeSubmitActionListener();
+	}
+	private void addNumberSelectActionListener() {
+		gameControls.getExchangePanel().addNumberSelectActionListener(e -> numberSelectChange());
+	}
+
+	private void numberSelectChange() {
+		GameControls.ExchangePanel ep = gameControls.getExchangePanel();
+		ep.enableLetterSelect(ep.getNumberToExchange() != GameScreen.RACK_SIZE);
+	}
+
+	private void addExchangeBackButtonActionListener() {
+		gameControls.getExchangePanel().addBackActionListener(e -> gameControls.showRack());
+	}
+	private void addExchangeSubmitActionListener() {
+		gameControls.getExchangePanel().addSubmitActionListener(e -> exchangeSubmitClick());
+	}
+
+	private void exchangeSubmitClick() {
+		gameControls.showRack();
+	}
+
+	private void addBlankPanelListeners() {
+		gameControls.getBlankPanel().addSubmitActionListener(e -> blankSubmitClick());
+	}
+	private void blankSubmitClick() {
+
+		gameControls.showRack();
+	}
+
+
+	/**
+	 * Adds the listeners to each panel of the board
+	 */
+	private void addBoardCellListeners() {
+		for (int row = 0; row < Board.BOARD_ROWS; row++) {
+			for (int col = 0; col < Board.BOARD_COLUMNS; col++) {
+				addBoardCellPanelListener(row, col);
+			}
+		}
+	}
+	/**
+	 * Creates the action listener for each panel of the board
+	 *
+	 * @param row the row of the given panel
+	 * @param col the column of the given panel
+	 */
+	private void addBoardCellPanelListener(int row, int col) {
+		gameScreen.addActionListenerToBoardCell((e -> boardCellClick(row, col)), row, col);
+	}
+	/**
+	 * Puts a tile into the cell that is clicked by the player
+	 * If the button in this location is a TileButton, we put it back into the rack
+	 * 		then add the new tile in that location
+	 * If the button is not a TileButton, we just add the new tile to the board
+	 *
+	 * @param row the row of the button that is clicked
+	 * @param col the column of the button that is clicked
+	 */
+	private void boardCellClick(int row, int col) {
+		if (gameScreen.instanceOfTileButton(row, col)) {
+			//put in rack
+			gameScreen.removeBoardPanelActionListeners(row, col);
+			gameScreen.removeFromPlayedTiles(
+					new Tile(gameScreen.getBoardButtonText(row, col).charAt(0), new Point(row, col))
+			);
+			int index = gameControls.getMainControlsPanel().getRackPanel().addTileButtonToRack(
+					(TileButton) gameScreen.getBoardButton(row, col));
+			addTilePanelListener(index);
+		}
+		// add value to panel
+		JButton toAdd = gameScreen.getValue();
+		removeActionListeners(toAdd);
+		if (toAdd instanceof TileButton) {
+			gameScreen.addToPlayedTiles(
+					new Tile(toAdd.getText().charAt(0), new Point(row, col))
+			);
+		}
+		gameScreen.setBoardCellOfBoardPanel(toAdd, row, col);
+		addBoardCellPanelListener(row, col);
+		gameScreen.setValue(new JButton(" "));
+
+		//Play audio for when tiles are being placed on the board
+		parent.playTileFx();
+	}
+	/**
+	 * Adds the listeners to each panel of the rack
+	 */
+	private void addRackTileListeners(){
+		for (int col = 0; col < 7; col++) {
+			addTilePanelListener(col);
+		}
+	}
+	/* Creates the action listener for each button in each panel */
+	private void addTilePanelListener(int col) { gameControls.getMainControlsPanel().getRackPanel().addRackTileActionListener(e -> tilePanelClick(col), col); }
+	/* Takes the clicked tile off the rack to place it on the board */
+	private void tilePanelClick(int col) {
+		if (gameScreen.getValue() instanceof TileButton) {
+			int index = gameControls.getMainControlsPanel().getRackPanel().addTileButtonToRack((TileButton) gameScreen.getValue());
+			gameControls.getMainControlsPanel().getRackPanel().removeActionListeners(index);
+			gameControls.getMainControlsPanel().getRackPanel().addRackTileActionListener(e -> tilePanelClick(index), index);
+		}
+		JButton removed = gameControls.getMainControlsPanel().getRackPanel().removeButtonFromRack(col);
+		gameScreen.setValue(removed);
+	}
+	/* Creates the action listener for the submit button */
+	private void addMainSubmitActionListener() {gameControls.getMainControlsPanel().addSubmitActionListener(e -> submitClick());}
+	/* Submits the tiles played by the player on the board and plays the tiles into the game */
+	private void submitClick() {
+		if (gameScreen.getValue() instanceof TileButton) {
+			gameControls.getMainControlsPanel().getRackPanel().addTileButtonToRack((TileButton) gameScreen.getValue());
+		}
+		int playerID = parent.getSelfID();
+		PlayTiles playTiles = new PlayTiles(playerID, playerID, gameScreen.getPlayedTiles().toArray(new Tile[0]));
+		playTiles.execute(parent);
+	}
+
+
+	/**
 	 * Removes the action listeners for a tile on the rack when it is removed
 	 */
 	private void removeRackTileListeners() {
 		for (int i = 0; i < GameScreen.RACK_SIZE; i++) {
-			gameScreen.removeRackTileActionListeners(i);
+			gameControls.getMainControlsPanel().getRackPanel().removeActionListeners(i);
 		}
 	}
 
@@ -179,125 +339,7 @@ public class GameScreenController {
 	 */
 	private void quitMenuClick() { if (parent.showQuitDialog() == JOptionPane.YES_OPTION) parent.exit(); }
 
-	/**
-	 * Adds the action listeners for the buttons on the game screen
-	 */
-	private void addActionListeners() {
-		addRackTileListeners();
-		addBoardCellListeners();
-		addSubmitActionListener();
-	}
-
-	/**
-	 * Adds the listeners to each panel of the board
-	 */
-	private void addBoardCellListeners() {
-		for (int row = 0; row < Board.BOARD_ROWS; row++) {
-			for (int col = 0; col < Board.BOARD_COLUMNS; col++) {
-				addBoardCellPanelListener(row, col);
-			}
-		}
-	}
-
-	/**
-	 * Creates the action listener for each panel of the board
-	 *
-	 * @param row the row of the given panel
-	 * @param col the column of the given panel
-	 */
-	private void addBoardCellPanelListener(int row, int col) {
-		gameScreen.addActionListenerToBoardCell((e -> boardCellClick(row, col)), row, col);
-	}
-
-	/**
-	 * Puts a tile into the cell that is clicked by the player
-	 * If the button in this location is a TileButton, we put it back into the rack
-	 * 		then add the new tile in that location
-	 * If the button is not a TileButton, we just add the new tile to the board
-	 *
-	 * @param row the row of the button that is clicked
-	 * @param col the column of the button that is clicked
-	 */
-	private void boardCellClick(int row, int col) {
-		if (gameScreen.instanceOfTileButton(row, col)) {
-			//put in rack
-			gameScreen.removeBoardPanelActionListeners(row, col);
-			gameScreen.removeFromPlayedTiles(
-					new Tile(gameScreen.getBoardButtonText(row, col).charAt(0), new Point(row, col))
-			);
-			int index = gameScreen.addTileButtonToRack((TileButton) gameScreen.getBoardButton(row, col));
-			addTilePanelListener(index);
-		}
-		// add value to panel
-		JButton toAdd = gameScreen.getValue();
-		removeActionListeners(toAdd);
-		if (toAdd instanceof TileButton) {
-			gameScreen.addToPlayedTiles(
-					new Tile(toAdd.getText().charAt(0), new Point(row, col))
-			);
-		}
-		gameScreen.setBoardCellOfBoardPanel(toAdd, row, col);
-		addBoardCellPanelListener(row, col);
-		gameScreen.setValue(new JButton(" "));
-
-		//Play audio for when tiles are being placed on the board
-		parent.playTileFx();
-	}
-
-	/**
-	 * Adds the listeners to each panel of the rack
-	 */
-	private void addRackTileListeners(){
-		for (int col = 0; col < 7; col++) {
-			addTilePanelListener(col);
-		}
-	}
-
-	/**
-	 * Creates the action listener for each button in each panel
-	 *
-	 * @param col the column of the rack tile
-	 */
-	private void addTilePanelListener(int col) { gameScreen.addRackTileActionListener(col, e -> tilePanelClick(col)); }
-
-	/**
-	 * Takes the clicked tile off the rack to place it on the board
-	 *
-	 * @param col the column of the tile clicked to remove from the rack
-	 */
-	private void tilePanelClick(int col) {
-		if (gameScreen.getValue() instanceof TileButton) {
-			int index = gameScreen.addTileButtonToRack((TileButton) gameScreen.getValue());
-			gameScreen.removeRackTileActionListeners(index);
-			gameScreen.addRackTileActionListener(index, e -> tilePanelClick(index));
-		}
-		JButton removed = gameScreen.removeButtonFromRack(col);
-		gameScreen.setValue(removed);
-	}
-
-	/**
-	 * Creates the action listener for the submit button
-	 */
-	private void addSubmitActionListener() {gameScreen.getSubmitButton().addActionListener(e -> submitClick());}
-
-	/**
-	 * Submits the tiles played by the player on the board
-	 * 		and plays the tiles into the game
-	 */
-	private void submitClick() {
-		if (gameScreen.getValue() instanceof TileButton) {
-			gameScreen.addTileButtonToRack((TileButton) gameScreen.getValue());
-		}
-		int playerID = parent.getSelfID();
-		PlayTiles playTiles = new PlayTiles(playerID, playerID, gameScreen.getPlayedTiles().toArray(new Tile[0]));
-		playTiles.execute(parent);
-	}
-
-	public void setAudio(boolean musicEnable, boolean fxEnable) {
-
-	}
-
-	public void setEnabled(boolean musicEnabled, boolean fxEnabled){
+	public void setAudioEnabled(boolean musicEnabled, boolean fxEnabled){
 		parent.getView().getAudioItem().setSelected(musicEnabled);
 		parent.getView().getFxItem().setSelected(fxEnabled);
 	}
