@@ -179,8 +179,15 @@ public class GameScreenController {
 	}
 
 	private void addExchangeButtonActionListener() {
-		gameControls.getMainControlsPanel().addExchangeActionListener(e -> gameControls.showExchange());
+		gameControls.getMainControlsPanel().addExchangeActionListener(e -> exchangeButtonClick());
 	}
+	private void exchangeButtonClick() {
+		GameControls.ExchangePanel ep = gameControls.getExchangePanel();
+		ep.removeAllLetters();
+		ep.addLetters(gameControls.getMainControlsPanel().getRackLetters());
+		gameControls.showExchange();
+	}
+
 	private void addChallengeButtonActionListener() {
 		gameControls.getMainControlsPanel().getChallengeButton().addActionListener(e -> System.out.println("get spawn killed :/"));
 	}
@@ -207,6 +214,14 @@ public class GameScreenController {
 	}
 
 	private void exchangeSubmitClick() {
+		int playerId = parent.getSelfID();
+		Tile[] tiles = (gameControls.getExchangePanel().getNumberToExchange() == GameScreen.RACK_SIZE
+				? gameControls.getMainControlsPanel().getRackTiles()
+				: new Tile[] {new Tile(Tile.TileScore.valueOf(gameControls.getExchangePanel().getSelectedLetter() + ""))}
+		);
+
+		ExchangeTiles exchangeTiles = new ExchangeTiles(playerId, playerId, tiles);
+		exchangeTiles.execute(parent);
 		gameControls.showRack();
 	}
 
@@ -285,12 +300,13 @@ public class GameScreenController {
 	private void addTilePanelListener(int col) { gameControls.getMainControlsPanel().getRackPanel().addRackTileActionListener(e -> tilePanelClick(col), col); }
 	/* Takes the clicked tile off the rack to place it on the board */
 	private void tilePanelClick(int col) {
+		GameControls.MainControlsPanel.RackPanel rp = gameControls.getMainControlsPanel().getRackPanel();
 		if (gameScreen.getValue() instanceof TileButton) {
-			int index = gameControls.getMainControlsPanel().getRackPanel().addTileButtonToRack((TileButton) gameScreen.getValue());
-			gameControls.getMainControlsPanel().getRackPanel().removeActionListeners(index);
-			gameControls.getMainControlsPanel().getRackPanel().addRackTileActionListener(e -> tilePanelClick(index), index);
+			int index = rp.addTileButtonToRack((TileButton) gameScreen.getValue());
+			rp.removeActionListeners(index);
+			rp.addRackTileActionListener(e -> tilePanelClick(index), index);
 		}
-		JButton removed = gameControls.getMainControlsPanel().getRackPanel().removeButtonFromRack(col);
+		JButton removed = rp.removeButtonFromRack(col);
 		gameScreen.setValue(removed);
 	}
 	/* Creates the action listener for the submit button */
