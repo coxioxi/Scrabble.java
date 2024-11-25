@@ -50,6 +50,8 @@ public class Controller implements PropertyChangeListener  {
 
 	private final ElevatorMusicPlayer elevatorMusicPlayer = new ElevatorMusicPlayer("Bossa nova.wav");
 
+	private StringBuilder rules;
+
     /*
     reference to the party host
     when this controller is the manager of the party.
@@ -76,6 +78,7 @@ public class Controller implements PropertyChangeListener  {
 		);				// Allow window listeners to handle closing events
 		addListeners(view);
 		this.showMain();
+		rules = new StringBuilder();
 	}
 
 	@Override
@@ -157,6 +160,7 @@ public class Controller implements PropertyChangeListener  {
 	public void sendRulesToHost(boolean challengesAllowed, String dictionary,
 								int playerTime, int gameTime) {
 		Ruleset ruleset = new Ruleset(gameTime, playerTime, challengesAllowed, dictionary);
+		setupRules(ruleset);
 		host.startGame(ruleset);
 	}
 
@@ -459,7 +463,7 @@ public class Controller implements PropertyChangeListener  {
 	 * Displays the set of rules used for the current game, specified by the
 	 * game's <code>Ruleset</code>.
 	 */
-	public void showRulesDialog() { JOptionPane.showMessageDialog(view, "1.~~~~~~~~~\n2.~~~~~~~~~\n3.~~~~~~~~~~~~\n4.~~~~~~~~~~", "Rules", JOptionPane.INFORMATION_MESSAGE); }
+	public void showRulesDialog() { JOptionPane.showMessageDialog(view, rules, "Rules", JOptionPane.INFORMATION_MESSAGE); }
 
 	/**
 	 * Displays a warning that the player has not entered their name.
@@ -608,6 +612,21 @@ public class Controller implements PropertyChangeListener  {
 	/*
 	 * adds listeners to the individual screens
 	 */
+	private void setupRules(Ruleset ruleset) {
+		rules.append("<html> To play a letter on the board, click on the tile you would like to place, then click " +
+				"on the location in the board where you want to play your tile.\n");
+		rules.append("Rules set by the host:\n");
+		rules.append("\t1. " + (ruleset.getDictionaryFileName().equals("code/dictionary.txt")
+				? "You will be using the normal Scrabble dictionary"
+				: "You will be using the ____ dictionary")
+		).append("\n");
+		rules.append("\t2. The game will have a total time of " + ruleset.getTotalTime() + " minutes").append("\n");
+		rules.append("\t3. Each player will have a total time of " + ruleset.getTurnTime() + " minutes per turn").append("\n");
+		rules.append("\t4. Challenges are " + (ruleset.areChallengesAllowed() ? "enabled" : "disabled")).append("\n");
+
+		rules.append("For more information, visit: " + "<a href=\"https://www.hasbro.com/common/instruct/Scrabble_(2003).pdf\" target=\"_blank\">Scrabble Rules</a> </html>");
+	}
+
 	private void addListeners(ScrabbleGUI view) {
 		addMenuListeners(view.getMainMenu());
 		addHostListeners(view.getHost());
