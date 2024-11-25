@@ -908,15 +908,7 @@ public class Board {
     column (x) value, with smallest at tiles[0]
     */
     private void sortAscendingByCol(Tile[] tiles) {
-        for (int i = 0; i < tiles.length-1; i++) {
-            for (int j = i; j < tiles.length-1; j++) {
-                if (tiles[j].getLocation().y > tiles[j+1].getLocation().y) {
-                    Tile temp = tiles[j];
-                    tiles[j] = tiles[j+1];
-                    tiles[j+1] = temp;
-                }
-            }
-        }
+		Arrays.sort(tiles, Comparator.comparingInt(t -> t.getLocation().y));
     }
 
     /*
@@ -924,15 +916,7 @@ public class Board {
     row (y) value, with smallest at tiles[0]
      */
     private void sortAscendingByRow(Tile[] tiles) {
-        for (int i = 0; i < tiles.length-1; i++) {
-            for (int j = i; j < tiles.length-1; j++) {
-                if (tiles[j].getLocation().x > tiles[j+1].getLocation().x) {
-                    Tile temp = tiles[j];
-                    tiles[j] = tiles[j+1];
-                    tiles[j+1] = temp;
-                }
-            }
-        }
+       Arrays.sort(tiles, Comparator.comparingInt(t -> t.getLocation().x));
     }
 
     /*
