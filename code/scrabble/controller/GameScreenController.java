@@ -20,6 +20,7 @@ public class GameScreenController {
 	private final Controller parent;
 	private final GameScreen gameScreen;
 	private final GameControls gameControls;
+	private GameTimeController gameTimeController;
 	private boolean isRackEnabled;
 
 	/**
@@ -56,10 +57,13 @@ public class GameScreenController {
 	 * @param startingTiles the tiles that will be on the player's starting rack
 	 */
 	public void setupGameItems(String[] names, int gameTime, int turnTime, Tile[] startingTiles) {
-		gameScreen.setupGameItems(names, gameTime, turnTime, startingTiles);
+		parent.getView().makeGameScreen(names, gameTime, turnTime, startingTiles);
+		gameTimeController = new GameTimeController(gameTime);
 		addRackTileListeners();
 		gameScreen.repaint();
 	}
+
+	public void halt() { gameTimeController.cancel(); }
 
 	/**
 	 * Sets up the action listeners for the menu items
@@ -238,6 +242,7 @@ public class GameScreenController {
 	private void addBoardCellPanelListener(int row, int col) {
 		gameScreen.addActionListenerToBoardCell((e -> boardCellClick(row, col)), row, col);
 	}
+
 	/**
 	 * Puts a tile into the cell that is clicked by the player
 	 * If the button in this location is a TileButton, we put it back into the rack
@@ -344,25 +349,23 @@ public class GameScreenController {
 		parent.getView().getFxItem().setSelected(fxEnabled);
 	}
 
-	private static class GameTimeController {
-		private java.util.Timer scheduler;
-		private TimerTask task;
+	private  class GameTimeController {
+		private Timer scheduler;
 
 		public GameTimeController(int gameLength) {
 			// schedule task to run every second for however the game runs.
 			scheduler = new Timer();
-			task = new PlayerTask();
-			scheduler.schedule(task, 0, gameLength* 1000L);
+			scheduler.schedule(new TimerTask() {
+				public void run() { GameScreenController.this.gameScreen.decrementTime();}
+				},
+				1000, 1000
+			);
 		}
 
-		private static class PlayerTask extends TimerTask {
-			public PlayerTask() {super();}
-
-			@Override
-			public void run() {
-				// decrease time.
-			}
+		public void cancel() {
+			scheduler.cancel();
 		}
+
 	}
 
 }

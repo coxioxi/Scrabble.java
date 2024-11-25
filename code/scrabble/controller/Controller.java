@@ -227,6 +227,7 @@ public class Controller implements PropertyChangeListener  {
 		if (playerID == selfID) selfPlayTiles(tiles);
 		else otherPlayTiles(playerID, tiles);
 		gameScreenController.setRackButtonsEnabled(model.getCurrentPlayer() == selfID);
+		this.getView().getGame().nextPlayer();
 	}
 
 	public void playTileFx(){
@@ -703,6 +704,7 @@ public class Controller implements PropertyChangeListener  {
 		if (this.host != null) {
 			host.halt();
 		}
+		gameScreenController.halt();
 	}
 
     /**

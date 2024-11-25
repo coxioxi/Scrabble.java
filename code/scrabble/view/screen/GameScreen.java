@@ -13,7 +13,6 @@ import scrabble.model.Tile;
 import scrabble.view.TileButton;
 
 import javax.swing.*;
-import javax.swing.border.TitledBorder;
 import java.awt.*;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
@@ -28,7 +27,8 @@ public class GameScreen extends JPanel {
 	public static final int GAP = 150; // Spacing used between panels
 	public static final int RACK_SIZE = 7; // Number of tiles in a player's rack
 
-	private JLabel gameTime; // Label displaying the game timer
+	private JLabel gameTimeLabel; // Label displaying the game timer
+	private int gameTimeRemaining; 	// in seconds;
 	private BoardPanel boardPanel; // Panel representing the game board
 
 	private final JPanel eastPanel; // Panel for player panels on the right side
@@ -37,6 +37,7 @@ public class GameScreen extends JPanel {
 	private final GameControls gameControls;
 
 	private final PlayerPanel[] playerPanels;
+	private int currentPlayerIndex;
 
 	// List of tiles that have been played in the current turn
 	private List<Tile> playedTiles = new ArrayList<>();
@@ -67,6 +68,23 @@ public class GameScreen extends JPanel {
 		this.add(gameControls, BorderLayout.SOUTH);
 		System.out.println("num components: " + this.getComponentCount());
 	}
+
+	public GameScreen(String[] playerNames, int gameTime, int playerTime, Tile[] rackTiles) {
+	 	 this();
+		 this.setupGameItems(playerNames, gameTime, playerTime, rackTiles);
+		 currentPlayerIndex = 0;
+	}
+
+	public void decrementTime() {
+		this.decreaseTime(1);
+	}
+
+	public void decreaseTime(int amount) {
+		this.gameTimeRemaining -= amount;
+		gameTimeLabel.setText(formatTime(gameTimeRemaining));
+		playerPanels[currentPlayerIndex].decreaseTime(amount);
+	}
+
 
 	public GameControls getGameControls() { return gameControls; }
 
@@ -114,18 +132,25 @@ public class GameScreen extends JPanel {
 	/**
 	 * @return The label representing the game timer.
 	 */
-	public JLabel getGameTime() {
-		return gameTime;
+	public JLabel getGameTimeLabel() {
+		return gameTimeLabel;
 	}
 
 	public void updateScore(String playerName, int score) {
 		for (PlayerPanel player : playerPanels) {
-			if (player != null && Objects.equals(player.getNameLabel().getText(), playerName)) {
-				player.getScore().setText("" + score);
+			if (player != null && Objects.equals(player.getPlayerName(), playerName)) {
+				player.setScore(score);
 			}
 		}
 	}
 
+	/**
+	 *
+	 * @param playerNames
+	 * @param gameTime
+	 * @param playerTime in minutes
+	 * @param rackTiles
+	 */
 	public void setupGameItems(String[] playerNames, int gameTime, int playerTime, Tile[] rackTiles) {
 		// Setup player panels
 		for (int i = 0; i < playerNames.length; i++) {
@@ -138,9 +163,17 @@ public class GameScreen extends JPanel {
 		}
 		gameControls.getMainControlsPanel().getRackPanel().resetRack();
 		gameControls.getMainControlsPanel().getRackPanel().addTilesToRack(rackTiles);
-		this.gameTime.setText(gameTime + ":00");
+		gameTimeRemaining = gameTime*60;
+		this.gameTimeLabel.setText(formatTime(gameTimeRemaining));
 		this.revalidate();
 		this.repaint();
+	}
+
+	public void nextPlayer() {
+		playerPanels[currentPlayerIndex].resetTime();
+		playerPanels[currentPlayerIndex].setEnabled(false);
+		this.currentPlayerIndex++;
+		this.currentPlayerIndex %= playerPanels.length;
 	}
 
 	public void addToBoard(Tile[] tiles) {
@@ -213,10 +246,15 @@ public class GameScreen extends JPanel {
 	 */
 	private JPanel setupNorthPanel() {
 		JPanel northPanel = new JPanel(new FlowLayout());
-		gameTime = new JLabel("00:00");
-		gameTime.setBorder(BorderFactory.createEtchedBorder());
-		northPanel.add(gameTime);
+		gameTimeLabel = new JLabel("00:00");
+		gameTimeLabel.setBorder(BorderFactory.createEtchedBorder());
+		northPanel.add(gameTimeLabel);
 		return northPanel;
+	}
+
+	public static String formatTime(int timeRemaining) {
+		return String.valueOf(timeRemaining / 60 < 10 ? "0" + timeRemaining / 60 : timeRemaining / 60) + ':' +
+				(timeRemaining % 60 < 10 ? "0" + timeRemaining % 60 : timeRemaining % 60);
 	}
 
 	/**
@@ -226,9 +264,10 @@ public class GameScreen extends JPanel {
 	private static class PlayerPanel extends JPanel {
 
 		// Labels to display player's name, time, and score
-		private JLabel name;
-		private JLabel timeLabel;
-		private JLabel score;
+		private final JLabel name;
+		private final JLabel timeLabel;
+		private final JLabel score;
+		private final int defaultTime;
 		private int time;
 
 		/**
@@ -251,7 +290,8 @@ public class GameScreen extends JPanel {
 
 			// Label for remaining time, formatted as minutes and seconds
 			JLabel playerTimeLabel = new JLabel("Time:", SwingConstants.RIGHT);
-			this.timeLabel = new JLabel(time / 60 + ":" + (time % 60 < 10 ? "0":"") + time % 60);
+			this.time = this.defaultTime = time;
+			this.timeLabel = new JLabel(GameScreen.formatTime(time));
 
 			// Label for player's score
 			JLabel playerScoreLabel = new JLabel("Score:", SwingConstants.RIGHT);
@@ -271,27 +311,22 @@ public class GameScreen extends JPanel {
 		 *
 		 * @return JLabel labeling the player's name.
 		 */
-		public JLabel getNameLabel() {
-			return name;
+		public String getPlayerName() { return name.getText(); }
+
+		public void decrementTime() { decreaseTime(1); }
+
+		public void decreaseTime(int amount) {
+			this.time -= amount;
+			timeLabel.setText(GameScreen.formatTime(time));
 		}
 
-		/**
-		 * Gets the label displaying the remaining time.
-		 *
-		 * @return JLabel representing the player's remaining time.
-		 */
-		public JLabel getTimeLabel() {
-			return timeLabel;
-		}
+		public int getTimeRemaining() { return time; }
 
-		/**
-		 * Gets the label displaying the player's score.
-		 *
-		 * @return JLabel labeling the player's score.
-		 */
-		public JLabel getScore() {
-			return score;
-		}
+		public void increaseScore(int amount) { this.score.setText(Integer.parseInt(score.getText()) + amount + "");}
+
+		public void setScore(int score) { this.score.setText(score+""); }
+
+		public void resetTime() {this.time = defaultTime; timeLabel.setText(GameScreen.formatTime(time));}
 	}
 
 	/**
@@ -550,6 +585,4 @@ public class GameScreen extends JPanel {
 			}
 		}
 	}
-
-
 }

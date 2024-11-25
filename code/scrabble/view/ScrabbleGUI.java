@@ -8,6 +8,7 @@ package scrabble.view;
  */
 
 import scrabble.model.Player;
+import scrabble.model.Tile;
 import scrabble.view.screen.*;
 
 import javax.swing.*;
@@ -37,7 +38,7 @@ public class ScrabbleGUI extends JFrame{
 	private JPanel host		= new HostScreen();
 	private JPanel join 	= new JoinScreen();
 	private JPanel waiting 	= new WaitingScreen();
-	private JPanel game 	= new GameScreen();
+	private JPanel game 	= new JPanel();
 	private JPanel winner 	= new JPanel();	// temp bc these are not yet decided
 
 	private JMenuBar menuBar;
@@ -106,6 +107,10 @@ public class ScrabbleGUI extends JFrame{
 		layoutManager.removeLayoutComponent(game);
 		game = new GameScreen();
 		layoutManager.addLayoutComponent(game, GAME);
+	}
+
+	public void makeGameScreen(String[] playerNames, int gameTime, int playerTime, Tile[] rackTiles) {
+		game = new GameScreen(playerNames, gameTime, playerTime, rackTiles);
 	}
 
 	/**
