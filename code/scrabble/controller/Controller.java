@@ -192,6 +192,7 @@ public class Controller implements PropertyChangeListener  {
 			players[i] = new Player(playerNames[i], playerID[i], i);
 		}
 		model = new Game(players, new Board(), ruleset, self);
+		view.setTitle("Scrabble.\"" + self.getPlayerName()+ "\"");
 		if (model.getCurrentPlayer() != selfID) gameScreenController.setRackButtonsEnabled(false);
 		SwingUtilities.invokeLater(this::showGame);
 	}
@@ -263,14 +264,14 @@ public class Controller implements PropertyChangeListener  {
 		model.playTiles(playerID, tiles);
 		gameScreenController.addToBoard(tiles);
 		Player player = model.getPlayer(playerID);
-		gameScreenController.updateScore(player.getName(), player.getScore());
+		gameScreenController.updateScore(player.getPlayerName(), player.getScore());
 	}
 	private void selfPlayTiles(Tile[] tiles) {
 		// when the player is this application's player.
 		int score = model.playTiles(selfID, tiles);
 		if (score >= 0) {
 			Player p = model.getSelf();
-			gameScreenController.updateScore(p.getName(), p.getScore());
+			gameScreenController.updateScore(p.getPlayerName(), p.getScore());
 			try {
 				messenger.sendMessage(new PlayTiles(selfID, selfID, tiles));
 				gameScreenController.disableLastPlayedTiles();
@@ -372,6 +373,7 @@ public class Controller implements PropertyChangeListener  {
 				gameClose();
 			}
 		});
+
 		gameScreenController.setAudioEnabled(musicEnable, fxEnable);
 		showRulesDialog();
 	}
@@ -624,6 +626,7 @@ public class Controller implements PropertyChangeListener  {
 	 * adds listeners to the individual screens
 	 */
 	private JEditorPane setupRules() {
+		StringBuilder rules = new StringBuilder();
 		rules.append("<html>To play a letter on the board, click on the tile you would like to place, then click " +
 				"on the location in the board where you want to play your tile.<br><br>");
 		rules.append("Rules set by the host:<br><ol>");
@@ -970,7 +973,7 @@ public class Controller implements PropertyChangeListener  {
 
 				// Set volume to a low level.
 				FloatControl gainControl = (FloatControl) clip.getControl(FloatControl.Type.MASTER_GAIN);
-				gainControl.setValue(20f * (float) Math.log10(0.1));
+				gainControl.setValue(20f * (float) Math.log10(0.8));
 
 				clip.loop(Clip.LOOP_CONTINUOUSLY); // Loop music continuously.
 
