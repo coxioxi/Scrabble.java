@@ -1,25 +1,17 @@
 package scrabble.controller;
 
 import scrabble.model.*;
-import scrabble.network.messages.ExitParty;
-import scrabble.network.messages.Message;
+import scrabble.network.messages.*;
 import scrabble.network.PartyHost;
-import scrabble.network.messages.NewPlayer;
-import scrabble.network.messages.PlayTiles;
 import scrabble.view.ScrabbleGUI;
 import scrabble.view.screen.*;
 
 import javax.sound.sampled.*;
 import javax.swing.*;
 import javax.swing.event.HyperlinkEvent;
-import javax.swing.event.HyperlinkListener;
 import java.awt.*;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
-import java.awt.event.WindowListener;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
-import java.beans.PropertyChangeSupport;
+import java.awt.event.*;
+import java.beans.*;
 import java.io.*;
 import java.net.Socket;
 import java.net.SocketException;
@@ -41,7 +33,7 @@ public class Controller implements PropertyChangeListener  {
 	 */
 	public static final int PORT = 0;
 
-	private ScrabbleGUI view;	// maintains the GUI
+	private final ScrabbleGUI view;	// maintains the GUI
 	private Game model;			// maintains Scrabble game data
 
 	private boolean fxEnable = true;
@@ -52,9 +44,8 @@ public class Controller implements PropertyChangeListener  {
 	private GameScreenController gameScreenController;		// makes changes to view.screen.gameScreen
     private HostScreenController hostScreenController;		// makes changes to view.screen.HostScreen
 
-	private final ElevatorMusicPlayer elevatorMusicPlayer = new ElevatorMusicPlayer("Bossa nova.wav");
+	private final ElevatorMusicPlayer elevatorMusicPlayer;
 
-	private StringBuilder rules;
 	private Ruleset ruleset;
 
     /*
@@ -82,9 +73,13 @@ public class Controller implements PropertyChangeListener  {
 				WindowConstants.DO_NOTHING_ON_CLOSE
 		);				// Allow window listeners to handle closing events
 		addListeners(view);
+		elevatorMusicPlayer = new ElevatorMusicPlayer("Bossa nova.wav");
 		this.showMain();
-		rules = new StringBuilder();
 	}
+
+	/**************************************************
+	 * 		Code related to networking and messages   *
+	 **************************************************/
 
 	@Override
 	public void propertyChange(PropertyChangeEvent evt) {
@@ -177,7 +172,8 @@ public class Controller implements PropertyChangeListener  {
 	 * @param playerID the IDs of the players. These should correspond to those in <code>playerNames</code>.
 	 * @param startingTiles the tiles which this player has at the start of the game.
 	 */
-	public void startGame(Ruleset ruleset, String[] playerNames, int[] playerID, Tile[] startingTiles) {
+	public void startGame(Ruleset ruleset, String[] playerNames,
+						  int[] playerID, Tile[] startingTiles) {
 		// add tiles to game and gameScreen
 		// pass ruleset and the other stuff to setUpGameScreen
 		// use the info provided to make players for the game
@@ -238,27 +234,6 @@ public class Controller implements PropertyChangeListener  {
 		else otherPlayTiles(playerID, tiles);
 		gameScreenController.setRackButtonsEnabled(model.getCurrentPlayer() == selfID);
 	}
-
-	public void playTileFx(){
-		if(fxEnable) {
-			FxPlayer fxPlayer = new FxPlayer();
-			fxPlayer.tilePlacementFx();
-		}
-	}
-	public void rightTileFx(){
-		if(fxEnable) {
-			FxPlayer fxPlayer = new FxPlayer();
-			fxPlayer.rightPlacementFx();
-		}
-	}
-
-	public void wrongTileFx(){
-		if(fxEnable){
-		FxPlayer fxPlayer = new FxPlayer();
-		fxPlayer.wrongPlacementFx();
-		}
-	}
-
 	private void otherPlayTiles(int playerID, Tile[] tiles) {
 		// when the player is not from this application.
 		model.playTiles(playerID, tiles);
@@ -282,24 +257,42 @@ public class Controller implements PropertyChangeListener  {
 			rightTileFx();
 		}
 		else {
-			resetLastPlay();
+			gameScreenController.resetLastPlay();
 
 			//Play sound cue for when tiles are wrong
 			wrongTileFx();
 		}
 	}
 
-	/**
-	 * Removes the most recently played tiles from the board and places them in the rack.
-	 * @see GameScreenController#resetLastPlay
-	 */
-	public void resetLastPlay(){ gameScreenController.resetLastPlay(); }
+	public void playTileFx(){
+		if(fxEnable) {
+			FxPlayer fxPlayer = new FxPlayer();
+			fxPlayer.tilePlacementFx();
+		}
+	}
+	public void rightTileFx(){
+		if(fxEnable) {
+			FxPlayer fxPlayer = new FxPlayer();
+			fxPlayer.rightPlacementFx();
+		}
+	}
+	public void wrongTileFx(){
+		if(fxEnable){
+		FxPlayer fxPlayer = new FxPlayer();
+		fxPlayer.wrongPlacementFx();
+		}
+	}
 
 	/**
 	 * Removes a specific tile from this player's rack.
 	 * @param tile the tile to be removed.
 	 */
 	public void removeRackTile(Tile tile) { int removedLocation = gameScreenController.removeRackTile(tile); }
+
+	/* ************************************
+	 * 				getters				  *
+	 **************************************/
+
 
 	/**
 	 * Gets the view.
@@ -359,6 +352,10 @@ public class Controller implements PropertyChangeListener  {
 	 * @param selfID the new ID of this player
 	 */
 	public void setSelfID(int selfID) { this.selfID = selfID; }
+
+	/* * * * * * * * * * * * * * * * * * * * *
+	 * 			GUI management				 *
+	 * * * * * * * * * * * * * * * * * * * * */
 
 	/**
 	 * Changes the state of the GUI to display the game, with the appropriate
@@ -500,6 +497,40 @@ public class Controller implements PropertyChangeListener  {
 
 	public int showConfirmPassTurnDialog() { return JOptionPane.showConfirmDialog(view, "Are you sure you want to pass your turn?", "pass turn confirm", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE); }
 
+	/*
+	 * adds listeners to the individual screens
+	 */
+	private JEditorPane setupRules() {
+		StringBuilder rules = new StringBuilder();
+		rules.append("<html>To play a letter on the board, click on the tile you would like to place, then click " +
+				"on the location in the board where you want to play your tile.<br><br>");
+		rules.append("Rules set by the host:<br><ol>");
+		rules.append("<li>" + (ruleset.getDictionaryFileName().equals("code/dictionary.txt")
+				? "You will be using the normal Scrabble dictionary</li>"
+				: "You will be using the ____ dictionary</li>"));
+		rules.append("<li>The game will have a total time of " + ruleset.getTotalTime() + " minutes</li>");
+		rules.append("<li>Each player will have a time of " + ruleset.getTurnTime() + " minutes per turn</li>");
+		rules.append("<li>Challenges are " + (ruleset.areChallengesAllowed() ? "enabled</li></ol>" : "disabled</li></ol>"));
+
+		rules.append("For more information, visit: " + "<a href=\"https://www.hasbro.com/common/instruct/Scrabble_(2003).pdf\" target=\"_blank\">Scrabble Rules</a></html>");
+
+		return  new JEditorPane("text/html", rules + "");
+	}
+
+	private void addHotlinkListener(JEditorPane ep) {
+		ep.addHyperlinkListener(e -> {
+			if (e.getEventType().equals(HyperlinkEvent.EventType.ACTIVATED)) {
+				try {
+					Desktop.getDesktop().browse(e.getURL().toURI()); // roll your own link launcher or use Desktop if J6+
+				} catch (IOException ex) {
+					throw new RuntimeException(ex);
+				} catch (URISyntaxException ex) {
+					throw new RuntimeException(ex);
+				}
+			}
+		});
+	}
+
 	/**
 	 * Stops the execution of this application.
 	 */
@@ -622,44 +653,6 @@ public class Controller implements PropertyChangeListener  {
 	* 			Private Methods				   *
 	 * * * * * * * * * * * * * * * * * * * * * */
 
-	/*
-	 * adds listeners to the individual screens
-	 */
-	private JEditorPane setupRules() {
-		StringBuilder rules = new StringBuilder();
-		rules.append("<html>To play a letter on the board, click on the tile you would like to place, then click " +
-				"on the location in the board where you want to play your tile.<br><br>");
-		rules.append("Rules set by the host:<br><ol>");
-		rules.append("<li>" + (ruleset.getDictionaryFileName().equals("code/dictionary.txt")
-				? "You will be using the normal Scrabble dictionary</li>"
-				: "You will be using the ____ dictionary</li>"));
-		rules.append("<li>The game will have a total time of " + ruleset.getTotalTime() + " minutes</li>");
-		rules.append("<li>Each player will have a time of " + ruleset.getTurnTime() + " minutes per turn</li>");
-		rules.append("<li>Challenges are " + (ruleset.areChallengesAllowed() ? "enabled</li></ol>" : "disabled</li></ol>"));
-
-		rules.append("For more information, visit: " + "<a href=\"https://www.hasbro.com/common/instruct/Scrabble_(2003).pdf\" target=\"_blank\">Scrabble Rules</a></html>");
-
-		return  new JEditorPane("text/html", rules + "");
-	}
-
-	private void addHotlinkListener(JEditorPane ep) {
-		ep.addHyperlinkListener(new HyperlinkListener() {
-			@Override
-			public void hyperlinkUpdate(HyperlinkEvent e)
-			{
-				if (e.getEventType().equals(HyperlinkEvent.EventType.ACTIVATED)) {
-					try {
-						Desktop.getDesktop().browse(e.getURL().toURI()); // roll your own link launcher or use Desktop if J6+
-					} catch (IOException ex) {
-						throw new RuntimeException(ex);
-					} catch (URISyntaxException ex) {
-						throw new RuntimeException(ex);
-					}
-				}
-			}
-		});
-	}
-
 	private void addListeners(ScrabbleGUI view) {
 		addMenuListeners(view.getMainMenu());
 		addHostListeners(view.getHost());
@@ -669,15 +662,13 @@ public class Controller implements PropertyChangeListener  {
 		gameScreenController.setupMenuListeners(view);
 	}
 
-	private void addWaitingListeners(JPanel waiting) {}
-
 	/*
 	 * adds listeners to the Join screen; allows player to enter name and host info,
 	 * then attempt to join.
 	 */
 	private void addJoinListeners(JoinScreen join) {
         // makes changes to view.screen.JoinScreen
-        JoinScreenController joinScreenController = new JoinScreenController(this, join);
+        new JoinScreenController(this, join);
 	}
 
 	/*
@@ -690,10 +681,7 @@ public class Controller implements PropertyChangeListener  {
 	/*
 	 * adds listeners to the menu screen; allows player to select join, host, or quit, with options for sound
 	 */
-	private void addMenuListeners(ScrabbleGUI.MainMenuScreen mainMenu) {
-        // makes changes to view.screen.MainMenu
-        MainMenuController mainMenuController = new MainMenuController(this, mainMenu);
-	}
+	private void addMenuListeners(ScrabbleGUI.MainMenuScreen mainMenu) { new MainMenuController(this, mainMenu); }
 
 	/*
 	 * handles 'X' being pressed from the main menu.
@@ -926,6 +914,11 @@ public class Controller implements PropertyChangeListener  {
 			parent.toggleMusic();
 		}
 	}
+
+
+	/* * * * * * * * * * * * * * * * *
+	 *		  Audio handling		 *
+	 * * * * * * * * * * * * * * * * */
 
 	/**
 	 * Toggles background music on or off.
