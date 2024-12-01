@@ -48,7 +48,7 @@ public class Player {
 	 * Getter for player name
 	 * @return name of player as String
 	 */
-	public String getName() {
+	public String getPlayerName() {
 		return name;
 	}
 
