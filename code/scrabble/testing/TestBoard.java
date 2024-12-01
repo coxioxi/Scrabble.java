@@ -275,36 +275,36 @@ public class TestBoard {
         System.out.println("First Turn:");
         System.out.println();
 
-        System.out.printf(player1.getName()+"'s Turn:\n");
+        System.out.printf(player1.getPlayerName()+"'s Turn:\n");
         score = board.playTiles(tiles0);
         player1.increaseScore(score);
         System.out.println("Words formed this turn: " + board.getLastWordsPlayed() + "\nTurn Score: " + score);
-        System.out.println(player1.getName()+"'s Total Score: "+ player1.getScore());
+        System.out.println(player1.getPlayerName()+"'s Total Score: "+ player1.getScore());
         System.out.println();
         board.getLastWordsPlayed().clear();
 
-        System.out.printf(player2.getName()+"'s Turn:\n");
+        System.out.printf(player2.getPlayerName()+"'s Turn:\n");
         score = board.playTiles(tiles1);
         player2.increaseScore(score);
         System.out.println("Words formed this turn: " + board.getLastWordsPlayed() + "\nTurn Score: " + score);
-        System.out.println(player2.getName()+"'s Total Score: "+ player2.getScore());
+        System.out.println(player2.getPlayerName()+"'s Total Score: "+ player2.getScore());
         System.out.println();
         board.getLastWordsPlayed().clear();
 
-        System.out.printf(player3.getName()+"'s Turn:\n");
+        System.out.printf(player3.getPlayerName()+"'s Turn:\n");
 
         score = board.playTiles(tiles2);
         player3.increaseScore(score);
         System.out.println("Words formed this turn: " + board.getLastWordsPlayed() + "\nTurn Score: " + score);
-        System.out.println(player3.getName()+"'s Total Score: "+ player3.getScore());
+        System.out.println(player3.getPlayerName()+"'s Total Score: "+ player3.getScore());
         System.out.println();
         board.getLastWordsPlayed().clear();
 
-        System.out.printf(player4.getName()+"'s Turn:\n");
+        System.out.printf(player4.getPlayerName()+"'s Turn:\n");
         score = board.playTiles(tiles7);
         player4.increaseScore(score);
         System.out.println("Words formed this turn: " + board.getLastWordsPlayed() + "\nTurn Score: " + score);
-        System.out.println(player4.getName()+"'s Total Score: "+ player4.getScore());
+        System.out.println(player4.getPlayerName()+"'s Total Score: "+ player4.getScore());
         System.out.println();
         board.getLastWordsPlayed().clear();
 
@@ -314,71 +314,71 @@ public class TestBoard {
 
         System.out.println();
 
-        System.out.printf(player1.getName()+"'s Turn:\n");
+        System.out.printf(player1.getPlayerName()+"'s Turn:\n");
         score = board.playTiles(tiles3);
         player1.increaseScore(score);
         System.out.println("Words formed this turn: " + board.getLastWordsPlayed() + "\nTurn Score: " + score);
-        System.out.println(player1.getName()+"'s Total Score: "+ player1.getScore());
+        System.out.println(player1.getPlayerName()+"'s Total Score: "+ player1.getScore());
         System.out.println();
         board.getLastWordsPlayed().clear();
 
-        System.out.printf(player2.getName()+"'s Turn:\n");
+        System.out.printf(player2.getPlayerName()+"'s Turn:\n");
         score = board.playTiles(tiles5);
         player2.increaseScore(score);
         System.out.println("Words formed this turn: " + board.getLastWordsPlayed() + "\nTurn Score: " + score);
-        System.out.println(player2.getName()+"'s Total Score: "+ player2.getScore());
+        System.out.println(player2.getPlayerName()+"'s Total Score: "+ player2.getScore());
         System.out.println();
         board.getLastWordsPlayed().clear();
 
-        System.out.printf(player3.getName()+"'s Turn:\n");
+        System.out.printf(player3.getPlayerName()+"'s Turn:\n");
 
         score = board.playTiles(tiles8);
         player3.increaseScore(score);
         System.out.println("Words formed this turn: " + board.getLastWordsPlayed() + "\nTurn Score: " + score);
-        System.out.println(player3.getName()+"'s Total Score: "+ player3.getScore());
+        System.out.println(player3.getPlayerName()+"'s Total Score: "+ player3.getScore());
         System.out.println();
         board.getLastWordsPlayed().clear();
 
-        System.out.printf(player4.getName()+"'s Turn:\n");
+        System.out.printf(player4.getPlayerName()+"'s Turn:\n");
         score = board.playTiles(tiles9);
         player4.increaseScore(score);
         System.out.println("Words formed this turn: " + board.getLastWordsPlayed() + "\nTurn Score: " + score);
-        System.out.println(player4.getName()+"'s Total Score: "+ player4.getScore());
+        System.out.println(player4.getPlayerName()+"'s Total Score: "+ player4.getScore());
         System.out.println();
         board.getLastWordsPlayed().clear();
 
         System.out.println("Third Turn:");
         System.out.println();
 
-        System.out.printf(player2.getName()+"'s Turn:\n");
+        System.out.printf(player2.getPlayerName()+"'s Turn:\n");
         score = board.playTiles(tiles11);
         player2.increaseScore(score);
         System.out.println("Words formed this turn: " + board.getLastWordsPlayed() + "\nTurn Score: " + score);
-        System.out.println(player2.getName()+"'s Total Score: "+ player2.getScore());
+        System.out.println(player2.getPlayerName()+"'s Total Score: "+ player2.getScore());
         System.out.println();
         board.getLastWordsPlayed().clear();
 
-        System.out.printf(player3.getName()+"'s Turn:\n");
+        System.out.printf(player3.getPlayerName()+"'s Turn:\n");
         score = board.playTiles(tiles12);
         player3.increaseScore(score);
         System.out.println("Words formed this turn: " + board.getLastWordsPlayed() + "\nTurn Score: " + score);
-        System.out.println(player3.getName()+"'s Total Score: "+ player3.getScore());
+        System.out.println(player3.getPlayerName()+"'s Total Score: "+ player3.getScore());
         System.out.println();
         board.getLastWordsPlayed().clear();
 
-        System.out.printf(player4.getName()+"'s Turn:\n");
+        System.out.printf(player4.getPlayerName()+"'s Turn:\n");
         score = board.playTiles(tiles13);
         player4.increaseScore(score);
         System.out.println("Words formed this turn: " + board.getLastWordsPlayed() + "\nTurn Score: " + score);
-        System.out.println(player4.getName()+"'s Total Score: "+ player4.getScore());
+        System.out.println(player4.getPlayerName()+"'s Total Score: "+ player4.getScore());
         System.out.println();
         board.getLastWordsPlayed().clear();
 
-        System.out.printf(player1.getName()+"'s Turn:\n");
+        System.out.printf(player1.getPlayerName()+"'s Turn:\n");
         score = board.playTiles(tiles14);
         player1.increaseScore(score);
         System.out.println("Words formed this turn: " + board.getLastWordsPlayed() + "\nTurn Score: " + score);
-        System.out.println(player1.getName()+"'s Total Score: "+ player1.getScore());
+        System.out.println(player1.getPlayerName()+"'s Total Score: "+ player1.getScore());
         System.out.println();
         board.getLastWordsPlayed().clear();
 
