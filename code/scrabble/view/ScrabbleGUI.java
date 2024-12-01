@@ -391,10 +391,10 @@ public class ScrabbleGUI extends JFrame{
 			JPanel podium = new JPanel(new GridLayout(4,1, 7, 10));
 
 			// Labels to display each player's rank, name, and score
-			JLabel firstPlaceName = new JLabel("1st: " + players[0].getName() + " | " + players[0].getScore());
-			JLabel secondPlaceName = new JLabel("2nd: " + players[1].getName() + " | " + players[1].getScore());
-			JLabel thirdPlaceName = new JLabel("3rd: " + players[2].getName() + " | " + players[2].getScore());
-			JLabel fourthPlaceName = new JLabel("4th: " + players[3].getName() + " | " + players[3].getScore());
+			JLabel firstPlaceName = new JLabel("1st: " + players[0].getPlayerName() + " | " + players[0].getScore());
+			JLabel secondPlaceName = new JLabel("2nd: " + players[1].getPlayerName() + " | " + players[1].getScore());
+			JLabel thirdPlaceName = new JLabel("3rd: " + players[2].getPlayerName() + " | " + players[2].getScore());
+			JLabel fourthPlaceName = new JLabel("4th: " + players[3].getPlayerName() + " | " + players[3].getScore());
 
 			// Button to return to the main menu
 			JButton returnToMain = new JButton("Return to Main Menu");
