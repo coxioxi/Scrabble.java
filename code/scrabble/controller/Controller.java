@@ -11,6 +11,8 @@ import scrabble.view.screen.*;
 
 import javax.sound.sampled.*;
 import javax.swing.*;
+import javax.swing.event.HyperlinkEvent;
+import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
@@ -20,6 +22,7 @@ import java.beans.PropertyChangeSupport;
 import java.io.*;
 import java.net.Socket;
 import java.net.SocketException;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -43,7 +46,7 @@ public class Controller implements PropertyChangeListener  {
 	private boolean fxEnable = true;
 	private boolean musicEnable = true;
 
-	private Ruleset rules;
+	private Ruleset ruleset;
 
 	private ClientMessenger messenger;		// inner class for communication with host
 	private Socket hostSocket;				// socket to the partyHost
@@ -159,7 +162,7 @@ public class Controller implements PropertyChangeListener  {
 	public void sendRulesToHost(boolean challengesAllowed, String dictionary,
 								int playerTime, int gameTime) {
 		Ruleset ruleset = new Ruleset(gameTime, playerTime, challengesAllowed, dictionary);
-		this.rules = ruleset;
+		this.ruleset = ruleset;
 		host.startGame(ruleset);
 	}
 
@@ -464,8 +467,46 @@ public class Controller implements PropertyChangeListener  {
 	 * Displays the set of rules used for the current game, specified by the
 	 * game's <code>Ruleset</code>.
 	 */
-	public void showRulesDialog() { JOptionPane.showMessageDialog(view, "1.~~~~~~~~~\n2.~~~~~~~~~\n3.~~~~~~~~~~~~\n4.~~~~~~~~~~", "Rules", JOptionPane.INFORMATION_MESSAGE); }
+	public void showRulesDialog() {
+		JOptionPane pane = new JOptionPane();
+		JEditorPane ep = setupRules();
+		ep.setEditable(false);
+		addHotlinkListener(ep);
+		pane.showMessageDialog(view, ep, "Rules", JOptionPane.INFORMATION_MESSAGE);
+	}
+	/*
+	 * adds listeners to the individual screens
+	 */
+	private JEditorPane setupRules() {
+		StringBuilder rules = new StringBuilder();
+		rules.append("<html>To play a letter on the board, click on the tile you would like to place, then click " +
+				"on the location in the board where you want to play your tile.<br><br>");
+		rules.append("Rules set by the host:<br><ol>");
+		rules.append("<li>" + (ruleset.getDictionaryFileName().equals("code/dictionary.txt")
+				? "You will be using the normal Scrabble dictionary</li>"
+				: "You will be using the ____ dictionary</li>"));
+		rules.append("<li>The game will have a total time of " + ruleset.getTotalTime() + " minutes</li>");
+		rules.append("<li>Each player will have a time of " + ruleset.getTurnTime() + " minutes per turn</li>");
+		rules.append("<li>Challenges are " + (ruleset.areChallengesAllowed() ? "enabled</li></ol>" : "disabled</li></ol>"));
 
+		rules.append("For more information, visit: " + "<a href=\"https://www.hasbro.com/common/instruct/Scrabble_(2003).pdf\" target=\"_blank\">Scrabble Rules</a></html>");
+
+		return  new JEditorPane("text/html", rules + "");
+	}
+
+	private void addHotlinkListener(JEditorPane ep) {
+		ep.addHyperlinkListener(e -> {
+			if (e.getEventType().equals(HyperlinkEvent.EventType.ACTIVATED)) {
+				try {
+					Desktop.getDesktop().browse(e.getURL().toURI()); // roll your own link launcher or use Desktop if J6+
+				} catch (IOException ex) {
+					throw new RuntimeException(ex);
+				} catch (URISyntaxException ex) {
+					throw new RuntimeException(ex);
+				}
+			}
+		});
+	}
 	/**
 	 * Displays a warning that the player has not entered their name.
 	 */
