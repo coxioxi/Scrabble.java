@@ -20,7 +20,7 @@ public class GameScreenController {
 	private final Controller parent;
 	private final ScrabbleGUI gui;
 	private GameScreen gameScreen;
-	private GameControls gameControls;
+	private GameScreen.GameControls gameControls;
 	private GameTimeController gameTimeController;
 	private boolean isRackEnabled;
 
@@ -64,7 +64,7 @@ public class GameScreenController {
 		gameScreen.repaint();
 	}
 
-	public void halt() { gameTimeController.cancel(); }
+	public void halt() { if (gameTimeController!=null) gameTimeController.cancel(); }
 
 	/**
 	 * Sets up the action listeners for the menu items
@@ -200,7 +200,7 @@ public class GameScreenController {
 	}
 
 	private void numberSelectChange() {
-		GameControls.ExchangePanel ep = gameControls.getExchangePanel();
+		GameScreen.GameControls.ExchangePanel ep = gameControls.getExchangePanel();
 		ep.enableLetterSelect(ep.getNumberToExchange() != GameScreen.RACK_SIZE);
 	}
 
