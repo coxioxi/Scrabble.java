@@ -187,7 +187,7 @@ public class GameScreenController {
 		gameControls.getMainControlsPanel().addExchangeActionListener(e -> exchangeButtonClick());
 	}
 	private void exchangeButtonClick() {
-		GameControls.ExchangePanel ep = gameControls.getExchangePanel();
+		GameScreen.GameControls.ExchangePanel ep = gameControls.getExchangePanel();
 		ep.removeAllLetters();
 		ep.addLetters(gameControls.getMainControlsPanel().getRackLetters());
 		gameControls.showExchange();
@@ -306,7 +306,7 @@ public class GameScreenController {
 	private void addTilePanelListener(int col) { gameControls.getMainControlsPanel().getRackPanel().addRackTileActionListener(e -> tilePanelClick(col), col); }
 	/* Takes the clicked tile off the rack to place it on the board */
 	private void tilePanelClick(int col) {
-		GameControls.MainControlsPanel.RackPanel rp = gameControls.getMainControlsPanel().getRackPanel();
+		GameScreen.GameControls.MainControlsPanel.RackPanel rp = gameControls.getMainControlsPanel().getRackPanel();
 		if (gameScreen.getValue() instanceof TileButton) {
 			int index = rp.addTileButtonToRack((TileButton) gameScreen.getValue());
 			rp.removeActionListeners(index);
