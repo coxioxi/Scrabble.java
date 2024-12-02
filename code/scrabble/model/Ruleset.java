@@ -76,6 +76,10 @@ public class Ruleset implements Serializable {
 		return turnTime;
 	}
 
+	public String getDictionaryFileName() {
+		return dictionaryFileName;
+	}
+
 	/**
 	 * Getter for challenges enabled
 	 * @return whether challenges are allowed

@@ -135,6 +135,7 @@ public class ExchangeTiles extends Message{
 			tiles.remove(t);
 			controller.removeRackTile(t);
 		}
+		controller.getModel().getSelf().addTiles(newTiles);
 	}
 
 	private void themExecute(Controller controller) {}
