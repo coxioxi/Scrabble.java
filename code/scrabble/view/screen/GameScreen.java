@@ -862,6 +862,25 @@ public class GameScreen extends JPanel {
 
 			public RackPanel getRackPanel() { return rackPanel; }
 
+			public char[] getRackLetters() {
+				RackPanel.TilePanel[] panels = rackPanel.tilePanels;
+				char[] letters = new char[RACK_SIZE];
+				for (int i = 0; i < panels.length; i++) {
+					letters[i] = panels[i].getButton().getText().charAt(0);
+				}
+				return letters;
+			}
+
+			public Tile[] getRackTiles() {
+				char[] characters = getRackLetters();
+				Tile[] tiles = new Tile[characters.length];
+				for (int i = 0; i < characters.length; i++) {
+					tiles[i] = new Tile(Tile.TileScore.valueOf(characters[i] + ""));
+				}
+				return tiles;
+			}
+
+
 			/**
 			 * RackPanel is a JPanel that represents a rack of TilePanels,
 			 * displaying the tiles a player currently holds.
