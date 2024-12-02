@@ -254,7 +254,7 @@ public class Controller implements PropertyChangeListener  {
 		model.playTiles(playerID, tiles);
 		gameScreenController.addToBoard(tiles);
 		Player player = model.getPlayer(playerID);
-		gameScreenController.updateScore(player.getName(), player.getScore());
+		gameScreenController.updateScore(player.getPlayerName(), player.getScore());
 		this.getView().getGame().nextPlayer();
 	}
 	private void selfPlayTiles(Tile[] tiles) {
@@ -262,7 +262,7 @@ public class Controller implements PropertyChangeListener  {
 		int score = model.playTiles(selfID, tiles);
 		if (score >= 0) {
 			Player p = model.getSelf();
-			gameScreenController.updateScore(p.getName(), p.getScore());
+			gameScreenController.updateScore(p.getPlayerName(), p.getScore());
 			try {
 				messenger.sendMessage(new PlayTiles(selfID, selfID, tiles));
 				gameScreenController.disableLastPlayedTiles();
