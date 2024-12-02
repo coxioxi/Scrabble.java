@@ -43,6 +43,8 @@ public class Controller implements PropertyChangeListener  {
 	private boolean fxEnable = true;
 	private boolean musicEnable = true;
 
+	private Ruleset rules;
+
 	private ClientMessenger messenger;		// inner class for communication with host
 	private Socket hostSocket;				// socket to the partyHost
 	private GameScreenController gameScreenController;		// makes changes to view.screen.gameScreen
@@ -157,6 +159,7 @@ public class Controller implements PropertyChangeListener  {
 	public void sendRulesToHost(boolean challengesAllowed, String dictionary,
 								int playerTime, int gameTime) {
 		Ruleset ruleset = new Ruleset(gameTime, playerTime, challengesAllowed, dictionary);
+		this.rules = ruleset;
 		host.startGame(ruleset);
 	}
 
