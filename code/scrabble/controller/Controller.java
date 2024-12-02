@@ -936,7 +936,7 @@ public class Controller implements PropertyChangeListener  {
 		/**
 		 * Stops the music playback.
 		 */
-		private void stopMusic(){clip.stop();}
+		private void stopMusic(){if (clip!=null) clip.stop();}
 
 		/**
 		 * Starts or resumes the music playback.
