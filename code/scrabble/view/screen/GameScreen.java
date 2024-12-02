@@ -258,7 +258,8 @@ public class GameScreen extends JPanel {
 	private static class PlayerPanel extends JPanel {
 
 		// Labels to display player's name, time, and score
-		private final JLabel name;
+		//private final JLabel name;
+		private final String name;
 		private final JLabel timeLabel;
 		private final JLabel score;
 		private final int defaultTime;
@@ -273,14 +274,11 @@ public class GameScreen extends JPanel {
 		 */
 		public PlayerPanel(String playerName, int score, int time) {
 			// Set layout for the panel with two columns and spacing between rows
-			this.setLayout(new GridLayout(3,2,7,10));
+			this.setLayout(new GridLayout(2,2,7,10));
 
 			// Set an etched border for visual separation
-			this.setBorder(BorderFactory.createEtchedBorder());
-
-			// Label for player name and value
-			JLabel playerNameLabel = new JLabel("Player Name:", SwingConstants.RIGHT);
-			name = new JLabel(playerName);
+			this.setBorder(BorderFactory.createTitledBorder(playerName));
+			name = playerName;
 
 			// Label for remaining time, formatted as minutes and seconds
 			JLabel playerTimeLabel = new JLabel("Time:", SwingConstants.RIGHT);
@@ -292,8 +290,8 @@ public class GameScreen extends JPanel {
 			this.score = new JLabel("" + score);
 
 			// Add labels to the panel in the specified layout order
-			this.add(playerNameLabel);
-			this.add(name);
+			//this.add(playerNameLabel);
+			//this.add(name);
 			this.add(playerTimeLabel);
 			this.add(this.timeLabel);
 			this.add(playerScoreLabel);
@@ -305,7 +303,7 @@ public class GameScreen extends JPanel {
 		 *
 		 * @return JLabel labeling the player's name.
 		 */
-		public String getPlayerName() { return name.getText(); }
+		public String getPlayerName() { return name; }
 
 		public void decrementTime() { decreaseTime(1); }
 

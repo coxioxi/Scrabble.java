@@ -15,6 +15,8 @@ import java.awt.*;
  * selecting game options, and viewing players who are waiting to join.
  */
 public class HostScreen extends JPanel {
+    public static final Color[] WAITING_PLAYER_LABEL_COLORS =
+            new Color[] { Color.red.darker(), Color.cyan.darker(), Color.orange.darker(), Color.green.darker()};
 
     public static final String DICTIONARY_PATH = "code/dictionary.txt";
     public static final String DEFAULT_WAITING_TEXT = "  Waiting...  ";
@@ -72,9 +74,11 @@ public class HostScreen extends JPanel {
         this.add(eastPanel, BorderLayout.EAST);
 
         // Panel on the left to display players waiting to join
-        JPanel westPanel = setupBorderedPanel("Players Waiting");
-        westPanel.add(setupPlayersWaiting());
-        this.add(westPanel, BorderLayout.WEST);
+        JPanel centerContainer = new JPanel();
+        JPanel centerPanel = setupBorderedPanel("Players Waiting");
+        centerPanel.add(setupPlayersWaiting());
+        centerContainer.add(centerPanel);
+        this.add(centerContainer, BorderLayout.CENTER);
     }
 
     /**
@@ -83,7 +87,7 @@ public class HostScreen extends JPanel {
      * @param name The name of the player to add.
      */
     public void addPlayerName(String name) {
-        System.out.println("Adding player name to host screen...");
+//        System.out.println("Adding player name to host screen...");
         players[numPlayers].setText(name);
         players[numPlayers].revalidate();
         players[numPlayers].repaint();
@@ -143,8 +147,9 @@ public class HostScreen extends JPanel {
 
         // Initialize each player slot with the default text and a border
         for (int i = 0; i < players.length; i++) {
-            players[i] = new JLabel(DEFAULT_WAITING_TEXT, SwingConstants.CENTER);
+            players[i] = new JLabel('\t'+DEFAULT_WAITING_TEXT+'\t', SwingConstants.CENTER);
             players[i].setBorder(BorderFactory.createEtchedBorder());
+            players[i].setBackground(WAITING_PLAYER_LABEL_COLORS[i]);
             playersWaiting.add(players[i]);
         }
         return playersWaiting;
