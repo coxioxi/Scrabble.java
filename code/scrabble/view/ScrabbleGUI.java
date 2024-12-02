@@ -8,6 +8,7 @@ package scrabble.view;
  */
 
 import scrabble.model.Player;
+import scrabble.model.Tile;
 import scrabble.view.screen.*;
 
 import javax.swing.*;
@@ -37,7 +38,7 @@ public class ScrabbleGUI extends JFrame{
 	private JPanel host		= new HostScreen();
 	private JPanel join 	= new JoinScreen();
 	private JPanel waiting 	= new WaitingScreen();
-	private JPanel game 	= new GameScreen();
+	private JPanel game 	= new JPanel();
 	private JPanel winner 	= new JPanel();	// temp bc these are not yet decided
 
 	private JMenuBar menuBar;
@@ -49,8 +50,6 @@ public class ScrabbleGUI extends JFrame{
 
 	public static boolean audioOn = true;
 	public static boolean fxOn = true;
-
-	private JPanel[] panels = new JPanel[]{mainMenu, host, join, waiting, game, winner};
 
 	private Dimension preferredSize, maximumSize, minimumSize;
 
@@ -66,7 +65,8 @@ public class ScrabbleGUI extends JFrame{
 		contentPane.setLayout(layoutManager);
 
 		// adding screens to frame
-		for (int i = 0; i < this.panels.length; i++) {
+		JPanel[] panels = new JPanel[]{mainMenu, host, join, waiting, game, winner};
+		for (int i = 0; i < panels.length; i++) {
 			contentPane.add(panels[i], SCREEN_NAMES[i]);
 		}
 		layoutManager.first(contentPane);
@@ -99,13 +99,10 @@ public class ScrabbleGUI extends JFrame{
 		menuBar.setVisible(false);
 	}
 
-	/**
-	 *
-	 */
-	public void resetGameScreen() {
-		layoutManager.removeLayoutComponent(game);
-		game = new GameScreen();
-		layoutManager.addLayoutComponent(game, GAME);
+	public void makeGameScreen(String[] playerNames, int gameTime, int playerTime, Tile[] rackTiles) {
+		this.remove(game);
+		game = new GameScreen(playerNames, gameTime, playerTime, rackTiles);
+		this.add(game, GAME);
 	}
 
 	/**
@@ -238,15 +235,6 @@ public class ScrabbleGUI extends JFrame{
 		return (WinnerScreen) winner;
 	}
 
-	/**
-	 * Getter for all panels
-	 *
-	 * @return JPanel array of all panels for the frame
-	 */
-	public JPanel[] getPanels() {
-		return panels;
-	}
-
 	/*
 	setters: change shown panel
 	 */
@@ -323,7 +311,6 @@ public class ScrabbleGUI extends JFrame{
 		layoutManager.removeLayoutComponent(winner);
 		winner = new WinnerScreen(players);
 		layoutManager.addLayoutComponent(winner, PODIUM);
-		panels[panels.length-1] = winner;
 	}
 
 	public void addWaitingPlayer(String playerName) {

@@ -18,8 +18,10 @@ import java.util.Timer;
  */
 public class GameScreenController {
 	private final Controller parent;
-	private final GameScreen gameScreen;
-	private final GameControls gameControls;
+	private final ScrabbleGUI gui;
+	private GameScreen gameScreen;
+	private GameScreen.GameControls gameControls;
+	private GameTimeController gameTimeController;
 	private boolean isRackEnabled;
 
 	/**
@@ -38,13 +40,11 @@ public class GameScreenController {
 	 * Constructor for the Game Screen
 	 *
 	 * @param parent the player's game controller
-	 * @param gameScreen the game screen panel of the user
+	 * @param gui the gui which has a game screen to which listeners will be added
 	 */
-	public GameScreenController(Controller parent, GameScreen gameScreen) {
+	public GameScreenController(Controller parent, ScrabbleGUI gui) {
 		this.parent = parent;
-		this.gameScreen = gameScreen;
-		this.gameControls = gameScreen.getGameControls();
-		addActionListeners();
+		this.gui = gui;
 	}
 
 	/**
@@ -56,10 +56,15 @@ public class GameScreenController {
 	 * @param startingTiles the tiles that will be on the player's starting rack
 	 */
 	public void setupGameItems(String[] names, int gameTime, int turnTime, Tile[] startingTiles) {
-		gameScreen.setupGameItems(names, gameTime, turnTime, startingTiles);
-		addRackTileListeners();
+		gui.makeGameScreen(names, gameTime, turnTime, startingTiles);
+		this.gameScreen = gui.getGame();
+		this.gameControls = gameScreen.getGameControls();
+		gameTimeController = new GameTimeController(gameTime);
+		addActionListeners();
 		gameScreen.repaint();
 	}
+
+	public void halt() { if (gameTimeController!=null) gameTimeController.cancel(); }
 
 	/**
 	 * Sets up the action listeners for the menu items
@@ -202,7 +207,7 @@ public class GameScreenController {
 	}
 
 	private void numberSelectChange() {
-		GameControls.ExchangePanel ep = gameControls.getExchangePanel();
+		GameScreen.GameControls.ExchangePanel ep = gameControls.getExchangePanel();
 		ep.enableLetterSelect(ep.getNumberToExchange() != GameScreen.RACK_SIZE);
 	}
 
@@ -253,6 +258,7 @@ public class GameScreenController {
 	private void addBoardCellPanelListener(int row, int col) {
 		gameScreen.addActionListenerToBoardCell((e -> boardCellClick(row, col)), row, col);
 	}
+
 	/**
 	 * Puts a tile into the cell that is clicked by the player
 	 * If the button in this location is a TileButton, we put it back into the rack
@@ -360,25 +366,21 @@ public class GameScreenController {
 		parent.getView().getFxItem().setSelected(fxEnabled);
 	}
 
-	private static class GameTimeController {
-		private java.util.Timer scheduler;
-		private TimerTask task;
+	private class GameTimeController {
+		private final Timer scheduler;
 
 		public GameTimeController(int gameLength) {
 			// schedule task to run every second for however the game runs.
 			scheduler = new Timer();
-			task = new PlayerTask();
-			scheduler.schedule(task, 0, gameLength* 1000L);
+			scheduler.schedule(
+				new TimerTask() {
+					public void run() { GameScreenController.this.gameScreen.decrementTime();}
+				}, 1000, 1000
+			);
 		}
 
-		private static class PlayerTask extends TimerTask {
-			public PlayerTask() {super();}
-
-			@Override
-			public void run() {
-				// decrease time.
-			}
+		public void cancel() {
+			scheduler.cancel();
 		}
 	}
-
 }
