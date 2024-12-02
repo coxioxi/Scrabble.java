@@ -36,7 +36,7 @@ public class GameScreen extends JPanel {
 
 	private final GameControls gameControls;
 
-	private final PlayerPanel[] playerPanels;
+	private PlayerPanel[] playerPanels;
 	private int currentPlayerIndex;
 
 	// List of tiles that have been played in the current turn
@@ -48,7 +48,6 @@ public class GameScreen extends JPanel {
 	 */
 	public GameScreen() {
 		this.setLayout(new BorderLayout()); // Set layout for the main panel
-		playerPanels = new PlayerPanel[4];
 		gameControls = new GameControls();
 
 		// Initialize and add the panels for different sections of the game screen
@@ -129,13 +128,6 @@ public class GameScreen extends JPanel {
 		return value;
 	}
 
-	/**
-	 * @return The label representing the game timer.
-	 */
-	public JLabel getGameTimeLabel() {
-		return gameTimeLabel;
-	}
-
 	public void updateScore(String playerName, int score) {
 		for (PlayerPanel player : playerPanels) {
 			if (player != null && Objects.equals(player.getPlayerName(), playerName)) {
@@ -153,6 +145,7 @@ public class GameScreen extends JPanel {
 	 */
 	public void setupGameItems(String[] playerNames, int gameTime, int playerTime, Tile[] rackTiles) {
 		// Setup player panels
+		playerPanels = new PlayerPanel[playerNames.length];
 		for (int i = 0; i < playerNames.length; i++) {
 			playerPanels[i] = (PlayerPanel) setupPlayerPanel(playerNames[i], playerTime);
 			if (i == 1 || i == 2) {

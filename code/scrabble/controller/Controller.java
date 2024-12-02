@@ -454,7 +454,7 @@ public class Controller implements PropertyChangeListener  {
 	 * @return An integer representing the choice selected, as specified in <code>JOptionPane</code>.
 	 * @see JOptionPane
 	 */
-	public int showQuitDialog() { return JOptionPane.showConfirmDialog(view, "Are you sure you want to leave?\nYou will not be able to rejoin.", "Quit?", JOptionPane.WARNING_MESSAGE); }
+	public int showQuitDialog() { return JOptionPane.showConfirmDialog(view, "Are you sure you want to leave?\nYou will not be able to rejoin.", "Quit?", JOptionPane.OK_CANCEL_OPTION); }
 
 	/**
 	 * Displays the set of rules used for the current game, specified by the
@@ -614,7 +614,7 @@ public class Controller implements PropertyChangeListener  {
 		addHostListeners(view.getHost());
 		addJoinListeners(view.getJoin());
 
-		this.gameScreenController = new GameScreenController(this, view.getGame());
+		this.gameScreenController = new GameScreenController(this, view);
 		gameScreenController.setupMenuListeners(view);
 	}
 

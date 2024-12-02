@@ -18,8 +18,9 @@ import java.util.Timer;
  */
 public class GameScreenController {
 	private final Controller parent;
-	private final GameScreen gameScreen;
-	private final GameControls gameControls;
+	private final ScrabbleGUI gui;
+	private GameScreen gameScreen;
+	private GameControls gameControls;
 	private GameTimeController gameTimeController;
 	private boolean isRackEnabled;
 
@@ -41,11 +42,9 @@ public class GameScreenController {
 	 * @param parent the player's game controller
 	 * @param gameScreen the game screen panel of the user
 	 */
-	public GameScreenController(Controller parent, GameScreen gameScreen) {
+	public GameScreenController(Controller parent, ScrabbleGUI gui) {
 		this.parent = parent;
-		this.gameScreen = gameScreen;
-		this.gameControls = gameScreen.getGameControls();
-		addActionListeners();
+		this.gui = gui;
 	}
 
 	/**
@@ -57,9 +56,11 @@ public class GameScreenController {
 	 * @param startingTiles the tiles that will be on the player's starting rack
 	 */
 	public void setupGameItems(String[] names, int gameTime, int turnTime, Tile[] startingTiles) {
-		parent.getView().makeGameScreen(names, gameTime, turnTime, startingTiles);
+		gui.makeGameScreen(names, gameTime, turnTime, startingTiles);
+		this.gameScreen = gui.getGame();
+		this.gameControls = gameScreen.getGameControls();
 		gameTimeController = new GameTimeController(gameTime);
-		addRackTileListeners();
+		addActionListeners();
 		gameScreen.repaint();
 	}
 
@@ -349,23 +350,21 @@ public class GameScreenController {
 		parent.getView().getFxItem().setSelected(fxEnabled);
 	}
 
-	private  class GameTimeController {
-		private Timer scheduler;
+	private class GameTimeController {
+		private final Timer scheduler;
 
 		public GameTimeController(int gameLength) {
 			// schedule task to run every second for however the game runs.
 			scheduler = new Timer();
-			scheduler.schedule(new TimerTask() {
-				public void run() { GameScreenController.this.gameScreen.decrementTime();}
-				},
-				1000, 1000
+			scheduler.schedule(
+				new TimerTask() {
+					public void run() { GameScreenController.this.gameScreen.decrementTime();}
+				}, 1000, 1000
 			);
 		}
 
 		public void cancel() {
 			scheduler.cancel();
 		}
-
 	}
-
 }
