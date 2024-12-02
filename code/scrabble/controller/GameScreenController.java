@@ -40,7 +40,7 @@ public class GameScreenController {
 	 * Constructor for the Game Screen
 	 *
 	 * @param parent the player's game controller
-	 * @param gameScreen the game screen panel of the user
+	 * @param gui the gui which has a game screen to which listeners will be added
 	 */
 	public GameScreenController(Controller parent, ScrabbleGUI gui) {
 		this.parent = parent;

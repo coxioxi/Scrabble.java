@@ -227,7 +227,6 @@ public class Controller implements PropertyChangeListener  {
 		if (playerID == selfID) selfPlayTiles(tiles);
 		else otherPlayTiles(playerID, tiles);
 		gameScreenController.setRackButtonsEnabled(model.getCurrentPlayer() == selfID);
-		this.getView().getGame().nextPlayer();
 	}
 
 	public void playTileFx(){
@@ -256,6 +255,7 @@ public class Controller implements PropertyChangeListener  {
 		gameScreenController.addToBoard(tiles);
 		Player player = model.getPlayer(playerID);
 		gameScreenController.updateScore(player.getName(), player.getScore());
+		this.getView().getGame().nextPlayer();
 	}
 	private void selfPlayTiles(Tile[] tiles) {
 		// when the player is this application's player.
@@ -271,6 +271,7 @@ public class Controller implements PropertyChangeListener  {
 			}
 			//Play sound cue for when tiles are right
 			rightTileFx();
+			this.getView().getGame().nextPlayer();
 		}
 		else {
 			resetLastPlay();
