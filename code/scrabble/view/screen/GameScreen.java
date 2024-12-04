@@ -80,7 +80,7 @@ public class GameScreen extends JPanel {
 	}
 
 	public void decreaseTime(int amount) {
-		this.gameTimeRemaining -= amount;
+		this.gameTimeRemaining = Math.max(0, gameTimeRemaining-amount);
 		gameTimeLabel.setText(formatTime(gameTimeRemaining));
 		playerPanels[currentPlayerIndex].decreaseTime(amount);
 	}
@@ -312,7 +312,7 @@ public class GameScreen extends JPanel {
 		public void decrementTime() { decreaseTime(1); }
 
 		public void decreaseTime(int amount) {
-			this.time -= amount;
+			this.time = Math.max(0, this.time-amount);
 			timeLabel.setText(GameScreen.formatTime(time));
 		}
 
