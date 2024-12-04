@@ -162,7 +162,6 @@ public class Controller implements PropertyChangeListener  {
 	public void sendRulesToHost(boolean challengesAllowed, String dictionary,
 								int playerTime, int gameTime) {
 		Ruleset ruleset = new Ruleset(gameTime, playerTime, challengesAllowed, dictionary);
-		this.ruleset = ruleset;
 		host.startGame(ruleset);
 	}
 
@@ -178,7 +177,7 @@ public class Controller implements PropertyChangeListener  {
 		// add tiles to game and gameScreen
 		// pass ruleset and the other stuff to setUpGameScreen
 		// use the info provided to make players for the game
-
+		this.ruleset = ruleset;
 		gameScreenController.setupGameItems(playerNames, ruleset.getTotalTime(), ruleset.getTurnTime(), startingTiles);
 		Player[] players = new Player[playerNames.length];
 		Player.LocalPlayer self = null;
@@ -189,7 +188,7 @@ public class Controller implements PropertyChangeListener  {
 			players[i] = new Player(playerNames[i], playerID[i], i);
 		}
 		model = new Game(players, new Board(), ruleset, self);
-		if (model.getCurrentPlayer() != selfID) gameScreenController.setRackButtonsEnabled(false);
+		if (model.getCurrentPlayer() != selfID) gameScreenController.setGameControlButtonsEnabled(false);
 		SwingUtilities.invokeLater(this::showGame);
 	}
 
@@ -232,7 +231,7 @@ public class Controller implements PropertyChangeListener  {
 	public void playTiles(int playerID, Tile[] tiles) {
 		if (playerID == selfID) selfPlayTiles(tiles);
 		else otherPlayTiles(playerID, tiles);
-		gameScreenController.setRackButtonsEnabled(model.getCurrentPlayer() == selfID);
+		gameScreenController.setGameControlButtonsEnabled(model.getCurrentPlayer() == selfID);
 	}
 
 	public void playTileFx(){
@@ -285,6 +284,12 @@ public class Controller implements PropertyChangeListener  {
 			//Play sound cue for when tiles are wrong
 			wrongTileFx();
 		}
+	}
+
+	public void passTurn(int playerID) {
+		model.passTurn(playerID);
+		view.getGame().nextPlayer();
+		gameScreenController.setGameControlButtonsEnabled(model.getCurrentPlayer() == selfID);
 	}
 
 	/**

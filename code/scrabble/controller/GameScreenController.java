@@ -115,7 +115,7 @@ public class GameScreenController {
 		gameControls.getMainControlsPanel().getRackPanel().addTilesToRack(tiles);
 		removeRackTileListeners();
 		addRackTileListeners();
-		setRackButtonsEnabled(this.isRackEnabled);
+		setGameControlButtonsEnabled(this.isRackEnabled);
 	}
 
 	/**
@@ -143,9 +143,9 @@ public class GameScreenController {
 	 *
 	 * @param enabled the boolean variable that says if it should be disabled or not
 	 */
-	public void setRackButtonsEnabled(boolean enabled) {
+	public void setGameControlButtonsEnabled(boolean enabled) {
 		this.isRackEnabled = enabled;
-		gameControls.getMainControlsPanel().getRackPanel().setRackButtonsEnabled(enabled);
+		gameControls.getMainControlsPanel().setButtonsEnabled(enabled);
 	}
 
 	/*

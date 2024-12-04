@@ -172,6 +172,12 @@ public class GameScreen extends JPanel {
 		playerPanels[currentPlayerIndex].setEnabled(false);
 		this.currentPlayerIndex++;
 		this.currentPlayerIndex %= playerPanels.length;
+		playerPanels[currentPlayerIndex].setEnabled(true);
+	}
+
+	public void passTurn() {
+
+
 	}
 
 	public void addToBoard(Tile[] tiles) {
@@ -863,6 +869,13 @@ public class GameScreen extends JPanel {
 			public JButton getChallengeButton() { return challengeButton; }
 
 			public RackPanel getRackPanel() { return rackPanel; }
+
+			public void setButtonsEnabled(boolean enabled) {
+				submitButton.setEnabled(enabled);
+				passButton.setEnabled(enabled);
+				exchangeButton.setEnabled(enabled);
+				rackPanel.setRackButtonsEnabled(enabled);
+			}
 
 			public char[] getRackLetters() {
 				RackPanel.TilePanel[] panels = rackPanel.tilePanels;

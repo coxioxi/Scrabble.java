@@ -17,7 +17,7 @@ import java.io.Serial;
  */
 public class PassTurn extends Message{
 	@Serial
-	private static final long serialVersionUID = 6L;
+	private static final long serialVersionUID = 25L;
 	private final int playerID;
 
 	/**
@@ -51,8 +51,8 @@ public class PassTurn extends Message{
 	@Override
 	public void execute(Controller controller) {
 		try {
-			controller.getMessenger().sendMessage(this);
-			controller.getModel().passTurn(playerID);
+			if(controller.getSelfID() == this.playerID) controller.getMessenger().sendMessage(this);
+			controller.passTurn(playerID);
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
@@ -67,9 +67,7 @@ public class PassTurn extends Message{
 	 */
 	@Override
 	public void execute(PartyHost partyHost) {
-		PassTurn passTurn = new PassTurn(PartyHost.HOST_ID, this.playerID);
 		try {
-			partyHost.sendMessage(this.playerID, passTurn);
 			partyHost.sendToAllButID(this.playerID, this);
 		} catch (IOException e) {
 			throw new RuntimeException(e);
