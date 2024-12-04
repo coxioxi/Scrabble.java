@@ -147,7 +147,7 @@ public class Game {
 
 	// Getter for the current player's index
 	public int getCurrentPlayer() {
-		return currentPlayer;
+		return players[currentPlayer].getID();
 	}
 
 	// Set the current player index
