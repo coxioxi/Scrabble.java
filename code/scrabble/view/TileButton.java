@@ -16,7 +16,8 @@ import java.awt.*;
  * A JButton representing a tile in the Scrabble game, displaying both the letter and its score.
  */
 public class TileButton extends JButton {
-    private Tile.TileScore letterScore; // The score and letter associated with this tile.
+    private Tile tile;
+    private Tile.TileScore letterScore;
     private final Font scoreFont; // The font used for displaying the score.
 
     /**
@@ -30,6 +31,14 @@ public class TileButton extends JButton {
         this.letterScore = letterScore;
 
         // Set the font size for the score and main button text.
+        scoreFont = getFont().deriveFont(8f);
+        setFont(getFont().deriveFont(Font.BOLD, 12f));
+    }
+
+    public TileButton(Tile tile) {
+        super(tile.getLetter() + "");
+        this.tile = tile;
+
         scoreFont = getFont().deriveFont(8f);
         setFont(getFont().deriveFont(Font.BOLD, 12f));
     }
@@ -58,12 +67,8 @@ public class TileButton extends JButton {
         g2.setFont(scoreFont);
 
         // Draw the score near the bottom-right corner of the tile.
-        if (this.letterScore != null) {
-            g2.drawString(letterScore.getScore() + "", getWidth() / 2 + 5, getHeight() / 2 + 8);
-        }
-        else {
-            g2.drawString("_", getWidth() / 2 + 8, getHeight() / 2 + 8);
-        }
+        g2.drawString(tile.getScore() + "", getWidth() / 2 + 5, getHeight() / 2 + 8);
+
         // Dispose of the Graphics object to free resources.
         g2.dispose();
     }

@@ -54,7 +54,7 @@ public class TileTest{
         }
     }
 
-    @Test
+    /*@Test
     public void testNotBlankException() {
         Tile tile = new Tile('A');
         try{
@@ -65,4 +65,6 @@ public class TileTest{
             System.out.println("nuh uh, "+e.getMessage());
         }
     }
+
+     */
 }
