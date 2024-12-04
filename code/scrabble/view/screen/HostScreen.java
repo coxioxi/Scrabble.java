@@ -8,6 +8,7 @@ package scrabble.view.screen;
  */
 
 import javax.swing.*;
+import javax.swing.border.TitledBorder;
 import java.awt.*;
 
 /**
@@ -57,6 +58,7 @@ public class HostScreen extends JPanel {
 
         // Input field for player's name and button to host the game
         hostButton = new JButton("Host");
+        hostButton.setFont(getFont().deriveFont(Font.PLAIN, 16f));
 
         // Panel at the bottom for the host button
         JPanel southPanel = new JPanel(new FlowLayout());
@@ -74,10 +76,19 @@ public class HostScreen extends JPanel {
         this.add(eastPanel, BorderLayout.EAST);
 
         // Panel on the left to display players waiting to join
-        JPanel centerContainer = new JPanel();
+        JPanel centerContainer = new JPanel(new GridBagLayout());
+        GridBagConstraints c = new GridBagConstraints();
         JPanel centerPanel = setupBorderedPanel("Players Waiting");
         centerPanel.add(setupPlayersWaiting());
-        centerContainer.add(centerPanel);
+        c.fill = GridBagConstraints.NONE;
+        c.weightx = 1.0;
+        c.weighty = 1.0;
+        c.gridwidth = 1;
+        c.gridheight = 2;
+        c.anchor = GridBagConstraints.CENTER;
+        c.ipadx = 25;
+        c.ipady = 25;
+        centerContainer.add(centerPanel, c);
         this.add(centerContainer, BorderLayout.CENTER);
     }
 
@@ -112,7 +123,10 @@ public class HostScreen extends JPanel {
      */
     private JPanel setupBorderedPanel(String title) {
         JPanel panel = new JPanel(new FlowLayout());
-        panel.setBorder(BorderFactory.createTitledBorder(title));
+        panel.setBorder(
+                BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), title, TitledBorder.LEFT,
+                TitledBorder.TOP, getFont().deriveFont(Font.PLAIN, 18f), Color.darkGray)
+        );
         return panel;
     }
 
@@ -125,9 +139,13 @@ public class HostScreen extends JPanel {
         JPanel nameAndIP = new JPanel(new GridLayout(2,2,7,10));
 
         JLabel yourIP = new JLabel("Your IP Address:", SwingConstants.RIGHT);
+        yourIP.setFont(getFont().deriveFont(Font.PLAIN, 18f));
         hostsIP = new JLabel("**Host's IP**");
+        hostsIP.setFont(getFont().deriveFont(Font.PLAIN, 18f));
         JLabel port = new JLabel("Port:", SwingConstants.RIGHT);
+        port.setFont(getFont().deriveFont(Font.PLAIN, 18f));
         hostPort = new JLabel("**Port**");
+        hostPort.setFont(getFont().deriveFont(Font.PLAIN, 18f));
 
         nameAndIP.add(yourIP);
         nameAndIP.add(hostsIP);
@@ -147,9 +165,11 @@ public class HostScreen extends JPanel {
 
         // Initialize each player slot with the default text and a border
         for (int i = 0; i < players.length; i++) {
-            players[i] = new JLabel('\t'+DEFAULT_WAITING_TEXT+'\t', SwingConstants.CENTER);
+            players[i] = new JLabel(DEFAULT_WAITING_TEXT, SwingConstants.CENTER);
+            players[i].setFont(getFont().deriveFont(Font.PLAIN, 24f));
             players[i].setBorder(BorderFactory.createEtchedBorder());
             players[i].setBackground(WAITING_PLAYER_LABEL_COLORS[i]);
+            players[i].setSize(50, 20);
             playersWaiting.add(players[i]);
         }
         return playersWaiting;
@@ -166,16 +186,24 @@ public class HostScreen extends JPanel {
 
         // Labels and combo boxes for each customization option
         JLabel challengeLabel = new JLabel("Challenges Allowed:", SwingConstants.RIGHT);
+        challengeLabel.setFont(getFont().deriveFont(Font.PLAIN, 18f));
         challengeBox = new JComboBox<>(challengeChoices);
+        challengeBox.setFont(getFont().deriveFont(Font.PLAIN, 18f));
         challengeLabel.setEnabled(false);
         challengeBox.setEnabled(false);
         JLabel dictionaryLabel = new JLabel("Dictionary Used:", SwingConstants.RIGHT);
+        dictionaryLabel.setFont(getFont().deriveFont(Font.PLAIN, 18f));
         dictionaryBox = new JComboBox<>(dictionaryChoices);
+        dictionaryBox.setFont(getFont().deriveFont(Font.PLAIN, 18f));
         dictionaryBox.setEditable(false);
         JLabel playerTimeLabel = new JLabel("Player Time:", SwingConstants.RIGHT);
+        playerTimeLabel.setFont(getFont().deriveFont(Font.PLAIN, 18f));
         playerTimeBox = new JComboBox<>(playerTimeChoices);
+        playerTimeBox.setFont(getFont().deriveFont(Font.PLAIN, 18f));
         JLabel gameTimeLabel = new JLabel("Game Time:", SwingConstants.RIGHT);
+        gameTimeLabel.setFont(getFont().deriveFont(Font.PLAIN, 18f));
         gameTimeBox = new JComboBox<>(gameTimeChoices);
+        gameTimeBox.setFont(getFont().deriveFont(Font.PLAIN, 18f));
 
         // Adding labels and combo boxes to the panel
         customizations.add(challengeLabel);
