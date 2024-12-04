@@ -24,6 +24,7 @@ import java.net.Socket;
 import java.net.SocketException;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 
@@ -177,8 +178,9 @@ public class Controller implements PropertyChangeListener  {
 		// add tiles to game and gameScreen
 		// pass ruleset and the other stuff to setUpGameScreen
 		// use the info provided to make players for the game
+		System.out.println("Controller#startGame: \n\t" + "Names: " + Arrays.toString(playerNames) + "\n\tIDs: " + Arrays.toString(playerID));
 		this.ruleset = ruleset;
-		gameScreenController.setupGameItems(playerNames, ruleset.getTotalTime(), ruleset.getTurnTime(), startingTiles);
+		gameScreenController.setupGameItems(playerNames, ruleset.getTotalTime(), ruleset.getTurnTime(), startingTiles);	//good
 		Player[] players = new Player[playerNames.length];
 		Player.LocalPlayer self = null;
 		for (int i = 0; i < players.length; i++) {
@@ -188,7 +190,7 @@ public class Controller implements PropertyChangeListener  {
 			players[i] = new Player(playerNames[i], playerID[i], i);
 		}
 		model = new Game(players, new Board(), ruleset, self);
-		if (model.getCurrentPlayer() != selfID) gameScreenController.setGameControlButtonsEnabled(false);
+		gameScreenController.setGameControlButtonsEnabled(model.getCurrentPlayer() == selfID);
 		SwingUtilities.invokeLater(this::showGame);
 	}
 

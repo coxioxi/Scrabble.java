@@ -67,10 +67,12 @@ public class StartGame extends Message {
 		// then, send the rules to the gameScreen via sendRules() in controller
 		// then, set up the rack for the player in gameScreen
 		String[] playerNames = new String[playerInfo.size()];
-		for(Integer turn: getPlayerInfo().keySet()){
-			Iterator<Integer> iterator= playerInfo.get(turn).keySet().iterator();
-			playerIDs[turn] = iterator.next();
+		for(Integer turn : getPlayerInfo().keySet()){
+
+			Iterator<Integer> playerIdIterator = playerInfo.get(turn).keySet().iterator();
+			playerIDs[turn] = playerIdIterator.next();
 			playerNames[turn] = getPlayerInfo().get(turn).get(playerIDs[turn]);
+			System.out.println("message.StartGame#execute: \n\tTurn: " + turn + "\tID: " + playerIDs[turn] + "\tName: " + playerNames[turn]);
 		}
 		controller.startGame(ruleset, playerNames, playerIDs, startingTiles);
 	}

@@ -131,17 +131,11 @@ public class ExchangeTiles extends Message{
 			// halt the messenger thread and notify the client that the game is over.
 			controller.getMessenger().halt();
 		}
+
 		System.out.println("Called exchange execute");
-		//removing tiles from the rack
-		//ArrayList<Tile> tiles = controller.getModel().getSelf().getRack();
 		for (Tile t : toExchange) {
-			System.out.println(".");
-			//tiles.remove(t);
 			controller.removeRackTile(t);
 		}
-		//controller.getModel().getSelf().addTiles(newTiles);
-		GameScreen gameScreen = new GameScreen();
-		gameScreen.addExchangedTiles(newTiles);
 	}
 
 	private void themExecute(Controller controller) {}

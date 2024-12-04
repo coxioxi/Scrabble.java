@@ -47,7 +47,7 @@ public class GameScreen extends JPanel {
 	/**
 	 * Default constructor that sets up the GameScreen layout and initializes the UI components.
 	 */
-	public GameScreen() {
+	private GameScreen() {
 		this.setLayout(new BorderLayout()); // Set layout for the main panel
 		gameControls = new GameControls();
 
@@ -136,7 +136,7 @@ public class GameScreen extends JPanel {
 	public void updateScore(String playerName, int score) {
 		for (PlayerPanel player : playerPanels) {
 			if (player != null && Objects.equals(player.getPlayerName(), playerName)) {
-				player.setScore(score);
+				player.setScoreLabel(score);
 			}
 		}
 	}
@@ -271,7 +271,7 @@ public class GameScreen extends JPanel {
 		//private final JLabel name;
 		private final String name;
 		private final JLabel timeLabel;
-		private final JLabel score;
+		private final JLabel scoreLabel;
 		private final int defaultTime;
 		private int time;
 
@@ -297,7 +297,7 @@ public class GameScreen extends JPanel {
 
 			// Label for player's score
 			JLabel playerScoreLabel = new JLabel("Score:", SwingConstants.RIGHT);
-			this.score = new JLabel("" + score);
+			this.scoreLabel = new JLabel("" + score);
 
 			// Add labels to the panel in the specified layout order
 			//this.add(playerNameLabel);
@@ -305,7 +305,7 @@ public class GameScreen extends JPanel {
 			this.add(playerTimeLabel);
 			this.add(this.timeLabel);
 			this.add(playerScoreLabel);
-			this.add(this.score);
+			this.add(this.scoreLabel);
 		}
 
 		/**
@@ -324,11 +324,17 @@ public class GameScreen extends JPanel {
 
 		public int getTimeRemaining() { return time; }
 
-		public void increaseScore(int amount) { this.score.setText(Integer.parseInt(score.getText()) + amount + "");}
+		public void increaseScore(int amount) { this.scoreLabel.setText(Integer.parseInt(scoreLabel.getText()) + amount + "");}
 
-		public void setScore(int score) { this.score.setText(score+""); }
+		public void setScoreLabel(int score) { this.scoreLabel.setText(score+""); }
 
 		public void resetTime() {this.time = defaultTime; timeLabel.setText(GameScreen.formatTime(time));}
+
+		public void setEnabled(boolean enabled) {
+			super.setEnabled(enabled);
+			this.timeLabel.setEnabled(enabled);
+			this.scoreLabel.setEnabled(enabled);
+		}
 	}
 
 	/**
