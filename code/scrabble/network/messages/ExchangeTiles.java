@@ -104,13 +104,11 @@ public class ExchangeTiles extends Message{
 	@Override
 	public void execute(PartyHost partyHost) {
 		newTiles = partyHost.getTiles(toExchange.length);
-		ExchangeTiles tiles = new ExchangeTiles(PartyHost.HOST_ID, this.playerID, newTiles);
+		NewTiles newTilesMessage = new NewTiles(this.getSenderID(), newTiles);
 		try{
-			//send tiles to be exchanged
-			partyHost.sendMessage(this.playerID, tiles);
-
 			//send exchange message to all players but itself
 			partyHost.sendToAllButID(this.playerID, this);
+			partyHost.sendMessage(this.playerID, newTilesMessage);
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
@@ -131,11 +129,7 @@ public class ExchangeTiles extends Message{
 			// halt the messenger thread and notify the client that the game is over.
 			controller.getMessenger().halt();
 		}
-
-		System.out.println("Called exchange execute");
-		for (Tile t : toExchange) {
-			controller.removeRackTile(t);
-		}
+		controller.exchangeTilesTurn(toExchange);
 	}
 
 	private void themExecute(Controller controller) {}

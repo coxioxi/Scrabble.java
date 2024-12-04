@@ -293,6 +293,15 @@ public class Controller implements PropertyChangeListener  {
 		gameScreenController.setGameControlButtonsEnabled(model.getCurrentPlayer() == selfID);
 	}
 
+	public void exchangeTilesTurn(Tile[] tiles) {
+		model.nextTurn();
+		view.getGame().nextPlayer();
+		gameScreenController.setGameControlButtonsEnabled(model.getCurrentPlayer() == selfID);
+		for (Tile t : tiles) {
+			this.removeRackTile(t);
+		}
+	}
+
 	/**
 	 * Removes the most recently played tiles from the board and places them in the rack.
 	 * @see GameScreenController#resetLastPlay
