@@ -200,7 +200,11 @@ public class Controller implements PropertyChangeListener  {
 	 * @param tiles the tiles to add.
 	 */
 	public void addTiles(Tile[] tiles) {
+		System.out.println("Controller#addTiles:\n\t");
+		ArrayList<Tile> toPrint = new ArrayList<>(Arrays.stream(tiles).toList());
+		toPrint.forEach(System.out::println);
 		model.addTiles(tiles);
+
 		gameScreenController.addRackTiles(tiles);
 	}
 

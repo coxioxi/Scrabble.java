@@ -112,8 +112,8 @@ public class GameScreenController {
 	 * @param tiles the Tile objects that are the player's new tiles
 	 */
 	public void addRackTiles(Tile[] tiles) {
-		gameControls.getMainControlsPanel().getRackPanel().addTilesToRack(tiles);
 		removeRackTileListeners();
+		gameControls.getMainControlsPanel().getRackPanel().addTilesToRack(tiles);
 		addRackTileListeners();
 		setGameControlButtonsEnabled(this.isRackEnabled);
 	}
@@ -337,6 +337,11 @@ public class GameScreenController {
 		}
 	}
 
+	private void passTurn() {
+		PassTurn passTurn = new PassTurn(this.parent.getSelfID(), this.parent.getSelfID());
+		passTurn.execute(this.parent);
+	}
+
 	/**
 	 * Action listener for the rules item on the menu of the frame
 	 */
@@ -374,7 +379,11 @@ public class GameScreenController {
 			scheduler = new Timer();
 			scheduler.schedule(
 				new TimerTask() {
-					public void run() { GameScreenController.this.gameScreen.decrementTime();}
+					public void run() {
+						GameScreenController.this.gameScreen.decrementTime();
+						if (GameScreenController.this.gameScreen.currentPlayerTime() == 0)
+							GameScreenController.this.passTurn();
+					}
 				}, 1000, 1000
 			);
 		}

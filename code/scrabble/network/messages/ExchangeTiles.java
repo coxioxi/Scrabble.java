@@ -15,6 +15,7 @@ import scrabble.view.screen.GameScreen;
 import java.io.IOException;
 import java.io.Serial;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 /**
  * Message sent when a player chooses to exchange one or all tiles from their rack.
@@ -103,6 +104,8 @@ public class ExchangeTiles extends Message{
 	@Override
 	public void execute(PartyHost partyHost) {
 		newTiles = partyHost.getTiles(toExchange.length);
+		ArrayList<Tile> tiles = new ArrayList<>(Arrays.stream(newTiles).toList());
+		tiles.forEach(System.out::println);
 		NewTiles newTilesMessage = new NewTiles(this.getSenderID(), newTiles);
 
 		//send exchange message to all players but itself

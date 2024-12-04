@@ -85,6 +85,10 @@ public class GameScreen extends JPanel {
 		playerPanels[currentPlayerIndex].decreaseTime(amount);
 	}
 
+	public int currentPlayerTime() {
+		return playerPanels[currentPlayerIndex].getTimeRemaining();
+	}
+
 
 	public GameControls getGameControls() { return gameControls; }
 
@@ -965,8 +969,10 @@ public class GameScreen extends JPanel {
 						if (!(tilePanels[i].getButton() instanceof TileButton)) {
 							setButton(button, i);
 							searching = false;
+							System.out.println("GS$MCP$RackPanel#addToRack: blank spot found");
 						}
 					}
+					if (searching) System.out.println("GS$MCP$RackPanel#addToRack: no blank spot found");
 				}
 
 				public int addTileButtonToRack(TileButton t) {
