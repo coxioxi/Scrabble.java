@@ -67,10 +67,6 @@ public class PassTurn extends Message{
 	 */
 	@Override
 	public void execute(PartyHost partyHost) {
-		try {
-			partyHost.sendToAllButID(this.playerID, this);
-		} catch (IOException e) {
-			throw new RuntimeException(e);
-		}
+		partyHost.sendToAllButID(this.playerID, this);
 	}
 }

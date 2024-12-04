@@ -81,11 +81,8 @@ public class PlayTiles extends Message {
 	public void execute(PartyHost partyHost) {
 		//get new tiles and send it back to the client (this message playerID)
 		NewTiles newTiles = new NewTiles(PartyHost.HOST_ID, partyHost.getTiles(tiles.length));
-		try{
-			partyHost.sendMessage(this.playerID, newTiles);
-			partyHost.sendToAllButID(this.playerID, this);
-		} catch (IOException e) {
-			throw new RuntimeException(e);
-		}
+
+		partyHost.sendMessage(this.playerID, newTiles);
+		partyHost.sendToAllButID(this.playerID, this);
 	}
 }

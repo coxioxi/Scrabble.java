@@ -56,7 +56,10 @@ public class ExitParty extends Message {
 	@Override
 	public void execute(Controller controller) {
 		try {
-			controller.getMessenger().sendMessage(this);
+			if (controller.getSelfID() == this.playerID) controller.getMessenger().sendMessage(this);
+			else {
+				System.out.println("message.ExitParty#execute(Controller):\n\tplease implement me.");
+			}
 		} catch (IOException ignore) {
 		}
 	}
@@ -71,10 +74,6 @@ public class ExitParty extends Message {
 	@Override
 	public void execute(PartyHost partyHost) {
 		//get new tiles and send it back to the client (this message playerID)
-		try{
-			partyHost.sendToAllButID(this.playerID, this);
-		} catch (IOException e) {
-			throw new RuntimeException(e);
-		}
+		partyHost.exit(this.playerID);
 	}
 }

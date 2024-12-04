@@ -78,17 +78,10 @@ public class NewPlayer extends Message implements Serializable {
         for (String name : partyHost.getPlayerNames()) {
             int selfID = partyHost.getMessagePlayerID();
             NewPlayer newPlayer = new NewPlayer(PartyHost.HOST_ID, selfID, name);
-			try {
-				partyHost.sendMessage(selfID, newPlayer);
-			} catch (IOException e) {
-				throw new RuntimeException(e);
-			}
+
+			partyHost.sendMessage(selfID, newPlayer);
 		}
         partyHost.addPlayerName(this.playerName);
-		try {
-			partyHost.sendToAllButID(this.playerID, this);
-		} catch (IOException e) {
-			throw new RuntimeException(e);
-		}
+		partyHost.sendToAllButID(this.playerID, this);
 	}
 }

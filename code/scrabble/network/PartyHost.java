@@ -151,7 +151,7 @@ public class PartyHost extends Thread implements PropertyChangeListener {
 	}
 
 	public int getMessagePlayerID() {
-		return receiverToIdMap.get((HostReceiver) evt.getSource());
+		return ((HostReceiver) evt.getSource()).getID();
 	}
 
 	public void addPlayerName(String name){
@@ -164,7 +164,7 @@ public class PartyHost extends Thread implements PropertyChangeListener {
 	}
 
 	private int getPlayerID(HostReceiver hr) {
-		return receiverToIdMap.get(hr);
+		return hr.getID();
 	}
 
 	/**
@@ -174,7 +174,7 @@ public class PartyHost extends Thread implements PropertyChangeListener {
 	 * @param message the message to be sent.
 	 * @throws IOException when an error occurs writing to client
 	 */
-	public void sendMessage(int playerID, Message message) throws IOException {
+	public void sendMessage(int playerID, Message message) {
 		playerIdToMessenger.get(playerID).sendMessage(message);
 	}
 
@@ -184,7 +184,7 @@ public class PartyHost extends Thread implements PropertyChangeListener {
 	 * @param message the message to send.
 	 * @throws IOException when the message cannot be sent.
 	 */
-	public void sendToAllButID(int playerID, Message message) throws IOException {
+	public void sendToAllButID(int playerID, Message message) {
 		for (HostReceiver host : receiverToIdMap.keySet()) {
 			if(!host.equals(playerIdToMessenger.get(playerID))) {
 				host.sendMessage(message);
@@ -223,16 +223,15 @@ public class PartyHost extends Thread implements PropertyChangeListener {
 			// establish connection with the client
 			Socket client = server.accept();
 
-			HostReceiver clientHandler = new HostReceiver(client, this);
-
-			// start the thread
-			new Thread(clientHandler).start();
+			int index = receiverToIdMap.size();
+			HostReceiver clientHandler = new HostReceiver(client, this, index);
 
 			//populate playerIdMap
-			int index = receiverToIdMap.size();
 			receiverToIdMap.put(clientHandler, index);
 			playerIdToMessenger.put(index, clientHandler);
 			clientHandler.sendMessage(new AssignID(HOST_ID, index));
+
+			new Thread(clientHandler).start();
 		}
 		catch (SocketTimeoutException ignore) {}
 		catch (IOException e) {
@@ -287,6 +286,15 @@ public class PartyHost extends Thread implements PropertyChangeListener {
 		}
 	}
 
+	public void exit(int playerID) {
+		HostReceiver exiting = playerIdToMessenger.remove(playerID);
+		playerIdToNameMap.remove(playerID);
+		tileBag.addTiles(receiverToTilesMap.remove(exiting).toArray(new Tile[0]));
+		receiverToIdMap.remove(exiting);
+		exiting.halt();
+		sendToAllButID(playerID, new ExitParty(playerID, playerID));
+	}
+
 	/**
 	 * ClientHandler is responsible for listening for new messages coming in from the clients
 	 * It maintains a reference to the <code>PartyHost</code> to notify it when messages are received.
@@ -301,10 +309,12 @@ public class PartyHost extends Thread implements PropertyChangeListener {
 	 */
 	private static class HostReceiver implements Runnable {
 
-		private final PropertyChangeSupport notifier;		// notifies listener of messages received
 		private final Socket socket; 	// the socket to the client
 		private final ObjectInputStream inputStream;	// the stream from which message objects are read
 		private final ObjectOutputStream outputStream;
+
+		private final PropertyChangeSupport notifier;		// notifies listener of messages received
+		private final int ID;
 		private boolean listening;	// whether we are listening for new messages from client
 
 		/**
@@ -314,13 +324,15 @@ public class PartyHost extends Thread implements PropertyChangeListener {
 		 * @throws IOException if an error occurs in getting the <code>socket</code>'s
 		 * 	 			streams.
 		 */
-		public HostReceiver(Socket socket, PropertyChangeListener listener)
+		public HostReceiver(Socket socket, PropertyChangeListener listener, int ID)
 				throws IOException {
 			this.socket = socket;
 			this.inputStream = new ObjectInputStream(socket.getInputStream());
 			this.outputStream = new ObjectOutputStream(socket.getOutputStream());
+
 			notifier = new PropertyChangeSupport(this);
 			notifier.addPropertyChangeListener(listener);
+			this.ID = ID;
 			listening = false;
 		}
 
@@ -329,6 +341,12 @@ public class PartyHost extends Thread implements PropertyChangeListener {
 		 * @return the socket.
 		 */
 		public Socket getSocket() { return socket; }
+
+		/**
+		 * Gets the ID of the player to which this object is listening.
+		 * @return the ID of the player.
+		 */
+		public int getID() { return ID; }
 
 		/**
 		 * Listens for messages from the client and sends them to the observer.
@@ -348,8 +366,7 @@ public class PartyHost extends Thread implements PropertyChangeListener {
 					newMessage = (Message) inputStream.readObject();
 				} catch (EOFException | SocketException e) {
 					// Client has closed socket.
-					PartyHost ph = (PartyHost) notifier.getPropertyChangeListeners()[0];
-					newMessage = new ExitParty(ph.getPlayerID(this), ph.getPlayerID(this));
+					newMessage = new ExitParty(this.ID, this.ID);
 					this.halt();
 				} catch (IOException | ClassNotFoundException e) {
 					throw new RuntimeException(e);
@@ -361,9 +378,7 @@ public class PartyHost extends Thread implements PropertyChangeListener {
 			// we have stopped listening. close streams
 			try {
 				closeStreams();
-			} catch (IOException e) {
-				throw new RuntimeException(e);
-			}
+			} catch (IOException ignore) {}
 		}
 
 		// closes socket and associated streams
@@ -377,11 +392,15 @@ public class PartyHost extends Thread implements PropertyChangeListener {
 		/**
 		 * Sends a message to the client associated with this object.
 		 * @param message the message to send. Must be non-null.
-		 * @throws IOException when an error occurs in writing to client stream.
 		 */
-		public void sendMessage(Message message) throws IOException {
-			outputStream.writeObject(message);
-			outputStream.flush();
+		public void sendMessage(Message message) {
+			try {
+				outputStream.writeObject(message);
+				outputStream.flush();
+			} catch (IOException e) {
+				ExitParty exitParty = new ExitParty(this.ID, this.ID);
+				notifier.firePropertyChange("message", null, exitParty);
+			}
 		}
 
 		/**

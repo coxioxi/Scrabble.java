@@ -105,13 +105,11 @@ public class ExchangeTiles extends Message{
 	public void execute(PartyHost partyHost) {
 		newTiles = partyHost.getTiles(toExchange.length);
 		NewTiles newTilesMessage = new NewTiles(this.getSenderID(), newTiles);
-		try{
+
 			//send exchange message to all players but itself
-			partyHost.sendToAllButID(this.playerID, this);
-			partyHost.sendMessage(this.playerID, newTilesMessage);
-		} catch (IOException e) {
-			throw new RuntimeException(e);
-		}
+		partyHost.sendToAllButID(this.playerID, this);
+		partyHost.sendMessage(this.playerID, newTilesMessage);
+
 	}
 
 	/**
