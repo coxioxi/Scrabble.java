@@ -10,6 +10,7 @@ package scrabble.network.messages;
 import scrabble.controller.Controller;
 import scrabble.model.Tile;
 import scrabble.network.PartyHost;
+import scrabble.view.screen.GameScreen;
 
 import java.io.IOException;
 import java.io.Serial;
@@ -50,6 +51,7 @@ public class ExchangeTiles extends Message{
 		super(senderID);
 		this.playerID = playerID;
 		this.toExchange = toExchange;
+		newTiles  = new Tile[toExchange.length];
 	}
 
 	/**
@@ -83,6 +85,7 @@ public class ExchangeTiles extends Message{
 
 		if (playerID == controller.getModel().getSelf().getID()) {
 			selfExecute(controller);
+			System.out.println("Called self execute");
 		}
 		else {
 			themExecute(controller);
@@ -101,7 +104,7 @@ public class ExchangeTiles extends Message{
 	@Override
 	public void execute(PartyHost partyHost) {
 		newTiles = partyHost.getTiles(toExchange.length);
-		ExchangeTiles tiles = new ExchangeTiles(PartyHost.HOST_ID, this.playerID, toExchange);
+		ExchangeTiles tiles = new ExchangeTiles(PartyHost.HOST_ID, this.playerID, newTiles);
 		try{
 			//send tiles to be exchanged
 			partyHost.sendMessage(this.playerID, tiles);
@@ -128,14 +131,17 @@ public class ExchangeTiles extends Message{
 			// halt the messenger thread and notify the client that the game is over.
 			controller.getMessenger().halt();
 		}
-
+		System.out.println("Called exchange execute");
 		//removing tiles from the rack
-		ArrayList<Tile> tiles = controller.getModel().getSelf().getRack();
+		//ArrayList<Tile> tiles = controller.getModel().getSelf().getRack();
 		for (Tile t : toExchange) {
-			tiles.remove(t);
+			System.out.println(".");
+			//tiles.remove(t);
 			controller.removeRackTile(t);
 		}
-		controller.getModel().getSelf().addTiles(newTiles);
+		//controller.getModel().getSelf().addTiles(newTiles);
+		GameScreen gameScreen = new GameScreen();
+		gameScreen.addExchangedTiles(newTiles);
 	}
 
 	private void themExecute(Controller controller) {}

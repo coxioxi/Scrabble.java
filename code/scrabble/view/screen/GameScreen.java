@@ -106,6 +106,10 @@ public class GameScreen extends JPanel {
 		playedTiles.add(t);
 	}
 
+	public void addExchangedTiles(Tile[] tiles){
+		gameControls.getMainControlsPanel().getRackPanel().addTilesToRack(tiles);
+	}
+
 	/**
 	 * @return List of tiles that have been played in the current turn.
 	 */
