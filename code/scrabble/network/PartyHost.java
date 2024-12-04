@@ -22,6 +22,11 @@ import java.io.ObjectOutputStream;
 import java.net.*;
 import java.util.*;
 
+/*
+how does this work...
+set up host. player creates a socket, sends their name. host returns their id number.
+ */
+
 /**
  * <p>
  *     Accepts and messages clients for the running of a Scrabble game. <code>PartyHost</code> maintains
@@ -67,30 +72,31 @@ public class PartyHost extends Thread implements PropertyChangeListener {
 
 	private final String IPAddress;
 	private ServerSocket server;
-	private TileBag tileBag;
 
-	private HashMap<HostReceiver, Integer> playerIdMap;
-	private HashMap<HostReceiver, ArrayList<Tile>> playerTiles;
-	private HashMap<Integer, HostReceiver> playerIdToMessenger;
-	private HashMap<Integer, String> playerNames;
+	private final HashMap<HostReceiver, Integer> receiverToIdMap;
+	private final HashMap<Integer, HostReceiver> playerIdToMessenger;
+
+	private final HashMap<HostReceiver, ArrayList<Tile>> receiverToTilesMap;
+	private final HashMap<Integer, String> playerIdToNameMap;
+
 	private PropertyChangeEvent evt;
 	private Ruleset ruleset;
+	private final TileBag tileBag;
 	private boolean inGame;
-
 
 	/**
 	 * Constructs a PartyHost object listening to a port.
 	 *
-	 * @param port the port on which to accept clients
+	 * @param port the port on which to accept clients.
 	 */
 	public PartyHost(int port) {
 		super();
 		server = null;
 		tileBag = new TileBag();
-		playerIdMap = new HashMap<>(MAX_NUM_PLAYERS);
-		playerTiles = new HashMap<>(MAX_NUM_PLAYERS);
+		receiverToIdMap = new HashMap<>(MAX_NUM_PLAYERS);
+		receiverToTilesMap = new HashMap<>(MAX_NUM_PLAYERS);
 		playerIdToMessenger = new HashMap<>(MAX_NUM_PLAYERS);
-		playerNames = new HashMap<>(MAX_NUM_PLAYERS);
+		playerIdToNameMap = new HashMap<>(MAX_NUM_PLAYERS);
 		inGame = false;
 
 		// create a server socket that refreshes every second
@@ -104,17 +110,25 @@ public class PartyHost extends Thread implements PropertyChangeListener {
 		}
 	}
 
-	/**
-	 * Gets the local host's IP address.
-	 * @return the raw IP address in a String format.
-	 */
-	public String getIPAddress() { return IPAddress; }
+	@Override
+	public void run() {
+		// accept clients if not in a game.
+		while (!inGame) {
+			while (!inGame && receiverToIdMap.size()<MAX_NUM_PLAYERS) {
+				acceptClients();
+			}
+		}
+		// game has started, stop looking
+		// all future changes handled through ClientHandler objects' calls to property change
+	}
 
-	/**
-	 * Gets the listening port.
-	 * @return the port number which accepts clients.
-	 */
-	public int getPort() { return server.getLocalPort();}
+	@Override
+	public void propertyChange(PropertyChangeEvent evt) {
+		// let the message cook!!!
+		this.evt = evt;
+		Message message = (Message) evt.getNewValue();
+		message.execute(this);
+	}
 
 	/**
 	 * Starts a game with a given <code>Ruleset</code>.
@@ -136,41 +150,21 @@ public class PartyHost extends Thread implements PropertyChangeListener {
 
 	}
 
-	@Override
-	public void run() {
-		// accept clients if not in a game.
-		while (!inGame) {
-			while (!inGame && playerIdMap.size()<MAX_NUM_PLAYERS) {
-				acceptClients();
-			}
-		}
-		// game has started, stop looking
-		// all future changes handled through ClientHandler objects' calls to property change
-	}
-
-	@Override
-	public void propertyChange(PropertyChangeEvent evt) {
-		// let the message cook!!!
-		this.evt = evt;
-		Message message = (Message) evt.getNewValue();
-		message.execute(this);
-	}
-
 	public int getMessagePlayerID() {
-		return playerIdMap.get((HostReceiver) evt.getSource());
+		return receiverToIdMap.get((HostReceiver) evt.getSource());
 	}
 
 	public void addPlayerName(String name){
-		int index = playerNames.size();
-		this.playerNames.put(playerNames.size(), name);
+		int index = playerIdToNameMap.size();
+		this.playerIdToNameMap.put(playerIdToNameMap.size(), name);
 	}
 
 	public String[] getPlayerNames() {
-		return playerNames.values().toArray(new String[0]);
+		return playerIdToNameMap.values().toArray(new String[0]);
 	}
 
-	public int getPlayerID(HostReceiver hr) {
-		return playerIdMap.get(hr);
+	private int getPlayerID(HostReceiver hr) {
+		return receiverToIdMap.get(hr);
 	}
 
 	/**
@@ -191,9 +185,8 @@ public class PartyHost extends Thread implements PropertyChangeListener {
 	 * @throws IOException when the message cannot be sent.
 	 */
 	public void sendToAllButID(int playerID, Message message) throws IOException {
-
-		for (HostReceiver host: playerIdMap.keySet()) {
-			if(!host.equals(playerIdToMessenger.get(playerID)) && host != null) {
+		for (HostReceiver host : receiverToIdMap.keySet()) {
+			if(!host.equals(playerIdToMessenger.get(playerID))) {
 				host.sendMessage(message);
 			}
 		}
@@ -201,55 +194,20 @@ public class PartyHost extends Thread implements PropertyChangeListener {
 
 	public void halt() {
 		this.inGame = true;
-		playerIdMap.keySet().forEach(HostReceiver::halt);
+		receiverToIdMap.keySet().forEach(HostReceiver::halt);
 	}
 
-	private void startGame() throws IOException {
-		// Make a starting rack for each player.
-		for (HostReceiver host: playerIdMap.keySet()){
-			playerTiles.put(host, new ArrayList<>(Arrays.asList(tileBag.getNext(GameScreen.RACK_SIZE))));
-		}
+	/**
+	 * Gets the local host's IP address.
+	 * @return the raw IP address in a String format.
+	 */
+	public String getIPAddress() { return IPAddress; }
 
-		int[] randomNumbers = new int[playerIdMap.size()];
-		for (int i = 0; i < randomNumbers.length; i++) {
-			randomNumbers[i] = i;
-		}
-
-		//shuffle randomNumbers array so the player order is randomised
-		Random rnd = new Random();
-		for (int i = randomNumbers.length - 1; i > 0; i--)
-		{
-			int index = rnd.nextInt(i + 1);
-			// Simple swap
-			int a = randomNumbers[index];
-			randomNumbers[index] = randomNumbers[i];
-			randomNumbers[i] = a;
-		}
-
-		//This hash map stores the turn as the key with the player ID and player name as a value
-		HashMap<Integer, HashMap<Integer, String>> playerInfo = new HashMap<>();
-		Iterator<Integer> iterator= playerNames.keySet().iterator();
-
-		//populates playerInfo map
-		for (int i = 0; i < randomNumbers.length; i++) {
-			HashMap<Integer, String> temp = new HashMap<>();
-			int ID = iterator.next();
-			temp.put(ID, playerNames.get(ID));
-			playerInfo.put(randomNumbers[i], temp);
-		}
-
-		int j = 0;
-		int[] playerID = new int[playerIdMap.size()];
-		for (HostReceiver host: playerIdMap.keySet()) {
-			playerID[j] = playerIdMap.get(host);
-			++j;
-		}
-
-		for (HostReceiver host: playerIdMap.keySet()) {
-			StartGame startGameMessage = new StartGame(HOST_ID, playerIdMap.get(host), playerInfo, ruleset, playerTiles.get(host).toArray(new Tile[0]));
-			host.sendMessage(startGameMessage);
-		}
-	}
+	/**
+	 * Gets the listening port.
+	 * @return the port number which accepts clients.
+	 */
+	public int getPort() { return server.getLocalPort();}
 
 	public Tile[] getTiles (int size){
 		return tileBag.getNext(size);
@@ -268,26 +226,70 @@ public class PartyHost extends Thread implements PropertyChangeListener {
 			HostReceiver clientHandler = new HostReceiver(client, this);
 
 			// start the thread
-			Thread clientThread = new Thread(clientHandler);
-			clientThread.start();
+			new Thread(clientHandler).start();
 
 			//populate playerIdMap
-			int index = playerIdMap.size();
-			playerIdMap.put(clientHandler, index);
+			int index = receiverToIdMap.size();
+			receiverToIdMap.put(clientHandler, index);
 			playerIdToMessenger.put(index, clientHandler);
 			clientHandler.sendMessage(new AssignID(HOST_ID, index));
 		}
-		catch (SocketTimeoutException e) {
-			// This is fine. don't do anything.
-		}
+		catch (SocketTimeoutException ignore) {}
 		catch (IOException e) {
 			throw new RuntimeException(e);
 		}
 	}
 
+	private void startGame() throws IOException {
+		// Make a starting rack for each player.
+		for (HostReceiver host: receiverToIdMap.keySet()){
+			receiverToTilesMap.put(host, new ArrayList<>(Arrays.asList(tileBag.getNext(GameScreen.RACK_SIZE))));
+		}
+
+		int[] randomNumbers = new int[receiverToIdMap.size()];
+		for (int i = 0; i < randomNumbers.length; i++) {
+			randomNumbers[i] = i;
+		}
+
+		//shuffle randomNumbers array so the player order is randomised
+		Random rnd = new Random();
+		for (int i = randomNumbers.length - 1; i > 0; i--)
+		{
+			int index = rnd.nextInt(i + 1);
+			// Simple swap
+			int a = randomNumbers[index];
+			randomNumbers[index] = randomNumbers[i];
+			randomNumbers[i] = a;
+		}
+
+		//This hash map stores the turn as the key with the player ID and player name as a value
+		HashMap<Integer, HashMap<Integer, String>> playerInfo = new HashMap<>();
+		Iterator<Integer> iterator= playerIdToNameMap.keySet().iterator();
+
+		//populates playerInfo map
+		for (int i = 0; i < randomNumbers.length; i++) {
+			HashMap<Integer, String> temp = new HashMap<>();
+			int ID = iterator.next();
+			temp.put(ID, playerIdToNameMap.get(ID));
+			playerInfo.put(randomNumbers[i], temp);
+		}
+
+		int j = 0;
+		int[] playerID = new int[receiverToIdMap.size()];
+		for (HostReceiver host: receiverToIdMap.keySet()) {
+			playerID[j] = receiverToIdMap.get(host);
+			++j;
+		}
+
+		for (HostReceiver host: receiverToIdMap.keySet()) {
+			StartGame startGameMessage = new StartGame(HOST_ID, receiverToIdMap.get(host), playerInfo, ruleset, receiverToTilesMap.get(host).toArray(new Tile[0]));
+			host.sendMessage(startGameMessage);
+		}
+	}
+
 	/**
 	 * ClientHandler is responsible for listening for new messages coming in from the clients
-	 * It maintains a reference to the PartyHost (PropertyChangeListener) to notify it when messages are received.
+	 * It maintains a reference to the <code>PartyHost</code> to notify it when messages are received.
 	 * For example,
 	 * <code>
 	 * 		Message message = inputStream.readObject();
@@ -320,7 +322,6 @@ public class PartyHost extends Thread implements PropertyChangeListener {
 			notifier = new PropertyChangeSupport(this);
 			notifier.addPropertyChangeListener(listener);
 			listening = false;
-
 		}
 
 		/**
