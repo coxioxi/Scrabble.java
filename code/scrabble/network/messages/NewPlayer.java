@@ -53,7 +53,6 @@ public class NewPlayer extends Message implements Serializable {
      *                   must use public getter methods for all the components
      *                   (for example, the GUI components, the model components etc.)
      */
-    @Override
     public void execute(Controller controller) {
         //Create player connection to the host
         //Add getPlayerName to controller in order to add players to waiting screen and game screen
@@ -73,7 +72,6 @@ public class NewPlayer extends Message implements Serializable {
      * @param partyHost the <code>PartyHost</code> on which to make changes. Note that this object
      *                   must use public getter methods for all the components which should be changed.
      */
-    @Override
     public void execute(PartyHost partyHost) {
         for (String name : partyHost.getPlayerNames()) {
             int selfID = partyHost.getMessagePlayerID();

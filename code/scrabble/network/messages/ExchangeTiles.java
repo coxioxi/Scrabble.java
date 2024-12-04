@@ -85,7 +85,6 @@ public class ExchangeTiles extends Message{
 
 		if (playerID == controller.getModel().getSelf().getID()) {
 			selfExecute(controller);
-			System.out.println("Called self execute");
 		}
 		else {
 			themExecute(controller);
@@ -106,10 +105,9 @@ public class ExchangeTiles extends Message{
 		newTiles = partyHost.getTiles(toExchange.length);
 		NewTiles newTilesMessage = new NewTiles(this.getSenderID(), newTiles);
 
-			//send exchange message to all players but itself
+		//send exchange message to all players but itself
 		partyHost.sendToAllButID(this.playerID, this);
 		partyHost.sendMessage(this.playerID, newTilesMessage);
-
 	}
 
 	/**
@@ -130,5 +128,7 @@ public class ExchangeTiles extends Message{
 		controller.exchangeTilesTurn(toExchange);
 	}
 
-	private void themExecute(Controller controller) {}
+	private void themExecute(Controller controller) {
+		controller.exchangeTilesTurn();
+	}
 }

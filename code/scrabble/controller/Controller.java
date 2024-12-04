@@ -132,6 +132,7 @@ public class Controller implements PropertyChangeListener  {
 		try {
 			messenger.sendMessage(new NewPlayer(selfID, selfID, name));
 		} catch (IOException e) { throw new RuntimeException(e); }
+		view.setTitle("Scrabble.\"" + name+'\"');
 		hostScreenController.addPlayer(name);
 	}
 
@@ -144,6 +145,7 @@ public class Controller implements PropertyChangeListener  {
 	 */
 	public void sendNewPlayer(String name) throws IOException {
 		messenger.sendMessage(new NewPlayer(0, 0, name));
+		view.setTitle("Scrabble.\"" + name + '\"');
 	}
 
 	/**
@@ -300,6 +302,12 @@ public class Controller implements PropertyChangeListener  {
 		for (Tile t : tiles) {
 			this.removeRackTile(t);
 		}
+	}
+
+	public void exchangeTilesTurn() {
+		model.nextTurn();
+		view.getGame().nextPlayer();
+		gameScreenController.setGameControlButtonsEnabled(model.getCurrentPlayer() == selfID);
 	}
 
 	/**
@@ -489,24 +497,21 @@ public class Controller implements PropertyChangeListener  {
 		addHotlinkListener(ep);
 		pane.showMessageDialog(view, ep, "Rules", JOptionPane.INFORMATION_MESSAGE);
 	}
-	/*
-	 * adds listeners to the individual screens
-	 */
+
 	private JEditorPane setupRules() {
-		StringBuilder rules = new StringBuilder();
-		rules.append("<html>To play a letter on the board, click on the tile you would like to place, then click " +
-				"on the location in the board where you want to play your tile.<br><br>");
-		rules.append("Rules set by the host:<br><ol>");
-		rules.append("<li>" + (ruleset.getDictionaryFileName().equals("code/dictionary.txt")
+
+		String rules = "<html>To play a letter on the board, click on the tile you would like to place, then click " +
+				"on the location in the board where you want to play your tile.<br><br>" +
+				"Rules set by the host:<br><ol>" +
+				"<li>" + (ruleset.getDictionaryFileName().equals("code/dictionary.txt")
 				? "You will be using the normal Scrabble dictionary</li>"
-				: "You will be using the ____ dictionary</li>"));
-		rules.append("<li>The game will have a total time of " + ruleset.getTotalTime() + " minutes</li>");
-		rules.append("<li>Each player will have a time of " + ruleset.getTurnTime() + " minutes per turn</li>");
-		rules.append("<li>Challenges are " + (ruleset.areChallengesAllowed() ? "enabled</li></ol>" : "disabled</li></ol>"));
+				: "You will be using the ____ dictionary</li>") +
+				"<li>The game will have a total time of " + ruleset.getTotalTime() + " minutes</li>" +
+				"<li>Each player will have a time of " + ruleset.getTurnTime() + " minutes per turn</li>" +
+				"<li>Challenges are " + (ruleset.areChallengesAllowed() ? "enabled</li></ol>" : "disabled</li></ol>") +
+				"For more information, visit: " + "<a href=\"https://www.hasbro.com/common/instruct/Scrabble_(2003).pdf\" target=\"_blank\">Scrabble Rules</a></html>";
 
-		rules.append("For more information, visit: " + "<a href=\"https://www.hasbro.com/common/instruct/Scrabble_(2003).pdf\" target=\"_blank\">Scrabble Rules</a></html>");
-
-		return  new JEditorPane("text/html", rules + "");
+		return  new JEditorPane("text/html", rules);
 	}
 
 	private void addHotlinkListener(JEditorPane ep) {
@@ -816,7 +821,6 @@ public class Controller implements PropertyChangeListener  {
             int gameTime = Integer.parseInt(hostScreen.getGameTimeBox().split(" ")[0]);
 
             parent.sendRulesToHost(challengesEnabled, dictionaryFile, playerTime, gameTime);
-//            parent.showGame();
         }
 
     }

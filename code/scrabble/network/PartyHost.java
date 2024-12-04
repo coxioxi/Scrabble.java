@@ -22,11 +22,6 @@ import java.io.ObjectOutputStream;
 import java.net.*;
 import java.util.*;
 
-/*
-how does this work...
-set up host. player creates a socket, sends their name. host returns their id number.
- */
-
 /**
  * <p>
  *     Accepts and messages clients for the running of a Scrabble game. <code>PartyHost</code> maintains
@@ -289,7 +284,7 @@ public class PartyHost extends Thread implements PropertyChangeListener {
 	public void exit(int playerID) {
 		HostReceiver exiting = playerIdToMessenger.remove(playerID);
 		playerIdToNameMap.remove(playerID);
-		tileBag.addTiles(receiverToTilesMap.remove(exiting).toArray(new Tile[0]));
+		if (inGame) tileBag.addTiles(receiverToTilesMap.remove(exiting).toArray(new Tile[0]));
 		receiverToIdMap.remove(exiting);
 		exiting.halt();
 		sendToAllButID(playerID, new ExitParty(playerID, playerID));
