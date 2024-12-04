@@ -178,7 +178,6 @@ public class Controller implements PropertyChangeListener  {
 		// add tiles to game and gameScreen
 		// pass ruleset and the other stuff to setUpGameScreen
 		// use the info provided to make players for the game
-		System.out.println("Controller#startGame: \n\t" + "Names: " + Arrays.toString(playerNames) + "\n\tIDs: " + Arrays.toString(playerID));
 		this.ruleset = ruleset;
 		gameScreenController.setupGameItems(playerNames, ruleset.getTotalTime(), ruleset.getTurnTime(), startingTiles);	//good
 		Player[] players = new Player[playerNames.length];

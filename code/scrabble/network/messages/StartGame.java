@@ -72,7 +72,6 @@ public class StartGame extends Message {
 			Iterator<Integer> playerIdIterator = playerInfo.get(turn).keySet().iterator();
 			playerIDs[turn] = playerIdIterator.next();
 			playerNames[turn] = getPlayerInfo().get(turn).get(playerIDs[turn]);
-			System.out.println("message.StartGame#execute: \n\tTurn: " + turn + "\tID: " + playerIDs[turn] + "\tName: " + playerNames[turn]);
 		}
 		controller.startGame(ruleset, playerNames, playerIDs, startingTiles);
 	}
