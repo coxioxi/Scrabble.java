@@ -221,5 +221,19 @@ public class Tile implements Serializable {
         public static int getScoreForLetter(char letter) {
             return TileScore.valueOf( String.valueOf(letter).toUpperCase() ).getScore();
         }
+
+        /**
+         * Supersedes the default <code>valueOf</code> method, which does not work with
+         * the letter value of <code>BLANK</code>.
+         * <br>
+         * Use this method over <code>valueOf</code>.
+         * @param name the letter for which to get the enum constant. For alphabetical Strings,
+         *             "A", "B", "C", etc. For a blank string, the letter value of <code>TileScore.BLANK</code>,
+         *             or the String "BLANK".
+         * @return The TileScore associated with the specified String.
+         */
+        public static TileScore scoreValueOf(String name) {
+            return (name.equals(TileScore.BLANK.getLetter()+"") ? TileScore.BLANK : valueOf(name));
+        }
     }
 }
