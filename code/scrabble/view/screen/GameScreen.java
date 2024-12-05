@@ -25,7 +25,7 @@ import java.util.Objects;
  * It contains various UI components such as the game board, player panels, and controls for gameplay actions.
  */
 public class GameScreen extends JPanel {
-	public static final int GAP = 150; // Spacing used between panels
+	private static final int GAP = 150; // Spacing used between panels
 	public static final int RACK_SIZE = 7; // Number of tiles in a player's rack
 
 	/**
@@ -38,11 +38,11 @@ public class GameScreen extends JPanel {
 	 */
 	public JButton value = new JButton(" ");
 
-	private final GameControls gameControls;
+	public final GameControls gameControls;
 
-	private final PlayerPanel[] playerPanels;
-	private int currentPlayerIndex;
-	private BoardPanel boardPanel; // Panel representing the game board
+	public final PlayerPanel[] playerPanels;
+	public int currentPlayerIndex;
+	public BoardPanel boardPanel; // Panel representing the game board
 
 	private JLabel gameTimeLabel; // Label displaying the game timer
 	private int gameTimeRemaining; 	// in seconds;
@@ -297,7 +297,7 @@ public class GameScreen extends JPanel {
 	 * PlayerPanel displays the details of a player in the game, showing the player's
 	 * name, current score, and remaining time.
 	 */
-	private static class PlayerPanel extends JPanel {
+	public static class PlayerPanel extends JPanel {
 		// Labels to display player's name, time, and score
 		private final JLabel timeLabel;
 		private final JLabel scoreLabel;
@@ -396,7 +396,7 @@ public class GameScreen extends JPanel {
 	 * BoardPanel is a JPanel that represents the game board in Scrabble.
 	 * It initializes and displays a grid of BoardCellPanels with appropriate colors and labels.
 	 */
-	private static class BoardPanel extends JPanel {
+	public static class BoardPanel extends JPanel {
 		/** The color of the text used for board modifier cells. */
 		public static final Color MODIFIER_CELL_TEXT_COLOR = new Color(255, 255, 255);
 		/**
@@ -587,7 +587,7 @@ public class GameScreen extends JPanel {
 		/**
 		 * A panel that holds a single JButton representing a cell on the Scrabble board.
 		 */
-		private static class BoardCellPanel extends JPanel {
+		public static class BoardCellPanel extends JPanel {
 			// The button representing the cell in the panel.
 			private JButton boardButton;
 

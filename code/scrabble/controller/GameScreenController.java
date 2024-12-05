@@ -8,8 +8,10 @@ import scrabble.view.TileButton;
 import scrabble.view.screen.*;
 
 import javax.swing.*;
-import java.awt.*;
 import java.awt.event.ActionListener;
+import java.awt.Point;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.TimerTask;
 import java.util.Timer;
 
@@ -21,8 +23,11 @@ public class GameScreenController {
 	private final ScrabbleGUI gui;
 	private GameScreen gameScreen;
 	private GameScreen.GameControls gameControls;
+
 	private GameTimeController gameTimeController;
 	private boolean isRackEnabled;
+	private JButton value;
+	private final List<Tile> lastPlayedTiles = new ArrayList<>();
 
 	/**
 	 * Removes the action listener for a tile that has been played and will not be able
