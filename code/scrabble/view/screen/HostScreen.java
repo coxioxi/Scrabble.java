@@ -222,7 +222,7 @@ public class HostScreen extends JPanel {
     }
 
     public boolean getChallengeBox() {
-        return challengeBox.getSelectedIndex() == 0;
+        return challengeBox.getSelectedIndex() != 0;
     }
 
     public String getDictionaryPath() {
