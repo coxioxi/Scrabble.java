@@ -44,7 +44,8 @@ public class TileButton extends JButton {
     }
 
     public TileButton() {
-        super();
+        super(Tile.TileScore.BLANK.getLetter()+"");
+        this.letterScore = Tile.TileScore.BLANK;
         scoreFont = getFont().deriveFont(8f);
         setFont(getFont().deriveFont(Font.BOLD, 12f));
     }
