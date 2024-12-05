@@ -131,6 +131,7 @@ public class Tile implements Serializable {
 
     /**
      * Sets the location of the tile on the board.
+     * When a tile is removed, pass in null.
      * @param location the new Point location for the tile.
      */
     public void setLocation(Point location){this.location = location;}
@@ -220,12 +221,5 @@ public class Tile implements Serializable {
         public static int getScoreForLetter(char letter) {
             return TileScore.valueOf( String.valueOf(letter).toUpperCase() ).getScore();
         }
-    }
-
-    /**
-     * Thrown when a tile's letter is attempted to be set when it already has been assigned.
-     */
-    public static class NotBlankException extends Exception {
-        public NotBlankException(String s) {super(s);}
     }
 }
