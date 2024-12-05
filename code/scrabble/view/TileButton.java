@@ -61,16 +61,40 @@ public class TileButton extends JButton {
         Graphics2D g2 = (Graphics2D) g.create();
 
         // Call the superclass paintComponent method to handle standard painting.
-        super.paintComponent(g);
+        super.paintComponent(g2);
 
         // Set the color and font for drawing the score on the tile.
         g2.setPaint(Color.BLACK);
         g2.setFont(scoreFont);
 
         // Draw the score near the bottom-right corner of the tile.
-        g2.drawString(tile.getScore() + "", getWidth() / 2 + 5, getHeight() / 2 + 8);
+        g2.drawString((tile == null ? letterScore.getScore() : tile.getScore()) + "", getWidth() / 2 + 5, getHeight() / 2 + 8);
 
         // Dispose of the Graphics object to free resources.
         g2.dispose();
     }
+
+    public Tile tile() { return tile; }
+
+    /**
+     *
+     * @param letter
+     */
+    public void setTileLetter(Tile.TileScore letter) {
+        if (tile.setLetter(letter)) this.repaint();
+    }
+
+    public void setTileLocation(Point location) {
+        tile.setLocation(location);
+    }
+
+
+
+
+
+
+
+
+
+
 }
