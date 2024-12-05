@@ -28,51 +28,57 @@ public class GameScreen extends JPanel {
 	public static final int GAP = 150; // Spacing used between panels
 	public static final int RACK_SIZE = 7; // Number of tiles in a player's rack
 
-	private JLabel gameTimeLabel; // Label displaying the game timer
-	private int gameTimeRemaining; 	// in seconds;
-	private BoardPanel boardPanel; // Panel representing the game board
-
-	private final JPanel eastPanel; // Panel for player panels on the right side
-	private final JPanel westPanel; // Panel for player panels on the left side
-
 	private final GameControls gameControls;
 
 	private PlayerPanel[] playerPanels;
 	private int currentPlayerIndex;
+	private BoardPanel boardPanel; // Panel representing the game board
 
-	// List of tiles that have been played in the current turn
-	private List<Tile> playedTiles = new ArrayList<>();
+	private JLabel gameTimeLabel; // Label displaying the game timer
+	private int gameTimeRemaining; 	// in seconds;
+
+	private List<Tile> playedTiles = new ArrayList<>();  // List of tiles that have been played in the current turn
 	private JButton value = new JButton(" ");
 
-	/**
-	 * Default constructor that sets up the GameScreen layout and initializes the UI components.
-	 */
-	private GameScreen() {
+	public static String formatTime(int timeRemaining) {
+		return String.valueOf(timeRemaining / 60 < 10 ? "0" + timeRemaining / 60 : timeRemaining / 60) + ':' +
+				(timeRemaining % 60 < 10 ? "0" + timeRemaining % 60 : timeRemaining % 60);
+	}
+
+	public GameScreen(String[] playerNames, int gameTime, int playerTime, Tile[] rackTiles) {
 		this.setLayout(new BorderLayout()); // Set layout for the main panel
 		gameControls = new GameControls();
 
 		// Initialize and add the panels for different sections of the game screen
-		// Panel for the game timer
 		JPanel northPanel = setupNorthPanel();
-		// Panel for the game board
 		JPanel centerPanel = setupCenterPanel();
-		eastPanel = new JPanel(new GridLayout(2, 1, 0, GAP));
-		westPanel = new JPanel(new GridLayout(2, 1, 0, GAP));
+		JPanel eastPanel = new JPanel(new GridLayout(2, 1, 0, GAP));
+		JPanel westPanel = new JPanel(new GridLayout(2, 1, 0, GAP));
 
 		//Drop down menu
 		this.add(northPanel, BorderLayout.NORTH);
 		this.add(centerPanel, BorderLayout.CENTER);
 		this.add(westPanel, BorderLayout.WEST);
 		this.add(eastPanel, BorderLayout.EAST);
-		System.out.println("num components: " + this.getComponentCount() + "\n" + "adding gameControls...");
 		this.add(gameControls, BorderLayout.SOUTH);
-		System.out.println("num components: " + this.getComponentCount());
-	}
 
-	public GameScreen(String[] playerNames, int gameTime, int playerTime, Tile[] rackTiles) {
-	 	 this();
-		 this.setupGameItems(playerNames, gameTime, playerTime, rackTiles);
-		 currentPlayerIndex = 0;
+		playerPanels = new PlayerPanel[playerNames.length];
+		for (int i = 0; i < playerNames.length; i++) {
+			playerPanels[i] = setupPlayerPanel(playerNames[i], playerTime);
+			if (i == 1 || i == 2) {
+				eastPanel.add(playerPanels[i]);
+			} else {
+				westPanel.add(playerPanels[i]);
+			}
+		}
+		gameControls.getMainControlsPanel().getRackPanel().resetRack();
+		gameControls.getMainControlsPanel().getRackPanel().addTilesToRack(rackTiles);
+		gameTimeRemaining = gameTime*60;
+		this.gameTimeLabel.setText(formatTime(gameTimeRemaining));
+		this.revalidate();
+		this.repaint();
+
+		currentPlayerIndex = 0;
 	}
 
 	public void decrementTime() {
@@ -158,9 +164,9 @@ public class GameScreen extends JPanel {
 		for (int i = 0; i < playerNames.length; i++) {
 			playerPanels[i] = (PlayerPanel) setupPlayerPanel(playerNames[i], playerTime);
 			if (i == 1 || i == 2) {
-				eastPanel.add(playerPanels[i]);
+				//eastPanel.add(playerPanels[i]);
 			} else {
-				westPanel.add(playerPanels[i]);
+				//westPanel.add(playerPanels[i]);
 			}
 		}
 		gameControls.getMainControlsPanel().getRackPanel().resetRack();
@@ -221,22 +227,12 @@ public class GameScreen extends JPanel {
 		return boardPanel.getButton(row, col);
 	}
 
-	/**
-	 * Sets up a PlayerPanel with the specified player's name and time.
-	 *
-	 * @param name       The name of the player.
-	 * @param playerTime The time allotted for the player.
-	 * @return A new PlayerPanel instance for the player.
-	 */
-	private JPanel setupPlayerPanel(String name, int playerTime) {
+
+
+	private PlayerPanel setupPlayerPanel(String name, int playerTime) {
 		return new PlayerPanel(name, 0, playerTime*60);
 	}
 
-	/**
-	 * Sets up the center panel containing the game board.
-	 *
-	 * @return The center panel.
-	 */
 	private JPanel setupCenterPanel() {
 		JPanel centerPanel = new JPanel(new FlowLayout());
 
@@ -247,11 +243,6 @@ public class GameScreen extends JPanel {
 		return centerPanel;
 	}
 
-	/**
-	 * Sets up the panel at the top of the screen, displaying the game timer.
-	 *
-	 * @return The north panel.
-	 */
 	private JPanel setupNorthPanel() {
 		JPanel northPanel = new JPanel(new FlowLayout());
 		gameTimeLabel = new JLabel("00:00");
@@ -259,25 +250,19 @@ public class GameScreen extends JPanel {
 		northPanel.add(gameTimeLabel);
 		return northPanel;
 	}
-
-	public static String formatTime(int timeRemaining) {
-		return String.valueOf(timeRemaining / 60 < 10 ? "0" + timeRemaining / 60 : timeRemaining / 60) + ':' +
-				(timeRemaining % 60 < 10 ? "0" + timeRemaining % 60 : timeRemaining % 60);
-	}
-
 	/**
 	 * PlayerPanel displays the details of a player in the game, showing the player's
 	 * name, current score, and remaining time.
 	 */
 	private static class PlayerPanel extends JPanel {
-
 		// Labels to display player's name, time, and score
-		//private final JLabel name;
-		private final String name;
 		private final JLabel timeLabel;
 		private final JLabel scoreLabel;
+		private final JLabel statusLabel;
+		private final String name;
 		private final int defaultTime;
 		private int time;
+		private Status status;
 
 		/**
 		 * Constructor for PlayerPanel. Sets up the panel layout and populates it with player information.
@@ -287,29 +272,28 @@ public class GameScreen extends JPanel {
 		 * @param time The player's remaining time in seconds.
 		 */
 		public PlayerPanel(String playerName, int score, int time) {
-			// Set layout for the panel with two columns and spacing between rows
-			this.setLayout(new GridLayout(2,2,7,10));
+			this.setLayout(new GridLayout(3,2,7,10));
 
-			// Set an etched border for visual separation
+			this.name = playerName;
 			this.setBorder(BorderFactory.createTitledBorder(playerName));
-			name = playerName;
 
-			// Label for remaining time, formatted as minutes and seconds
 			JLabel playerTimeLabel = new JLabel("Time:", SwingConstants.RIGHT);
 			this.time = this.defaultTime = time;
 			this.timeLabel = new JLabel(GameScreen.formatTime(time));
 
-			// Label for player's score
 			JLabel playerScoreLabel = new JLabel("Score:", SwingConstants.RIGHT);
 			this.scoreLabel = new JLabel("" + score);
 
-			// Add labels to the panel in the specified layout order
-			//this.add(playerNameLabel);
-			//this.add(name);
+			JLabel emptyLabel = new JLabel("");
+			statusLabel = new JLabel("Active");
+			statusLabel.setForeground(Color.GREEN);
+
 			this.add(playerTimeLabel);
 			this.add(this.timeLabel);
 			this.add(playerScoreLabel);
 			this.add(this.scoreLabel);
+			this.add(emptyLabel);
+			this.add(statusLabel);
 		}
 
 		/**
@@ -338,6 +322,30 @@ public class GameScreen extends JPanel {
 			super.setEnabled(enabled);
 			this.timeLabel.setEnabled(enabled);
 			this.scoreLabel.setEnabled(enabled);
+		}
+
+		public Status getStatus() {return status; }
+
+		public void setStatus(Status status) {
+			this.status = status;
+			this.statusLabel.setText(status.name);
+			this.statusLabel.setForeground(status.color);
+		}
+
+		public enum Status {
+			ACTIVE("Active", Color.GREEN), INACTIVE("Inactive", Color.darkGray),
+			DISCONNECTED("Disconnected", Color.red.darker()), PLAYING("Playing", Color.BLUE.brighter());
+
+			public final String name;
+			public final Color color;
+
+			Status(String name, Color color) {
+				this.name = name;
+				this.color = color;
+			}
+
+			public Color getColor() {return this.color;}
+			public String getName() {return this.name; }
 		}
 	}
 
