@@ -25,138 +25,70 @@ import java.util.Objects;
  * It contains various UI components such as the game board, player panels, and controls for gameplay actions.
  */
 public class GameScreen extends JPanel {
-	public static final int GAP = 150; // Spacing used between panels
+	private static final int GAP = 150; // Spacing used between panels
 	public static final int RACK_SIZE = 7; // Number of tiles in a player's rack
+
+	/**
+	 * Represents the <code>Tile</code>s which have been played on the board during the current
+	 * player's turn.
+	 */
+	public List<Tile> playedTiles = new ArrayList<>();  // List of tiles that have been played in the current turn
+	/**
+	 * The button which has been removed from the GUI but should be tracked.
+	 */
+	public JButton value = new JButton(" ");
+
+	public final GameControls gameControls;
+
+	public final PlayerPanel[] playerPanels;
+	public int currentPlayerIndex;
+	public BoardPanel boardPanel; // Panel representing the game board
 
 	private JLabel gameTimeLabel; // Label displaying the game timer
 	private int gameTimeRemaining; 	// in seconds;
-	private BoardPanel boardPanel; // Panel representing the game board
 
-	private final JPanel eastPanel; // Panel for player panels on the right side
-	private final JPanel westPanel; // Panel for player panels on the left side
-
-	private final GameControls gameControls;
-
-	private PlayerPanel[] playerPanels;
-	private int currentPlayerIndex;
-
-	// List of tiles that have been played in the current turn
-	private List<Tile> playedTiles = new ArrayList<>();
-	private JButton value = new JButton(" ");
 
 	/**
-	 * Default constructor that sets up the GameScreen layout and initializes the UI components.
+	 * Creates a formatted string from a specified number of seconds.
+	 * The <code>String</code> will be in the format "[number of minutes]:[number of seconds]",
+	 * with a leading 0 if the minutes or seconds are under 10.
+	 * @param timeRemaining the number of seconds for which to create a string.
+	 * @return The string with specified formatting.
 	 */
-	private GameScreen() {
+	public static String formatTime(int timeRemaining) {
+		return String.valueOf(timeRemaining / 60 < 10 ? "0" + timeRemaining / 60 : timeRemaining / 60) + ':' +
+				(timeRemaining % 60 < 10 ? "0" + timeRemaining % 60 : timeRemaining % 60);
+	}
+
+	/**
+	 * Constructs GameScreen from the names of players, the amount of time for the game,
+	 * the amount of time for each turn, and the starting tiles for this player.
+	 *
+	 * @param playerNames the names of the players in the order of turn
+	 * @param gameTime in minutes
+	 * @param playerTime in minutes
+	 * @param rackTiles starting tiles
+	 */
+	public GameScreen(String[] playerNames, int gameTime, int playerTime, Tile[] rackTiles) {
 		this.setLayout(new BorderLayout()); // Set layout for the main panel
 		gameControls = new GameControls();
 
 		// Initialize and add the panels for different sections of the game screen
-		// Panel for the game timer
 		JPanel northPanel = setupNorthPanel();
-		// Panel for the game board
 		JPanel centerPanel = setupCenterPanel();
-		eastPanel = new JPanel(new GridLayout(2, 1, 0, GAP));
-		westPanel = new JPanel(new GridLayout(2, 1, 0, GAP));
+		JPanel eastPanel = new JPanel(new GridLayout(2, 1, 0, GAP));
+		JPanel westPanel = new JPanel(new GridLayout(2, 1, 0, GAP));
 
 		//Drop down menu
 		this.add(northPanel, BorderLayout.NORTH);
 		this.add(centerPanel, BorderLayout.CENTER);
 		this.add(westPanel, BorderLayout.WEST);
 		this.add(eastPanel, BorderLayout.EAST);
-		System.out.println("num components: " + this.getComponentCount() + "\n" + "adding gameControls...");
 		this.add(gameControls, BorderLayout.SOUTH);
-		System.out.println("num components: " + this.getComponentCount());
-	}
 
-	public GameScreen(String[] playerNames, int gameTime, int playerTime, Tile[] rackTiles) {
-	 	 this();
-		 this.setupGameItems(playerNames, gameTime, playerTime, rackTiles);
-		 currentPlayerIndex = 0;
-	}
-
-	public void decrementTime() {
-		this.decreaseTime(1);
-	}
-
-	public void decreaseTime(int amount) {
-		this.gameTimeRemaining = Math.max(0, gameTimeRemaining-amount);
-		gameTimeLabel.setText(formatTime(gameTimeRemaining));
-		playerPanels[currentPlayerIndex].decreaseTime(amount);
-	}
-
-	public int currentPlayerTime() {
-		return playerPanels[currentPlayerIndex].getTimeRemaining();
-	}
-
-
-	public GameControls getGameControls() { return gameControls; }
-
-	/**
-	 * Disables the last played tiles on the board by updating the state of the cells.
-	 */
-	public void disableLastPlayedTiles() {
-		for (Tile t : playedTiles) {
-			boardPanel.disableBoardCell(t.getLocation().x, t.getLocation().y);
-		}
-		playedTiles = new ArrayList<>();
-	}
-
-	public void removeFromPlayedTiles(Tile tile) {
-		playedTiles.remove(tile);
-	}
-
-	public void addToPlayedTiles(Tile t) {
-		playedTiles.add(t);
-	}
-
-	public void addExchangedTiles(Tile[] tiles){
-		gameControls.getMainControlsPanel().getRackPanel().addTilesToRack(tiles);
-	}
-
-	/**
-	 * @return List of tiles that have been played in the current turn.
-	 */
-	public List<Tile> getPlayedTiles() {
-		return playedTiles;
-	}
-
-	/**
-	 * Sets a button value for internal use.
-	 *
-	 * @param value The JButton to set.
-	 */
-	public void setValue(JButton value) {
-		this.value = value;
-	}
-
-	/**
-	 * @return The value button.
-	 */
-	public JButton getValue() {
-		return value;
-	}
-
-	public void updateScore(String playerName, int score) {
-		for (PlayerPanel player : playerPanels) {
-			if (player != null && Objects.equals(player.getPlayerName(), playerName)) {
-				player.setScoreLabel(score);
-			}
-		}
-	}
-
-	/**
-	 *
-	 * @param playerNames
-	 * @param gameTime
-	 * @param playerTime in minutes
-	 * @param rackTiles
-	 */
-	public void setupGameItems(String[] playerNames, int gameTime, int playerTime, Tile[] rackTiles) {
-		// Setup player panels
 		playerPanels = new PlayerPanel[playerNames.length];
 		for (int i = 0; i < playerNames.length; i++) {
-			playerPanels[i] = (PlayerPanel) setupPlayerPanel(playerNames[i], playerTime);
+			playerPanels[i] = setupPlayerPanel(playerNames[i], playerTime);
 			if (i == 1 || i == 2) {
 				eastPanel.add(playerPanels[i]);
 			} else {
@@ -169,14 +101,124 @@ public class GameScreen extends JPanel {
 		this.gameTimeLabel.setText(formatTime(gameTimeRemaining));
 		this.revalidate();
 		this.repaint();
+
+		currentPlayerIndex = 0;
 	}
 
+	/**
+	 * Decreases both the game time label and the current player's time label by one second.
+	 * The formatting of the string is maintained by calls to {@link #formatTime}.
+	 * A time of -1 is not allowed, so decreasing the time when it is 0 has no effect on that label.
+	 */
+	public void decrementTime() { this.decreaseTime(1); }
+
+	/**
+	 * Decreases both the game time label and the current player's time label by the specified amount.
+	 * The formatting of the string is maintained by calls to {@link #formatTime}.
+	 * A time of -1 is not allowed, so decreasing the time when it is 0 has no effect on that label.
+	 */
+	public void decreaseTime(int amount) {
+		this.gameTimeRemaining = Math.max(0, gameTimeRemaining-amount);
+		gameTimeLabel.setText(formatTime(gameTimeRemaining));
+		playerPanels[currentPlayerIndex].decreaseTime(amount);
+	}
+
+	/**
+	 * Gets the current player's time remaining.
+	 * @return The amount of time which the current player has, in seconds.
+	 */
+	public int currentPlayerTime() { return playerPanels[currentPlayerIndex].getTimeRemaining(); }
+
+	/**
+	 * Gets the panel this uses to display game controls.
+	 * @return The <code>GameControls</code> panel of this instance.
+	 * @see GameControls
+	 */
+	public GameControls getGameControls() { return gameControls; }
+
+	/**
+	 * Disables the last played tiles on the board and resets <code>playedTiles</code>.
+	 * @see #removeFromPlayedTiles
+	 * @see #addToPlayedTiles
+	 */
+	public void disableLastPlayedTiles() {
+		for (Tile t : playedTiles) {
+			boardPanel.disableBoardCell(t.getLocation().x, t.getLocation().y);
+		}
+		playedTiles = new ArrayList<>();
+	}
+
+	/**
+	 * Removes a specified <code>Tile</code> from the list of played tiles.
+	 * The list of played tiles should be used to track the tiles which have been moved onto
+	 * the game board.
+	 * @param tile the tile to remove from the list.
+	 */
+	public void removeFromPlayedTiles(Tile tile) { playedTiles.remove(tile); }
+
+	/**
+	 * Adds a <code>Tile</code> to the list of played tiles.
+	 * The list of played tiles should be used to track the tiles which have been moved onto
+	 * the game board.
+	 * @param tile the tile to add to the list.
+	 * @see #removeFromPlayedTiles
+	 * @see #getPlayedTiles
+	 */
+	public void addToPlayedTiles(Tile tile) { playedTiles.add(tile); }
+
+	/**
+	 * Gets the list of played tiles. This list should be used to track the tiles which have
+	 * been placed on the game board by the user.
+	 * @return List of tiles that have been played in the current turn.
+	 * @see #removeFromPlayedTiles
+	 * @see #addToPlayedTiles
+	 * @see #disableLastPlayedTiles
+	 */
+	public List<Tile> getPlayedTiles() {
+		return playedTiles;
+	}
+
+	/**
+	 * Sets the <code>value</code> variable to the button specified.
+	 *
+	 */
+	public void setValue(JButton value) {
+		this.value = value;
+	}
+
+	/**
+	 * @return The value button.
+	 */
+	public JButton getValue() {
+		return value;
+	}
+
+	/**
+	 * Sets the score of the player specified by name.
+	 * @param playerName the name of the player for which to set the score.
+	 *                   Must exactly match one of the strings from parameter <code>playerNames</code>
+	 *                   in {@link #GameScreen}.
+	 * @param score the score to set the player.
+	 */
+	public void updateScore(String playerName, int score) {
+		for (PlayerPanel player : playerPanels) {
+			if (player != null && Objects.equals(player.getPlayerName(), playerName)) {
+				player.setScoreLabel(score);
+			}
+		}
+	}
+
+	/**
+	 * Updates the state of the GUI to be the next player as was specified in the constructor.
+	 */
 	public void nextPlayer() {
 		playerPanels[currentPlayerIndex].resetTime();
 		playerPanels[currentPlayerIndex].setEnabled(false);
+		playerPanels[currentPlayerIndex].setStatus(PlayerPanel.Status.ACTIVE);
 		this.currentPlayerIndex++;
 		this.currentPlayerIndex %= playerPanels.length;
 		playerPanels[currentPlayerIndex].setEnabled(true);
+		playerPanels[currentPlayerIndex].setStatus(PlayerPanel.Status.PLAYING);
 	}
 
 	public void passTurn() {
@@ -184,6 +226,11 @@ public class GameScreen extends JPanel {
 
 	}
 
+	/**
+	 * Adds tiles to the board as <code>TileButton</code>s, at the locations specified by
+	 * each tile's <code>location</code> field. If location is not set, a null pointer will be thrown.
+	 * @param tiles the tiles to add to the board. Each location must be set.
+	 */
 	public void addToBoard(Tile[] tiles) {
 		for (int i = 0; i < tiles.length; i++) {
 			TileButton tb = (tiles[i].isBlank() ?
@@ -221,22 +268,12 @@ public class GameScreen extends JPanel {
 		return boardPanel.getButton(row, col);
 	}
 
-	/**
-	 * Sets up a PlayerPanel with the specified player's name and time.
-	 *
-	 * @param name       The name of the player.
-	 * @param playerTime The time allotted for the player.
-	 * @return A new PlayerPanel instance for the player.
-	 */
-	private JPanel setupPlayerPanel(String name, int playerTime) {
+	/* creates a player panel with the default score of 0. */
+	private PlayerPanel setupPlayerPanel(String name, int playerTime) {
 		return new PlayerPanel(name, 0, playerTime*60);
 	}
 
-	/**
-	 * Sets up the center panel containing the game board.
-	 *
-	 * @return The center panel.
-	 */
+	/* Center panel: contains the Game Board (in all its glory). */
 	private JPanel setupCenterPanel() {
 		JPanel centerPanel = new JPanel(new FlowLayout());
 
@@ -247,11 +284,7 @@ public class GameScreen extends JPanel {
 		return centerPanel;
 	}
 
-	/**
-	 * Sets up the panel at the top of the screen, displaying the game timer.
-	 *
-	 * @return The north panel.
-	 */
+	/* North panel: contains the game time label. */
 	private JPanel setupNorthPanel() {
 		JPanel northPanel = new JPanel(new FlowLayout());
 		gameTimeLabel = new JLabel("00:00");
@@ -260,24 +293,19 @@ public class GameScreen extends JPanel {
 		return northPanel;
 	}
 
-	public static String formatTime(int timeRemaining) {
-		return String.valueOf(timeRemaining / 60 < 10 ? "0" + timeRemaining / 60 : timeRemaining / 60) + ':' +
-				(timeRemaining % 60 < 10 ? "0" + timeRemaining % 60 : timeRemaining % 60);
-	}
-
 	/**
 	 * PlayerPanel displays the details of a player in the game, showing the player's
 	 * name, current score, and remaining time.
 	 */
-	private static class PlayerPanel extends JPanel {
-
+	public static class PlayerPanel extends JPanel {
 		// Labels to display player's name, time, and score
-		//private final JLabel name;
-		private final String name;
 		private final JLabel timeLabel;
 		private final JLabel scoreLabel;
+		private final JLabel statusLabel;
+		private final String name;
 		private final int defaultTime;
 		private int time;
+		private Status status;
 
 		/**
 		 * Constructor for PlayerPanel. Sets up the panel layout and populates it with player information.
@@ -287,29 +315,28 @@ public class GameScreen extends JPanel {
 		 * @param time The player's remaining time in seconds.
 		 */
 		public PlayerPanel(String playerName, int score, int time) {
-			// Set layout for the panel with two columns and spacing between rows
-			this.setLayout(new GridLayout(2,2,7,10));
+			this.setLayout(new GridLayout(3,2,7,10));
 
-			// Set an etched border for visual separation
+			this.name = playerName;
 			this.setBorder(BorderFactory.createTitledBorder(playerName));
-			name = playerName;
 
-			// Label for remaining time, formatted as minutes and seconds
 			JLabel playerTimeLabel = new JLabel("Time:", SwingConstants.RIGHT);
 			this.time = this.defaultTime = time;
 			this.timeLabel = new JLabel(GameScreen.formatTime(time));
 
-			// Label for player's score
 			JLabel playerScoreLabel = new JLabel("Score:", SwingConstants.RIGHT);
 			this.scoreLabel = new JLabel("" + score);
 
-			// Add labels to the panel in the specified layout order
-			//this.add(playerNameLabel);
-			//this.add(name);
+			JLabel emptyLabel = new JLabel("");
+			statusLabel = new JLabel("Active");
+			statusLabel.setForeground(Color.GREEN);
+
 			this.add(playerTimeLabel);
 			this.add(this.timeLabel);
 			this.add(playerScoreLabel);
 			this.add(this.scoreLabel);
+			this.add(emptyLabel);
+			this.add(statusLabel);
 		}
 
 		/**
@@ -339,13 +366,37 @@ public class GameScreen extends JPanel {
 			this.timeLabel.setEnabled(enabled);
 			this.scoreLabel.setEnabled(enabled);
 		}
+
+		public Status getStatus() {return status; }
+
+		public void setStatus(Status status) {
+			this.status = status;
+			this.statusLabel.setText(status.name);
+			this.statusLabel.setForeground(status.color);
+		}
+
+		public enum Status {
+			ACTIVE("Active", Color.GREEN), INACTIVE("Inactive", Color.darkGray),
+			DISCONNECTED("Disconnected", Color.red.darker()), PLAYING("Playing", Color.BLUE);
+
+			public final String name;
+			public final Color color;
+
+			Status(String name, Color color) {
+				this.name = name;
+				this.color = color;
+			}
+
+			public Color getColor() {return this.color;}
+			public String getName() {return this.name; }
+		}
 	}
 
 	/**
 	 * BoardPanel is a JPanel that represents the game board in Scrabble.
 	 * It initializes and displays a grid of BoardCellPanels with appropriate colors and labels.
 	 */
-	private static class BoardPanel extends JPanel {
+	public static class BoardPanel extends JPanel {
 		/** The color of the text used for board modifier cells. */
 		public static final Color MODIFIER_CELL_TEXT_COLOR = new Color(255, 255, 255);
 		/**
@@ -366,12 +417,11 @@ public class GameScreen extends JPanel {
 
 		// Array of BoardCellPanels representing the game board cells
 		private BoardCellPanel[][] boardCells;
-		private int environmentHeight;
-		private int environmentWidth;
+		private final int environmentHeight;
 
 		// Dimensions for panel and cell sizes
-		private Dimension maxPanelSize, preferredPanelSize, minPanelSize,
-					maxCellSize, preferredCellSize, minCellSize;
+		private Dimension maxPanelSize;
+		private Dimension preferredPanelSize;
 
 		/**
 		 * Initializes the board panel, sets up dimensions, and adds cell panels.
@@ -379,7 +429,6 @@ public class GameScreen extends JPanel {
 		public BoardPanel() {
 			// Get the screen dimensions from the default graphics environment
 			GraphicsDevice gd = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
-			environmentWidth = gd.getDisplayMode().getWidth();
 			environmentHeight = gd.getDisplayMode().getHeight();
 
 			// Set up panel and cell dimensions
@@ -401,18 +450,18 @@ public class GameScreen extends JPanel {
 		 * Sets up the dimensions for the panel and cells based on screen size.
 		 */
 		private void setupDimensions() {
-			minPanelSize = new Dimension((int)(MINIMUM_PANEL_SIZE_PERCENT*environmentHeight),
-					(int)(MINIMUM_PANEL_SIZE_PERCENT*environmentHeight));
+			Dimension minPanelSize = new Dimension((int) (MINIMUM_PANEL_SIZE_PERCENT * environmentHeight),
+					(int) (MINIMUM_PANEL_SIZE_PERCENT * environmentHeight));
 			preferredPanelSize = new Dimension((int)(PREFERRED_PANEL_SIZE_PERCENT*environmentHeight),
 					(int)(PREFERRED_PANEL_SIZE_PERCENT*environmentHeight));
 			maxPanelSize = new Dimension((int)(MAXIMUM_PANEL_SIZE_PERCENT*environmentHeight),
 					(int)(MAXIMUM_PANEL_SIZE_PERCENT*environmentHeight));
-			minCellSize = new Dimension((int)(MINIMUM_CELL_PERCENT*environmentHeight),
-					(int)(MINIMUM_CELL_PERCENT*environmentHeight));
-			preferredCellSize = new Dimension((int)(PREFERRED_CELL_PERCENT*environmentHeight),
-					(int)(PREFERRED_CELL_PERCENT*environmentHeight));
-			maxCellSize = new Dimension((int)(MAXIMUM_CELL_PERCENT*environmentHeight),
-					(int)(MAXIMUM_CELL_PERCENT*environmentHeight));
+			Dimension minCellSize = new Dimension((int) (MINIMUM_CELL_PERCENT * environmentHeight),
+					(int) (MINIMUM_CELL_PERCENT * environmentHeight));
+			Dimension preferredCellSize = new Dimension((int) (PREFERRED_CELL_PERCENT * environmentHeight),
+					(int) (PREFERRED_CELL_PERCENT * environmentHeight));
+			Dimension maxCellSize = new Dimension((int) (MAXIMUM_CELL_PERCENT * environmentHeight),
+					(int) (MAXIMUM_CELL_PERCENT * environmentHeight));
 		}
 
 		/**
@@ -538,7 +587,7 @@ public class GameScreen extends JPanel {
 		/**
 		 * A panel that holds a single JButton representing a cell on the Scrabble board.
 		 */
-		private static class BoardCellPanel extends JPanel {
+		public static class BoardCellPanel extends JPanel {
 			// The button representing the cell in the panel.
 			private JButton boardButton;
 
