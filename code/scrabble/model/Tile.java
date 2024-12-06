@@ -54,7 +54,7 @@ public class Tile implements Serializable {
      * @deprecated Use {@link #Tile(TileScore)}.
      */
     public Tile(char letter) {
-        this.primary = this.secondary = TileScore.valueOf(Character.toUpperCase(letter) + "");
+        this.primary = this.secondary = TileScore.scoreValueOf(Character.toUpperCase(letter) + "");
     }
 
     /**
@@ -219,7 +219,7 @@ public class Tile implements Serializable {
          * @return the value of the letter. Between 1-10
          */
         public static int getScoreForLetter(char letter) {
-            return TileScore.valueOf( String.valueOf(letter).toUpperCase() ).getScore();
+            return TileScore.scoreValueOf( String.valueOf(letter).toUpperCase() ).getScore();
         }
 
         /**

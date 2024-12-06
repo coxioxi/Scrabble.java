@@ -40,7 +40,6 @@ public class TileButton extends JButton {
 
     public TileButton(Tile tile) {
         super(tile.getLetter()+"");
-        System.out.println("TileButton#<init> with " + letterScore.getLetter());
         this.tile = tile;
     }
 

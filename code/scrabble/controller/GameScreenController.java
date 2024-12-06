@@ -227,7 +227,7 @@ public class GameScreenController {
 		int playerId = parent.getSelfID();
 		Tile[] tiles = (gameControls.getExchangePanel().getNumberToExchange() == GameScreen.RACK_SIZE
 				? gameControls.getMainControlsPanel().getRackTiles()
-				: new Tile[] {new Tile(Tile.TileScore.valueOf(gameControls.getExchangePanel().getSelectedLetter() + ""))}
+				: new Tile[] {new Tile(Tile.TileScore.scoreValueOf(gameControls.getExchangePanel().getSelectedLetter() + ""))}
 		);
 
 		ExchangeTiles exchangeTiles = new ExchangeTiles(playerId, playerId, tiles);

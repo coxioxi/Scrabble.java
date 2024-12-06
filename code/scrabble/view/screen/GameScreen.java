@@ -233,10 +233,7 @@ public class GameScreen extends JPanel {
 	 */
 	public void addToBoard(Tile[] tiles) {
 		for (int i = 0; i < tiles.length; i++) {
-			TileButton tb = (tiles[i].isBlank() ?
-					new TileButton() :
-					new TileButton(Tile.TileScore.valueOf(tiles[i].getLetter()+""))
-			);
+			TileButton tb = new TileButton(tiles[i]);
 			int x = tiles[i].getLocation().x;
 			int y = tiles[i].getLocation().y;
 			boardPanel.setBoardCell(tb, x, y);
@@ -949,7 +946,7 @@ public class GameScreen extends JPanel {
 				char[] characters = getRackLetters();
 				Tile[] tiles = new Tile[characters.length];
 				for (int i = 0; i < characters.length; i++) {
-					tiles[i] = new Tile(Tile.TileScore.valueOf(characters[i] + ""));
+					tiles[i] = new Tile(Tile.TileScore.scoreValueOf(characters[i] + ""));
 				}
 				return tiles;
 			}
@@ -969,7 +966,7 @@ public class GameScreen extends JPanel {
 					this.setLayout(new GridLayout(1, RACK_SIZE, 10, 0));
 
 					for (int i = 0; i < tilePanels.length; i++) {
-						tilePanels[i] = new TilePanel(new TileButton(Tile.TileScore.values()[i]));
+						tilePanels[i] = new TilePanel(new TileButton(new Tile(Tile.TileScore.values()[i])));
 						this.add(tilePanels[i]);
 					}
 				}
@@ -1042,11 +1039,7 @@ public class GameScreen extends JPanel {
 				 */
 				public void addTilesToRack(Tile[] tiles) {
 					for(Tile t : tiles) {
-						TileButton button =
-								(t.isBlank()
-										? new TileButton()
-										: new TileButton(Tile.TileScore.valueOf(t.getLetter()+""))
-								);
+						TileButton button = new TileButton(t);
 						this.addToRack(button);
 					}
 				}
