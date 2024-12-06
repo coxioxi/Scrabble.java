@@ -12,42 +12,44 @@ import scrabble.model.Tile;
 import javax.swing.*;
 import java.awt.*;
 
+
 /**
  * A JButton representing a tile in the Scrabble game, displaying both the letter and its score.
  */
 public class TileButton extends JButton {
+    private static final Color BACKGROUND_COLOR = new Color(220, 220, 220);
+    private static final Color ENABLED_TEXT_COLOR = Color.BLACK;
+    private static final Color DISABLED_TEXT_COLOR = Color.GRAY;
+
     private Tile tile;
     private Tile.TileScore letterScore;
-    private final Font scoreFont; // The font used for displaying the score.
-
+    private final Font SCORE_FONT = getFont().deriveFont(7f); // The font used for displaying the score.
+    private final Font LETTER_FONT = getFont().deriveFont(Font.BOLD, 12f);
     /**
      * Constructor that initializes the button with a given TileScore object.
      *
      * @param letterScore The TileScore object representing the letter and score of the tile.
+     * @deprecated use {@link #TileButton(Tile)}
      */
     public TileButton(Tile.TileScore letterScore) {
         // Call the parent JButton constructor with the name of the letter.
-        super(letterScore.name());
+        super(letterScore.getLetter()+"");
+        System.out.println("TileButton#<init> with " + letterScore.getLetter());
         this.letterScore = letterScore;
-
-        // Set the font size for the score and main button text.
-        scoreFont = getFont().deriveFont(8f);
-        setFont(getFont().deriveFont(Font.BOLD, 12f));
     }
 
     public TileButton(Tile tile) {
-        super(tile.getLetter() + "");
+        super(tile.getLetter()+"");
+        System.out.println("TileButton#<init> with " + letterScore.getLetter());
         this.tile = tile;
-
-        scoreFont = getFont().deriveFont(8f);
-        setFont(getFont().deriveFont(Font.BOLD, 12f));
     }
 
+    /**
+     * @deprecated use {@link #TileButton(Tile)}
+     */
     public TileButton() {
         super(Tile.TileScore.BLANK.getLetter()+"");
         this.letterScore = Tile.TileScore.BLANK;
-        scoreFont = getFont().deriveFont(8f);
-        setFont(getFont().deriveFont(Font.BOLD, 12f));
     }
 
     /**
@@ -57,20 +59,24 @@ public class TileButton extends JButton {
      */
     @Override
     public void paintComponent(Graphics g) {
-        // Create a copy of the Graphics object for drawing.
+        // default paint
         Graphics2D g2 = (Graphics2D) g.create();
-
-        // Call the superclass paintComponent method to handle standard painting.
         super.paintComponent(g2);
 
-        // Set the color and font for drawing the score on the tile.
-        g2.setPaint(Color.BLACK);
-        g2.setFont(scoreFont);
+        // background
+        g2.setColor(BACKGROUND_COLOR);
+        g2.fillRect(0,0,getWidth(), getHeight());
+
+        g2.setPaint(this.isEnabled() ? ENABLED_TEXT_COLOR : DISABLED_TEXT_COLOR);
+        g2.setFont(LETTER_FONT);
+        float x = getWidth()/2f - 2*LETTER_FONT.getSize()/5f - 1;
+        float y = getHeight()/2f + 2*LETTER_FONT.getSize()/5f;
+        g2.drawString(""+(tile == null ? letterScore.getLetter() : tile.getLetter()), x, y);
+
+        g2.setFont(SCORE_FONT);
 
         // Draw the score near the bottom-right corner of the tile.
         g2.drawString((tile == null ? letterScore.getScore() : tile.getScore()) + "", getWidth() / 2 + 5, getHeight() / 2 + 8);
-
-        // Dispose of the Graphics object to free resources.
         g2.dispose();
     }
 
@@ -87,14 +93,4 @@ public class TileButton extends JButton {
     public void setTileLocation(Point location) {
         tile.setLocation(location);
     }
-
-
-
-
-
-
-
-
-
-
 }
