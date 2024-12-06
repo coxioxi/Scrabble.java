@@ -80,12 +80,8 @@ public class ExchangeTiles extends Message{
 	 */
 	@Override
 	public void execute(Controller controller) {
-		if (playerID == controller.getModel().getSelf().getID()) {
-			selfExecute(controller);
-		}
-		else {
-			themExecute(controller);
-		}
+		if (playerID == controller.getSelfID()) selfExecute(controller);
+		else themExecute(controller);
 	}
 
 	/**
@@ -98,8 +94,8 @@ public class ExchangeTiles extends Message{
 	@Override
 	public void execute(PartyHost partyHost) {
 		Tile[] newTiles = partyHost.getTiles(toExchange.length);
-		ArrayList<Tile> tiles = new ArrayList<>(Arrays.stream(newTiles).toList());
-		tiles.forEach(System.out::println);
+		//ArrayList<Tile> tiles = new ArrayList<>(Arrays.stream(newTiles).toList());
+		//tiles.forEach(System.out::println);
 		NewTiles newTilesMessage = new NewTiles(this.getSenderID(), newTiles);
 
 		//send exchange message to all players but itself
