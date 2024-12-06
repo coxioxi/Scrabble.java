@@ -25,30 +25,15 @@ public class TileButton extends JButton {
     private Tile.TileScore letterScore;
     private final Font SCORE_FONT = getFont().deriveFont(7f); // The font used for displaying the score.
     private final Font LETTER_FONT = getFont().deriveFont(Font.BOLD, 12f);
-    /**
-     * Constructor that initializes the button with a given TileScore object.
-     *
-     * @param letterScore The TileScore object representing the letter and score of the tile.
-     * @deprecated use {@link #TileButton(Tile)}
-     */
-    public TileButton(Tile.TileScore letterScore) {
-        // Call the parent JButton constructor with the name of the letter.
-        super(letterScore.getLetter()+"");
-        System.out.println("TileButton#<init> with " + letterScore.getLetter());
-        this.letterScore = letterScore;
-    }
 
+    /**
+     * Constructor that initializes the button with a given Tile object.
+     *
+     * @param tile the tile object representing the letter and score of the tile.
+     */
     public TileButton(Tile tile) {
         super(tile.getLetter()+"");
         this.tile = tile;
-    }
-
-    /**
-     * @deprecated use {@link #TileButton(Tile)}
-     */
-    public TileButton() {
-        super(Tile.TileScore.BLANK.getLetter()+"");
-        this.letterScore = Tile.TileScore.BLANK;
     }
 
     /**
@@ -68,7 +53,7 @@ public class TileButton extends JButton {
 
         g2.setPaint(this.isEnabled() ? ENABLED_TEXT_COLOR : DISABLED_TEXT_COLOR);
         g2.setFont(LETTER_FONT);
-        float x = getWidth()/2f - 2*LETTER_FONT.getSize()/5f - 1;
+        float x = getWidth()/2f - 2*LETTER_FONT.getSize()/5f - 0.5f;
         float y = getHeight()/2f + 2*LETTER_FONT.getSize()/5f;
         g2.drawString(""+(tile == null ? letterScore.getLetter() : tile.getLetter()), x, y);
 
