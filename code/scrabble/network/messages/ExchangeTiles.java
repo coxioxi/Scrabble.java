@@ -12,6 +12,7 @@ import scrabble.model.Tile;
 import scrabble.network.PartyHost;
 import scrabble.view.screen.GameScreen;
 
+import javax.swing.*;
 import java.io.IOException;
 import java.io.Serial;
 import java.util.ArrayList;
@@ -83,15 +84,12 @@ public class ExchangeTiles extends Message{
 	 */
 	@Override
 	public void execute(Controller controller) {
-
 		if (playerID == controller.getModel().getSelf().getID()) {
 			selfExecute(controller);
 		}
 		else {
 			themExecute(controller);
 		}
-
-		controller.getModel().nextTurn();
 	}
 
 	/**
