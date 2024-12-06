@@ -349,7 +349,7 @@ public class GameScreenController {
 		if (gameScreen.instanceOfTileButton(row, col)) {
 			//put in rack
 			TileButton tile = (TileButton) gameScreen.boardPanel.getButton(row, col);
-			if (tile.getTile().isBlank()) {
+			if (tile.getTile().isBlank() && tile.isEnabled()) {
 				tile.getTile().resetLetter();
 			}
 			gameScreen.removeBoardPanelActionListeners(row, col);
