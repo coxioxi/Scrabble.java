@@ -24,7 +24,6 @@ import java.net.Socket;
 import java.net.SocketException;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 
@@ -41,7 +40,7 @@ public class Controller implements PropertyChangeListener  {
 	 */
 	public static final int PORT = 0;
 
-	private ScrabbleGUI view;	// maintains the GUI
+	private final ScrabbleGUI view;	// maintains the GUI
 	private Game model;			// maintains Scrabble game data
 
 	private boolean fxEnable = true;
@@ -77,9 +76,7 @@ public class Controller implements PropertyChangeListener  {
 	public Controller() {
 		try { UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName()); } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException ignore) {}
 		view = new ScrabbleGUI();
-		view.setDefaultCloseOperation(
-				WindowConstants.DO_NOTHING_ON_CLOSE
-		);				// Allow window listeners to handle closing events
+		view.setDefaultCloseOperation( WindowConstants.DO_NOTHING_ON_CLOSE);	// Allow window listeners to handle closing events
 		addListeners(view);
 		this.showMain();
 	}
@@ -200,11 +197,10 @@ public class Controller implements PropertyChangeListener  {
 	 * @param tiles the tiles to add.
 	 */
 	public void addTiles(Tile[] tiles) {
-		System.out.println("Controller#addTiles:\n\t");
-		ArrayList<Tile> toPrint = new ArrayList<>(Arrays.stream(tiles).toList());
-		toPrint.forEach(System.out::println);
-		model.addTiles(tiles);
-
+//		System.out.println("Controller#addTiles:\n\t");
+//		ArrayList<Tile> toPrint = new ArrayList<>(Arrays.stream(tiles).toList());
+//		toPrint.forEach(System.out::println);
+		// uses swingUtilities now
 		gameScreenController.addRackTiles(tiles);
 	}
 
@@ -267,7 +263,7 @@ public class Controller implements PropertyChangeListener  {
 		gameScreenController.addToBoard(tiles);
 		Player player = model.getPlayer(playerID);
 		gameScreenController.updateScore(player.getPlayerName(), player.getScore());
-		this.getView().getGame().nextPlayer();
+		gameScreenController.nextPlayer();
 	}
 	private void selfPlayTiles(Tile[] tiles) {
 		// when the player is this application's player.
@@ -295,22 +291,31 @@ public class Controller implements PropertyChangeListener  {
 
 	public void passTurn(int playerID) {
 		model.passTurn(playerID);
-		view.getGame().nextPlayer();
+		gameScreenController.nextPlayer();
 		gameScreenController.setGameControlButtonsEnabled(model.getCurrentPlayer() == selfID);
 	}
 
 	public void exchangeTilesTurn(Tile[] tiles) {
+//		System.out.println("Controller#exchangeTilesTurn(Tile[]):\n\tI am player " + selfID);
+//		System.out.println("Controller#exchangeTilesTurn(Tile[]):\n\tmodel says it is " + model.getCurrentPlayer() +"'s turn.\n\tMoving to next player..." );
 		model.nextTurn();
-		view.getGame().nextPlayer();
+//		System.out.println("Controller#exchangeTilesTurn(Tile[]):\n\tmodel says it is " + model.getCurrentPlayer() +"'s turn" );
+		gameScreenController.nextPlayer();
+//		System.out.println("Controller#exchangeTilesTurn(Tile[]):\n\tcurrentPlayer == self:" + (model.getCurrentPlayer() == selfID));
 		gameScreenController.setGameControlButtonsEnabled(model.getCurrentPlayer() == selfID);
 		for (Tile t : tiles) {
+//			System.out.println("Controller#exchangeTilesTurn(Tile[]):\n\t removing tile " + t);
 			this.removeRackTile(t);
 		}
 	}
 
 	public void exchangeTilesTurn() {
+//		System.out.println("Controller#exchangeTilesTurn:\n\tI am player " + selfID);
+//		System.out.println("Controller#exchangeTilesTurn:\n\tmodel says it is " + model.getCurrentPlayer() +"'s turn.\n\tMoving to next player..." );
 		model.nextTurn();
-		view.getGame().nextPlayer();
+//		System.out.println("Controller#exchangeTilesTurn:\n\tmodel says it is " + model.getCurrentPlayer() +"'s turn" );
+		gameScreenController.nextPlayer();
+//		System.out.println("Controller#exchangeTilesTurn:\n\tcurrentPlayer == self:" + (model.getCurrentPlayer() == selfID));
 		gameScreenController.setGameControlButtonsEnabled(model.getCurrentPlayer() == selfID);
 	}
 
@@ -318,13 +323,15 @@ public class Controller implements PropertyChangeListener  {
 	 * Removes the most recently played tiles from the board and places them in the rack.
 	 * @see GameScreenController#resetLastPlay
 	 */
-	public void resetLastPlay(){ gameScreenController.resetLastPlay(); }
+	public void resetLastPlay(){
+		gameScreenController.resetLastPlay(); }
 
 	/**
 	 * Removes a specific tile from this player's rack.
 	 * @param tile the tile to be removed.
 	 */
-	public void removeRackTile(Tile tile) { int removedLocation = gameScreenController.removeRackTile(tile); }
+	public void removeRackTile(Tile tile) {
+		gameScreenController.removeRackTile(tile); }
 
 	/**
 	 * Gets the view.
@@ -369,14 +376,6 @@ public class Controller implements PropertyChangeListener  {
 	 */
 	public ElevatorMusicPlayer getElevatorMusicPlayer() {
 		return elevatorMusicPlayer;
-	}
-
-	public boolean isFxEnable() {
-		return fxEnable;
-	}
-
-	public boolean isMusicEnable() {
-		return musicEnable;
 	}
 
 	/**
@@ -495,11 +494,10 @@ public class Controller implements PropertyChangeListener  {
 	 * game's <code>Ruleset</code>.
 	 */
 	public void showRulesDialog() {
-		JOptionPane pane = new JOptionPane();
 		JEditorPane ep = setupRules();
 		ep.setEditable(false);
 		addHotlinkListener(ep);
-		pane.showMessageDialog(view, ep, "Rules", JOptionPane.INFORMATION_MESSAGE);
+		JOptionPane.showMessageDialog(view, ep, "Rules", JOptionPane.INFORMATION_MESSAGE);
 	}
 
 	private JEditorPane setupRules() {
@@ -523,9 +521,7 @@ public class Controller implements PropertyChangeListener  {
 			if (e.getEventType().equals(HyperlinkEvent.EventType.ACTIVATED)) {
 				try {
 					Desktop.getDesktop().browse(e.getURL().toURI()); // roll your own link launcher or use Desktop if J6+
-				} catch (IOException ex) {
-					throw new RuntimeException(ex);
-				} catch (URISyntaxException ex) {
+				} catch (IOException | URISyntaxException ex) {
 					throw new RuntimeException(ex);
 				}
 			}
@@ -687,15 +683,13 @@ public class Controller implements PropertyChangeListener  {
 		gameScreenController.setupMenuListeners(view);
 	}
 
-	private void addWaitingListeners(JPanel waiting) {}
-
 	/*
 	 * adds listeners to the Join screen; allows player to enter name and host info,
 	 * then attempt to join.
 	 */
 	private void addJoinListeners(JoinScreen join) {
         // makes changes to view.screen.JoinScreen
-        JoinScreenController joinScreenController = new JoinScreenController(this, join);
+        new JoinScreenController(this, join);
 	}
 
 	/*
@@ -710,7 +704,7 @@ public class Controller implements PropertyChangeListener  {
 	 */
 	private void addMenuListeners(ScrabbleGUI.MainMenuScreen mainMenu) {
         // makes changes to view.screen.MainMenu
-        MainMenuController mainMenuController = new MainMenuController(this, mainMenu);
+        new MainMenuController(this, mainMenu);
 	}
 
 	/*
