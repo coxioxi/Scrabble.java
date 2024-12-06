@@ -944,11 +944,15 @@ public class GameScreen extends JPanel {
 
 			public Tile[] getRackTiles() {
 				char[] characters = getRackLetters();
-				Tile[] tiles = new Tile[characters.length];
+				ArrayList<Tile> tiles = new ArrayList<>(RACK_SIZE);
 				for (int i = 0; i < characters.length; i++) {
-					tiles[i] = new Tile(Tile.TileScore.scoreValueOf(characters[i] + ""));
+					boolean cInValues = false;
+					for (int j = 0; j < Tile.TileScore.values().length && !cInValues; j++) {
+						if (characters[i] == Tile.TileScore.values()[j].getLetter()) cInValues = true;
+					}
+					if (cInValues) tiles.add(new Tile(Tile.TileScore.scoreValueOf(characters[i] + "")));
 				}
-				return tiles;
+				return tiles.toArray(new Tile[0]);
 			}
 
 
@@ -1009,18 +1013,6 @@ public class GameScreen extends JPanel {
 					this.repaint();
 				}
 
-				public void addToRack(TileButton button) {
-					boolean searching = true;
-					for (int i = 0; i < tilePanels.length && searching; i++) {
-						if (!(tilePanels[i].getButton() instanceof TileButton)) {
-							setButton(button, i);
-							searching = false;
-							System.out.println("GS$MCP$RackPanel#addToRack: blank spot found");
-						}
-					}
-					if (searching) System.out.println("GS$MCP$RackPanel#addToRack: no blank spot found");
-				}
-
 				public int addTileButtonToRack(TileButton t) {
 					int index = -1;
 					for (int i = 0; i < tilePanels.length && index == -1; i++) {
@@ -1040,18 +1032,17 @@ public class GameScreen extends JPanel {
 				public void addTilesToRack(Tile[] tiles) {
 					for(Tile t : tiles) {
 						TileButton button = new TileButton(t);
-						this.addToRack(button);
+						addTileButtonToRack(button);
 					}
 				}
 
-				public int removeFromRack(String letter) {
+				public void removeFromRack(String letter) {
 					for(int i = 0; i < tilePanels.length; i++){
 						if(tilePanels[i].getButton().getText().equals(letter)){
 							tilePanels[i].setButton(new JButton(" "));
-							return i;
+							return;
 						}
 					}
-					return -1;
 				}
 
 				public JButton removeButtonFromRack(int col) {
@@ -1077,6 +1068,12 @@ public class GameScreen extends JPanel {
 				public void resetRack() {
 					for (TilePanel tp : tilePanels) {
 						tp.setButton(new JButton(" "));
+					}
+				}
+
+				public void soutRack() {
+					for (TilePanel p : tilePanels) {
+						System.out.println(p.getButton().getText());
 					}
 				}
 
