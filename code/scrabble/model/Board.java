@@ -318,7 +318,7 @@ public class Board {
 		 * A normal, non-modifying cell. Does not apply to a word, has a multiplier of 1, is named "Normal Cell",
 		 * is rendered with text " ", and has an off-white color.
 		 */
-		NONE(false, 1, "Normal Cell", " ", new Color(221, 221, 221));  	// Normal cell.
+		NONE(false, 1, "Normal Cell", " ", new Color(200, 200, 200));  	// Normal cell.
 
 		private final boolean appliesToWord;
 		private final int multiplier;
