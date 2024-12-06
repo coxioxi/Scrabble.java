@@ -21,8 +21,7 @@ public class TileButton extends JButton {
     private static final Color ENABLED_TEXT_COLOR = Color.BLACK;
     private static final Color DISABLED_TEXT_COLOR = Color.GRAY;
 
-    private Tile tile;
-    private Tile.TileScore letterScore;
+    private final Tile tile;
     private final Font SCORE_FONT = getFont().deriveFont(7f); // The font used for displaying the score.
     private final Font LETTER_FONT = getFont().deriveFont(Font.BOLD, 12f);
 
@@ -55,12 +54,12 @@ public class TileButton extends JButton {
         g2.setFont(LETTER_FONT);
         float x = getWidth()/2f - 2*LETTER_FONT.getSize()/5f - 0.5f;
         float y = getHeight()/2f + 2*LETTER_FONT.getSize()/5f;
-        g2.drawString(""+(tile == null ? letterScore.getLetter() : tile.getLetter()), x, y);
+        g2.drawString(""+tile.getLetter(), x, y);
 
         g2.setFont(SCORE_FONT);
 
         // Draw the score near the bottom-right corner of the tile.
-        g2.drawString((tile == null ? letterScore.getScore() : tile.getScore()) + "", getWidth() / 2 + 5, getHeight() / 2 + 8);
+        g2.drawString(tile.getScore() + "", getWidth() / 2 + 5, getHeight() / 2 + 8);
         g2.dispose();
     }
 
