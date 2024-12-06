@@ -1,7 +1,6 @@
 package scrabble.controller;
 
 import scrabble.model.Board;
-import scrabble.model.Game;
 import scrabble.model.Tile;
 import scrabble.network.messages.*;
 import scrabble.view.ScrabbleGUI;
@@ -11,9 +10,7 @@ import scrabble.view.screen.*;
 import javax.swing.*;
 import java.awt.event.ActionListener;
 import java.awt.Point;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.TimerTask;
+import java.util.*;
 import java.util.Timer;
 
 /**
@@ -29,6 +26,7 @@ public class GameScreenController {
 	private boolean isRackEnabled;
 	private JButton value;
 	private final List<Tile> lastPlayedTiles = new ArrayList<>();
+	private Point blankTileLocation;
 
 	/**
 	 * Removes the action listener for a tile that has been played and will not be able
@@ -300,6 +298,19 @@ public class GameScreenController {
 		gameControls.getBlankPanel().addSubmitActionListener(e -> blankSubmitClick());
 	}
 	private void blankSubmitClick() {
+		char letter = gameControls.getBlankPanel().getSelectedLetter();
+		TileButton newTile = (TileButton)gameScreen.getValue();
+		newTile.setTileLetter(Tile.TileScore.scoreValueOf(letter + ""));
+		newTile.setTileLocation(blankTileLocation);
+
+		gameScreen.addToPlayedTiles(newTile.getTile());
+		gameScreen.setBoardCellOfBoardPanel(newTile, blankTileLocation.x, blankTileLocation.y);
+		addBoardCellPanelListener(blankTileLocation.x, blankTileLocation.y);
+		blankTileLocation = null;
+		gameScreen.setValue(new JButton(" "));
+
+		//Play audio for when tiles are being placed on the board
+		parent.playTileFx();
 
 		gameControls.showRack();
 	}
@@ -337,28 +348,41 @@ public class GameScreenController {
 	private void boardCellClick(int row, int col) {
 		if (gameScreen.instanceOfTileButton(row, col)) {
 			//put in rack
+			TileButton tile = (TileButton) gameScreen.boardPanel.getButton(row, col);
+			if (tile.getTile().isBlank()) {
+				tile.getTile().resetLetter();
+			}
 			gameScreen.removeBoardPanelActionListeners(row, col);
-			gameScreen.removeFromPlayedTiles(
-					new Tile(gameScreen.getBoardButtonText(row, col).charAt(0), new Point(row, col))
-			);
+			gameScreen.removeFromPlayedTiles(tile.getTile());
 			int index = gameControls.getMainControlsPanel().getRackPanel().addTileButtonToRack(
 					(TileButton) gameScreen.getBoardButton(row, col));
 			addTilePanelListener(index);
 		}
 		// add value to panel
+
 		JButton toAdd = gameScreen.getValue();
 		removeActionListeners(toAdd);
-		if (toAdd instanceof TileButton) {
-			gameScreen.addToPlayedTiles(
-					new Tile(toAdd.getText().charAt(0), new Point(row, col))
-			);
-		}
-		gameScreen.setBoardCellOfBoardPanel(toAdd, row, col);
-		addBoardCellPanelListener(row, col);
-		gameScreen.setValue(new JButton(" "));
 
-		//Play audio for when tiles are being placed on the board
-		parent.playTileFx();
+		boolean toAddIsBlank = false;
+
+		if (toAdd instanceof TileButton tileButton) {
+            if (tileButton.getTile().isBlank()) {
+				gameControls.showBlank();
+				blankTileLocation = new Point(row, col);
+				toAddIsBlank = true;
+			} else {
+				tileButton.setTileLocation(new Point(row, col));
+				gameScreen.addToPlayedTiles(tileButton.getTile());
+			}
+		}
+		if (!toAddIsBlank) {
+			gameScreen.setBoardCellOfBoardPanel(toAdd, row, col);
+			addBoardCellPanelListener(row, col);
+			gameScreen.setValue(new JButton(" "));
+
+			//Play audio for when tiles are being placed on the board
+			parent.playTileFx();
+		}
 	}
 	/**
 	 * Adds the listeners to each panel of the rack
@@ -392,6 +416,7 @@ public class GameScreenController {
 			}
 			gameControls.getMainControlsPanel().getRackPanel().soutRack();
 			int playerID = parent.getSelfID();
+			System.out.println(Arrays.toString(gameScreen.getPlayedTiles().toArray(new Tile[0])));
 			PlayTiles playTiles = new PlayTiles(playerID, playerID, gameScreen.getPlayedTiles().toArray(new Tile[0]));
 			playTiles.execute(parent);
 		});

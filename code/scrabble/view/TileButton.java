@@ -64,7 +64,7 @@ public class TileButton extends JButton {
         g2.dispose();
     }
 
-    public Tile tile() { return tile; }
+    public Tile getTile() { return tile; }
 
     /**
      *
