@@ -196,12 +196,15 @@ public class Game {
 	 * @param isConnected The new status of the player
 	 */
 	public void setConnected(int playerID, boolean isConnected) {
-		Player.NetworkPlayer player = (Player.NetworkPlayer) players[playerID]; // Cast player to NetworkPlayer
-		if(isConnected){
-			player.setConnected(true); // Set connected status to true
-		}else{
-			player.setActive(false); // Set active status to false if disconnected
+		System.out.println("game.setConnected:\n\t playerID = " + playerID);
+		if (players[playerID] instanceof Player.NetworkPlayer networkPlayer) {
+			networkPlayer.setConnected(isConnected);
+			networkPlayer.setActive(isConnected);
+		} else if (players[playerID] instanceof Player.LocalPlayer localPlayer){
+			localPlayer.setActive(isConnected);
 		}
+		else
+			System.out.println("WTF.");
 	}
 
 	/**
@@ -317,6 +320,15 @@ public class Game {
 		}
 		return true;
 	}
+
+	public int numPlayersActive() {
+		int numActive = 0;
+		for (Player p : players) {
+			if (p.isActive()) numActive++;
+		}
+		return numActive;
+	}
+
 
 	/**
 	 * this helper method returns a reference to the player object

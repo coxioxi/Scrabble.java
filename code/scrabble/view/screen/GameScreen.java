@@ -233,10 +233,7 @@ public class GameScreen extends JPanel {
 	 */
 	public void addToBoard(Tile[] tiles) {
 		for (int i = 0; i < tiles.length; i++) {
-			TileButton tb = (tiles[i].isBlank() ?
-					new TileButton() :
-					new TileButton(Tile.TileScore.valueOf(tiles[i].getLetter()+""))
-			);
+			TileButton tb = new TileButton(tiles[i]);
 			int x = tiles[i].getLocation().x;
 			int y = tiles[i].getLocation().y;
 			boardPanel.setBoardCell(tb, x, y);
@@ -291,6 +288,14 @@ public class GameScreen extends JPanel {
 		gameTimeLabel.setBorder(BorderFactory.createEtchedBorder());
 		northPanel.add(gameTimeLabel);
 		return northPanel;
+	}
+
+	public void setDisconnected(String playerName) {
+		for (PlayerPanel p : playerPanels) {
+			if (p.getPlayerName().equals(playerName)) {
+				p.setStatus(PlayerPanel.Status.DISCONNECTED);
+			}
+		}
 	}
 
 	/**
@@ -947,11 +952,15 @@ public class GameScreen extends JPanel {
 
 			public Tile[] getRackTiles() {
 				char[] characters = getRackLetters();
-				Tile[] tiles = new Tile[characters.length];
+				ArrayList<Tile> tiles = new ArrayList<>(RACK_SIZE);
 				for (int i = 0; i < characters.length; i++) {
-					tiles[i] = new Tile(Tile.TileScore.valueOf(characters[i] + ""));
+					boolean cInValues = false;
+					for (int j = 0; j < Tile.TileScore.values().length && !cInValues; j++) {
+						if (characters[i] == Tile.TileScore.values()[j].getLetter()) cInValues = true;
+					}
+					if (cInValues) tiles.add(new Tile(Tile.TileScore.scoreValueOf(characters[i] + "")));
 				}
-				return tiles;
+				return tiles.toArray(new Tile[0]);
 			}
 
 
@@ -969,7 +978,7 @@ public class GameScreen extends JPanel {
 					this.setLayout(new GridLayout(1, RACK_SIZE, 10, 0));
 
 					for (int i = 0; i < tilePanels.length; i++) {
-						tilePanels[i] = new TilePanel(new TileButton(Tile.TileScore.values()[i]));
+						tilePanels[i] = new TilePanel(new TileButton(new Tile(Tile.TileScore.values()[i])));
 						this.add(tilePanels[i]);
 					}
 				}
@@ -1012,18 +1021,6 @@ public class GameScreen extends JPanel {
 					this.repaint();
 				}
 
-				public void addToRack(TileButton button) {
-					boolean searching = true;
-					for (int i = 0; i < tilePanels.length && searching; i++) {
-						if (!(tilePanels[i].getButton() instanceof TileButton)) {
-							setButton(button, i);
-							searching = false;
-							System.out.println("GS$MCP$RackPanel#addToRack: blank spot found");
-						}
-					}
-					if (searching) System.out.println("GS$MCP$RackPanel#addToRack: no blank spot found");
-				}
-
 				public int addTileButtonToRack(TileButton t) {
 					int index = -1;
 					for (int i = 0; i < tilePanels.length && index == -1; i++) {
@@ -1042,23 +1039,18 @@ public class GameScreen extends JPanel {
 				 */
 				public void addTilesToRack(Tile[] tiles) {
 					for(Tile t : tiles) {
-						TileButton button =
-								(t.isBlank()
-										? new TileButton()
-										: new TileButton(Tile.TileScore.valueOf(t.getLetter()+""))
-								);
-						this.addToRack(button);
+						TileButton button = new TileButton(t);
+						addTileButtonToRack(button);
 					}
 				}
 
-				public int removeFromRack(String letter) {
+				public void removeFromRack(String letter) {
 					for(int i = 0; i < tilePanels.length; i++){
 						if(tilePanels[i].getButton().getText().equals(letter)){
 							tilePanels[i].setButton(new JButton(" "));
-							return i;
+							return;
 						}
 					}
-					return -1;
 				}
 
 				public JButton removeButtonFromRack(int col) {
@@ -1084,6 +1076,12 @@ public class GameScreen extends JPanel {
 				public void resetRack() {
 					for (TilePanel tp : tilePanels) {
 						tp.setButton(new JButton(" "));
+					}
+				}
+
+				public void soutRack() {
+					for (TilePanel p : tilePanels) {
+						System.out.println(p.getButton().getText());
 					}
 				}
 

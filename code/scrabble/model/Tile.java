@@ -15,68 +15,9 @@ import java.io.Serializable;
  * and it holds information about its score and location.
  */
 public class Tile implements Serializable {
-
-    private final int score;        // How many points this tile scores
-    private char letter;            // The letter on the tile
-    private final boolean isBlank;  // Whether the tile is blank or not
+    private final TileScore primary;
+    private TileScore secondary = null;
     private Point location;         // The location of the tile on the game board
-
-    /**
-     * Creates a new, blank Tile object
-     * This tile has a score of 0 and an unset letter value.
-     * this letter value must be set at a future point to be a true representation of scrabble.
-     * @deprecated Use {@link #Tile(TileScore)} with {@link TileScore#BLANK}.
-     */
-    public Tile() {
-        this.isBlank = true;        // Set to true as this is a blank tile
-        score = 0;                  // Default score for a blank tile
-    }
-
-    /**
-     * Creates a new Tile object from a letter
-     * @param letter the letter on the face of the tile. Must be an alphabetical
-     *      character A-Z. The letter is automatically scored according to the
-     *      rules of Scrabble, and as outlined in class TileScore
-     * @deprecated Use {@link #Tile(TileScore)}.
-     */
-    public Tile(char letter) {
-        this.letter = letter;                           // Assign the letter to the tile
-        score = TileScore.getScoreForLetter(letter);    // Get the score for the letter
-        this.isBlank = false;                           // This tile is not blank
-    }
-
-    /**
-     * Creates a new Tile object from a letter and location.
-     * @param letter the letter on the tile.
-     * @param location the Point representing the tile's location on the board.
-     * @deprecated Use {@link #Tile(TileScore, Point)}.
-     */
-    public Tile(char letter, Point location) {
-        this.letter = letter;                           // Assign the letter to the tile
-        score = TileScore.getScoreForLetter(letter);    // Get the score for the letter
-        this.isBlank = false;                           // This tile is not blank
-        this.location = location;                       // Assign the location of the tile
-    }
-
-    /**
-     * Constructs a Tile from a <code>TileScore</code> enum.
-     * @param ts the enum from which this <code>Tile</code> is created.
-     */
-    public Tile(TileScore ts) {
-        this.letter = ts.letter;
-        this.isBlank = (ts.letter == TileScore.BLANK.letter);
-        this.score = ts.score;
-    }
-
-    /**
-     * Constructs a Tile from a <code>TileScore</code> enum at a location.
-     * @param ts the enum from which this <code>Tile</code> is created.
-     * @param point the point at which this tile is placed.
-     */
-    public Tile(TileScore ts, Point point) {
-        this(ts);
-        this.location = point;
-    }
 
     /**
      * Creates an array of <code>Tile</code>s from the given <code>TileScore</code>.
@@ -96,17 +37,71 @@ public class Tile implements Serializable {
     }
 
     /**
-     * If a tile is blank, its letter can be set once it is played
-     * @param letter the letter to put on the tile
-     * @throws NotBlankException when a non-blank letter is attempted
-     *          to be set.
+     * Creates a new, blank Tile object
+     * This tile has a score of 0 and an unset letter value.
+     * this letter value must be set at a future point to be a true representation of scrabble.
+     * @deprecated Use {@link #Tile(TileScore)} with {@link TileScore#BLANK}.
      */
-    public void setLetter(char letter)
-            throws NotBlankException{
-        if (!isBlank) {
-            throw new NotBlankException("model.Tile already has value " + this.letter);
-        }
-        else this.letter = letter;
+    public Tile() {
+        this.primary = TileScore.BLANK;        // Set to true as this is a blank tile
+    }
+
+    /**
+     * Creates a new Tile object from a letter
+     * @param letter the letter on the face of the tile. Must be an alphabetical
+     *      character A-Z. The letter is automatically scored according to the
+     *      rules of Scrabble, and as outlined in class TileScore
+     * @deprecated Use {@link #Tile(TileScore)}.
+     */
+    public Tile(char letter) {
+        this.primary = this.secondary = TileScore.scoreValueOf(Character.toUpperCase(letter) + "");
+    }
+
+    /**
+     * Creates a new Tile object from a letter and location.
+     * @param letter the letter on the tile.
+     * @param location the Point representing the tile's location on the board.
+     * @deprecated Use {@link #Tile(TileScore, Point)}.
+     */
+    public Tile(char letter, Point location) {
+        this(letter);
+        this.location = location;                       // Assign the location of the tile
+    }
+
+    /**
+     * Constructs a Tile from a <code>TileScore</code> enum.
+     * @param ts the enum from which this <code>Tile</code> is created.
+     */
+    public Tile(TileScore ts) {
+        if (ts != TileScore.BLANK) this.primary = this.secondary = ts;
+        else this.primary = ts;
+    }
+
+    /**
+     * Constructs a Tile from a <code>TileScore</code> enum at a location.
+     * @param ts the enum from which this <code>Tile</code> is created.
+     * @param point the point at which this tile is placed.
+     */
+    public Tile(TileScore ts, Point point) {
+        this(ts);
+        this.location = point;
+    }
+
+    /**
+     * Sets the letter of a blank tile to be the letter passed in. If the value
+     * of this tile has already been set, call {@link #resetLetter()} before this.
+     *
+     * @param ts the letter which this blank tile should be.
+     * @return True if the tile's letter was successfully set, false otherwise.
+     */
+    public boolean setLetter(TileScore ts) {
+        if (secondary != null || ts == TileScore.BLANK) return false;
+        this.secondary = ts;
+        return true;
+    }
+
+    public void resetLetter() {
+        if (primary == TileScore.BLANK) secondary = null;
     }
 
     /**
@@ -114,7 +109,10 @@ public class Tile implements Serializable {
      * @return the letter on the tile
      */
     public char getLetter() {
-        return this.letter;
+        if (secondary == null)
+            return primary.getLetter();
+        else
+            return secondary.getLetter();
     }
 
     /**
@@ -122,17 +120,18 @@ public class Tile implements Serializable {
      * @return the value of the letter
      */
     public int getScore() {
-        return this.score;
+        return primary.getScore();
     }
 
     /**
      * getter for isBlank
      * @return the value of isBlank
      */
-    public boolean isBlank(){return this.isBlank;}
+    public boolean isBlank(){return primary == TileScore.BLANK;}
 
     /**
      * Sets the location of the tile on the board.
+     * When a tile is removed, pass in null.
      * @param location the new Point location for the tile.
      */
     public void setLocation(Point location){this.location = location;}
@@ -149,9 +148,9 @@ public class Tile implements Serializable {
     @Override
     public String toString() {
         return "Tile{" +
-                "score=" + score +
-                ", letter=" + letter +
-                ", isBlank=" + isBlank +
+                "score=" + primary.getScore() +
+                ", letter=" + (secondary != null ? secondary.getLetter() : primary.getLetter()) +
+                ", isBlank=" + this.isBlank() +
                 ", location=" + location +
                 '}'; // Return a string representation of the Tile object
     }
@@ -220,14 +219,21 @@ public class Tile implements Serializable {
          * @return the value of the letter. Between 1-10
          */
         public static int getScoreForLetter(char letter) {
-            return TileScore.valueOf( String.valueOf(letter).toUpperCase() ).getScore();
+            return TileScore.scoreValueOf( String.valueOf(letter).toUpperCase() ).getScore();
         }
-    }
 
-    /**
-     * Thrown when a tile's letter is attempted to be set when it already has been assigned.
-     */
-    public static class NotBlankException extends Exception {
-        public NotBlankException(String s) {super(s);}
+        /**
+         * Supersedes the default <code>valueOf</code> method, which does not work with
+         * the letter value of <code>BLANK</code>.
+         * <br>
+         * Use this method over <code>valueOf</code>.
+         * @param name the letter for which to get the enum constant. For alphabetical Strings,
+         *             "A", "B", "C", etc. For a blank string, the letter value of <code>TileScore.BLANK</code>,
+         *             or the String "BLANK".
+         * @return The TileScore associated with the specified String.
+         */
+        public static TileScore scoreValueOf(String name) {
+            return (name.equals(TileScore.BLANK.getLetter()+"") ? TileScore.BLANK : valueOf(name));
+        }
     }
 }

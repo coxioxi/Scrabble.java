@@ -10,7 +10,6 @@ package scrabble.network.messages;
 import scrabble.controller.Controller;
 import scrabble.model.Tile;
 import scrabble.network.PartyHost;
-import scrabble.view.screen.GameScreen;
 
 import java.io.IOException;
 import java.io.Serial;
@@ -38,8 +37,7 @@ public class ExchangeTiles extends Message{
 	@Serial
 	private static final long serialVersionUID = 3L;
 	private final int playerID;
-	private Tile[] toExchange;
-	private Tile[] newTiles;
+	private final Tile[] toExchange;
 
 	/**
 	 * Constructor for the ExchangeTiles message class
@@ -52,7 +50,6 @@ public class ExchangeTiles extends Message{
 		super(senderID);
 		this.playerID = playerID;
 		this.toExchange = toExchange;
-		newTiles  = new Tile[toExchange.length];
 	}
 
 	/**
@@ -83,15 +80,8 @@ public class ExchangeTiles extends Message{
 	 */
 	@Override
 	public void execute(Controller controller) {
-
-		if (playerID == controller.getModel().getSelf().getID()) {
-			selfExecute(controller);
-		}
-		else {
-			themExecute(controller);
-		}
-
-		controller.getModel().nextTurn();
+		if (playerID == controller.getSelfID()) selfExecute(controller);
+		else themExecute(controller);
 	}
 
 	/**
@@ -103,9 +93,9 @@ public class ExchangeTiles extends Message{
 	 */
 	@Override
 	public void execute(PartyHost partyHost) {
-		newTiles = partyHost.getTiles(toExchange.length);
-		ArrayList<Tile> tiles = new ArrayList<>(Arrays.stream(newTiles).toList());
-		tiles.forEach(System.out::println);
+		Tile[] newTiles = partyHost.getTiles(toExchange.length);
+		//ArrayList<Tile> tiles = new ArrayList<>(Arrays.stream(newTiles).toList());
+		//tiles.forEach(System.out::println);
 		NewTiles newTilesMessage = new NewTiles(this.getSenderID(), newTiles);
 
 		//send exchange message to all players but itself

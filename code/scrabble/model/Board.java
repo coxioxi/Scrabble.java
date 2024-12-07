@@ -250,7 +250,7 @@ public class Board {
 	 * the lower 1000's.
      */
     public int playTiles(Tile[] tiles) {
-        if (!validatePositions(tiles))
+		if (!validatePositions(tiles))
 			return -1;       // ensure positions are allowed
         int score = score(tiles);       // calculate score of play
         addToBoard(tiles);              // add to board
@@ -318,7 +318,7 @@ public class Board {
 		 * A normal, non-modifying cell. Does not apply to a word, has a multiplier of 1, is named "Normal Cell",
 		 * is rendered with text " ", and has an off-white color.
 		 */
-		NONE(false, 1, "Normal Cell", " ", new Color(221, 221, 221));  	// Normal cell.
+		NONE(false, 1, "Normal Cell", " ", new Color(200, 200, 200));  	// Normal cell.
 
 		private final boolean appliesToWord;
 		private final int multiplier;
@@ -1051,20 +1051,16 @@ public class Board {
         int y = (int) tile.getLocation().getY();
 
         // Check if the adjacent cells (up, down, left, right) are occupied by non-blank tiles.
-        if (x - 1 >= 0 && board[x - 1][y] != null && !board[x - 1][y].isBlank()) {
+        if (x - 1 >= 0 && board[x - 1][y] != null) {
             return true;
         }
-        else if (x + 1 < BOARD_ROWS && board[x + 1][y] != null && !board[x + 1][y].isBlank()) {
+        else if (x + 1 < BOARD_ROWS && board[x + 1][y] != null) {
             return true;
         }
-        else if (y - 1 >= 0 && board[x][y - 1] != null && !board[x][y - 1].isBlank()) {
+        else if (y - 1 >= 0 && board[x][y - 1] != null) {
             return true;
         }
-        else if (y + 1 < BOARD_COLUMNS && board[x][y + 1] != null && !board[x][y + 1].isBlank()){
-            return true;
-        }
-        else
-            return false;
+        else return y + 1 < BOARD_COLUMNS && board[x][y + 1] != null;
     }
 
     /*
