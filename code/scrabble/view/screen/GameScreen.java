@@ -290,6 +290,14 @@ public class GameScreen extends JPanel {
 		return northPanel;
 	}
 
+	public void setDisconnected(String playerName) {
+		for (PlayerPanel p : playerPanels) {
+			if (p.getPlayerName().equals(playerName)) {
+				p.setStatus(PlayerPanel.Status.DISCONNECTED);
+			}
+		}
+	}
+
 	/**
 	 * PlayerPanel displays the details of a player in the game, showing the player's
 	 * name, current score, and remaining time.

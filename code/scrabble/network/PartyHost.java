@@ -181,7 +181,8 @@ public class PartyHost extends Thread implements PropertyChangeListener {
 	 */
 	public void sendToAllButID(int playerID, Message message) {
 		for (HostReceiver host : receiverToIdMap.keySet()) {
-			if(!host.equals(playerIdToMessenger.get(playerID))) {
+			if(host.getID() != playerID) {
+				System.out.println("\t\tSending to " + host.getID());
 				host.sendMessage(message);
 			}
 		}
@@ -282,12 +283,13 @@ public class PartyHost extends Thread implements PropertyChangeListener {
 	}
 
 	public void exit(int playerID) {
+		System.out.println("PartyHost#exit:\n\t with" + playerID);
+		sendToAllButID(playerID, new ExitParty(playerID, playerID));
 		HostReceiver exiting = playerIdToMessenger.remove(playerID);
 		playerIdToNameMap.remove(playerID);
 		if (inGame) tileBag.addTiles(receiverToTilesMap.remove(exiting).toArray(new Tile[0]));
 		receiverToIdMap.remove(exiting);
 		exiting.halt();
-		sendToAllButID(playerID, new ExitParty(playerID, playerID));
 	}
 
 	/**
@@ -361,6 +363,7 @@ public class PartyHost extends Thread implements PropertyChangeListener {
 					newMessage = (Message) inputStream.readObject();
 				} catch (EOFException | SocketException e) {
 					// Client has closed socket.
+					System.out.println("PH$HR#run sending new exit party message with " + this.ID);
 					newMessage = new ExitParty(this.ID, this.ID);
 					this.halt();
 				} catch (IOException | ClassNotFoundException e) {

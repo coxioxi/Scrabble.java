@@ -185,7 +185,7 @@ public class Controller implements PropertyChangeListener  {
 			if (playerID[i] == this.selfID) {
 				self = new Player.LocalPlayer(playerNames[i], playerID[i], i, new ArrayList<>(List.of(startingTiles)));
 			}
-			players[i] = new Player(playerNames[i], playerID[i], i);
+			players[i] = new Player.NetworkPlayer(playerNames[i], playerID[i], i);
 		}
 		model = new Game(players, new Board(), ruleset, self);
 		gameScreenController.setGameControlButtonsEnabled(model.getCurrentPlayer() == selfID);
@@ -293,6 +293,27 @@ public class Controller implements PropertyChangeListener  {
 		model.passTurn(playerID);
 		gameScreenController.nextPlayer();
 		gameScreenController.setGameControlButtonsEnabled(model.getCurrentPlayer() == selfID);
+	}
+
+	public void exitParty(int playerID) {
+		if (model.getCurrentPlayer() == playerID) {
+			model.nextTurn();
+			gameScreenController.nextPlayer();
+		}
+		model.setConnected(playerID, false);
+		gameScreenController.setConnected(model.getPlayer(playerID).getPlayerName());
+		if (model.numPlayersActive() < 2) {
+			showExitGame();
+			exit();
+		}
+		else {
+			System.out.println("there are 2 or more left"	 );
+			//gameScreenController.removePlayer(model.getPlayer(playerID).getPlayerName());
+		}
+	}
+
+	private void showExitGame() {
+		JOptionPane.showMessageDialog(this.view, "A player has disconnected; there are not enough players to continue the game");
 	}
 
 	public void exchangeTilesTurn(Tile[] tiles) {
@@ -553,6 +574,11 @@ public class Controller implements PropertyChangeListener  {
 	 * Stops the execution of this application.
 	 */
 	public void exit() { view.dispose(); haltThreads(); }
+
+	public void hostDisconnect() {
+		if (this.host != null) JOptionPane.showMessageDialog(this.view, "The host has disconnected :(");
+		this.exit();
+	}
 
 	/**
 	 * Implements communication with a host, using the objects in
@@ -862,6 +888,7 @@ public class Controller implements PropertyChangeListener  {
 					parent.setupSocket(hostsIP, portNumber);
 					parent.sendNewPlayer(userName);
 					parent.showWaiting();
+					//parent.getView().setTitle("Scrabble.\"" +userName + "\"");
 				} catch (NumberFormatException e) {
 					parent.showNoPortDialog();
 				} catch (IOException e) {

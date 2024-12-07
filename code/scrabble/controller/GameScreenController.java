@@ -467,6 +467,10 @@ public class GameScreenController {
 		parent.getView().getFxItem().setSelected(fxEnabled);
 	}
 
+	public void setConnected(String playerName) {
+		gameScreen.setDisconnected(playerName);
+	}
+
 	private class GameTimeController {
 		private final Timer scheduler;
 

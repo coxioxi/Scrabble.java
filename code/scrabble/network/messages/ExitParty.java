@@ -55,10 +55,15 @@ public class ExitParty extends Message {
 	 */
 	@Override
 	public void execute(Controller controller) {
+		System.out.println();
 		try {
 			if (controller.getSelfID() == this.playerID) controller.getMessenger().sendMessage(this);
-			else {
-				System.out.println("message.ExitParty#execute(Controller):\n\tplease implement me.");
+			else if (this.playerID == PartyHost.HOST_ID) {
+				controller.hostDisconnect();
+			}else
+			{
+					System.out.println("message.ExitParty#execute(Controller):\n\tI am in testing rn");
+					controller.exitParty(this.playerID);
 			}
 		} catch (IOException ignore) {
 		}
@@ -74,6 +79,7 @@ public class ExitParty extends Message {
 	@Override
 	public void execute(PartyHost partyHost) {
 		//get new tiles and send it back to the client (this message playerID)
+		System.out.println("ExitParty#execute(PartyHost):\n\t with" + playerID);
 		partyHost.exit(this.playerID);
 	}
 }
