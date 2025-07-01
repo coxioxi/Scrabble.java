@@ -17,9 +17,41 @@ A Java-based Scrabble game simulation developed by me and a group of 4 people, f
 <h2>Program walk-through:</h2>
 
 <p align="center">
-Manual: <br/>
-<a href="docs/Scrabble Manual.pdf" target="_blank">View Full PDF Guide</a>
+Launch the utility: <br/>
+<a href="Docs/Manual.docx" target="_blank">View Full PDF Guide</a>
+</p>
+
+<p align="center">
+Main Menu Screen: <br/>
+<img src="https://imgur.com/QOYM7Zk.png" height="80%" width="80%" alt="Disk Sanitization Steps"/>
 <br />
+
+<p align="center">
+Host Menu Screen: <br/>
+<img src="https://imgur.com/IRKmNQ6.png" height="80%" width="80%" alt="Disk Sanitization Steps"/>
+<br />
+
+<p align="center">
+Join Game Menu Screen: <br/>
+<img src="https://imgur.com/7J2kpWq.png" height="80%" width="80%" alt="Disk Sanitization Steps"/>
+<br />
+
+<p align="center">
+Board Screen: <br/>
+<img src="https://imgur.com/DwnsMTy.png" height="80%" width="80%" alt="Disk Sanitization Steps"/>
+<br />
+
+<p align="center">
+Player Rack: <br/>
+<img src="https://imgur.com/sGuqdPe.png" height="80%" width="80%" alt="Disk Sanitization Steps"/>
+<br />
+
+<p align="center">
+Exchange Tiles Menu: <br/>
+<img src="https://imgur.com/IH8HO7M.png" height="80%" width="80%" alt="Disk Sanitization Steps"/>
+<br />
+
+
 
 <!--
  ```diff
