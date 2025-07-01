@@ -18,7 +18,7 @@ A Java-based Scrabble game simulation developed by me and a group of 4 people, f
 
 <p align="center">
 Launch the utility: <br/>
-<a href="Docs/Manual.docx" target="_blank">View Full PDF Guide</a>
+<a href="Docs/Scrabble Manual.pdf" target="_blank">View Full PDF Guide</a>
 </p>
 
 <p align="center">
