@@ -1,7 +1,7 @@
 <h1>Scrabble Java Application</h1>
 
 <h2>Description</h2>
-A Java-based Scrabble game simulation developed by me and a group of 4 people, featuring a fully functional board with word validation, point calculations based on tile values and board modifiers, and a turn-based play system. Supports peer-to-peer hosting for a multiplayer experience, allowing players to connect and compete directly without a central server. Includes methods to simulate gameplay, track scores, and demonstrate core mechanics such as placing tiles, forming words, and applying bonus rules.
+A Java-based Scrabble game simulation, featuring a fully functional board with word validation, point calculations based on tile values and board modifiers, and a turn-based play system. Supports peer-to-peer hosting for a multiplayer experience, allowing players to connect and compete directly without a central server. Includes methods to simulate gameplay, track scores, and demonstrate core mechanics such as placing tiles, forming words, and applying bonus rules. Developed using the Waterfall methodology in a team setting. Also includes original background music, which I personally composed, performed, and produced.
 <br />
 
 
